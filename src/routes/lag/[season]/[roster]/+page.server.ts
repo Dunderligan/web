@@ -1,14 +1,15 @@
 import { db, schema } from '$lib/server/db/index.js';
 import { error } from '@sveltejs/kit';
-import { eq } from 'drizzle-orm';
+import { eq, and, desc, or, asc } from 'drizzle-orm';
 
 export const load = async ({ params }) => {
 	const data = await db.query.roster.findFirst({
-		where: eq(schema.roster.slug, params.slug),
+		where: and(eq(schema.roster.seasonSlug, params.season), eq(schema.roster.slug, params.roster)),
 		columns: {
 			id: true,
 			name: true,
-			slug: true
+			slug: true,
+			seasonSlug: true
 		},
 		with: {
 			members: {
@@ -73,8 +74,39 @@ export const load = async ({ params }) => {
 		error(404);
 	}
 
-	const info = data.team.rosters.find((r) => r.id === data.id)!;
-	const roster = { ...data, team: undefined, ...info };
+	const matches = await db.query.match.findMany({
+		where: and(
+			eq(schema.match.played, true),
+			or(eq(schema.match.rosterAId, data.id), eq(schema.match.rosterBId, data.id))
+		),
+		limit: 5,
+		orderBy: desc(schema.match.scheduledAt),
+		columns: {
+			id: true,
+			teamAScore: true,
+			teamBScore: true,
+			draws: true
+		},
+		with: {
+			rosterA: {
+				columns: {
+					id: true,
+					name: true,
+					slug: true
+				}
+			},
+			rosterB: {
+				columns: {
+					id: true,
+					name: true,
+					slug: true
+				}
+			}
+		}
+	});
+
+	const currentRosterInfo = data.team.rosters.find((r) => r.id === data.id)!;
+	const roster = { ...data, team: undefined, ...currentRosterInfo, matches };
 
 	return { roster, team: data.team };
 };

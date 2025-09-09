@@ -11,6 +11,10 @@ const client = postgres(env.DATABASE_URL);
 
 const db = drizzle(client, { schema, casing: 'snake_case' });
 
+function rand() {
+	return Math.floor(100000 + Math.random() * 900000);
+}
+
 async function seedDb() {
 	const seedSchema = {
 		team: schema.team,
@@ -61,7 +65,7 @@ async function seedDb() {
 	}));
 	*/
 
-	let season = await db
+	let [season] = await db
 		.insert(schema.season)
 		.values({ name: 'Test Säsong', slug: 'test', startedAt: new Date() })
 		.returning();
@@ -76,7 +80,7 @@ async function seedDb() {
 				.values({
 					name,
 					slug,
-					seasonId: season[0].id
+					seasonId: season.id
 				})
 				.returning();
 
@@ -105,19 +109,21 @@ async function seedDb() {
 	);
 
 	let teams = await Promise.all(
-		Array.from({ length: 32 }).map(() => db.insert(schema.team).values({}).returning())
+		Array.from({ length: 40 }).map(() => db.insert(schema.team).values({}).returning())
 	);
 
 	let rosters = await Promise.all(
 		teams.map(async (team) => {
-			let name = `Team ${team[0].id}`;
+			let name = `Lag #${rand()}`;
+			let slug = name.toLowerCase().replaceAll(' ', '-').replaceAll('#', '');
 			let groupIndex = Math.floor(Math.random() * groups.length);
 
 			let result = await db
 				.insert(schema.roster)
 				.values({
 					name,
-					slug: name.toLowerCase().replaceAll(' ', '-'),
+					slug,
+					seasonSlug: season.slug,
 					teamId: team[0].id,
 					groupId: groups[groupIndex].id
 				})
@@ -128,8 +134,8 @@ async function seedDb() {
 	);
 
 	let players = await Promise.all(
-		Array.from({ length: 32 * 2 * 7 }).map(async () => {
-			let battletag = `Player#${Math.floor(100000 + Math.random() * 900000)}`;
+		Array.from({ length: 40 * 6 }).map(async () => {
+			let battletag = `Spelare #${rand()}`;
 
 			let result = await db
 				.insert(schema.player)
@@ -145,8 +151,17 @@ async function seedDb() {
 	await Promise.all(
 		players.map(async (player, i) => {
 			let rosterIndex = i % rosters.length;
-			let rank = Rank.BRONZE;
-			let tier = (i % 5) + 1;
+			let rank = [
+				Rank.BRONZE,
+				Rank.SILVER,
+				Rank.GOLD,
+				Rank.PLATINUM,
+				Rank.DIAMOND,
+				Rank.MASTER,
+				Rank.GRANDMASTER,
+				Rank.CHAMPION
+			][Math.floor(Math.random() * 8)];
+			let tier = Math.floor(Math.random() * 5) + 1;
 			let isCaptain = i % 7 === 0;
 
 			await db.insert(schema.member).values({

@@ -5,7 +5,7 @@
 
 	async function login() {
 		await authClient.signIn.social({
-			provider: 'discord'
+			provider: 'battlenet'
 		});
 	}
 

@@ -1,4 +1,4 @@
-import type { Rank } from './server/db/schema';
+import type { Rank, Role } from './server/db/schema';
 
 const rankNums = {
 	bronze: 0,
@@ -17,13 +17,26 @@ export type FullRank = {
 };
 
 export function averageRank(ranks: FullRank[]): FullRank {
-	const nums = ranks.map((m) => rankNums[m.rank] + m.tier / 5 - 1).reduce((a, b) => a + b, 0);
+	// convert the ranks to decimal numbers using the record above
+	const rankNumbers = ranks
+		.map((fullRank) => rankNums[fullRank.rank] + (fullRank.tier - 1) / 5)
+		.reduce((a, b) => a + b, 0);
 
-	const avg = nums / ranks.length;
+	const average = rankNumbers / ranks.length;
 	const rank = Object.entries(rankNums)
 		.reverse()
-		.find(([_, n]) => n <= avg) ?? ['bronze', 0];
-	const tier = Math.round((avg - (rank[1] ?? 0)) * 5) + 1;
+		.find(([_, num]) => num <= average) ?? ['bronze', 0];
+	const tier = Math.round((average - (rank[1] ?? 0)) * 5) + 1;
 
 	return { rank: rank[0] as Rank, tier };
+}
+
+const roleNums: Record<Role, number> = {
+	tank: 0,
+	damage: 1,
+	support: 2
+};
+
+export function sortRole(a: Role, b: Role) {
+	return roleNums[a] - roleNums[b];
 }

@@ -63,13 +63,13 @@
 		</thead>
 		<tbody>
 			{#each table as { rosterId, score }, i (rosterId)}
-				{@const roster = rosters.find((r) => r.id === rosterId)}
+				{@const roster = rosters.find((roster) => roster.id === rosterId)!}
 
 				<tr>
 					<td>{i + 1}</td>
-					<td><a href="/lag/{roster?.slug}">{roster?.name}</a></td>
+					<td><a class="underline" href="/lag/{season.slug}/{roster.slug}">{roster.name}</a></td>
 					<td>{score.mapWins}</td>
-					<td>{score.mapWins}/{score.mapLosses}/0</td>
+					<td>{score.mapWins}/{score.mapLosses}/{score.mapDraws}</td>
 					<td>{score.matchesPlayed}</td>
 				</tr>
 			{/each}

@@ -82,18 +82,23 @@ export const teamRelations = relations(team, ({ many }) => ({
 	socials: many(social)
 }));
 
-export const roster = pgTable('roster', {
-	id: uuid().primaryKey().defaultRandom(),
-	name: text().notNull(),
-	slug: text().notNull().unique(),
-	teamId: uuid()
-		.notNull()
-		.references(() => team.id, { onDelete: 'cascade' }),
-	groupId: uuid()
-		.notNull()
-		.references(() => group.id, { onDelete: 'cascade' }),
-	...timestamps
-});
+export const roster = pgTable(
+	'roster',
+	{
+		id: uuid().primaryKey().defaultRandom(),
+		name: text().notNull(),
+		slug: text().notNull(),
+		seasonSlug: text().notNull(),
+		teamId: uuid()
+			.notNull()
+			.references(() => team.id, { onDelete: 'cascade' }),
+		groupId: uuid()
+			.notNull()
+			.references(() => group.id, { onDelete: 'cascade' }),
+		...timestamps
+	},
+	(t) => [unique().on(t.slug, t.seasonSlug)]
+);
 
 export const rosterRelations = relations(roster, ({ one, many }) => ({
 	team: one(team, {
@@ -232,11 +237,13 @@ export const matchRelations = relations(match, ({ one }) => ({
 	}),
 	rosterA: one(roster, {
 		fields: [match.rosterAId],
-		references: [roster.id]
+		references: [roster.id],
+		relationName: 'rosterA'
 	}),
 	rosterB: one(roster, {
 		fields: [match.rosterBId],
-		references: [roster.id]
+		references: [roster.id],
+		relationName: 'rosterB'
 	}),
 	nextMatch: one(match, {
 		fields: [match.nextMatchId],

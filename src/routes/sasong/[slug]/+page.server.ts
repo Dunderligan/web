@@ -11,6 +11,7 @@ export const load = async ({ params }) => {
 		},
 		with: {
 			divisions: {
+				orderBy: schema.division.name,
 				columns: {
 					id: true,
 					name: true,
@@ -18,6 +19,7 @@ export const load = async ({ params }) => {
 				},
 				with: {
 					groups: {
+						orderBy: schema.division.name,
 						columns: {
 							id: true,
 							name: true,
