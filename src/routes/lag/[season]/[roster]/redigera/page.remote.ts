@@ -1,9 +1,8 @@
 import { command } from '$app/server';
 import { db, schema } from '$lib/server/db';
+import type { Transaction } from '$lib/server/db/helpers';
 import { Rank, Role, SocialPlatform, type Member, type TeamSocial } from '$lib/types';
-import { eq, sql, type ExtractTablesWithRelations } from 'drizzle-orm';
-import type { PgTransaction } from 'drizzle-orm/pg-core';
-import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
+import { eq, sql } from 'drizzle-orm';
 import slugify from 'slugify';
 import * as z from 'zod';
 
@@ -27,7 +26,7 @@ export const editRoster = command(
 		socials: z.array(
 			z.object({
 				platform: z.enum(SocialPlatform),
-				url: z.string()
+				url: z.url()
 			})
 		)
 	}),
@@ -37,8 +36,8 @@ export const editRoster = command(
 		await db.transaction(async (tx) => {
 			await Promise.all([
 				updateName(tx, id, name, newSlug),
-				updateMembers(id, members),
-				updateSocials(teamId, socials)
+				updateMembers(tx, id, members),
+				updateSocials(tx, teamId, socials)
 			]);
 		});
 
@@ -48,16 +47,7 @@ export const editRoster = command(
 	}
 );
 
-async function updateName(
-	tx: PgTransaction<
-		PostgresJsQueryResultHKT,
-		typeof schema,
-		ExtractTablesWithRelations<typeof schema>
-	>,
-	rosterId: string,
-	name: string,
-	slug: string
-) {
+async function updateName(tx: Transaction, rosterId: string, name: string, slug: string) {
 	await tx
 		.update(schema.roster)
 		.set({
@@ -67,15 +57,16 @@ async function updateName(
 		.where(eq(schema.roster.id, rosterId));
 }
 
-async function updateMembers(rosterId: string, members: Member[]) {
+async function updateMembers(tx: Transaction, rosterId: string, members: Member[]) {
 	// delete all the members and insert them again
 	// there is probably a more effective way to do this
 
-	await db.delete(schema.member).where(eq(schema.member.rosterId, rosterId));
+	await tx.delete(schema.member).where(eq(schema.member.rosterId, rosterId));
 
 	const memberInserts = await Promise.all(
 		members.map(async (member) => {
-			let playerId = member.player.id ?? (await findOrCreatePlayer(member.player.battletag));
+			// if they already have an associated id, use that
+			let playerId = member.player.id ?? (await findOrCreatePlayer(tx, member.player.battletag));
 
 			return {
 				rosterId: rosterId,
@@ -89,12 +80,12 @@ async function updateMembers(rosterId: string, members: Member[]) {
 	);
 
 	if (memberInserts.length > 0) {
-		await db.insert(schema.member).values(memberInserts);
+		await tx.insert(schema.member).values(memberInserts);
 	}
 }
 
-async function findOrCreatePlayer(battletag: string) {
-	const [existingPlayer] = await db
+async function findOrCreatePlayer(tx: Transaction, battletag: string) {
+	const [existingPlayer] = await tx
 		.select()
 		.from(schema.player)
 		.where(eq(schema.player.battletag, battletag));
@@ -102,14 +93,14 @@ async function findOrCreatePlayer(battletag: string) {
 	if (existingPlayer) {
 		return existingPlayer.id;
 	} else {
-		const [newPlayer] = await db.insert(schema.player).values({ battletag }).returning();
+		const [newPlayer] = await tx.insert(schema.player).values({ battletag }).returning();
 
 		return newPlayer.id;
 	}
 }
 
-async function updateSocials(teamId: string, socials: TeamSocial[]) {
-	await db
+async function updateSocials(tx: Transaction, teamId: string, socials: TeamSocial[]) {
+	await tx
 		.insert(schema.social)
 		.values(socials.map((social) => ({ ...social, teamId })))
 		.onConflictDoUpdate({

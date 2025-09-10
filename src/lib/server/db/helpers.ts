@@ -1,4 +1,7 @@
-import { timestamp } from 'drizzle-orm/pg-core';
+import type { ExtractTablesWithRelations } from 'drizzle-orm';
+import { PgTransaction, timestamp } from 'drizzle-orm/pg-core';
+import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
+import type { schema } from '.';
 
 export const timestamps = {
 	createdAt: timestamp().defaultNow().notNull()
@@ -34,3 +37,9 @@ export function enumToPgEnum<T extends Record<string, any>>(
 ): [T[keyof T], ...T[keyof T][]] {
 	return Object.values(myEnum).map((value: any) => `${value}`) as any;
 }
+
+export type Transaction = PgTransaction<
+	PostgresJsQueryResultHKT,
+	typeof schema,
+	ExtractTablesWithRelations<typeof schema>
+>;
