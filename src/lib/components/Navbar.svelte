@@ -6,7 +6,6 @@
 	async function login() {
 		await authClient.signIn.social({
 			provider: 'battlenet',
-			callbackURL: 'http://localhost:5173',
 			scopes: ['openid']
 		});
 	}
@@ -22,9 +21,7 @@
 
 		<div>
 			{#if $session.data}
-				<img src={$session.data.user?.image} class="inline size-8 rounded-full" alt="" />
-
-				<button onclick={logout}>Logga ut</button>
+				<button onclick={logout}>{$session.data.user.name}</button>
 			{:else}
 				<button onclick={login}>Logga in</button>
 			{/if}

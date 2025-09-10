@@ -13,6 +13,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { enumToPgEnum, timestamps } from '../helpers';
 import { relations, sql } from 'drizzle-orm';
+import { MatchType, Rank, Role, SocialPlatform } from '$lib/util';
 
 export const season = pgTable('season', {
 	id: uuid().primaryKey().defaultRandom(),
@@ -113,11 +114,6 @@ export const rosterRelations = relations(roster, ({ one, many }) => ({
 	matches: many(match)
 }));
 
-export enum SocialPlatform {
-	YOUTUBE = 'youtube',
-	TWITTER = 'twitter'
-}
-
 export const socialPlatformEnum = pgEnum('social_platform', enumToPgEnum(SocialPlatform));
 
 export const social = pgTable(
@@ -151,24 +147,7 @@ export const playerRelations = relations(player, ({ many }) => ({
 	memberships: many(member)
 }));
 
-export enum Rank {
-	BRONZE = 'bronze',
-	SILVER = 'silver',
-	GOLD = 'gold',
-	PLATINUM = 'platinum',
-	DIAMOND = 'diamond',
-	MASTER = 'master',
-	GRANDMASTER = 'grandmaster',
-	CHAMPION = 'champion'
-}
-
 export const rankEnum = pgEnum('rank', enumToPgEnum(Rank));
-
-export enum Role {
-	DAMAGE = 'damage',
-	TANK = 'tank',
-	SUPPORT = 'support'
-}
 
 export const roleEnum = pgEnum('role', enumToPgEnum(Role));
 
@@ -203,11 +182,6 @@ export const memberRelations = relations(member, ({ one }) => ({
 		references: [roster.id]
 	})
 }));
-
-export enum MatchType {
-	GROUP = 'group',
-	BRACKET = 'bracket'
-}
 
 export const matchType = pgEnum('match_type', enumToPgEnum(MatchType));
 

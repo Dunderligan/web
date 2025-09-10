@@ -22,8 +22,6 @@
 	let rosters = $derived(activeGroup?.rosters ?? []);
 
 	let table = $derived(activeGroup ? (data.tables.get(activeGroup.id) ?? null) : null);
-
-	console.log(data);
 </script>
 
 <h1 class="text-4xl font-bold">Säsong {data.season.name}</h1>

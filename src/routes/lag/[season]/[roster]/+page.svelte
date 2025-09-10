@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import { averageRank, sortRole as compareRole } from '$lib/util';
 
 	let { data } = $props();
@@ -82,10 +83,12 @@
 	<div class="flex items-center gap-2">
 		{#each otherRosters as roster (roster.id)}
 			<div>
-				<a href="/lag/{roster.slug}"
-					>{roster.group.division.season.name} {roster.group.division.name}</a
-				>
+				<a href="roster.slug">{roster.group.division.season.name} {roster.group.division.name}</a>
 			</div>
 		{/each}
 	</div>
+</div>
+
+<div>
+	<a href="{page.url}/redigera">Edit</a>
 </div>

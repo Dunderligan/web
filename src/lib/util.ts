@@ -1,5 +1,3 @@
-import type { Rank, Role } from './server/db/schema';
-
 const rankNums = {
 	bronze: 0,
 	silver: 1,
@@ -39,4 +37,31 @@ const roleNums: Record<Role, number> = {
 
 export function sortRole(a: Role, b: Role) {
 	return roleNums[a] - roleNums[b];
+}
+
+export enum Rank {
+	BRONZE = 'bronze',
+	SILVER = 'silver',
+	GOLD = 'gold',
+	PLATINUM = 'platinum',
+	DIAMOND = 'diamond',
+	MASTER = 'master',
+	GRANDMASTER = 'grandmaster',
+	CHAMPION = 'champion'
+}
+
+export enum SocialPlatform {
+	YOUTUBE = 'youtube',
+	TWITTER = 'twitter'
+}
+
+export enum Role {
+	DAMAGE = 'damage',
+	TANK = 'tank',
+	SUPPORT = 'support'
+}
+
+export enum MatchType {
+	GROUP = 'group',
+	BRACKET = 'bracket'
 }

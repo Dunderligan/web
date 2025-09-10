@@ -32,9 +32,26 @@ export const auth = betterAuth({
 					clientSecret: BATTLENET_CLIENT_SECRET,
 					authorizationUrl: 'https://oauth.battle.net/authorize',
 					tokenUrl: 'https://oauth.battle.net/token',
-					userInfoUrl: 'https://oauth.battle.net/userinfo',
-					redirectURI: 'http://localhost:5173/',
-					scopes: ['openid']
+					redirectURI: 'http://localhost:5173/api/auth/callback/battlenet',
+					scopes: ['openid'],
+					getUserInfo: async (tokens) => {
+						const result = await fetch('https://oauth.battle.net/userinfo', {
+							headers: {
+								Authorization: `Bearer ${tokens.accessToken}`
+							}
+						}).then((res) => res.json());
+
+						console.log('got stuff from battle.net', result);
+
+						return {
+							id: result.id,
+							name: result.battletag,
+							email: `${result.id}@https://battle.net`,
+							emailVerified: true,
+							createdAt: new Date(),
+							updatedAt: new Date()
+						};
+					}
 				}
 			]
 		})
