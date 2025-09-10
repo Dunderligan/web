@@ -6,7 +6,7 @@ export const authClient = createAuthClient({
 	plugins: [genericOAuthClient()]
 });
 
-export type User = BetterAuthUser & { role: string };
+export type User = BetterAuthUser & { role?: string | null };
 
 export function isAdmin(user?: User | null) {
 	return user?.role === 'admin';

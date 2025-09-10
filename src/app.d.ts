@@ -7,6 +7,9 @@ declare global {
 			session?: Session;
 			user?: User;
 		}
+		interface PageData {
+			user?: User;
+		}
 	}
 }
 

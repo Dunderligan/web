@@ -20,8 +20,8 @@
 		<a href="/sasong/test">Ställningar</a>
 
 		<div>
-			{#if $session.data}
-				<button onclick={logout}>{$session.data.user.name}</button>
+			{#if $session.data?.user}
+				<button onclick={logout}>{$session.data?.user.name}</button>
 			{:else}
 				<button onclick={login}>Logga in</button>
 			{/if}

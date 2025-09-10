@@ -1,10 +1,11 @@
 import { command, getRequestEvent } from '$app/server';
 import { isAdmin } from '$lib/auth-client';
 import { db, schema } from '$lib/server/db';
-import type { Transaction } from '$lib/server/db/helpers';
+import { groupContext as nestedGroupQuery, type Transaction } from '$lib/server/db/helpers';
 import { Rank, Role, SocialPlatform, type Member, type TeamSocial } from '$lib/types';
+import { flattenGroup } from '$lib/util';
 import { error } from '@sveltejs/kit';
-import { eq, sql } from 'drizzle-orm';
+import { and, eq, inArray, not, sql } from 'drizzle-orm';
 import slugify from 'slugify';
 import * as z from 'zod';
 
@@ -68,7 +69,6 @@ async function updateName(tx: Transaction, rosterId: string, name: string, slug:
 async function updateMembers(tx: Transaction, rosterId: string, members: Member[]) {
 	// delete all the members and insert them again
 	// there is probably a more effective way to do this
-
 	await tx.delete(schema.member).where(eq(schema.member.rosterId, rosterId));
 
 	const memberInserts = await Promise.all(
@@ -108,6 +108,19 @@ async function findOrCreatePlayer(tx: Transaction, battletag: string) {
 }
 
 async function updateSocials(tx: Transaction, teamId: string, socials: TeamSocial[]) {
+	if (socials.length === 0) {
+		// delete all platforms
+		await tx.delete(schema.social).where(eq(schema.social.teamId, teamId));
+		return;
+	}
+
+	const platforms = socials.map((social) => social.platform);
+
+	// delete extra platforms
+	await tx
+		.delete(schema.social)
+		.where(and(eq(schema.social.teamId, teamId), not(inArray(schema.social.platform, platforms))));
+
 	await tx
 		.insert(schema.social)
 		.values(socials.map((social) => ({ ...social, teamId })))
@@ -116,3 +129,37 @@ async function updateSocials(tx: Transaction, teamId: string, socials: TeamSocia
 			set: { url: sql`excluded.${schema.social.url}` }
 		});
 }
+
+export const createRoster = command(
+	z.object({
+		name: z.string(),
+		teamId: z.uuid(),
+		groupId: z.uuid()
+	}),
+	async ({ name, teamId, groupId }) => {
+		const nestedGroup = await db.query.group.findFirst({
+			where: eq(schema.group.id, groupId),
+			...nestedGroupQuery.group
+		});
+
+		if (!nestedGroup) {
+			error(400);
+		}
+
+		const { season } = flattenGroup(nestedGroup);
+
+		const slug = slugify(name).toLowerCase();
+
+		await db.insert(schema.roster).values({
+			name,
+			slug,
+			teamId,
+			groupId,
+			seasonSlug: season.slug
+		});
+
+		return {
+			location: `../${slug}/redigera`
+		};
+	}
+);

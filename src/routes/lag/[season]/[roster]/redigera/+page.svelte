@@ -2,11 +2,17 @@
 	import { goto } from '$app/navigation';
 	import { Rank, Role, SocialPlatform } from '$lib/types';
 	import { formatSocialPlatform, flattenGroup } from '$lib/util';
-	import { editRoster } from './page.remote';
+	import { createRoster, editRoster } from './page.remote';
 
 	let { data } = $props();
 
+	$effect(() => {
+		roster = data.roster;
+		team = data.team;
+	});
+
 	let { roster, team } = $state(data);
+	let { group, division, season } = $derived(flattenGroup(roster.group));
 
 	let newBattletag = $state('');
 
@@ -18,6 +24,8 @@
 
 	let newPlatform = $state(SocialPlatform.TWITTER);
 	let newSocialUrl = $state('');
+
+	let newGroupId = $state('');
 
 	async function submitEdit() {
 		const { location } = await editRoster({
@@ -59,62 +67,37 @@
 		newSocialUrl = '';
 	}
 
-	console.log(data);
+	async function submitNewRoster() {
+		const { location } = await createRoster({
+			name: roster.name + ' version 2',
+			groupId: newGroupId,
+			teamId: team.id
+		});
+
+		newGroupId = '';
+
+		await goto(location);
+	}
+
+	$inspect(roster.members);
 </script>
 
-<div>
-	<table class="w-full">
-		<thead>
-			<tr>
-				<th> Namn </th>
-				<th> Säsong </th>
-				<th> Division </th>
-				<th> Grupp </th>
-				<th> </th>
-			</tr>
-		</thead>
-		<tbody>
-			{#each team.rosters as roster (roster.id)}
-				{@const isCurrent = data.roster.id === roster.id}
-				{@const { group, division, season } = flattenGroup(roster.group)}
-
-				<tr>
-					<td>
-						{#if isCurrent}
-							&rang;
-						{/if}
-
-						{roster.name}
-					</td>
-					<td>
-						{season.name}
-					</td>
-					<td>
-						{division.name}
-					</td>
-					<td>
-						{roster.group.name}
-					</td>
-					<td>
-						{#if !isCurrent}
-							<a href="/lag/{season.slug}/{roster.slug}/redigera">Redigera</a>
-						{/if}
-
-						<button>Radera</button>
-					</td>
-				</tr>
-			{/each}
-		</tbody>
-	</table>
-</div>
-
 <form class="mt-6 space-y-6">
-	<label class="block">
-		Namn
-		<input type="text" bind:value={roster.name} />
-	</label>
+	<div>
+		<h1 class="text-2xl font-bold">
+			Redigerar roster för {season.name} ({division.name}
+			{group.name})
+		</h1>
+
+		<label class="mt-2 block">
+			Namn
+			<input type="text" bind:value={roster.name} />
+		</label>
+	</div>
 
 	<div>
+		<h2 class="text-xl font-semibold">Roster</h2>
+
 		<table class="w-full">
 			<thead>
 				<tr>
@@ -171,17 +154,27 @@
 						</td>
 					</tr>
 				{/each}
+				<tr>
+					<td>
+						<input
+							type="text"
+							placeholder="Battletag"
+							bind:value={newBattletag}
+							onchange={addNewPlayer}
+						/>
+					</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
 			</tbody>
 		</table>
-
-		<div class="mt-2">
-			<input type="text" placeholder="Battletag" bind:value={newBattletag} />
-
-			<button onclick={addNewPlayer}>Lägg till</button>
-		</div>
 	</div>
 
 	<div>
+		<h2 class="text-xl font-semibold">Sociala medier</h2>
+
 		<table class="w-full">
 			<thead>
 				<tr>
@@ -224,8 +217,60 @@
 		{/if}
 	</div>
 
+	<div>
+		<h2 class="text-xl font-semibold">Alla rosters</h2>
+
+		<table class="w-full">
+			<thead>
+				<tr>
+					<th> Namn </th>
+					<th> Säsong </th>
+					<th> Division </th>
+					<th> Grupp </th>
+					<th> </th>
+				</tr>
+			</thead>
+			<tbody>
+				{#each team.rosters as roster (roster.id)}
+					{@const isCurrent = data.roster.id === roster.id}
+					{@const { group, division, season } = flattenGroup(roster.group)}
+
+					<tr>
+						<td>
+							{#if isCurrent}
+								&rang;
+							{/if}
+
+							{roster.name}
+						</td>
+						<td>
+							{season.name}
+						</td>
+						<td>
+							{division.name}
+						</td>
+						<td>
+							{group.name}
+						</td>
+						<td>
+							{#if !isCurrent}
+								<a href="/lag/{season.slug}/{roster.slug}/redigera">Redigera</a>
+							{/if}
+
+							<button>Radera</button>
+						</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+
+		<div class="mt-2">
+			<button onclick={submitNewRoster}>Skapa roster</button>
+		</div>
+	</div>
+
 	<button
-		class="block"
+		class="block bg-black px-4 py-2 text-white"
 		onclick={async (evt) => {
 			evt.preventDefault();
 			await submitEdit();

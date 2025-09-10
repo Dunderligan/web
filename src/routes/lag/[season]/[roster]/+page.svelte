@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { authClient, isAdmin } from '$lib/auth-client';
 	import { averageRank, sortRole as compareRole } from '$lib/util';
+
+	const session = authClient.useSession();
 
 	let { data } = $props();
 
@@ -13,8 +16,6 @@
 
 	let sortedMembers = $derived(roster.members.toSorted((a, b) => compareRole(a.role, b.role)));
 	let average = $derived(averageRank(roster.members));
-
-	console.log(data);
 </script>
 
 <h1 class="text-2xl font-bold">{roster.name}</h1>
@@ -91,6 +92,8 @@
 	</div>
 </div>
 
-<div>
-	<a href="{page.url}/redigera">Redigera</a>
-</div>
+{#if isAdmin($session.data?.user)}
+	<div>
+		<a href="{page.url}/redigera">Redigera</a>
+	</div>
+{/if}
