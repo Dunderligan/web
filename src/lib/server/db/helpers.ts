@@ -7,7 +7,7 @@ export const timestamps = {
 	createdAt: timestamp().defaultNow().notNull()
 };
 
-export const groupContext = {
+export const nestedGroupQuery = {
 	group: {
 		columns: {
 			name: true,

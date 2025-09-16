@@ -28,7 +28,7 @@
 	let newGroupId = $state('');
 
 	async function submitEdit() {
-		const { location } = await editRoster({
+		await editRoster({
 			id: roster.id,
 			teamId: team.id,
 			name: roster.name,
@@ -36,7 +36,7 @@
 			socials: team.socials
 		});
 
-		await goto(location);
+		await goto(`/lag/${season.slug}/${roster.slug}`);
 	}
 
 	async function addNewPlayer() {
@@ -68,7 +68,7 @@
 	}
 
 	async function submitNewRoster() {
-		const { location } = await createRoster({
+		await createRoster({
 			name: roster.name + ' version 2',
 			groupId: newGroupId,
 			teamId: team.id
@@ -76,7 +76,7 @@
 
 		newGroupId = '';
 
-		await goto(location);
+		await goto(`admin/roster/${roster.id}`);
 	}
 
 	$inspect(roster.members);
@@ -96,7 +96,7 @@
 	</div>
 
 	<div>
-		<h2 class="text-xl font-semibold">Roster</h2>
+		<h2 class="text-xl font-semibold">Spelare</h2>
 
 		<table class="w-full">
 			<thead>

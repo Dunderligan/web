@@ -58,6 +58,9 @@ export type Roster = {
 	id: string;
 	name: string;
 	slug: string;
+};
+
+export type FullRoster = Roster & {
 	seasonSlug: string;
 	group: NestedGroup;
 	members: Member[];
@@ -67,4 +70,21 @@ export type Roster = {
 export type TeamSocial = {
 	platform: SocialPlatform;
 	url: string;
+};
+
+export type Match = {
+	groupId: string;
+	id?: string;
+	type?: MatchType;
+	createdAt?: Date;
+	rosterAId?: string | null;
+	rosterBId?: string | null;
+	teamAScore?: number | null;
+	teamBScore?: number | null;
+	draws?: number | null;
+	played?: boolean;
+	playedAt?: Date | null;
+	scheduledAt?: Date | null;
+	vodUrl?: string | null;
+	nextMatchId?: string | null;
 };

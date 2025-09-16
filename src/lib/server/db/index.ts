@@ -15,6 +15,85 @@ function rand() {
 	return Math.floor(100000 + Math.random() * 900000);
 }
 
+function pick<T>(list: T[]) {
+	return list[Math.floor(Math.random() * list.length)];
+}
+
+const ADJECTIVES = [
+	'Skoningslösa',
+	'Starka',
+	'Mäktiga',
+	'Listiga',
+	'Fantastiska',
+	'Coola',
+	'Snygga',
+	'Läskiga',
+	'Blöta',
+	'Torra',
+	'Trasiga',
+	'Omedvetna',
+	'Runda',
+	'Glansiga',
+	'Underbara',
+	'Vidriga',
+	'Mogna',
+	'Flexibla',
+	'Stela',
+	'Allvetande',
+	'Öppensinnade',
+	'Uppblåsta',
+	'Stångsugna',
+	'Överskattade',
+	'Stiliga',
+	'Rika',
+	'Fattiga',
+	'Hemlösa',
+	'Bosatta',
+	'Oklippta',
+	'Anonyma',
+	'Superba'
+];
+
+const NOUNS = [
+	'Pojkarna',
+	'Leoparderna',
+	'Katterna',
+	'Missarna',
+	'Nissarna',
+	'Grabbarna',
+	'Ödlorna',
+	'Hajarna',
+	'Nördarna',
+	'Björnarna',
+	'Bumbibjörnarna',
+	'Ormarna',
+	'Riddarna',
+	'Gamers',
+	'Boysen',
+	'Girlsen',
+	'Drakarna',
+	'Minionerna',
+	'Pingvinerna',
+	'Isbjörnarna',
+	'Datorerna',
+	'Pappertussarna',
+	'TUNG TUNG TUNG TUNG TUNG SAHOURS',
+	'Pandorna'
+];
+
+const usedNames = new Set<string>();
+
+function generateTeamName() {
+	while (true) {
+		const name = `${pick(ADJECTIVES)} ${pick(NOUNS)}`;
+
+		if (!usedNames.has(name)) {
+			usedNames.add(name);
+			return name;
+		}
+	}
+}
+
 async function seedDb() {
 	const seedSchema = {
 		team: schema.team,
@@ -29,41 +108,6 @@ async function seedDb() {
 	};
 
 	await reset(db, seedSchema);
-
-	/*
-	await seed(db, seedSchema).refine((f) => ({
-		team: {
-			count: 32
-		},
-		roster: {
-			count: 32 * 2
-		},
-		player: {
-			count: 32 * 2 * 7
-		},
-		member: {
-			count: 32 * 2 * 7 + 3,
-			columns: {
-				tier: f.int({ minValue: 1, maxValue: 5 })
-			}
-		},
-		season: {
-			count: 1
-		},
-		division: {
-			count: 3
-		},
-		group: {
-			count: 3 * 3
-		},
-		match: {
-			count: 128
-		},
-		social: {
-			count: 32
-		}
-	}));
-	*/
 
 	let [season] = await db
 		.insert(schema.season)
@@ -109,12 +153,12 @@ async function seedDb() {
 	);
 
 	let teams = await Promise.all(
-		Array.from({ length: 40 }).map(() => db.insert(schema.team).values({}).returning())
+		Array.from({ length: 60 }).map(() => db.insert(schema.team).values({}).returning())
 	);
 
 	let rosters = await Promise.all(
 		teams.map(async (team) => {
-			let name = `Lag #${rand()}`;
+			let name = generateTeamName();
 			let slug = name.toLowerCase().replaceAll(' ', '-').replaceAll('#', '');
 			let groupIndex = Math.floor(Math.random() * groups.length);
 

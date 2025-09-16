@@ -1,17 +1,12 @@
-import { isAdmin } from '$lib/auth-client';
 import { db, schema } from '$lib/server/db';
-import { groupContext } from '$lib/server/db/helpers';
-import type { Roster } from '$lib/types';
+import { nestedGroupQuery } from '$lib/server/db/helpers';
+import type { FullRoster } from '$lib/types';
 import { error } from '@sveltejs/kit';
 import { eq, and } from 'drizzle-orm';
 
 export const load = async ({ params, locals }) => {
-	if (!isAdmin(locals.user)) {
-		error(403);
-	}
-
 	const data = await db.query.roster.findFirst({
-		where: and(eq(schema.roster.seasonSlug, params.season), eq(schema.roster.slug, params.roster)),
+		where: and(eq(schema.roster.id, params.id)),
 		columns: {
 			id: true,
 			name: true,
@@ -53,7 +48,7 @@ export const load = async ({ params, locals }) => {
 							slug: true
 						},
 						with: {
-							...groupContext
+							...nestedGroupQuery
 						}
 					}
 				}
@@ -66,7 +61,7 @@ export const load = async ({ params, locals }) => {
 	}
 
 	const currentRosterInfo = data.team.rosters.find((r) => r.id === data.id)!;
-	const roster: Roster = { ...data, team: undefined, ...currentRosterInfo };
+	const roster: FullRoster = { ...data, team: undefined, ...currentRosterInfo };
 
 	return { roster, team: data.team };
 };

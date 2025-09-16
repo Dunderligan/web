@@ -1,12 +1,11 @@
 import { command, getRequestEvent } from '$app/server';
 import { isAdmin } from '$lib/auth-client';
 import { db, schema } from '$lib/server/db';
-import { groupContext as nestedGroupQuery, type Transaction } from '$lib/server/db/helpers';
+import { nestedGroupQuery as nestedGroupQuery, type Transaction } from '$lib/server/db/helpers';
 import { Rank, Role, SocialPlatform, type Member, type TeamSocial } from '$lib/types';
-import { flattenGroup } from '$lib/util';
+import { flattenGroup, toSlug } from '$lib/util';
 import { error } from '@sveltejs/kit';
 import { and, eq, inArray, not, sql } from 'drizzle-orm';
-import slugify from 'slugify';
 import * as z from 'zod';
 
 export const editRoster = command(
@@ -40,7 +39,7 @@ export const editRoster = command(
 			error(403);
 		}
 
-		const newSlug = slugify(name).toLowerCase();
+		const newSlug = toSlug(name);
 
 		await db.transaction(async (tx) => {
 			await Promise.all([
@@ -49,10 +48,6 @@ export const editRoster = command(
 				updateSocials(tx, teamId, socials)
 			]);
 		});
-
-		return {
-			location: `../${newSlug}`
-		};
 	}
 );
 
@@ -77,8 +72,8 @@ async function updateMembers(tx: Transaction, rosterId: string, members: Member[
 			let playerId = member.player.id ?? (await findOrCreatePlayer(tx, member.player.battletag));
 
 			return {
-				rosterId: rosterId,
 				playerId,
+				rosterId: rosterId,
 				role: member.role,
 				rank: member.rank,
 				tier: member.tier,
@@ -114,16 +109,21 @@ async function updateSocials(tx: Transaction, teamId: string, socials: TeamSocia
 		return;
 	}
 
-	const platforms = socials.map((social) => social.platform);
-
 	// delete extra platforms
+	const platforms = socials.map((social) => social.platform);
 	await tx
 		.delete(schema.social)
 		.where(and(eq(schema.social.teamId, teamId), not(inArray(schema.social.platform, platforms))));
 
 	await tx
 		.insert(schema.social)
-		.values(socials.map((social) => ({ ...social, teamId })))
+		.values(
+			socials.map((social) => ({
+				url: social.url,
+				platform: social.platform,
+				teamId
+			}))
+		)
 		.onConflictDoUpdate({
 			target: [schema.social.platform, schema.social.teamId],
 			set: { url: sql`excluded.${schema.social.url}` }
@@ -137,29 +137,23 @@ export const createRoster = command(
 		groupId: z.uuid()
 	}),
 	async ({ name, teamId, groupId }) => {
-		const nestedGroup = await db.query.group.findFirst({
+		const group = await db.query.group.findFirst({
 			where: eq(schema.group.id, groupId),
 			...nestedGroupQuery.group
 		});
 
-		if (!nestedGroup) {
+		if (!group) {
 			error(400);
 		}
 
-		const { season } = flattenGroup(nestedGroup);
-
-		const slug = slugify(name).toLowerCase();
+		const { season } = flattenGroup(group);
 
 		await db.insert(schema.roster).values({
 			name,
-			slug,
+			slug: toSlug(name),
 			teamId,
 			groupId,
 			seasonSlug: season.slug
 		});
-
-		return {
-			location: `../${slug}/redigera`
-		};
 	}
 );

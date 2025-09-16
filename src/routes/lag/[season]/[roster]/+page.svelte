@@ -1,16 +1,14 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { authClient, isAdmin } from '$lib/auth-client';
-	import { averageRank, sortRole as compareRole } from '$lib/util';
+	import { averageRank, sortRole as compareRole, flattenGroup } from '$lib/util';
 
 	const session = authClient.useSession();
 
 	let { data } = $props();
 
 	let { team, roster } = $derived(data);
-	let { group } = $derived(roster);
-	let { division } = $derived(group);
-	let { season } = $derived(division);
+	let { group, division, season } = $derived(flattenGroup(roster.group));
 
 	let otherRosters = $derived(team.rosters.filter((other) => other.id !== roster.id));
 
@@ -94,6 +92,6 @@
 
 {#if isAdmin($session.data?.user)}
 	<div>
-		<a href="{page.url}/redigera">Redigera</a>
+		<a href="/admin/roster/{roster.id}">Redigera</a>
 	</div>
 {/if}

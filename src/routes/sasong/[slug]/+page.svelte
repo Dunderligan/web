@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
+	import { authClient, isAdmin } from '$lib/auth-client';
+
+	const session = authClient.useSession();
 
 	let { data } = $props();
 
@@ -10,14 +13,14 @@
 	let activeDivision = $derived.by(() => {
 		const param = page.url.searchParams.get('div');
 
-		return (param ? divisions.find((div) => div.slug === param) : divisions[0]) ?? null;
+		return param ? (divisions.find((div) => div.slug === param) ?? divisions[0]) : divisions[0];
 	});
 
 	let groups = $derived(activeDivision ? activeDivision.groups : []);
 	let activeGroup = $derived.by(() => {
 		const param = page.url.searchParams.get('grupp');
 
-		return (param ? groups.find((group) => group.slug == param) : groups[0]) ?? null;
+		return param ? (groups.find((group) => group.slug == param) ?? groups[0]) : groups[0];
 	});
 	let rosters = $derived(activeGroup?.rosters ?? []);
 
@@ -73,4 +76,10 @@
 			{/each}
 		</tbody>
 	</table>
+{/if}
+
+{#if isAdmin($session.data?.user)}
+	<div>
+		<a href="/admin/grupp/{activeGroup?.id}">Redigera</a>
+	</div>
 {/if}

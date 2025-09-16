@@ -1,4 +1,4 @@
-import { groupContext } from '$lib/server/db/helpers.js';
+import { nestedGroupQuery } from '$lib/server/db/helpers.js';
 import { db, schema } from '$lib/server/db/index.js';
 import { error } from '@sveltejs/kit';
 import { eq, and, desc, or } from 'drizzle-orm';
@@ -43,7 +43,7 @@ export const load = async ({ params }) => {
 							slug: true
 						},
 						with: {
-							...groupContext
+							...nestedGroupQuery
 						}
 					}
 				}
