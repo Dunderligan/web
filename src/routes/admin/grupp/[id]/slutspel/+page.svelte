@@ -1,14 +1,11 @@
 <script lang="ts">
-	import EditMatchDialog from '$lib/components/EditMatchDialog.svelte';
+	import EditableMatch from '$lib/components/EditableMatch.svelte';
 	import type { Match } from '$lib/types';
-	import { getRoster } from '$lib/util';
 	import { deleteBracket, generateBracket, updateBracket } from './page.remote';
 
 	const { data } = $props();
 
-	const { season, division, group, matches, rosters } = $derived(data);
-
-	let editingMatch: Match | null = $state(null);
+	const { season, division, group, matches } = $derived(data);
 
 	let rounds: Match[][] = $state(buildRounds());
 
@@ -67,33 +64,7 @@
 			{#each rounds as round}
 				<div class="flex w-full flex-col justify-around gap-4">
 					{#each round as match}
-						{@const rosterA = getRoster(match.rosterAId, rosters)}
-						{@const rosterB = getRoster(match.rosterBId, rosters)}
-
-						<div class="flex">
-							<div>
-								<div>
-									{#if rosterA}
-										<a href="/admin/roster/{match.rosterAId}">{rosterA.name}</a>
-									{:else}
-										---
-									{/if}
-
-									{match.teamAScore}
-								</div>
-								<div>
-									{#if rosterB}
-										<a href="/admin/roster/{match.rosterBId}">{rosterB.name}</a>
-									{:else}
-										---
-									{/if}
-
-									{match.teamBScore}
-								</div>
-							</div>
-
-							<button onclick={() => (editingMatch = match)}>R</button>
-						</div>
+						<EditableMatch {match} />
 					{/each}
 				</div>
 			{/each}
@@ -108,5 +79,3 @@
 		</div>
 	{/if}
 </div>
-
-<EditMatchDialog {rosters} bind:match={editingMatch} />

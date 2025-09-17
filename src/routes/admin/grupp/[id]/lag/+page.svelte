@@ -1,7 +1,11 @@
 <script lang="ts">
+	import { RosterState } from '$lib/state/rosters.svelte.js';
+
 	const { data } = $props();
 
-	const { season, division, group, rosters } = $derived(data);
+	const { season, division, group } = $derived(data);
+
+	const rosters = RosterState.get();
 </script>
 
 <div class="space-y-6">
@@ -13,7 +17,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each rosters as [id, { name }], i (id)}
+			{#each rosters.list as [id, { name }], i (id)}
 				<tr>
 					<td>
 						<a href="/admin/roster/{id}">{name}</a>

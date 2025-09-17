@@ -37,10 +37,8 @@ export const load = async ({ params }) => {
 		error(404);
 	}
 
-	const rosters = new Map(data.rosters.map((roster) => [roster.id, roster]));
-
 	return {
-		rosters,
+		rosters: data.rosters,
 		group: {
 			id: data.id,
 			name: data.name,

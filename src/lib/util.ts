@@ -79,10 +79,6 @@ export function toSlug(str: string) {
 	});
 }
 
-export function getRoster<T>(id: string | undefined | null, map: Map<string, T>) {
-	return id ? map.get(id)! : null;
-}
-
 type TableScore = {
 	mapWins: number;
 	mapLosses: number;

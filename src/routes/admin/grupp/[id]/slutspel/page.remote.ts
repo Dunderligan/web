@@ -1,6 +1,7 @@
 import { command, getRequestEvent } from '$app/server';
+import { matchSchema } from '$lib/schemas';
 import { db, schema } from '$lib/server/db';
-import { MatchType } from '$lib/types';
+import { MatchType, type Match } from '$lib/types';
 import { sortBySeed } from '$lib/util';
 import { and, eq } from 'drizzle-orm';
 import { v4 as uuidv4 } from 'uuid';
@@ -89,7 +90,7 @@ export const generateBracket = command(
 	}
 );
 
-function createMatch(groupId: string, nextMatchId?: string): typeof schema.match.$inferInsert {
+function createMatch(groupId: string, nextMatchId?: string): Match {
 	return {
 		id: uuidv4(),
 		nextMatchId,
@@ -100,16 +101,7 @@ function createMatch(groupId: string, nextMatchId?: string): typeof schema.match
 
 export const updateBracket = command(
 	z.object({
-		matches: z.array(
-			z.object({
-				id: z.uuid(),
-				rosterAId: z.string().nullable(),
-				rosterBId: z.string().nullable(),
-				teamAScore: z.int().nullable(),
-				teamBScore: z.int().nullable(),
-				draws: z.int().nullable()
-			})
-		)
+		matches: z.array(matchSchema)
 	}),
 	async ({ matches }) => {
 		await db.transaction(async (tx) => {

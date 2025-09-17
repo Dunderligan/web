@@ -1,8 +1,15 @@
 <script lang="ts">
+	import EditMatchDialog from '$lib/components/EditMatchDialog.svelte';
+	import { RosterState } from '$lib/state/rosters.svelte.js';
+
 	const { data, children } = $props();
 
 	const { season, division, group } = $derived(data);
+
+	RosterState.set(new RosterState(data.rosters));
 </script>
+
+<EditMatchDialog />
 
 <div class="space-y-6">
 	<a class="text-xl font-semibold" href="/admin/sasong/{season.id}">{season.name}</a>

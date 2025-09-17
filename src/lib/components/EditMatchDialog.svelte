@@ -1,15 +1,11 @@
 <script lang="ts">
-	import type { Match, Roster } from '$lib/types';
-	import { getRoster } from '$lib/util';
+	import { RosterState } from '$lib/state/rosters.svelte';
 	import Dialog from './Dialog.svelte';
 	import RosterSelect from './RosterSelect.svelte';
 
-	type Props = {
-		match: Match | null;
-		rosters: Map<string, Roster>;
-	};
+	const rosters = RosterState.get();
 
-	let { match = $bindable(), rosters }: Props = $props();
+	const match = $derived(rosters.editingMatch);
 
 	let open = $derived(match !== null);
 </script>
@@ -19,17 +15,17 @@
 	{open}
 	onOpenChange={(state) => {
 		if (!state) {
-			match = null;
+			rosters.stopEditing();
 		}
 	}}
 >
 	{#if match}
 		<div class="flex">
-			<RosterSelect bind:selectedId={match.rosterAId} {rosters} />
+			<RosterSelect bind:selectedId={match.rosterAId} />
 			<input class="min-w-0 grow" bind:value={match.teamAScore} type="number" min="0" max="3" />
 		</div>
 		<div class="flex">
-			<RosterSelect bind:selectedId={match.rosterBId} {rosters} />
+			<RosterSelect bind:selectedId={match.rosterBId} />
 			<input class="min-w-0 grow" bind:value={match.teamBScore} type="number" min="0" max="3" />
 		</div>
 	{/if}
