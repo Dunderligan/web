@@ -13,7 +13,7 @@
 
 <select bind:value={selectedId}>
 	<option value={null}>?</option>
-	{#each rosters.list as [id, { name }] (id)}
+	{#each rosters.map as [id, { name }] (id)}
 		<option value={id}>{name}</option>
 	{/each}
 </select>

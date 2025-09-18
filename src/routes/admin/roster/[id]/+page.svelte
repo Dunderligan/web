@@ -27,6 +27,8 @@
 
 	let newGroupId = $state('');
 
+	let fileList = $state(new FileList());
+
 	async function submitEdit() {
 		await editRoster({
 			id: roster.id,

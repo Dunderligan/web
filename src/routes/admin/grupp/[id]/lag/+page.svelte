@@ -17,7 +17,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each rosters.list as [id, { name }], i (id)}
+			{#each rosters.map as [id, { name }], i (id)}
 				<tr>
 					<td>
 						<a href="/admin/roster/{id}">{name}</a>
