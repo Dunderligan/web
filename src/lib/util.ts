@@ -87,7 +87,7 @@ export function calculateStandings(rosters: { id: string }[], matches: MatchWith
 	}
 
 	for (const match of matches) {
-		if (!match.played || !match.rosterAId || !match.rosterBId) continue;
+		if (!match.rosterAId || !match.rosterBId) continue;
 
 		const teamA = rosterScores.get(match.rosterAId);
 		const teamB = rosterScores.get(match.rosterBId);

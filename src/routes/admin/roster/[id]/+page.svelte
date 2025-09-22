@@ -78,22 +78,21 @@
 
 		await goto(`admin/roster/${roster.id}`);
 	}
-
-	$inspect(roster.members);
 </script>
 
 <form {...uploadLogo}>
-	<input type="file" name="file" accept="application/png">
-	<input type="text" name="rosterId" value={roster.id}>
+	<input type="file" name="file" accept="application/png" />
+	<input type="text" name="rosterId" value={roster.id} />
 	<button>Upload</button>
 </form>
 
 <form class="mt-6 space-y-6">
 	<div>
-		<h1 class="text-2xl font-bold">
-			Redigerar roster för {season.name} ({division.name}
-			{group.name})
-		</h1>
+		<div class="flex items-center text-lg font-semibold">
+			<a href="/admin/sasong/{season.id}">{season.name}</a>
+			<a href="/admin/division/{division.id}">{division.name}</a>
+			<a href="/admin/grupp/{group.id}">{group.name}</a>
+		</div>
 
 		<label class="mt-2 block">
 			Namn

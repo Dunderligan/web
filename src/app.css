@@ -5,3 +5,7 @@
         cursor: pointer;
     }
 }
+
+@theme {
+    --default-font-family: 'Rajdhani', sans-serif;   
+}

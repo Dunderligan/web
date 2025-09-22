@@ -10,18 +10,21 @@ export const timestamps = {
 export const nestedGroupQuery = {
 	group: {
 		columns: {
+			id: true,
 			name: true,
 			slug: true
 		},
 		with: {
 			division: {
 				columns: {
+					id: true,
 					name: true,
 					slug: true
 				},
 				with: {
 					season: {
 						columns: {
+							id: true,
 							name: true,
 							slug: true
 						}

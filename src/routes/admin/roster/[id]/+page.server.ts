@@ -4,15 +4,9 @@ import type { FullRoster } from '$lib/types';
 import { error } from '@sveltejs/kit';
 import { eq, and } from 'drizzle-orm';
 
-export const load = async ({ params, locals }) => {
+export const load = async ({ params }) => {
 	const data = await db.query.roster.findFirst({
 		where: and(eq(schema.roster.id, params.id)),
-		columns: {
-			id: true,
-			name: true,
-			slug: true,
-			seasonSlug: true
-		},
 		with: {
 			members: {
 				columns: {
@@ -60,8 +54,8 @@ export const load = async ({ params, locals }) => {
 		error(404);
 	}
 
-	const currentRosterInfo = data.team.rosters.find((r) => r.id === data.id)!;
-	const roster: FullRoster = { ...data, team: undefined, ...currentRosterInfo };
+	const currentRosterInfo = data.team.rosters.find((roster) => roster.id === data.id)!;
+	const { team, ...roster } = { ...data, ...currentRosterInfo };
 
-	return { roster, team: data.team };
+	return { roster, team };
 };

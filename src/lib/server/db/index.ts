@@ -77,7 +77,6 @@ const NOUNS = [
 	'Isbjörnarna',
 	'Datorerna',
 	'Pappertussarna',
-	'TUNG TUNG TUNG TUNG TUNG SAHOURS',
 	'Pandorna'
 ];
 
