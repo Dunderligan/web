@@ -20,7 +20,8 @@ export const load = async ({ params }) => {
 				columns: {
 					createdAt: false
 				}
-			}
+			},
+			matches: {}
 		}
 	});
 

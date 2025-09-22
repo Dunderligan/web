@@ -47,7 +47,8 @@ export const divisionRelations = relations(division, ({ one, many }) => ({
 		fields: [division.seasonId],
 		references: [season.id]
 	}),
-	groups: many(group)
+	groups: many(group),
+	matches: many(match)
 }));
 
 export const group = pgTable(
@@ -187,9 +188,10 @@ export const matchType = pgEnum('match_type', enumToPgEnum(MatchType));
 
 export const match = pgTable('match', {
 	id: uuid().primaryKey().defaultRandom(),
-	groupId: uuid()
-		.notNull()
-		.references(() => group.id, { onDelete: 'cascade' }),
+	// for group matches
+	groupId: uuid().references(() => group.id, { onDelete: 'cascade' }),
+	// for bracket matches
+	divisionId: uuid().references(() => division.id, { onDelete: 'cascade' }),
 	rosterAId: uuid().references(() => roster.id, { onDelete: 'restrict' }),
 	rosterBId: uuid().references(() => roster.id, { onDelete: 'restrict' }),
 	teamAScore: integer(),
@@ -200,15 +202,10 @@ export const match = pgTable('match', {
 	scheduledAt: timestamp(),
 	vodUrl: text(),
 	nextMatchId: uuid().references((): AnyPgColumn => match.id, { onDelete: 'set null' }),
-	type: matchType().notNull().default(MatchType.GROUP),
 	...timestamps
 });
 
 export const matchRelations = relations(match, ({ one }) => ({
-	group: one(group, {
-		fields: [match.groupId],
-		references: [group.id]
-	}),
 	rosterA: one(roster, {
 		fields: [match.rosterAId],
 		references: [roster.id],
@@ -219,8 +216,12 @@ export const matchRelations = relations(match, ({ one }) => ({
 		references: [roster.id],
 		relationName: 'rosterB'
 	}),
-	nextMatch: one(match, {
-		fields: [match.nextMatchId],
-		references: [match.id]
+	group: one(group, {
+		fields: [match.groupId],
+		references: [group.id]
+	}),
+	division: one(division, {
+		fields: [match.divisionId],
+		references: [division.id]
 	})
 }));

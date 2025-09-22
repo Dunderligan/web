@@ -4,7 +4,7 @@ import { error } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 
 export const load = async ({ params }) => {
-	const season = await db.query.season.findFirst({
+	const data = await db.query.season.findFirst({
 		where: eq(schema.season.slug, params.slug),
 		columns: {
 			name: true,
@@ -51,15 +51,15 @@ export const load = async ({ params }) => {
 		}
 	});
 
-	if (!season) {
+	if (!data) {
 		error(404);
 	}
 
 	const tables = new Map(
-		season.divisions.flatMap((div) =>
+		data.divisions.flatMap((div) =>
 			div.groups.map((group) => [group.id, calculateStandings(group.rosters, group.matches)])
 		)
 	);
 
-	return { season, tables };
+	return { season: data, tables };
 };

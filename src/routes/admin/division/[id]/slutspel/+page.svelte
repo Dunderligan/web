@@ -1,11 +1,15 @@
 <script lang="ts">
 	import EditableMatch from '$lib/components/EditableMatch.svelte';
+	import EditMatchDialog from '$lib/components/EditMatchDialog.svelte';
+	import { RosterState } from '$lib/state/rosters.svelte';
 	import type { Match } from '$lib/types';
 	import { deleteBracket, generateBracket, updateBracket } from './page.remote';
 
 	const { data } = $props();
 
-	const { group, matches } = $derived(data);
+	const { division, matches } = $derived(data);
+
+	RosterState.set(new RosterState(data.rosters));
 
 	let rounds: Match[][] = $state(buildRounds());
 
@@ -37,22 +41,21 @@
 
 	async function generate() {
 		const result = await generateBracket({
-			groupId: group.id
+			divisionId: division.id
 		});
 
 		rounds = result.rounds;
-		console.log(rounds);
 	}
 
 	async function save() {
 		await updateBracket({
-			matches: matches.values().toArray()
+			matches: rounds.flatMap((round) => round)
 		});
 	}
 
 	async function deleteCurrent() {
 		await deleteBracket({
-			groupId: group.id
+			divisionId: division.id
 		});
 
 		rounds = [];
@@ -75,8 +78,10 @@
 		<button onclick={save}> Spara </button>
 	{:else}
 		<div>
-			Denna grupp har inget bracket.
+			Denna division har inget bracket.
 			<button onclick={generate}>Generera</button>
 		</div>
 	{/if}
 </div>
+
+<EditMatchDialog />

@@ -133,7 +133,7 @@ async function seedDb() {
 
 	let groups = await Promise.all(
 		divisions.flatMap((division) =>
-			Array.from({ length: 3 }).map(async (_, i) => {
+			Array.from({ length: 2 }).map(async (_, i) => {
 				let slug = String.fromCharCode(65 + i);
 				let name = `Grupp ${slug}`;
 
@@ -152,14 +152,16 @@ async function seedDb() {
 	);
 
 	let teams = await Promise.all(
-		Array.from({ length: 60 }).map(() => db.insert(schema.team).values({}).returning())
+		Array.from({ length: groups.length * 4 }).map(() =>
+			db.insert(schema.team).values({}).returning()
+		)
 	);
 
 	let rosters = await Promise.all(
-		teams.map(async (team) => {
+		teams.map(async (team, i) => {
 			let name = generateTeamName();
 			let slug = name.toLowerCase().replaceAll(' ', '-').replaceAll('#', '');
-			let groupIndex = Math.floor(Math.random() * groups.length);
+			let groupIndex = i % groups.length;
 
 			let result = await db
 				.insert(schema.roster)
@@ -177,7 +179,7 @@ async function seedDb() {
 	);
 
 	let players = await Promise.all(
-		Array.from({ length: 40 * 6 }).map(async () => {
+		Array.from({ length: teams.length * 6 }).map(async () => {
 			let battletag = `Spelare #${rand()}`;
 
 			let result = await db

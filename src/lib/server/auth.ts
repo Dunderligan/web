@@ -4,14 +4,14 @@ import { db } from './db';
 import {
 	BATTLENET_CLIENT_ID,
 	BATTLENET_CLIENT_SECRET,
-	DISCORD_CLIENT_ID,
-	DISCORD_CLIENT_SECRET
+	BETTER_AUTH_SECRET
 } from '$env/static/private';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
 import { genericOAuth } from 'better-auth/plugins';
 
 export const auth = betterAuth({
+	secret: BETTER_AUTH_SECRET,
 	database: drizzleAdapter(db, {
 		provider: 'pg'
 	}),
@@ -23,13 +23,6 @@ export const auth = betterAuth({
 				defaultValue: 'user',
 				input: false
 			}
-		}
-	},
-	socialProviders: {
-		discord: {
-			clientId: DISCORD_CLIENT_ID,
-			clientSecret: DISCORD_CLIENT_SECRET,
-			prompt: 'consent'
 		}
 	},
 	plugins: [

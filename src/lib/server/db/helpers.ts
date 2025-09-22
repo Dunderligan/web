@@ -1,7 +1,7 @@
-import type { ExtractTablesWithRelations } from 'drizzle-orm';
+import { eq, type ExtractTablesWithRelations } from 'drizzle-orm';
 import { PgTransaction, timestamp } from 'drizzle-orm/pg-core';
 import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
-import type { schema } from '.';
+import { db, schema } from '.';
 
 export const timestamps = {
 	createdAt: timestamp().defaultNow().notNull()

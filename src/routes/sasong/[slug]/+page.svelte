@@ -27,7 +27,7 @@
 	let table = $derived(activeGroup ? (data.tables.get(activeGroup.id) ?? null) : null);
 </script>
 
-<h1 class="text-4xl font-bold">Säsong {data.season.name}</h1>
+<h1 class="text-4xl font-bold">{data.season.name}</h1>
 
 <div class="flex items-center gap-2">
 	<div class="font-semibold">Division</div>
@@ -40,16 +40,18 @@
 	{/each}
 </div>
 
-<div class="flex items-center gap-2">
-	<div class="font-semibold">Grupp</div>
+{#if groups.length > 1}
+	<div class="flex items-center gap-2">
+		<div class="font-semibold">Grupp</div>
 
-	{#each groups as group (group.id)}
-		<button onclick={() => goto(`?div=${activeDivision?.slug}&grupp=${group.slug}`)}>
-			{group.name}
-			{activeGroup?.id === group.id ? '✓' : ''}
-		</button>
-	{/each}
-</div>
+		{#each groups as group (group.id)}
+			<button onclick={() => goto(`?div=${activeDivision?.slug}&grupp=${group.slug}`)}>
+				{group.name}
+				{activeGroup?.id === group.id ? '✓' : ''}
+			</button>
+		{/each}
+	</div>
+{/if}
 
 {#if table}
 	<table class="w-5xl">

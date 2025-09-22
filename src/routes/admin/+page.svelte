@@ -1,5 +1,27 @@
 <script lang="ts">
+	import Dialog from '$lib/components/Dialog.svelte';
+	import { createSeason } from './page.remote.js';
+
 	let { data } = $props();
+
+	let seasons = $state(data.seasons);
+
+	let createDialogOpen = $state(false);
+
+	let newSeasonName = $state('');
+	let newSeasonStartedAt = $state(new Date());
+
+	async function submitNewSeason() {
+		const { season } = await createSeason({
+			name: newSeasonName,
+			startedAt: newSeasonStartedAt
+		});
+
+		seasons.push(season);
+
+		newSeasonName = '';
+		createDialogOpen = false;
+	}
 </script>
 
 <div class="space-y-6">
@@ -16,7 +38,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each data.seasons as season (season.id)}
+			{#each seasons as season (season.id)}
 				<tr>
 					<td>
 						<a href="/admin/sasong/{season.id}">{season.name}</a>
@@ -31,4 +53,11 @@
 			{/each}
 		</tbody>
 	</table>
+
+	<button onclick={() => (createDialogOpen = true)}>Skapa säsong</button>
 </div>
+
+<Dialog title="Skapa säsong" bind:open={createDialogOpen}>
+	<input type="text" bind:value={newSeasonName} placeholder="Namn" />
+	<button onclick={submitNewSeason}>Skapa</button>
+</Dialog>

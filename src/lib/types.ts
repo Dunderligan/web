@@ -71,9 +71,9 @@ export type TeamSocial = {
 };
 
 export type Match = {
-	groupId: string;
 	id: string;
-	type?: MatchType;
+	groupId?: string | null;
+	divisionId?: string | null;
 	createdAt?: Date;
 	rosterAId?: string | null;
 	rosterBId?: string | null;

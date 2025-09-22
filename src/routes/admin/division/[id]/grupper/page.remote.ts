@@ -24,12 +24,3 @@ export const createGroup = command(
 		return { group };
 	}
 );
-
-export const deleteDivision = command(
-	z.object({
-		id: z.uuidv4()
-	}),
-	async ({ id }) => {
-		await db.delete(schema.division).where(eq(schema.division.id, id));
-	}
-);

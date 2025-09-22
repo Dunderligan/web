@@ -30,7 +30,6 @@
 	<div>
 		<a href="lag">Lag</a>
 		<a href="gruppspel">Gruppspel</a>
-		<a href="slutspel">Slutspel</a>
 	</div>
 
 	{@render children()}

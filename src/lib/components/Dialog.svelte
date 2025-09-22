@@ -5,7 +5,7 @@
 		title: string;
 	} & DialogRootProps;
 
-	let { title, open = $bindable(), children, ...restProps }: Props = $props();
+	let { title, open = $bindable(false), children, ...restProps }: Props = $props();
 </script>
 
 <Dialog.Root {...restProps} bind:open>
