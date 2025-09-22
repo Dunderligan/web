@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { PUBLIC_CDN_ENDPOINT } from '$env/static/public';
 	import { authClient, isAdmin } from '$lib/auth-client';
 	import { averageRank, sortRole as compareRole, flattenGroup } from '$lib/util';
 
@@ -16,7 +17,17 @@
 	let average = $derived(averageRank(roster.members));
 </script>
 
+<img src="{PUBLIC_CDN_ENDPOINT}/dunderligan/logos/{roster.id}.png" alt="" class="size-52" />
+
 <h1 class="text-2xl font-bold">{roster.name}</h1>
+
+<div class="flex items-center gap-4">
+	{#each team.socials as social (social.platform)}
+		<div>
+			<a href={social.url} class="underline">{social.platform}</a>
+		</div>
+	{/each}
+</div>
 
 <div>
 	Spelade i <a class="underline" href="/sasong/{season.slug}?div={division.slug}&grupp={group.slug}"

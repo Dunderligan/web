@@ -26,7 +26,7 @@ export const uploadLogo = form(async (data) => {
 
 	const command = new PutObjectCommand({
 		Bucket: S3_BUCKET_NAME,
-		Key: `logos/${rosterId}`,
+		Key: `logos/${rosterId}.png`,
 		Body: buffer,
 		ContentType: 'image/png'
 	});
@@ -74,6 +74,8 @@ export const editRoster = command(
 				updateSocials(tx, teamId, socials)
 			]);
 		});
+
+		return { slug: newSlug };
 	}
 );
 
@@ -148,11 +150,11 @@ async function updateSocials(tx: Transaction, teamId: string, socials: TeamSocia
 				url: social.url,
 				platform: social.platform,
 				teamId
-			}))
+			}))[0]
 		)
 		.onConflictDoUpdate({
-			target: [schema.social.platform, schema.social.teamId],
-			set: { url: sql`excluded.${schema.social.url}` }
+			target: [schema.social.teamId, schema.social.platform],
+			set: { url: sql.raw(`excluded.${schema.social.url.name}`) }
 		});
 }
 

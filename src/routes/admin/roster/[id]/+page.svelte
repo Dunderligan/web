@@ -28,7 +28,7 @@
 	let newGroupId = $state('');
 
 	async function submitEdit() {
-		await editRoster({
+		const { slug } = await editRoster({
 			id: roster.id,
 			teamId: team.id,
 			name: roster.name,
@@ -36,7 +36,7 @@
 			socials: team.socials
 		});
 
-		await goto(`/lag/${season.slug}/${roster.slug}`);
+		await goto(`/lag/${season.slug}/${slug}`);
 	}
 
 	async function addNewPlayer() {
@@ -80,7 +80,7 @@
 	}
 </script>
 
-<form {...uploadLogo}>
+<form {...uploadLogo} enctype="multipart/form-data">
 	<input type="file" name="file" accept="application/png" />
 	<input type="text" name="rosterId" value={roster.id} />
 	<button>Upload</button>
