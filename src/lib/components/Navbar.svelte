@@ -31,7 +31,7 @@
 	];
 </script>
 
-<nav class="mt-1 h-18 w-full p-2 backdrop-blur-sm">
+<nav class="h-18 w-full bg-gradient-to-t to-gray-200/80 px-2 pt-3 pb-1 backdrop-blur-xs">
 	<div class="mx-auto flex h-full max-w-3xl items-center justify-between gap-2">
 		<div class="flex items-center gap-8">
 			<a href="/">
