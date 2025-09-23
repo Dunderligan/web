@@ -21,6 +21,8 @@
 	}
 </script>
 
+<button onclick={() => (createDialogOpen = true)}>Skapa grupp</button>
+
 <table class="w-full">
 	<thead>
 		<tr>

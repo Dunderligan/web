@@ -2,7 +2,7 @@
 	import { page } from '$app/state';
 	import { PUBLIC_CDN_ENDPOINT } from '$env/static/public';
 	import { authClient, isAdmin } from '$lib/auth-client';
-	import { averageRank, sortRole as compareRole, flattenGroup } from '$lib/util';
+	import { averageRank, cdnImageSrc, sortRole as compareRole, flattenGroup } from '$lib/util';
 
 	const session = authClient.useSession();
 
@@ -17,7 +17,7 @@
 	let average = $derived(averageRank(roster.members));
 </script>
 
-<img src="{PUBLIC_CDN_ENDPOINT}/dunderligan/logos/{roster.id}.png" alt="" class="size-52" />
+<img src={cdnImageSrc(`/logos/${roster.id}.png`, { width: 512 })} alt="" class="size-52" />
 
 <h1 class="text-2xl font-bold">{roster.name}</h1>
 

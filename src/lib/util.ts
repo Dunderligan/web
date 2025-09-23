@@ -10,6 +10,7 @@ import {
 	type Match,
 	type BaseGroupInfo
 } from './types';
+import { PUBLIC_CDN_ENDPOINT } from '$env/static/public';
 
 const rankNums: Record<Rank, number> = {
 	bronze: 0,
@@ -129,4 +130,13 @@ export function sortBySeed(rosters: { id: string }[], matches: MatchWithoutIds[]
 	);
 
 	return rosters.sort((a, b) => seeds.get(a.id)! - seeds.get(b.id)!);
+}
+
+export function cdnImageSrc(path: string, { width, height }: { width: number; height?: number }) {
+	let filters = `format=auto,fit=scale-down,width=${width}`;
+	if (height) {
+		filters += `,height=${height}`;
+	}
+
+	return `${PUBLIC_CDN_ENDPOINT}/cdn-cgi/image/${filters}/dunderligan${path}`;
 }

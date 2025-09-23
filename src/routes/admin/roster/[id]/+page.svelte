@@ -81,7 +81,7 @@
 </script>
 
 <form {...uploadLogo} enctype="multipart/form-data">
-	<input type="file" name="file" accept="application/png" />
+	<input type="file" name="file" accept="image/png" />
 	<input type="text" name="rosterId" value={roster.id} />
 	<button>Upload</button>
 </form>

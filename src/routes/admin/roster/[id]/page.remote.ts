@@ -28,10 +28,12 @@ export const uploadLogo = form(async (data) => {
 		Bucket: S3_BUCKET_NAME,
 		Key: `logos/${rosterId}.png`,
 		Body: buffer,
-		ContentType: 'image/png'
+		ContentType: `image/png`
 	});
 
 	await S3.send(command);
+
+	console.log('uploaded logo');
 });
 
 export const editRoster = command(
