@@ -42,7 +42,8 @@
 			</div>
 			<p class="text-gray-400">Byggd av Bobbo med ❤️</p>
 		</div>
-		<div class="hidden w-full md:block">
+
+		<div class="hidden w-full flex-col items-start md:flex">
 			<h4 class="mb-2 text-xl font-semibold text-white">Navigation</h4>
 
 			<a href="/" class="block text-lg underline hover:text-accent-500">Startsida</a>
@@ -50,13 +51,15 @@
 			<a href="/arkiv" class="block text-lg underline hover:text-accent-500">Arkiv</a>
 			<a href="/om" class="block text-lg underline hover:text-accent-500">Om oss</a>
 		</div>
-		<div class="hidden w-full md:block">
+
+		<div class="hidden w-full flex-col items-start md:flex">
 			<h4 class="mb-2 text-xl font-semibold text-white">Kontakt</h4>
 
 			<a href="mailto:info@dunderligan.se" class="block text-lg underline hover:text-accent-500"
 				>info@dunderligan.se</a
 			>
 		</div>
+
 		<div
 			class="flex w-full flex-col items-center gap-4 text-center text-gray-400 sm:flex-row sm:text-left"
 		>
