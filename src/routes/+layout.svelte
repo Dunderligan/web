@@ -3,6 +3,7 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import Navbar from '$lib/components/Navbar.svelte';
 	import Footer from '$lib/components/Footer.svelte';
+	import { ProgressBar } from '@prgm/sveltekit-progress-bar';
 
 	let { children } = $props();
 </script>
@@ -10,6 +11,10 @@
 <svelte:head>
 	<link rel="icon" href={favicon} />
 </svelte:head>
+
+<ProgressBar class="text-accent-600" />
+
+<div id="background" class="fixed top-0 min-h-[35rem] w-full min-w-lg"></div>
 
 <div class="relative flex min-h-screen flex-col overflow-hidden">
 	<div
@@ -19,18 +24,19 @@
 
 	<Navbar />
 
+	<!-- <div class="mb-8 h-18"></div> -->
+
 	{@render children?.()}
 
 	<Footer />
 </div>
 
 <style>
-	:global(body) {
-		min-height: 100lvh;
+	#background {
 		background-image:
-			linear-gradient(to bottom, transparent, rgba(255, 255, 255, 100) 100%), url('/striped-bg.png');
-		background-size: contain;
-		background-repeat: no-repeat;
+			linear-gradient(to bottom, transparent, var(--color-gray-100) 100%), url('/striped-bg.png');
+		background-size: cover;
+		aspect-ratio: 16 / 9;
 	}
 
 	#splotch {

@@ -3,8 +3,12 @@
 	import Button from '$lib/components/Button.svelte';
 	import Icon from '$lib/components/Icon.svelte';
 	import Match from '$lib/components/Match.svelte';
+	import MembersTable from '$lib/components/MembersTable.svelte';
+	import Rank from '$lib/components/Rank.svelte';
 	import Table from '$lib/components/Table.svelte';
 	import Tabs from '$lib/components/Tabs.svelte';
+	import TeamSocial from '$lib/components/TeamSocial.svelte';
+	import type { ClassValue } from '$lib/types';
 	import {
 		averageRank,
 		capitalize,
@@ -37,21 +41,29 @@
 	);
 </script>
 
-<header class="mx-auto flex w-full max-w-4xl items-center gap-6">
-	<img src={cdnImageSrc(`/logos/${roster.id}.png`, { width: 512 })} alt="" class="size-40" />
+<header class="mx-auto flex w-full max-w-4xl flex-col items-center gap-6 px-4 sm:flex-row">
+	<img
+		src={cdnImageSrc(`/logos/${roster.id}.png`, { width: 512 })}
+		alt=""
+		class="size-40 shrink-0 rounded-lg"
+	/>
 
 	<div>
-		<h1 class="mb-1 font-display text-6xl font-extrabold text-black">{roster.name}</h1>
-		<div class="flex items-center gap-3">
+		<h1
+			class="mb-1 text-center font-display text-5xl font-extrabold text-black sm:text-left sm:text-6xl"
+		>
+			{roster.name}
+		</h1>
+		<div class="flex items-center justify-center gap-3 sm:justify-start">
 			{#each team.socials as { platform, url } (platform)}
-				<a href={url}><Icon class="gap-2 text-4xl text-accent-600" icon="mdi:{platform}" /></a>
+				<TeamSocial {platform} href={url} />
 			{/each}
 		</div>
 	</div>
 </header>
 
-<main class="relative z-10 mt-12 grow bg-white px-4 py-12 shadow-2xl">
-	<div class="mx-auto flex max-w-4xl gap-10">
+<main class="relative z-10 mt-14 grow bg-white px-4 py-12 shadow-2xl">
+	<div class="mx-auto flex max-w-4xl flex-col-reverse gap-10 sm:flex-row">
 		<section class="grow">
 			{#if rosterTabItems.length > 1}
 				<div class="mb-6 flex items-center gap-6">
@@ -69,38 +81,7 @@
 				</div>
 			{/if}
 
-			<Table
-				columns={[
-					{
-						label: 'Roll',
-						center: true
-					},
-					{
-						label: 'Battletag'
-					},
-					{ label: 'Rank' }
-				]}
-				rows={sortedMembers}
-				class="grid-cols-[70px_1fr_170px]"
-			>
-				{#snippet row({ value: member })}
-					<div class="bg-gray-200 py-3.5 text-center text-xl text-gray-800">
-						<Icon icon={roleIcon(member.role)} title={capitalize(member.role)} />
-					</div>
-					<div class="flex items-center bg-gray-200 text-lg font-semibold">
-						{member.player.battletag}
-
-						{#if member.isCaptain}
-							<Icon icon="mdi:crown" class="mb-0.5 ml-2 text-gray-800" title="Lagkapten" />
-						{/if}
-					</div>
-					<div class="flex items-center bg-gray-200 text-lg font-medium">
-						<img src="/rank/{member.rank}.webp" alt="" class="mr-2 inline size-6" />
-						{capitalize(member.rank)}
-						{member.tier}
-					</div>
-				{/snippet}
-			</Table>
+			<MembersTable members={sortedMembers} />
 
 			<h2 class="mt-8 mb-4 font-display text-2xl font-bold text-gray-700">Senaste matcher</h2>
 
@@ -111,22 +92,27 @@
 			</div>
 		</section>
 
-		<section class="w-1/4 shrink-0">
-			{#if isAdmin($session.data?.user)}
-				<Button href="/admin/roster/{roster.id}" kind="secondary" class="mb-4">
-					<Icon icon="mdi:pencil" />
-					Redigera lag
-				</Button>
-			{/if}
+		<section class="shrink-0 sm:w-1/4">
+			{@render editButton('mb-4 hidden')}
 
 			<div>
 				<div class="font-medium text-gray-700">Genomsnittlig rank</div>
 				<div class="text-xl font-semibold text-gray-800">
-					<img src="/rank/{average.rank}.webp" alt="" class="mr-1 inline size-6" />
-					{capitalize(average.rank)}
-					{average.tier}
+					<Rank {...average} />
 				</div>
 			</div>
 		</section>
 	</div>
 </main>
+
+{#snippet editButton(classProp: ClassValue)}
+	{#if isAdmin($session.data?.user)}
+		<Button
+			href="/admin/roster/{roster.id}"
+			kind="secondary"
+			class={[classProp, 'w-max']}
+			label="Redigera lag"
+			icon="mdi:pencil"
+		/>
+	{/if}
+{/snippet}

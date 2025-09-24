@@ -27,7 +27,7 @@
 	class={[
 		classProp,
 		typeClass,
-		'flex items-center justify-center gap-2 rounded-lg px-4 py-2 transition-colors duration-150'
+		'flex items-center justify-center gap-2 rounded-lg px-4 py-2 transition-colors'
 	]}
 	{...props}
 >

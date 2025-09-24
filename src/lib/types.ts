@@ -59,7 +59,7 @@ export type Member = {
 	role: Role;
 	isCaptain: boolean;
 	player: {
-		id: string | null;
+		id?: string | null;
 		battletag: string;
 	};
 };

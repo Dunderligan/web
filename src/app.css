@@ -18,6 +18,8 @@
     --default-font-family: 'Rajdhani', sans-serif;
     --font-display: 'Inter', 'Rajdhani', sans-serif;
 
+    --default-transition-duration: 150ms;
+
     --color-*: initial;
 
     --color-transparent: rgba(0, 0, 0, 0);

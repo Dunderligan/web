@@ -2,6 +2,7 @@
 	import type { Match, MatchRoster, ClassValue } from '$lib/types';
 	import { cdnImageSrc } from '$lib/util';
 	import Icon from './Icon.svelte';
+	import RosterLogo from './RosterLogo.svelte';
 
 	type Props = {
 		match: Match;
@@ -39,11 +40,7 @@
 	classes: { root?: ClassValue; name?: ClassValue }
 )}
 	<div class={[classes.root, 'flex w-full items-center']}>
-		<img
-			src={cdnImageSrc(`/logos/${roster.id}.png`, { width: 128 })}
-			class="size-12 rounded-md"
-			alt=""
-		/>
+		<RosterLogo id={roster.id} />
 
 		{#if won}
 			<Icon icon="mdi:crown" class="mx-2 text-2xl text-accent-600" />
