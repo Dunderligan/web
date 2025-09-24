@@ -8,7 +8,9 @@ export const load = async ({ params }) => {
 		where: eq(schema.season.slug, params.slug),
 		columns: {
 			name: true,
-			slug: true
+			slug: true,
+			startedAt: true,
+			endedAt: true
 		},
 		with: {
 			divisions: {

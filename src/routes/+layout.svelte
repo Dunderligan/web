@@ -18,7 +18,7 @@
 
 <div class="relative flex min-h-screen flex-col overflow-hidden">
 	<div
-		class="absolute top-32 left-[-60rem] -z-10 size-[150rem] rounded-full bg-accent-400/10"
+		class="absolute top-32 left-[-60rem] -z-10 size-[150rem] rounded-full bg-accent-400/20"
 		id="splotch"
 	></div>
 

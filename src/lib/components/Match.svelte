@@ -50,7 +50,7 @@
 			href="/lag/{roster.seasonSlug}/{roster.slug}"
 			class={[
 				classes.name,
-				'grow truncate font-semibold text-gray-800 hover:text-accent-600 hover:underline'
+				'grow font-semibold text-gray-800 hover:text-accent-600 hover:underline'
 			]}
 		>
 			{roster.name}

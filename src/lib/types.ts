@@ -1,14 +1,6 @@
 export type ClassDictionary = Record<string, any>;
 export type ClassArray = ClassValue[];
-export type ClassValue =
-	| ClassArray
-	| ClassDictionary
-	| string
-	| number
-	| bigint
-	| null
-	| boolean
-	| undefined;
+export type ClassValue = ClassArray | ClassDictionary | string | null | undefined;
 
 export type FullRank = {
 	rank: Rank;

@@ -4,12 +4,12 @@
 
 	type Props = {
 		class?: ClassValue;
-		short?: boolean;
+		collapse?: boolean;
 	} & FullRank;
 
-	let { class: classProp, rank, tier }: Props = $props();
+	let { class: classProp, collapse, rank, tier }: Props = $props();
 </script>
 
-<img src="/rank/{rank}.webp" alt="" class={[classProp, 'mr-1 inline size-6']} />
-{capitalize(rank)}
-{tier}
+<img src="/rank/{rank}.webp" alt="" class={[classProp, 'mr-2 inline size-6']} />
+<span class={['mr-1', collapse && 'hidden sm:inline']}>{capitalize(rank)}</span>
+<span>{tier}</span>

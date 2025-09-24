@@ -24,7 +24,7 @@
 		{ label: 'Rank' }
 	]}
 	rows={members}
-	class="grid-cols-[70px_1fr_170px]"
+	class="grid-cols-[60px_1fr_100px] sm:grid-cols-[70px_1fr_170px]"
 >
 	{#snippet row({ value: { player, role, rank, tier, isCaptain } })}
 		<div class="bg-gray-200 py-3.5 text-center text-xl text-gray-800">
@@ -40,7 +40,7 @@
 		</div>
 
 		<div class="flex items-center bg-gray-200 text-lg font-medium">
-			<Rank {rank} {tier} />
+			<Rank {rank} {tier} collapse />
 		</div>
 	{/snippet}
 </Table>

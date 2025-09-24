@@ -146,6 +146,7 @@ export function cdnImageSrc(path: string, { width, height }: { width: number; he
 }
 
 export function capitalize(str: string) {
+	if (!str) return str;
 	return str.charAt(0).toUpperCase() + str.slice(1);
 }
 

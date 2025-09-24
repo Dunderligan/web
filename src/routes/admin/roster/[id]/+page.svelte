@@ -11,7 +11,8 @@
 		team = data.team;
 	});
 
-	let { roster, team } = $state(data);
+	let roster = $state(data.roster);
+	let team = $state(data.team);
 	let { group, division, season } = $derived(flattenGroup(roster.group));
 
 	let newBattletag = $state('');
@@ -78,6 +79,8 @@
 
 		await goto(`admin/roster/${roster.id}`);
 	}
+
+	$inspect(roster);
 </script>
 
 <form {...uploadLogo} enctype="multipart/form-data">

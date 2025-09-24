@@ -4,6 +4,8 @@
 	import Icon from '$lib/components/Icon.svelte';
 	import Match from '$lib/components/Match.svelte';
 	import MembersTable from '$lib/components/MembersTable.svelte';
+	import PageHeader from '$lib/components/PageHeader.svelte';
+	import PageSection from '$lib/components/PageSection.svelte';
 	import Rank from '$lib/components/Rank.svelte';
 	import Table from '$lib/components/Table.svelte';
 	import Tabs from '$lib/components/Tabs.svelte';
@@ -41,7 +43,7 @@
 	);
 </script>
 
-<header class="mx-auto flex w-full max-w-4xl flex-col items-center gap-6 px-4 sm:flex-row">
+<PageHeader>
 	<img
 		src={cdnImageSrc(`/logos/${roster.id}.png`, { width: 512 })}
 		alt=""
@@ -56,54 +58,54 @@
 		</h1>
 		<div class="flex items-center justify-center gap-3 sm:justify-start">
 			{#each team.socials as { platform, url } (platform)}
-				<TeamSocial {platform} href={url} />
+				<TeamSocial class="text-4xl" {platform} href={url} />
 			{/each}
 		</div>
 	</div>
-</header>
+</PageHeader>
 
-<main class="relative z-10 mt-14 grow bg-white px-4 py-12 shadow-2xl">
-	<div class="mx-auto flex max-w-4xl flex-col-reverse gap-10 sm:flex-row">
-		<section class="grow">
-			{#if rosterTabItems.length > 1}
-				<div class="mb-6 flex items-center gap-6">
-					<h3 class="text-xl font-semibold text-gray-700">Rosters</h3>
+<PageSection>
+	<section class="grow">
+		{#if rosterTabItems.length > 1}
+			<div class="mb-6 flex items-center gap-6">
+				<h3 class="text-xl font-semibold text-gray-700">Rosters</h3>
 
-					<Tabs class="grow" items={rosterTabItems} />
-				</div>
-			{:else}
-				<div class="mb-4 text-lg font-medium text-gray-700">
-					Spelade i <a
-						href="/sasong/{season.slug}?div={division.slug}&grupp={group.slug}"
-						class="font-bold text-accent-600 hover:text-accent-700 hover:underline"
-						>{season.name}, {division.name}</a
-					>.
-				</div>
-			{/if}
-
-			<MembersTable members={sortedMembers} />
-
-			<h2 class="mt-8 mb-4 font-display text-2xl font-bold text-gray-700">Senaste matcher</h2>
-
-			<div class="space-y-2">
-				{#each roster.matches as match (match.id)}
-					<Match {match} />
-				{/each}
+				<Tabs class="grow" items={rosterTabItems} />
 			</div>
-		</section>
+		{:else}
+			<div class="mb-4 text-lg font-medium text-gray-700">
+				Spelade i <a
+					href="/sasong/{season.slug}?div={division.slug}&grupp={group.slug}"
+					class="font-bold text-accent-600 hover:text-accent-700 hover:underline"
+					>{season.name}, {division.name}</a
+				>.
+			</div>
+		{/if}
 
-		<section class="shrink-0 sm:w-1/4">
-			{@render editButton('mb-4 hidden')}
+		<MembersTable members={sortedMembers} />
 
-			<div>
+		<h2 class="mt-8 mb-4 font-display text-2xl font-bold text-gray-700">Senaste matcher</h2>
+
+		<div class="space-y-2">
+			{#each roster.matches as match (match.id)}
+				<Match {match} />
+			{/each}
+		</div>
+	</section>
+
+	<section class="shrink-0 sm:w-1/4">
+		{@render editButton('mb-4')}
+
+		<div>
+			{#if average}
 				<div class="font-medium text-gray-700">Genomsnittlig rank</div>
 				<div class="text-xl font-semibold text-gray-800">
 					<Rank {...average} />
 				</div>
-			</div>
-		</section>
-	</div>
-</main>
+			{/if}
+		</div>
+	</section>
+</PageSection>
 
 {#snippet editButton(classProp: ClassValue)}
 	{#if isAdmin($session.data?.user)}
