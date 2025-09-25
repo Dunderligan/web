@@ -2,34 +2,25 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { authClient, isAdmin } from '$lib/auth-client';
-	import Icon from '$lib/components/Icon.svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import PageSection from '$lib/components/PageSection.svelte';
+	import RosterLogo from '$lib/components/RosterLogo.svelte';
+	import Table from '$lib/components/Table.svelte';
+	import Tabs from '$lib/components/Tabs.svelte';
 
 	const session = authClient.useSession();
 
 	let { data } = $props();
 
-	let season = $derived(data.season);
+	let { season, divisions } = $derived(data);
 
-	const isActive = $derived(season.endedAt === null);
+	const isOngoing = $derived(season.endedAt === null);
 
-	let divisions = $derived(season.divisions);
 	let activeDivision = $derived.by(() => {
 		const param = page.url.searchParams.get('div');
 
 		return param ? (divisions.find((div) => div.slug === param) ?? divisions[0]) : divisions[0];
 	});
-
-	let groups = $derived(activeDivision ? activeDivision.groups : []);
-	let activeGroup = $derived.by(() => {
-		const param = page.url.searchParams.get('grupp');
-
-		return param ? (groups.find((group) => group.slug == param) ?? groups[0]) : groups[0];
-	});
-	let rosters = $derived(activeGroup?.rosters ?? []);
-
-	let table = $derived(activeGroup ? (data.tables.get(activeGroup.id) ?? null) : null);
 </script>
 
 <PageHeader>
@@ -40,7 +31,7 @@
 			{season.name}
 		</h1>
 
-		{#if isActive}
+		{#if isOngoing}
 			<span
 				class="mr-1 rounded-full border-green-600 bg-green-200 px-4 py-2 text-sm font-semibold text-green-800"
 			>
@@ -59,32 +50,81 @@
 </PageHeader>
 
 <PageSection>
-	<div>
-		<h1 class="text-4xl font-bold">{data.season.name}</h1>
+	<section class="grow">
+		<div class="flex max-w-lg flex-col gap-1.5">
+			<Tabs
+				items={divisions.map((division) => ({
+					label: division.name,
+					value: division,
+					href: `?div=${division.slug}`
+				}))}
+				selected={activeDivision}
+			/>
 
-		<div class="flex items-center gap-2">
-			<div class="font-semibold">Division</div>
-
-			{#each divisions as division (division.id)}
-				<button onclick={() => goto(`?div=${division.slug}`)}>
-					{division.name}
-					{activeDivision?.id === division.id ? '✓' : ''}
-				</button>
-			{/each}
+			<Tabs
+				hideSelectedIcon
+				items={[
+					{
+						icon: 'mdi:table',
+						label: 'Gruppspel',
+						value: 'group'
+					},
+					{
+						icon: 'mdi:bracket',
+						label: 'Slutspel',
+						value: 'bracket'
+					}
+				]}
+			/>
 		</div>
 
-		{#if groups.length > 1}
-			<div class="flex items-center gap-2">
-				<div class="font-semibold">Grupp</div>
+		<Table
+			columns={[
+				'#',
+				{
+					label: 'Lag',
+					center: false
+				},
+				'Poäng',
+				'W/L/D',
+				'Matcher'
+			]}
+			rows={activeDivision.table}
+			key={(row) => row.rosterId}
+			class="mt-6 grid-cols-[50px_1fr_80px_60px_80px]"
+		>
+			{#snippet row({ index, value: { rosterId, score } })}
+				{@const { id, name, slug } = activeDivision.rosters.find(
+					(roster) => roster.id === rosterId
+				)!}
 
-				{#each groups as group (group.id)}
-					<button onclick={() => goto(`?div=${activeDivision?.slug}&grupp=${group.slug}`)}>
-						{group.name}
-						{activeGroup?.id === group.id ? '✓' : ''}
-					</button>
-				{/each}
-			</div>
-		{/if}
+				<div class="flex items-center justify-center bg-gray-200 text-lg font-semibold">
+					{index + 1}
+				</div>
+
+				<div class="flex min-w-0 items-center gap-2 bg-gray-200 py-2 text-lg font-semibold">
+					<RosterLogo {id} />
+
+					<a href="/lag/{season.slug}/{slug}" class="truncate hover:text-accent-600 hover:underline"
+						>{name}</a
+					>
+				</div>
+
+				<div class="flex items-center justify-center bg-gray-200 text-lg font-semibold">
+					{score.mapWins}
+				</div>
+
+				<div class="flex items-center justify-center bg-gray-200 text-lg font-medium">
+					{score.mapWins}/{score.mapLosses}/{score.mapDraws}
+				</div>
+
+				<div class="flex items-center justify-center bg-gray-200 text-lg font-medium">
+					{score.matchesPlayed}
+				</div>
+			{/snippet}
+		</Table>
+
+		<!--
 
 		{#if table}
 			<table class="w-5xl">
@@ -118,6 +158,7 @@
 			<div>
 				<a href="/admin/grupp/{activeGroup?.id}">Redigera</a>
 			</div>
-		{/if}
-	</div>
+		{/if} -->
+	</section>
+	<section class="shrink-0 sm:w-1/4"></section>
 </PageSection>

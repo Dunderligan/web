@@ -5,10 +5,7 @@ import {
 	type NestedGroup,
 	type Rank,
 	type Role,
-	type FullRoster,
-	type Roster,
-	type FullMatch,
-	type BaseGroupInfo
+	type FullMatch
 } from './types';
 import { PUBLIC_CDN_ENDPOINT } from '$env/static/public';
 
@@ -161,4 +158,11 @@ export function roleIcon(role: Role): string {
 	}
 
 	return 'mdi:help';
+}
+
+export function aggregateGroups<R, M>(groups: { rosters: R[]; matches: M[] }[]) {
+	return {
+		rosters: groups.flatMap((group) => group.rosters),
+		matches: groups.flatMap((group) => group.matches)
+	};
 }

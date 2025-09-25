@@ -14,16 +14,18 @@
 
 <Table
 	columns={[
+		'Roll',
 		{
-			label: 'Roll',
-			center: true
+			label: 'Battletag',
+			center: false
 		},
 		{
-			label: 'Battletag'
-		},
-		{ label: 'Rank' }
+			label: 'Rank',
+			center: false
+		}
 	]}
 	rows={members}
+	key={(member) => member.player.battletag}
 	class="grid-cols-[60px_1fr_100px] sm:grid-cols-[70px_1fr_170px]"
 >
 	{#snippet row({ value: { player, role, rank, tier, isCaptain } })}

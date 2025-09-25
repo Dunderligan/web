@@ -12,19 +12,19 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<ProgressBar class="text-accent-600" />
+<ProgressBar class="text-accent-500" zIndex={100} />
 
 <div id="background" class="fixed top-0 min-h-[35rem] w-full min-w-lg"></div>
 
 <div class="relative flex min-h-screen flex-col overflow-hidden">
 	<div
-		class="absolute top-32 left-[-60rem] -z-10 size-[150rem] rounded-full bg-accent-400/20"
+		class="fixed top-32 left-[-50rem] size-[100rem] rounded-full bg-accent-400/20"
 		id="splotch"
 	></div>
 
 	<Navbar />
 
-	<!-- <div class="mb-8 h-18"></div> -->
+	<div class="mb-8 h-18"></div>
 
 	{@render children?.()}
 

@@ -26,7 +26,11 @@
 	{/if}
 
 	<div class="shrink-0 rounded-lg bg-white px-3 py-1.5 font-display text-xl font-extrabold">
-		{match.teamAScore ?? 0} - {match.teamBScore ?? 0}
+		{#if match.played === false}
+			? - ?
+		{:else}
+			{match.teamAScore ?? 0} - {match.teamBScore ?? 0}
+		{/if}
 	</div>
 
 	{#if match.rosterB}

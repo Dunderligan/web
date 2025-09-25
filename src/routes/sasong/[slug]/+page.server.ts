@@ -1,5 +1,5 @@
 import { db, schema } from '$lib/server/db/index.js';
-import { calculateStandings } from '$lib/util.js';
+import { aggregateGroups, calculateStandings } from '$lib/util.js';
 import { error } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 
@@ -57,11 +57,19 @@ export const load = async ({ params }) => {
 		error(404);
 	}
 
-	const tables = new Map(
-		data.divisions.flatMap((div) =>
-			div.groups.map((group) => [group.id, calculateStandings(group.rosters, group.matches)])
-		)
-	);
+	const { divisions, ...season } = data;
 
-	return { season: data, tables };
+	return {
+		season,
+		divisions: divisions.map(({ groups, ...division }) => {
+			const { rosters, matches } = aggregateGroups(groups);
+			const table = calculateStandings(rosters, matches);
+
+			return {
+				rosters,
+				table,
+				...division
+			};
+		})
+	};
 };

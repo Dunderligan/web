@@ -32,7 +32,9 @@
 	];
 </script>
 
-<nav class="z-40 mb-10 h-18 w-full bg-gradient-to-t to-gray-300/80 px-8 pt-4 backdrop-blur-[2px]">
+<nav
+	class="fixed z-40 mb-10 h-18 w-full bg-gradient-to-t to-gray-300/80 px-8 pt-4 backdrop-blur-[2px]"
+>
 	<div class="mx-auto flex h-full max-w-3xl items-center justify-between gap-2">
 		<div class="flex items-center gap-8 text-gray-800">
 			<a href="/">

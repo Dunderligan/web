@@ -7,33 +7,48 @@
 		label: string;
 		value: T;
 		icon?: string;
-	} & ({ href: string; onclick?: never } | { href?: never; onclick: () => void });
+		href?: string;
+	};
 
 	type Props = {
 		items: Item[];
 		selected?: T;
 		class?: ClassValue;
+		hideSelectedIcon?: boolean;
+		onitemclick?: (value: T) => void;
 	};
 
-	let { items, selected = $bindable(items[0].value), class: classProp }: Props = $props();
+	let {
+		items,
+		selected = $bindable(items[0].value),
+		class: classProp,
+		hideSelectedIcon = false,
+		onitemclick
+	}: Props = $props();
 </script>
 
-<div class={[classProp, 'flex items-stretch overflow-hidden rounded-lg']}>
-	{#each items as { label, value, icon, href, onclick } (value)}
+<div class={[classProp, 'flex items-stretch gap-1 overflow-hidden rounded-lg']}>
+	{#each items as { label, value, icon, href } (value)}
 		{@const isActive = selected === value}
 
 		<Button.Root
 			{href}
-			{onclick}
+			onclick={() => {
+				if (href) return;
+				selected = value;
+				onitemclick?.(value);
+			}}
 			class={[
-				'flex w-full items-center justify-center p-2',
+				'flex w-full items-center justify-center gap-2 p-2.5',
 				isActive
-					? 'bg-accent-600 font-semibold text-white'
-					: 'bg-accent-200 font-medium text-accent-800'
+					? 'bg-accent-600 font-bold text-white'
+					: 'bg-accent-200 font-semibold text-accent-800'
 			]}
 		>
-			{#if icon}
-				<Icon {icon} />
+			{@const renderedIcon = isActive && !hideSelectedIcon ? 'mdi:eye' : icon}
+
+			{#if renderedIcon}
+				<Icon icon={renderedIcon} />
 			{/if}
 
 			{label}

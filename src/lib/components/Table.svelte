@@ -1,25 +1,30 @@
 <script lang="ts" generics="T">
 	import type { ClassValue } from 'svelte/elements';
-	import Icon from './Icon.svelte';
 	import type { Snippet } from 'svelte';
 
-	type Column = {
-		label: string;
-		center?: boolean;
-	};
+	type Column =
+		| string
+		| {
+				label: string;
+				center?: boolean;
+		  };
 
 	type Props = {
 		columns: Column[];
 		rows: T[];
-		row: Snippet<[{ value: T }]>;
+		row: Snippet<[{ value: T; index: number }]>;
+		key?: (value: T) => any;
 		class?: ClassValue;
 	};
 
-	let { columns, rows, row, class: classProp }: Props = $props();
+	let { columns, rows, row, key, class: classProp }: Props = $props();
 </script>
 
 <div class={[classProp, 'grid w-full gap-y-1 overflow-hidden rounded-lg']}>
-	{#each columns as { label, center = false }}
+	{#each columns as column}
+		{@const [label, center] =
+			typeof column === 'string' ? [column, true] : [column.label, column.center ?? true]}
+
 		<div
 			class={[
 				center ? 'text-center ' : 'text-left',
@@ -30,7 +35,7 @@
 		</div>
 	{/each}
 
-	{#each rows as value}
-		{@render row({ value })}
+	{#each rows as value, index (key?.(value))}
+		{@render row({ value, index })}
 	{/each}
 </div>
