@@ -21,6 +21,17 @@ export const load = async ({ params }) => {
 					slug: true
 				},
 				with: {
+					matches: {
+						columns: {
+							id: true,
+							teamAScore: true,
+							teamBScore: true,
+							draws: true,
+							rosterAId: true,
+							rosterBId: true,
+							nextMatchId: true
+						}
+					},
 					groups: {
 						orderBy: schema.division.name,
 						columns: {

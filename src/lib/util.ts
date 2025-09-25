@@ -72,7 +72,7 @@ export function toSlug(str: string) {
 	});
 }
 
-type TableScore = {
+export type TableScore = {
 	mapWins: number;
 	mapLosses: number;
 	mapDraws: number;
@@ -131,6 +131,31 @@ export function sortBySeed(rosters: { id: string }[], matches: MatchWithoutIds[]
 	);
 
 	return rosters.sort((a, b) => seeds.get(a.id)! - seeds.get(b.id)!);
+}
+
+export function buildBracket<T extends { id: string; nextMatchId?: string | null }>(matches: T[]) {
+	const finalMatch = matches.find((match) => !match.nextMatchId);
+
+	if (!finalMatch) {
+		console.warn('No final match found!');
+		return [];
+	}
+
+	const rounds: T[][] = [];
+	let currentRound = [finalMatch];
+
+	while (currentRound.length > 0) {
+		rounds.unshift(currentRound);
+
+		const nextRoundIds = new Set(currentRound.map((match) => match.id));
+		const prevRound = matches.filter(
+			(match) => match.nextMatchId && nextRoundIds.has(match.nextMatchId)
+		);
+
+		currentRound = prevRound;
+	}
+
+	return rounds;
 }
 
 export function cdnImageSrc(path: string, { width, height }: { width: number; height?: number }) {

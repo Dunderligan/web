@@ -3,6 +3,7 @@
 	import EditMatchDialog from '$lib/components/EditMatchDialog.svelte';
 	import { RosterState } from '$lib/state/rosters.svelte';
 	import type { FullMatch } from '$lib/types';
+	import { buildBracket } from '$lib/util';
 	import { deleteBracket, generateBracket, updateBracket } from './page.remote';
 
 	const { data } = $props();
@@ -11,33 +12,7 @@
 
 	RosterState.set(new RosterState(data.rosters));
 
-	let rounds: FullMatch[][] = $state(buildRounds());
-
-	function buildRounds() {
-		const finalMatch = matches.values().find((match) => !match.nextMatchId);
-
-		if (!finalMatch) {
-			console.warn('No final match found!');
-			return [];
-		}
-
-		const rounds: FullMatch[][] = [];
-		let currentRound = [finalMatch];
-
-		while (currentRound.length > 0) {
-			rounds.unshift(currentRound);
-
-			const nextRoundIds = new Set(currentRound.map((match) => match.id));
-			const prevRound = matches
-				.values()
-				.filter((match) => match.nextMatchId && nextRoundIds.has(match.nextMatchId))
-				.toArray();
-
-			currentRound = prevRound;
-		}
-
-		return rounds;
-	}
+	let rounds: FullMatch[][] = $state(buildBracket(matches));
 
 	async function generate() {
 		const result = await generateBracket({

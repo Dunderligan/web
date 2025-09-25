@@ -17,7 +17,7 @@ export const load = async ({ params }) => {
 		}
 	});
 
-	const matchData = await db.query.match.findMany({
+	const matches = await db.query.match.findMany({
 		where: eq(schema.match.divisionId, params.id),
 		columns: {
 			id: true,
@@ -30,11 +30,10 @@ export const load = async ({ params }) => {
 		}
 	});
 
-	if (!rosterData || !matchData) {
+	if (!rosterData || !matches) {
 		error(404);
 	}
 
-	const matches = new Map(matchData.map((match) => [match.id, match]));
 	const rosters = rosterData.flatMap((group) => group.rosters);
 
 	return { matches, rosters };

@@ -1,12 +1,13 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { authClient, isAdmin } from '$lib/auth-client';
+	import Button from '$lib/components/Button.svelte';
+	import Match from '$lib/components/Match.svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import PageSection from '$lib/components/PageSection.svelte';
-	import RosterLogo from '$lib/components/RosterLogo.svelte';
-	import Table from '$lib/components/Table.svelte';
+	import StandingsTable from '$lib/components/StandingsTable.svelte';
 	import Tabs from '$lib/components/Tabs.svelte';
+	import { buildBracket } from '$lib/util';
 
 	const session = authClient.useSession();
 
@@ -20,6 +21,21 @@
 		const param = page.url.searchParams.get('div');
 
 		return param ? (divisions.find((div) => div.slug === param) ?? divisions[0]) : divisions[0];
+	});
+
+	type Mode = 'group' | 'bracket';
+
+	let mode: Mode = $derived.by(() => {
+		const param = page.url.searchParams.get('visa');
+
+		switch (param) {
+			case 'gruppspel':
+				return 'group';
+			case 'slutspel':
+				return 'bracket';
+			default:
+				return 'group';
+		}
 	});
 </script>
 
@@ -51,114 +67,65 @@
 
 <PageSection>
 	<section class="grow">
-		<div class="flex max-w-lg flex-col gap-1.5">
+		<div class="mb-6 flex max-w-lg flex-col gap-1.5">
 			<Tabs
+				selected={activeDivision}
 				items={divisions.map((division) => ({
 					label: division.name,
 					value: division,
 					href: `?div=${division.slug}`
 				}))}
-				selected={activeDivision}
 			/>
 
 			<Tabs
 				hideSelectedIcon
+				selected={mode}
 				items={[
 					{
 						icon: 'mdi:table',
 						label: 'Gruppspel',
-						value: 'group'
+						value: 'group',
+						href: `?div=${activeDivision.slug}&visa=gruppspel`
 					},
 					{
 						icon: 'mdi:bracket',
 						label: 'Slutspel',
-						value: 'bracket'
+						value: 'bracket',
+						href: `?div=${activeDivision.slug}&visa=slutspel`
 					}
 				]}
 			/>
 		</div>
 
-		<Table
-			columns={[
-				'#',
-				{
-					label: 'Lag',
-					center: false
-				},
-				'Poäng',
-				'W/L/D',
-				'Matcher'
-			]}
-			rows={activeDivision.table}
-			key={(row) => row.rosterId}
-			class="mt-6 grid-cols-[50px_1fr_80px_60px_80px]"
-		>
-			{#snippet row({ index, value: { rosterId, score } })}
-				{@const { id, name, slug } = activeDivision.rosters.find(
-					(roster) => roster.id === rosterId
-				)!}
+		{#if mode === 'group'}
+			<StandingsTable
+				rosters={activeDivision.rosters}
+				scores={activeDivision.table}
+				seasonSlug={season.slug}
+			/>
+		{:else}
+			{@const rounds = buildBracket(activeDivision.matches)}
 
-				<div class="flex items-center justify-center bg-gray-200 text-lg font-semibold">
-					{index + 1}
-				</div>
-
-				<div class="flex min-w-0 items-center gap-2 bg-gray-200 py-2 text-lg font-semibold">
-					<RosterLogo {id} />
-
-					<a href="/lag/{season.slug}/{slug}" class="truncate hover:text-accent-600 hover:underline"
-						>{name}</a
-					>
-				</div>
-
-				<div class="flex items-center justify-center bg-gray-200 text-lg font-semibold">
-					{score.mapWins}
-				</div>
-
-				<div class="flex items-center justify-center bg-gray-200 text-lg font-medium">
-					{score.mapWins}/{score.mapLosses}/{score.mapDraws}
-				</div>
-
-				<div class="flex items-center justify-center bg-gray-200 text-lg font-medium">
-					{score.matchesPlayed}
-				</div>
-			{/snippet}
-		</Table>
-
-		<!--
-
-		{#if table}
-			<table class="w-5xl">
-				<thead>
-					<tr>
-						<th>#</th>
-						<th>Lag</th>
-						<th>Poäng</th>
-						<th>W/L/D</th>
-						<th>Matcher</th>
-					</tr>
-				</thead>
-				<tbody>
-					{#each table as { rosterId, score }, i (rosterId)}
-						{@const roster = rosters.find((roster) => roster.id === rosterId)!}
-
-						<tr>
-							<td>{i + 1}</td>
-							<td><a class="underline" href="/lag/{season.slug}/{roster.slug}">{roster.name}</a></td
-							>
-							<td>{score.mapWins}</td>
-							<td>{score.mapWins}/{score.mapLosses}/{score.mapDraws}</td>
-							<td>{score.matchesPlayed}</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
-		{/if}
-
-		{#if isAdmin($session.data?.user)}
-			<div>
-				<a href="/admin/grupp/{activeGroup?.id}">Redigera</a>
+			<div class="flex w-full items-stretch gap-4">
+				{#each rounds as round}
+					<div class="flex w-full flex-col justify-around gap-4">
+						{#each round as match}
+							<Match {match} />
+						{/each}
+					</div>
+				{/each}
 			</div>
-		{/if} -->
+		{/if}
 	</section>
-	<section class="shrink-0 sm:w-1/4"></section>
+	<section class="shrink-0 sm:w-1/4">
+		{#if isAdmin($session.data?.user)}
+			<Button
+				label="Redigera division"
+				icon="mdi:edit"
+				kind="secondary"
+				class="max-w-max"
+				href="/admin/division/{activeDivision.id}"
+			/>
+		{/if}
+	</section>
 </PageSection>
