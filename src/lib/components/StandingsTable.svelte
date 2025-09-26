@@ -26,7 +26,7 @@
 	]}
 	rows={scores}
 	key={(row) => row.rosterId}
-	class="grid-cols-[50px_1fr_80px_60px_80px]"
+	class="max-w-2xl grid-cols-[50px_1fr_80px_60px_80px]"
 >
 	{#snippet row({ index, value: { rosterId, score } })}
 		{@const { id, name, slug } = rosters.find((roster) => roster.id === rosterId)!}

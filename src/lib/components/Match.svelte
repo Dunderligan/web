@@ -1,14 +1,14 @@
 <script lang="ts">
-	import type { Match, MatchRoster, ClassValue } from '$lib/types';
-	import { cdnImageSrc } from '$lib/util';
+	import type { ResolvedMatch, MatchRoster, ClassValue } from '$lib/types';
 	import Icon from './Icon.svelte';
 	import RosterLogo from './RosterLogo.svelte';
 
 	type Props = {
-		match: Match;
+		match: ResolvedMatch;
+		seasonSlug: string;
 	};
 
-	let { match }: Props = $props();
+	let { match, seasonSlug }: Props = $props();
 
 	const teamAWon =
 		match.played === false ? null : (match.teamAScore ?? 0) > (match.teamBScore ?? 0);
@@ -51,7 +51,7 @@
 		{/if}
 
 		<a
-			href="/lag/{roster.seasonSlug}/{roster.slug}"
+			href="/lag/{seasonSlug}/{roster.slug}"
 			class={[
 				classes.name,
 				'grow font-semibold text-gray-800 hover:text-accent-600 hover:underline'

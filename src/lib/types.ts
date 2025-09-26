@@ -91,7 +91,7 @@ export type FullMatch = {
 	nextMatchId?: string | null;
 };
 
-export type Match = {
+export type ResolvedMatch = {
 	id: string;
 	played?: boolean | null;
 	teamAScore?: number | null;
@@ -105,5 +105,4 @@ export type MatchRoster = {
 	id: string;
 	name: string;
 	slug: string;
-	seasonSlug: string;
 };

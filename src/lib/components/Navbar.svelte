@@ -51,7 +51,7 @@
 				<Icon icon="mdi:white-balance-sunny" />
 			</button>
 
-			<button>
+			<button onclick={login}>
 				<Icon icon="mdi:account-circle" />
 			</button>
 

@@ -29,7 +29,8 @@ export const load = async ({ params }) => {
 							draws: true,
 							rosterAId: true,
 							rosterBId: true,
-							nextMatchId: true
+							nextMatchId: true,
+							played: true
 						}
 					},
 					groups: {

@@ -15,7 +15,7 @@
 </main>
 
 <style>
-	main::before {
+	/* main::before {
 		content: '';
 		position: absolute;
 		top: 0;
@@ -24,10 +24,10 @@
 		height: 50rem;
 		background: var(
 			--color-gray-200
-		); /*linear-gradient(to bottom left, var(--color-gray-300) 0%, white 70%);*/
+		);
 		mask-image: url('/dotted-bg.svg');
 		mask-repeat: repeat;
 		pointer-events: none;
 		z-index: -1;
-	}
+	} */
 </style>

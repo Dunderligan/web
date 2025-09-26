@@ -34,7 +34,6 @@
 		<Button.Root
 			{href}
 			onclick={() => {
-				if (href) return;
 				selected = value;
 				onitemclick?.(value);
 			}}
@@ -45,7 +44,7 @@
 					: 'bg-accent-200 font-semibold text-accent-800'
 			]}
 		>
-			{@const renderedIcon = isActive && !hideSelectedIcon ? 'mdi:eye' : icon}
+			{@const renderedIcon = isActive && !hideSelectedIcon ? null : icon}
 
 			{#if renderedIcon}
 				<Icon icon={renderedIcon} />

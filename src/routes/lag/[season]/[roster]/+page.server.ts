@@ -81,8 +81,7 @@ export const load = async ({ params }) => {
 				columns: {
 					id: true,
 					name: true,
-					slug: true,
-					seasonSlug: true
+					slug: true
 				}
 			}
 		}

@@ -88,7 +88,7 @@
 
 		<div class="space-y-2">
 			{#each roster.matches as match (match.id)}
-				<Match {match} />
+				<Match seasonSlug={season.slug} {match} />
 			{/each}
 		</div>
 	</section>

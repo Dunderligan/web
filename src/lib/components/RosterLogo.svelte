@@ -15,7 +15,7 @@
 </script>
 
 <img
-	src={cdnImageSrc(`/logos/${id}.png`, { width: 96 })}
+	src={cdnImageSrc(`/logos/${id}.png`, { width: 64 })}
 	class={[classProp, 'size-12 shrink-0 rounded-md']}
 	{onerror}
 	alt=""
