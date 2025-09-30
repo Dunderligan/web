@@ -3,6 +3,12 @@
 	import { DropdownMenu } from 'bits-ui';
 	import Icon from './Icon.svelte';
 
+	type Props = {
+		dark?: boolean;
+	};
+
+	let { dark }: Props = $props();
+
 	const session = authClient.useSession();
 
 	async function login() {
@@ -33,7 +39,10 @@
 </script>
 
 <nav
-	class="fixed z-40 mb-10 h-18 w-full bg-gradient-to-t to-gray-800/80 px-8 pt-4 text-gray-200 backdrop-blur-[2px]"
+	class={[
+		dark ? 'text-gray-200' : 'to-gray-300/80 text-gray-800',
+		'fixed z-40 h-18 w-screen bg-gradient-to-t px-8 pt-4 backdrop-blur-[2px]'
+	]}
 >
 	<div class="mx-auto flex h-full max-w-3xl items-center justify-between gap-2">
 		<div class="flex items-center gap-8">
@@ -60,7 +69,8 @@
 					<Icon icon="mdi:menu" class="text-2xl" />
 				</DropdownMenu.Trigger>
 				<DropdownMenu.Content
-					class="z-50 mt-2 flex w-screen flex-col items-stretch gap-1 bg-white py-6 shadow-lg"
+					class="z-50 flex w-lvw flex-col items-stretch gap-1 bg-white py-6 shadow-lg"
+					avoidCollisions={false}
 				>
 					{#each links as { href, label } (href)}
 						<DropdownMenu.Item>

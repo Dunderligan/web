@@ -39,7 +39,7 @@
 		}
 	});
 
-	function formatDate(date: Date) {
+	function formatDateWithoutYear(date: Date) {
 		return date.toLocaleDateString(undefined, {
 			month: 'long',
 			day: 'numeric'
@@ -72,12 +72,13 @@
 			•
 
 			{#if isOngoing}
-				Startade {formatDate(season.startedAt)}
+				Startade {formatDateWithoutYear(season.startedAt)}
 			{:else}
-				Pågick mellan {formatDate(season.startedAt)} och {formatDate(season.endedAt ?? new Date())}
+				Pågick mellan {formatDateWithoutYear(season.startedAt)} och {formatDateWithoutYear(
+					season.endedAt ?? new Date()
+				)}
+				{season.startedAt.getFullYear()}
 			{/if}
-
-			{season.startedAt.getFullYear()}
 		</div>
 	</div>
 </PageHeader>

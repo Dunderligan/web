@@ -62,7 +62,7 @@
 </PageHeader>
 
 <PageSection class="flex flex-col-reverse gap-10 sm:flex-row">
-	<section class="grow">
+	<section class="shrink grow">
 		{#if rosterTabItems.length > 1}
 			<div class="mb-6 flex items-center gap-6">
 				<h3 class="text-xl font-semibold text-gray-700">Rosters</h3>
