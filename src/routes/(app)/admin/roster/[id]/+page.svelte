@@ -1,5 +1,9 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import AdminCard from '$lib/components/AdminCard.svelte';
+	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
+	import Icon from '$lib/components/Icon.svelte';
+	import RosterLogo from '$lib/components/RosterLogo.svelte';
 	import { Rank, Role, SocialPlatform } from '$lib/types';
 	import { formatSocialPlatform, flattenGroup } from '$lib/util';
 	import { createRoster, editRoster, uploadLogo } from './page.remote';
@@ -79,24 +83,41 @@
 
 		await goto(`admin/roster/${roster.id}`);
 	}
-
-	$inspect(roster);
 </script>
 
-<form {...uploadLogo} enctype="multipart/form-data">
-	<input type="file" name="file" accept="image/png" />
-	<input type="text" name="rosterId" value={roster.id} />
-	<button>Upload</button>
-</form>
+<Breadcrumbs
+	crumbs={[
+		{ label: season.name, href: `/admin/sasong/${season.id}` },
+		{ label: division.name, href: `/admin/division/${division.id}` },
+		{ label: group.name, href: `/admin/grupp/${group.id}` },
+		{ label: roster.name, href: `/admin/roster/${roster.id}` }
+	]}
+/>
 
-<form class="mt-6 space-y-6">
+<AdminCard title="Medlemmar"></AdminCard>
+
+<AdminCard title="Sociala medier"></AdminCard>
+
+<AdminCard title="Inställningar">
+	<form {...uploadLogo} enctype="multipart/form-data">
+		<label class="group relative flex size-32 cursor-pointer items-center justify-center">
+			<RosterLogo
+				id={roster.id}
+				class="absolute -z-10 h-full w-full transition-all group-hover:brightness-75"
+				imgSize={128}
+			/>
+			<Icon
+				icon="mdi:upload"
+				class="hidden items-center justify-center rounded-lg bg-accent-600 p-4 text-center text-xl font-bold text-white group-hover:block"
+			/>
+			<input type="file" name="file" accept="image/png" class="hidden" />
+		</label>
+		<input type="text" name="rosterId" value={roster.id} class="hidden" />
+	</form>
+</AdminCard>
+
+<form>
 	<div>
-		<div class="flex items-center text-lg font-semibold">
-			<a href="/admin/sasong/{season.id}">{season.name}</a>
-			<a href="/admin/division/{division.id}">{division.name}</a>
-			<a href="/admin/grupp/{group.id}">{group.name}</a>
-		</div>
-
 		<label class="mt-2 block">
 			Namn
 			<input type="text" bind:value={roster.name} />

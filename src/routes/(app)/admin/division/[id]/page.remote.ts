@@ -1,11 +1,20 @@
 import { command } from '$app/server';
-import { matchSchema } from '$lib/schemas';
 import { db, schema } from '$lib/server/db';
-import type { FullMatch } from '$lib/types';
 import { sortBySeed, toSlug } from '$lib/util';
-import { eq, inArray } from 'drizzle-orm';
-import { v4 as uuidv4 } from 'uuid';
+import { eq } from 'drizzle-orm';
 import * as z from 'zod';
+import { v4 as uuidv4 } from 'uuid';
+import { matchSchema } from '$lib/schemas';
+import type { FullMatch } from '$lib/types';
+
+export const deleteDivision = command(
+	z.object({
+		id: z.uuidv4()
+	}),
+	async ({ id }) => {
+		await db.delete(schema.division).where(eq(schema.division.id, id));
+	}
+);
 
 export const createGroup = command(
 	z.object({
@@ -25,15 +34,6 @@ export const createGroup = command(
 			.returning();
 
 		return { group };
-	}
-);
-
-export const deleteDivision = command(
-	z.object({
-		id: z.uuidv4()
-	}),
-	async ({ id }) => {
-		await db.delete(schema.division).where(eq(schema.division.id, id));
 	}
 );
 

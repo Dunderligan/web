@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import AdminCard from '$lib/components/AdminCard.svelte';
+	import AdminLink from '$lib/components/AdminLink.svelte';
+	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	import Dialog from '$lib/components/Dialog.svelte';
+	import Icon from '$lib/components/Icon.svelte';
 	import { createDivision, deleteSeason } from './page.remote.js';
 
 	const { data } = $props();
@@ -34,40 +38,24 @@
 	}
 </script>
 
-<div class="space-y-6">
-	<h1 class="text-4xl font-bold">{season.name}</h1>
+<Breadcrumbs crumbs={[{ label: season.name, href: `admin/sasong/${season.id}` }]} />
 
-	<div class="rounded-xl bg-gray-100 p-6">
-		<h2 class="text-xl font-bold">Divisioner</h2>
-
-		<button onclick={() => (createDialogOpen = true)}>Skapa division</button>
-
-		<table class="w-full">
-			<thead>
-				<tr>
-					<th> Namn </th>
-					<th> </th>
-				</tr>
-			</thead>
-			<tbody>
-				{#each season.divisions as { id, name }, i (id)}
-					<tr>
-						<td>
-							<a href="/admin/division/{id}">{name}</a>
-						</td>
-					</tr>
-				{/each}
-			</tbody>
-		</table>
+<AdminCard title="Divisioner">
+	<div class="space-y-1 overflow-hidden rounded-lg">
+		{#each season.divisions as { id, name } (id)}
+			<AdminLink href="/admin/division/{id}">
+				{name}
+			</AdminLink>
+		{/each}
 	</div>
+</AdminCard>
 
-	<div class="rounded-xl bg-gray-100 p-6">
-		<h2 class="text-xl font-bold">Inställningar</h2>
+<div class="rounded-xl bg-gray-100 p-6">
+	<h2 class="text-xl font-bold">Inställningar</h2>
 
-		<input class="block" type="text" bind:value={name} />
+	<input class="block" type="text" bind:value={name} />
 
-		<button onclick={submitDelete}>Radera säsong</button>
-	</div>
+	<button onclick={submitDelete}>Radera säsong</button>
 </div>
 
 <Dialog title="Skapa division" bind:open={createDialogOpen}>

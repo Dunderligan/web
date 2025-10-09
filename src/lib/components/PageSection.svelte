@@ -20,7 +20,7 @@
 </main>
 
 <style>
-	main::before {
+	/* main::before {
 		content: '';
 		position: absolute;
 		top: 0;
@@ -32,5 +32,5 @@
 		mask-size: cover;
 		pointer-events: none;
 		z-index: -1;
-	}
+	} */
 </style>

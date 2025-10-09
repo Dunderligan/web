@@ -1,0 +1,16 @@
+<script lang="ts">
+	import type { Snippet } from 'svelte';
+
+	type Props = {
+		title: string;
+		children?: Snippet;
+	};
+
+	let { title, children }: Props = $props();
+</script>
+
+<div class="space-y-4 rounded-xl border-[3px] border-gray-100 px-8 py-6">
+	<h2 class="font-display text-2xl font-bold text-gray-700">{title}</h2>
+
+	{@render children?.()}
+</div>

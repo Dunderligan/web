@@ -3,19 +3,40 @@ import { error } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 
 export const load = async ({ params }) => {
-	const groups = await db.query.group.findMany({
-		where: eq(schema.group.divisionId, params.id),
-		columns: {},
+	const data = await db.query.division.findFirst({
+		where: eq(schema.division.id, params.id),
+		columns: {
+			createdAt: false
+		},
 		with: {
-			rosters: {
+			groups: {
+				orderBy: schema.group.name,
 				columns: {
-					id: true,
-					name: true,
-					slug: true
+					createdAt: false,
+					divisionId: false
+				},
+				with: {
+					rosters: {
+						columns: {
+							id: true,
+							name: true,
+							slug: true
+						}
+					}
 				}
-			}
+			},
+			season: {
+				columns: {
+					createdAt: false
+				}
+			},
+			matches: {}
 		}
 	});
+
+	if (!data) {
+		error(404);
+	}
 
 	const matches = await db.query.match.findMany({
 		where: eq(schema.match.divisionId, params.id),
@@ -33,11 +54,5 @@ export const load = async ({ params }) => {
 		}
 	});
 
-	if (!groups || !matches) {
-		error(404);
-	}
-
-	const rosters = groups.flatMap((group) => group.rosters);
-
-	return { matches, rosters };
+	return { division: data, matches };
 };

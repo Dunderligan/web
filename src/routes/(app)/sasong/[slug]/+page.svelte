@@ -158,7 +158,7 @@
 				icon="mdi:edit"
 				kind="secondary"
 				class="mt-4 max-w-max"
-				href="/admin/division/{activeDivision.id}/{mode === 'group' ? 'grupper' : 'slutspel'}"
+				href="/admin/division/{activeDivision.id}"
 			/>
 		{/if}
 	</section>
