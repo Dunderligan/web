@@ -32,7 +32,8 @@
 	let team = $state(data.team);
 	let { group, division, season } = $derived(flattenGroup(roster.group));
 
-	let newBattletag = $state('');
+	let newPlayerOpen = $state(false);
+	let newPlayerBattletag = $state('');
 
 	let remainingPlatforms = $derived(
 		Object.values(SocialPlatform).filter(
@@ -66,11 +67,16 @@
 			role: Role.DAMAGE,
 			player: {
 				id: null, // the backend will either link this up with an existing player, or create a new one
-				battletag: newBattletag
+				battletag: newPlayerBattletag
 			}
 		});
 
-		newBattletag = '';
+		resetNewPlayer();
+	}
+
+	function resetNewPlayer() {
+		newPlayerOpen = false;
+		newPlayerBattletag = '';
 	}
 
 	async function addSocial() {
@@ -114,60 +120,81 @@
 />
 
 <AdminCard title="Medlemmar">
-	<Table
-		columns={[{ label: 'Battletag', center: false }, 'Roll', 'Rank', '']}
-		rows={roster.members}
-		class="grid-cols-[1fr_160px_250px_50px]"
-	>
-		{#snippet row({ value: member })}
-			<div class="flex items-center bg-gray-200 px-6 py-4 text-lg font-semibold">
-				{member.player.battletag}
-			</div>
+	{#if roster.members.length === 0}
+		<Notice kind="info">
+			Detta lag har inga medlemmar.
 
-			<div class="flex items-center bg-gray-200 pr-4">
-				<Select
-					type="single"
-					triggerClass="grow"
-					bind:value={member.role}
-					itemIcon={(role) => roleIcon(role as Role)}
-					items={enumToPgEnum(Role).map((role) => ({
-						label: capitalize(role),
-						value: role
-					}))}
-				/>
-			</div>
+			<Button
+				icon="mdi:add"
+				label="Lägg till"
+				kind="transparent"
+				class="ml-auto"
+				onclick={() => (newPlayerOpen = true)}
+			/>
+		</Notice>
+	{:else}
+		<Table
+			columns={[{ label: 'Battletag', center: false }, 'Roll', 'Rank', '']}
+			rows={roster.members}
+			class="grid-cols-[1fr_160px_250px_50px]"
+		>
+			{#snippet row({ value: member, index })}
+				<div class="flex items-center bg-gray-200 px-6 py-4 text-lg font-semibold">
+					{member.player.battletag}
+				</div>
 
-			<div class="flex items-center gap-2 bg-gray-200 pr-2">
-				<Select
-					type="single"
-					triggerClass="grow"
-					bind:value={member.rank}
-					items={enumToPgEnum(Rank).map((rank) => ({
-						label: capitalize(rank),
-						value: rank
-					}))}
-				>
-					{#snippet itemSnippet({ value })}
-						<img src="/rank/{value}.png" alt="" class="-m-1 mr-2 size-8" />
-					{/snippet}
-				</Select>
+				<div class="flex items-center bg-gray-200 pr-4">
+					<Select
+						type="single"
+						triggerClass="grow"
+						bind:value={member.role}
+						itemIcon={(role) => roleIcon(role as Role)}
+						items={enumToPgEnum(Role).map((role) => ({
+							label: capitalize(role),
+							value: role
+						}))}
+					/>
+				</div>
 
-				<Select
-					type="single"
-					triggerClass="w-1/4"
-					bind:value={() => member.tier.toString(), (str) => parseInt(str)}
-					items={[1, 2, 3, 4, 5].map((tier) => ({
-						label: tier.toString(),
-						value: tier.toString()
-					}))}
-				/>
-			</div>
+				<div class="flex items-center gap-2 bg-gray-200 pr-2">
+					<Select
+						type="single"
+						triggerClass="grow"
+						bind:value={member.rank}
+						items={enumToPgEnum(Rank).map((rank) => ({
+							label: capitalize(rank),
+							value: rank
+						}))}
+					>
+						{#snippet itemSnippet({ value })}
+							<img src="/rank/{value}.png" alt="" class="-m-1 mr-2 size-8" />
+						{/snippet}
+					</Select>
 
-			<div class="flex items-center bg-gray-200 pr-4">
-				<Button title="Ta bort" icon="mdi:remove" kind="tertiary" />
-			</div>
-		{/snippet}
-	</Table>
+					<Select
+						type="single"
+						triggerClass="w-1/4"
+						bind:value={() => member.tier.toString(), (str) => (member.tier = parseInt(str))}
+						items={[1, 2, 3, 4, 5].map((tier) => ({
+							label: tier.toString(),
+							value: tier.toString()
+						}))}
+					/>
+				</div>
+
+				<div class="flex items-center bg-gray-200 pr-4">
+					<Button
+						title="Ta bort"
+						icon="mdi:remove"
+						kind="tertiary"
+						onclick={() => roster.members.splice(index, 1)}
+					/>
+				</div>
+			{/snippet}
+		</Table>
+
+		<Button kind="primary" icon="mdi:add" onclick={() => (newPlayerOpen = true)} />
+	{/if}
 </AdminCard>
 
 <AdminCard title="Sociala medier">
@@ -240,81 +267,6 @@
 
 <form>
 	<div>
-		<h2 class="text-xl font-semibold">Spelare</h2>
-
-		<table class="w-full">
-			<thead>
-				<tr>
-					<th>Battletag</th>
-					<th>Roll</th>
-					<th>Rank</th>
-					<th>Kapten</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-				{#each roster.members as member, i}
-					<tr>
-						<td>
-							{member.player.battletag}
-						</td>
-						<td>
-							<select bind:value={member.role}>
-								<option value="tank">Tank</option>
-								<option value="damage">Damage</option>
-								<option value="support">Support</option>
-							</select>
-						</td>
-						<td>
-							<div class="inline-block">
-								<select bind:value={member.rank}>
-									<option value="bronze">Bronze</option>
-									<option value="silver">Silver</option>
-									<option value="gold">Gold</option>
-									<option value="platinum">Platinum</option>
-									<option value="diamond">Diamond</option>
-									<option value="master">Master</option>
-									<option value="grandmaster">Grandmaster</option>
-									<option value="champion">Champion</option>
-								</select>
-							</div>
-							<div class="inline-block">
-								<select
-									bind:value={() => member.tier.toString(), (str) => (member.tier = parseInt(str))}
-								>
-									<option value="1">1</option>
-									<option value="2">2</option>
-									<option value="3">3</option>
-									<option value="4">4</option>
-									<option value="5">5</option>
-								</select>
-							</div>
-						</td>
-						<td>
-							<input type="checkbox" bind:checked={member.isCaptain} />
-						</td>
-						<td> </td>
-					</tr>
-				{/each}
-				<tr>
-					<td>
-						<input
-							type="text"
-							placeholder="Battletag"
-							bind:value={newBattletag}
-							onchange={addNewPlayer}
-						/>
-					</td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-
-	<div>
 		<h2 class="text-xl font-semibold">Alla rosters</h2>
 
 		<table class="w-full">
@@ -365,16 +317,6 @@
 			<button onclick={submitNewRoster}>Skapa roster</button>
 		</div>
 	</div>
-
-	<button
-		class="block bg-black px-4 py-2 text-white"
-		onclick={async (evt) => {
-			evt.preventDefault();
-			await submitEdit();
-		}}
-	>
-		Spara
-	</button>
 </form>
 
 <Dialog
@@ -400,14 +342,37 @@
 			type="single"
 			triggerClass="grow"
 			bind:value={newPlatform}
+			itemIcon={(platform) => `mdi:${platform}`}
 			items={remainingPlatforms.map((platform) => ({
 				label: formatSocialPlatform(platform),
-				value: platform,
-				icon: `mdi:${platform}`
+				value: platform
 			}))}
 		/>
 	</Label>
 	<Label label="URL">
 		<InputField bind:value={newSocialUrl} placeholder="https://x.com/..." />
+	</Label>
+</Dialog>
+
+<Dialog
+	title="Lägg till spelare"
+	bind:open={newPlayerOpen}
+	buttons={[
+		{
+			label: 'Avbryt',
+			kind: 'secondary',
+			onclick: resetNewPlayer
+		},
+		{
+			icon: 'mdi:create',
+			label: 'Skapa',
+			kind: 'primary',
+			onclick: addNewPlayer,
+			disabled: !newPlayerBattletag
+		}
+	]}
+>
+	<Label label="Battletag">
+		<InputField bind:value={newPlayerBattletag} placeholder="Spelare#0000" />
 	</Label>
 </Dialog>

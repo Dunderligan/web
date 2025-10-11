@@ -1,6 +1,5 @@
 import { db, schema } from '$lib/server/db';
 import { nestedGroupQuery } from '$lib/server/db/helpers';
-import type { FullRoster } from '$lib/types';
 import { error } from '@sveltejs/kit';
 import { eq, and } from 'drizzle-orm';
 
