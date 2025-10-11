@@ -175,7 +175,7 @@ export function capitalize(str: string) {
 export function roleIcon(role: Role): string {
 	switch (role) {
 		case 'tank':
-			return 'mdi:shield';
+			return 'mdi:shield-outline';
 		case 'damage':
 			return 'mdi:sword-cross';
 		case 'support':
@@ -190,4 +190,15 @@ export function aggregateGroups<R, M>(groups: { rosters: R[]; matches: M[] }[]) 
 		rosters: groups.flatMap((group) => group.rosters),
 		matches: groups.flatMap((group) => group.matches)
 	};
+}
+
+export function mapEmptyToUndefined(str: string) {
+	if (str.length === 0) return undefined;
+	return str;
+}
+
+export function enumToPgEnum<T extends Record<string, any>>(
+	myEnum: T
+): [T[keyof T], ...T[keyof T][]] {
+	return Object.values(myEnum).map((value: any) => `${value}`) as any;
 }

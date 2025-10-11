@@ -107,3 +107,5 @@ export type MatchRoster = {
 	name: string;
 	slug: string;
 };
+
+export type ButtonKind = 'primary' | 'secondary' | 'tertiary' | 'transparent' | 'negative';

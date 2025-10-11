@@ -35,7 +35,7 @@
 		</div>
 	{/each}
 
-	{#each rows as value, index (key?.(value))}
+	{#each rows as value, index (key?.(value) ?? value)}
 		{@render row({ value, index })}
 	{/each}
 </div>

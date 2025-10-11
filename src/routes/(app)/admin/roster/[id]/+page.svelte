@@ -3,13 +3,22 @@
 	import AdminCard from '$lib/components/AdminCard.svelte';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import Dialog from '$lib/components/Dialog.svelte';
 	import Icon from '$lib/components/Icon.svelte';
 	import InputField from '$lib/components/InputField.svelte';
 	import Label from '$lib/components/Label.svelte';
 	import Notice from '$lib/components/Notice.svelte';
 	import RosterLogo from '$lib/components/RosterLogo.svelte';
+	import Select from '$lib/components/Select.svelte';
+	import Table from '$lib/components/Table.svelte';
 	import { Rank, Role, SocialPlatform } from '$lib/types';
-	import { formatSocialPlatform, flattenGroup, capitalize } from '$lib/util';
+	import {
+		formatSocialPlatform,
+		flattenGroup,
+		capitalize,
+		enumToPgEnum,
+		roleIcon
+	} from '$lib/util';
 	import { createRoster, editRoster, uploadLogo } from './page.remote';
 
 	let { data } = $props();
@@ -31,6 +40,7 @@
 		)
 	);
 
+	let newSocialOpen = $state(false);
 	let newPlatform = $state(SocialPlatform.TWITTER);
 	let newSocialUrl = $state('');
 
@@ -69,11 +79,16 @@
 			url: newSocialUrl
 		});
 
+		resetNewSocial();
+	}
+
+	function resetNewSocial() {
+		newSocialOpen = false;
+		newSocialUrl = '';
+
 		if (remainingPlatforms.length > 0) {
 			newPlatform = remainingPlatforms[0];
 		}
-
-		newSocialUrl = '';
 	}
 
 	async function submitNewRoster() {
@@ -98,11 +113,76 @@
 	]}
 />
 
-<AdminCard title="Medlemmar"></AdminCard>
+<AdminCard title="Medlemmar">
+	<Table
+		columns={[{ label: 'Battletag', center: false }, 'Roll', 'Rank', '']}
+		rows={roster.members}
+		class="grid-cols-[1fr_160px_250px_50px]"
+	>
+		{#snippet row({ value: member })}
+			<div class="flex items-center bg-gray-200 px-6 py-4 text-lg font-semibold">
+				{member.player.battletag}
+			</div>
+
+			<div class="flex items-center bg-gray-200 pr-4">
+				<Select
+					type="single"
+					triggerClass="grow"
+					bind:value={member.role}
+					itemIcon={(role) => roleIcon(role as Role)}
+					items={enumToPgEnum(Role).map((role) => ({
+						label: capitalize(role),
+						value: role
+					}))}
+				/>
+			</div>
+
+			<div class="flex items-center gap-2 bg-gray-200 pr-2">
+				<Select
+					type="single"
+					triggerClass="grow"
+					bind:value={member.rank}
+					items={enumToPgEnum(Rank).map((rank) => ({
+						label: capitalize(rank),
+						value: rank
+					}))}
+				>
+					{#snippet itemSnippet({ value })}
+						<img src="/rank/{value}.png" alt="" class="-m-1 mr-2 size-8" />
+					{/snippet}
+				</Select>
+
+				<Select
+					type="single"
+					triggerClass="w-1/4"
+					bind:value={() => member.tier.toString(), (str) => parseInt(str)}
+					items={[1, 2, 3, 4, 5].map((tier) => ({
+						label: tier.toString(),
+						value: tier.toString()
+					}))}
+				/>
+			</div>
+
+			<div class="flex items-center bg-gray-200 pr-4">
+				<Button title="Ta bort" icon="mdi:remove" kind="tertiary" />
+			</div>
+		{/snippet}
+	</Table>
+</AdminCard>
 
 <AdminCard title="Sociala medier">
 	{#if team.socials.length === 0}
-		<Notice kind="info">Detta lag har inga sociala medier kopplade.</Notice>
+		<Notice kind="info"
+			>Detta lag har inga länkade sociala medier.
+
+			<Button
+				icon="mdi:add"
+				label="Lägg till"
+				kind="transparent"
+				class="ml-auto"
+				onclick={() => (newSocialOpen = true)}
+			/>
+		</Notice>
 	{:else}
 		<div class="space-y-1.5 overflow-hidden rounded-lg py-1">
 			{#each team.socials as social, i (social.platform)}
@@ -124,9 +204,11 @@
 				</Label>
 			{/each}
 		</div>
-	{/if}
 
-	<Button icon="mdi:add" kind="secondary" />
+		{#if remainingPlatforms.length > 0}
+			<Button icon="mdi:add" kind="secondary" onclick={() => (newSocialOpen = true)} />
+		{/if}
+	{/if}
 </AdminCard>
 
 <AdminCard title="Inställningar">
@@ -233,51 +315,6 @@
 	</div>
 
 	<div>
-		<h2 class="text-xl font-semibold">Sociala medier</h2>
-
-		<table class="w-full">
-			<thead>
-				<tr>
-					<th>Platform</th>
-					<th>URL</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-				{#each team.socials as social, i (social.platform)}
-					<tr>
-						<td>
-							{formatSocialPlatform(social.platform)}
-						</td>
-
-						<td>
-							<input class="w-full" type="text" bind:value={social.url} placeholder="URL" />
-						</td>
-
-						<td>
-							<button onclick={() => team.socials.splice(i, 1)}>Ta bort</button>
-						</td>
-					</tr>
-				{/each}
-			</tbody>
-		</table>
-
-		{#if remainingPlatforms.length > 0}
-			<div class="mt-2">
-				<select bind:value={newPlatform}>
-					{#each remainingPlatforms as platform}
-						<option value={platform}>{formatSocialPlatform(platform)}</option>
-					{/each}
-				</select>
-
-				<input type="text" bind:value={newSocialUrl} placeholder="URL" />
-
-				<button onclick={addSocial}>Lägg till</button>
-			</div>
-		{/if}
-	</div>
-
-	<div>
 		<h2 class="text-xl font-semibold">Alla rosters</h2>
 
 		<table class="w-full">
@@ -339,3 +376,38 @@
 		Spara
 	</button>
 </form>
+
+<Dialog
+	title="Lägg till social media"
+	bind:open={newSocialOpen}
+	buttons={[
+		{
+			label: 'Avbryt',
+			kind: 'secondary',
+			onclick: resetNewSocial
+		},
+		{
+			icon: 'mdi:create',
+			label: 'Skapa',
+			kind: 'primary',
+			onclick: addSocial,
+			disabled: !newSocialUrl || !newPlatform
+		}
+	]}
+>
+	<Label label="Platform">
+		<Select
+			type="single"
+			triggerClass="grow"
+			bind:value={newPlatform}
+			items={remainingPlatforms.map((platform) => ({
+				label: formatSocialPlatform(platform),
+				value: platform,
+				icon: `mdi:${platform}`
+			}))}
+		/>
+	</Label>
+	<Label label="URL">
+		<InputField bind:value={newSocialUrl} placeholder="https://x.com/..." />
+	</Label>
+</Dialog>

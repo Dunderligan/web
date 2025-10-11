@@ -10,6 +10,6 @@
 	let { class: classProp, collapse, rank, tier }: Props = $props();
 </script>
 
-<img src="/rank/{rank}.webp" alt="" class={[classProp, 'mr-2 inline size-6']} />
+<img src="/rank/{rank}.png" alt="" class={[classProp, 'mr-2 inline size-7']} />
 <span class={['mr-1', collapse && 'hidden sm:inline']}>{capitalize(rank)}</span>
 <span>{tier}</span>

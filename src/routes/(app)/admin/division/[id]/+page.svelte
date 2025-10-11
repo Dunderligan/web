@@ -131,7 +131,8 @@
 		<Notice kind="info">
 			Denna division har inget bracket.
 
-			<Button kind="tertiary" label="Generera" class="ml-auto" onclick={generate}></Button>
+			<Button kind="transparent" icon="mdi:add" label="Generera" class="ml-auto" onclick={generate}
+			></Button>
 		</Notice>
 	{/if}
 </AdminCard>
