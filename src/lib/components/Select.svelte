@@ -113,7 +113,7 @@
 											<span>{item.label}</span>
 
 											{#if selected}
-												<Icon icon="mdi:check" class="ml-auto text-lg text-accent-400" />
+												<Icon icon="mdi:circle" class="ml-auto text-xs text-accent-400" />
 											{/if}
 										{/snippet}
 									</Select.Item>

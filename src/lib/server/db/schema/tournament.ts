@@ -14,7 +14,7 @@ import {
 import { timestamps } from '../helpers';
 import { relations, sql } from 'drizzle-orm';
 import { MatchType, Rank, Role, SocialPlatform } from '../../../types';
-import { enumToPgEnum } from '$lib/util';
+import { enumToPgEnum } from '../../../util';
 
 export const season = pgTable('season', {
 	id: uuid().primaryKey().defaultRandom(),
@@ -193,8 +193,8 @@ export const match = pgTable('match', {
 	groupId: uuid().references(() => group.id, { onDelete: 'cascade' }),
 	// for bracket matches
 	divisionId: uuid().references(() => division.id, { onDelete: 'cascade' }),
-	rosterAId: uuid().references(() => roster.id, { onDelete: 'restrict' }),
-	rosterBId: uuid().references(() => roster.id, { onDelete: 'restrict' }),
+	rosterAId: uuid().references(() => roster.id, { onDelete: 'set null' }),
+	rosterBId: uuid().references(() => roster.id, { onDelete: 'set null' }),
 	teamAScore: integer(),
 	teamBScore: integer(),
 	draws: integer(),

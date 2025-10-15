@@ -5,8 +5,12 @@
 	import Footer from '$lib/components/Footer.svelte';
 	import Navbar from '$lib/components/Navbar.svelte';
 	import { page } from '$app/state';
+	import { ConfirmState } from '$lib/state/confirm.svelte';
+	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
 
 	let { children } = $props();
+
+	ConfirmState.set(new ConfirmState());
 </script>
 
 <svelte:head>
@@ -20,3 +24,5 @@
 {@render children()}
 
 <Footer />
+
+<ConfirmDialog />

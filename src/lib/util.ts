@@ -7,7 +7,7 @@ import {
 	type Role,
 	type FullMatch
 } from './types';
-import { PUBLIC_CDN_ENDPOINT } from '$env/static/public';
+// import { PUBLIC_CDN_ENDPOINT } from '$env/static/public';
 
 const rankNums: Record<Rank, number> = {
 	bronze: 0,
@@ -164,7 +164,8 @@ export function cdnImageSrc(path: string, { width, height }: { width: number; he
 		filters += `,height=${height}`;
 	}
 
-	return `${PUBLIC_CDN_ENDPOINT}/cdn-cgi/image/${filters}/dunderligan${path}`;
+	// return `${PUBLIC_CDN_ENDPOINT}/cdn-cgi/image/${filters}/dunderligan${path}`;
+	return `https://cdn.kesomannen.com/cdn-cgi/image/${filters}/dunderligan${path}`;
 }
 
 export function capitalize(str: string) {

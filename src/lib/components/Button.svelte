@@ -3,10 +3,13 @@
 	import type { Snippet } from 'svelte';
 	import Icon from './Icon.svelte';
 	import type { ButtonKind } from '$lib/types';
+	import { fly } from 'svelte/transition';
+	import { expoOut } from 'svelte/easing';
 
 	type Props = {
 		icon?: string;
 		kind?: ButtonKind;
+		loading?: boolean;
 	} & (
 		| { children: Snippet; label?: never; icon?: never }
 		| {
@@ -23,14 +26,19 @@
 		WithoutChildren<ButtonRootProps>;
 
 	let {
-		icon,
+		icon: iconProp,
 		children,
-		disabled,
+		loading,
+		disabled: disabledProp,
 		label,
 		class: classProp,
 		kind = 'primary',
+		href,
 		...props
 	}: Props = $props();
+
+	const disabled = $derived(disabledProp || loading);
+	const icon = $derived(loading ? 'mdi:loading' : iconProp);
 
 	const typeClass = $derived(
 		disabled
@@ -38,7 +46,7 @@
 			: {
 					primary: 'bg-accent-600 enabled:hover:bg-accent-700 font-semibold text-white',
 					secondary: 'bg-gray-400 enabled:hover:bg-gray-500 font-semibold text-white',
-					tertiary: 'text-gray-600 enabled:hover:bg-gray-100',
+					tertiary: 'text-gray-500 font-medium enabled:hover:bg-gray-100 underline',
 					transparent: 'text-accent-800 enabled:hover:bg-accent-100 enabled:active:bg-accent-200',
 					negative:
 						'bg-red-700 enabled:hover:bg-red-600 font-semibold text-red-100 enabled:hover:text-white'
@@ -46,7 +54,8 @@
 	);
 </script>
 
-<Button.Root
+<svelte:element
+	this={href ? 'a' : 'button'}
 	class={[
 		classProp,
 		typeClass,
@@ -55,15 +64,16 @@
 		'flex items-center justify-center gap-2 rounded-lg transition-colors'
 	]}
 	{disabled}
+	{href}
 	{...props}
 >
 	{#if children}
 		{@render children()}
 	{:else}
 		{#if icon}
-			<Icon {icon} class="text-lg" />
+			<Icon {icon} class={[loading && 'animate-spin', 'text-lg']} />
 		{/if}
 
 		{label}
 	{/if}
-</Button.Root>
+</svelte:element>

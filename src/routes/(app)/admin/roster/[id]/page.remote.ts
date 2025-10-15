@@ -187,3 +187,12 @@ export const createRoster = command(
 		});
 	}
 );
+
+export const deleteRoster = command(
+	z.object({
+		id: z.uuid()
+	}),
+	async ({ id }) => {
+		await db.delete(schema.roster).where(eq(schema.roster.id, id));
+	}
+);

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { ConfirmState } from '$lib/state/confirm.svelte';
+
 	let { children } = $props();
 </script>
 

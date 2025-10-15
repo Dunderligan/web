@@ -9,8 +9,10 @@
 	import Label from '$lib/components/Label.svelte';
 	import Notice from '$lib/components/Notice.svelte';
 	import RosterLogo from '$lib/components/RosterLogo.svelte';
+	import SaveToast from '$lib/components/SaveToast.svelte';
 	import Select from '$lib/components/Select.svelte';
 	import Table from '$lib/components/Table.svelte';
+	import { ConfirmState } from '$lib/state/confirm.svelte';
 	import { Rank, Role, SocialPlatform } from '$lib/types';
 	import {
 		formatSocialPlatform,
@@ -19,7 +21,7 @@
 		enumToPgEnum,
 		roleIcon
 	} from '$lib/util';
-	import { createRoster, editRoster, uploadLogo } from './page.remote';
+	import { createRoster, deleteRoster, editRoster, uploadLogo } from './page.remote';
 
 	let { data } = $props();
 
@@ -47,7 +49,10 @@
 
 	let newGroupId = $state('');
 
-	async function submitEdit() {
+	let dirty = $state(false);
+	let confirmState = ConfirmState.get();
+
+	async function save() {
 		const { slug } = await editRoster({
 			id: roster.id,
 			teamId: team.id,
@@ -56,7 +61,8 @@
 			socials: team.socials
 		});
 
-		await goto(`/lag/${season.slug}/${slug}`);
+		// await goto(`/lag/${season.slug}/${slug}`);
+		dirty = false;
 	}
 
 	async function addNewPlayer() {
@@ -85,6 +91,8 @@
 			url: newSocialUrl
 		});
 
+		markDirty();
+
 		resetNewSocial();
 	}
 
@@ -106,7 +114,25 @@
 
 		newGroupId = '';
 
-		await goto(`admin/roster/${roster.id}`);
+		markDirty();
+
+		await goto(`/admin/roster/${roster.id}`);
+	}
+
+	async function submitDelete() {
+		if (!(await confirmState.show('Är du säker?', 'Är du säker?'))) {
+			return;
+		}
+
+		await deleteRoster({
+			id: roster.id
+		});
+
+		await goto(`/admin/grupp/${group.id}`);
+	}
+
+	function markDirty() {
+		dirty = true;
 	}
 </script>
 
@@ -148,6 +174,7 @@
 						type="single"
 						triggerClass="grow"
 						bind:value={member.role}
+						onValueChange={markDirty}
 						itemIcon={(role) => roleIcon(role as Role)}
 						items={enumToPgEnum(Role).map((role) => ({
 							label: capitalize(role),
@@ -161,6 +188,7 @@
 						type="single"
 						triggerClass="grow"
 						bind:value={member.rank}
+						onValueChange={markDirty}
 						items={enumToPgEnum(Rank).map((rank) => ({
 							label: capitalize(rank),
 							value: rank
@@ -175,6 +203,7 @@
 						type="single"
 						triggerClass="w-1/4"
 						bind:value={() => member.tier.toString(), (str) => (member.tier = parseInt(str))}
+						onValueChange={markDirty}
 						items={[1, 2, 3, 4, 5].map((tier) => ({
 							label: tier.toString(),
 							value: tier.toString()
@@ -187,7 +216,10 @@
 						title="Ta bort"
 						icon="mdi:remove"
 						kind="tertiary"
-						onclick={() => roster.members.splice(index, 1)}
+						onclick={() => {
+							roster.members.splice(index, 1);
+							markDirty();
+						}}
 					/>
 				</div>
 			{/snippet}
@@ -226,7 +258,10 @@
 						class="ml-2"
 						kind="tertiary"
 						title="Radera"
-						onclick={() => team.socials.splice(i, 1)}
+						onclick={() => {
+							team.socials.splice(i, 1);
+							markDirty();
+						}}
 					/>
 				</Label>
 			{/each}
@@ -240,7 +275,7 @@
 
 <AdminCard title="Inställningar">
 	<Label label="Namn">
-		<InputField bind:value={roster.name} />
+		<InputField bind:value={roster.name} oninput={markDirty} />
 	</Label>
 
 	<Label label="Logotyp">
@@ -262,7 +297,7 @@
 		</form>
 	</Label>
 
-	<Button icon="mdi:delete" label="Radera roster" kind="negative" />
+	<Button icon="mdi:delete" label="Radera roster" kind="negative" onclick={submitDelete} />
 </AdminCard>
 
 <form>
@@ -376,3 +411,5 @@
 		<InputField bind:value={newPlayerBattletag} placeholder="Spelare#0000" />
 	</Label>
 </Dialog>
+
+<SaveToast bind:open={dirty} onsave={save} />
