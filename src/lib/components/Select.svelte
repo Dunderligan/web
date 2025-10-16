@@ -7,30 +7,32 @@
 	import { quadOut } from 'svelte/easing';
 	import type { Snippet } from 'svelte';
 
+	type LabelDecoration =
+		| {
+				label?: never;
+		  }
+		| {
+				placeholder?: never;
+				label: string;
+		  };
+
+	type ItemDecoration =
+		| {
+				itemIcon?: (value: string) => string;
+				itemSnippet?: never;
+		  }
+		| {
+				itemIcon?: never;
+				itemSnippet?: Snippet<[{ value: string }]>;
+		  };
+
 	type Props = WithoutChildren<Select.RootProps> & {
 		placeholder?: string;
 		items: { value: string; label: string; disabled?: boolean }[];
 		triggerClass?: string;
 		avoidCollisions?: boolean;
-	} & (
-			| {
-					label?: never;
-			  }
-			| {
-					placeholder?: never;
-					label: string;
-			  }
-		) &
-		(
-			| {
-					itemIcon?: (value: string) => string;
-					itemSnippet?: never;
-			  }
-			| {
-					itemIcon?: never;
-					itemSnippet?: Snippet<[{ value: string }]>;
-			  }
-		);
+	} & LabelDecoration &
+		ItemDecoration;
 
 	let {
 		open = $bindable(false),
@@ -42,6 +44,7 @@
 		label,
 		itemIcon,
 		itemSnippet,
+		disabled,
 		...restProps
 	}: Props = $props();
 
@@ -61,11 +64,11 @@
 	);
 </script>
 
-<Select.Root bind:value={value as never} bind:open {...restProps}>
+<Select.Root bind:value={value as never} bind:open {disabled} {...restProps}>
 	<Select.Trigger
 		class={[
 			triggerClass,
-			'group flex items-center overflow-hidden rounded-lg border border-transparent bg-gray-100 py-2 pr-2 pl-4 font-medium text-gray-800'
+			'group flex items-center overflow-hidden rounded-lg border border-transparent bg-gray-100 py-2 pr-2 pl-4 font-medium text-gray-800 ring-accent-600 transition-all duration-75 data-[disabled]:cursor-not-allowed data-[disabled]:bg-gray-200 data-[disabled]:text-gray-500 data-[state=open]:bg-white data-[state=open]:ring-2'
 		]}
 	>
 		{#if selectedItem}
@@ -83,7 +86,7 @@
 
 		<Icon
 			icon="mdi:arrow-down-drop"
-			class={[open && 'rotate-180', 'ml-auto transform text-xl text-gray-400']}
+			class={[open && 'rotate-180', 'ml-auto transform text-lg text-gray-400']}
 		/>
 	</Select.Trigger>
 	<Select.Portal>

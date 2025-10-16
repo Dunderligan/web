@@ -1,10 +1,8 @@
 <script lang="ts">
-	import { Button, type ButtonRootProps, type WithoutChildren } from 'bits-ui';
+	import { type ButtonRootProps, type WithoutChildren } from 'bits-ui';
 	import type { Snippet } from 'svelte';
 	import Icon from './Icon.svelte';
 	import type { ButtonKind } from '$lib/types';
-	import { fly } from 'svelte/transition';
-	import { expoOut } from 'svelte/easing';
 
 	type Props = {
 		icon?: string;
@@ -44,12 +42,11 @@
 		disabled
 			? 'text-gray-500 bg-gray-200 font-medium'
 			: {
-					primary: 'bg-accent-600 enabled:hover:bg-accent-700 font-semibold text-white',
-					secondary: 'bg-gray-500 enabled:hover:bg-gray-600 font-semibold text-white',
-					tertiary: 'text-gray-500 font-medium enabled:hover:bg-gray-100 underline',
-					transparent: 'text-accent-800 enabled:hover:bg-accent-100 enabled:active:bg-accent-200',
-					negative:
-						'bg-red-700 enabled:hover:bg-red-600 font-semibold text-red-100 enabled:hover:text-white'
+					primary: 'bg-accent-600 hover:bg-accent-700 font-semibold text-white',
+					secondary: 'bg-gray-500 hover:bg-gray-600 font-semibold text-white',
+					tertiary: 'text-gray-500 font-medium hover:bg-gray-100 underline',
+					transparent: 'text-accent-800 hover:bg-accent-100 active:bg-accent-200',
+					negative: 'bg-red-700 hover:bg-red-600 font-semibold text-red-100 hover:text-white'
 				}[kind]
 	);
 </script>

@@ -44,6 +44,10 @@ export const generateBracket = command(
 	async ({ divisionId }) => {
 		const { rosters, groupMatches } = await aggregateGroups(divisionId);
 
+		if (rosters.length < 2) {
+			return { rounds: [] };
+		}
+
 		sortBySeed(rosters, groupMatches);
 
 		const numberOfRounds = Math.ceil(Math.log2(rosters.length));
@@ -144,14 +148,20 @@ function createMatch(divisionId: string, order: number, nextMatchId?: string): F
 	};
 }
 
-export const updateBracket = command(
+export const updateDivision = command(
 	z.object({
-		matches: z.array(matchSchema)
+		id: z.uuid(),
+		name: z.string().nonempty(),
+		bracketMatches: z.array(matchSchema)
 	}),
-	async ({ matches }) => {
+	async ({ id, name, bracketMatches }) => {
 		await db.transaction(async (tx) => {
+			const slug = toSlug(name);
+
+			await tx.update(schema.division).set({ slug, name }).where(eq(schema.division.id, id));
+
 			await Promise.all(
-				matches.map((match) => {
+				bracketMatches.map((match) => {
 					return tx.update(schema.match).set(match).where(eq(schema.match.id, match.id));
 				})
 			);

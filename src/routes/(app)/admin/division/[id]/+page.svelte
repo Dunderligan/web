@@ -1,13 +1,21 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import AdminCard from '$lib/components/AdminCard.svelte';
+	import AdminEmptyNotice from '$lib/components/AdminEmptyNotice.svelte';
 	import AdminLink from '$lib/components/AdminLink.svelte';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import CreateDialog from '$lib/components/CreateDialog.svelte';
+	import Dialog from '$lib/components/Dialog.svelte';
 	import EditableMatch from '$lib/components/EditableMatch.svelte';
 	import EditMatchDialog from '$lib/components/EditMatchDialog.svelte';
+	import InputField from '$lib/components/InputField.svelte';
+	import Label from '$lib/components/Label.svelte';
 	import Notice from '$lib/components/Notice.svelte';
+	import SaveToast from '$lib/components/SaveToast.svelte';
+	import { ConfirmContext } from '$lib/state/confirm.svelte';
 	import { RosterContext } from '$lib/state/rosters.svelte';
+	import { SaveContext } from '$lib/state/save.svelte';
 	import type { FullMatch } from '$lib/types';
 	import { buildBracket } from '$lib/util';
 	import {
@@ -15,36 +23,45 @@
 		deleteBracket,
 		deleteDivision,
 		generateBracket,
-		updateBracket
+		updateDivision
 	} from './page.remote';
 
 	const { data } = $props();
 
-	const { division } = $derived(data);
+	const division = $state(data.division);
 	const { season } = $derived(division);
 
 	RosterContext.set(new RosterContext(data.division.groups.flatMap((group) => group.rosters)));
+	SaveContext.set(new SaveContext(save));
 
-	let createDialogOpen = $state(false);
+	const saveCtx = SaveContext.get();
+	const confirmCtx = ConfirmContext.get();
+
+	let createGroupOpen = $state(false);
 	let newGroupName = $state('');
 
-	async function onDeleteDivision() {
-		await deleteDivision({
-			id: division.id
-		});
+	async function submitDelete() {
+		await confirmCtx.confirm({
+			title: 'Radera division',
+			description: `Är du säker på att du vill radera ${division.name}, ${season.name}?`,
+			negative: true,
+			action: async () => {
+				await deleteDivision({
+					id: division.id
+				});
 
-		await goto(`/admin/sasong/${season.id}`);
+				await goto(`/admin/sasong/${season.id}`);
+			}
+		});
 	}
 
-	async function submitGroup() {
+	async function submitNewGroup() {
 		const { group } = await createGroup({
 			name: newGroupName,
 			divisionId: division.id
 		});
 
-		division.groups.push({ rosters: [], ...group });
-		createDialogOpen = false;
-		newGroupName = '';
+		await goto(`/admin/grupp/${group.id}`);
 	}
 
 	let rounds: FullMatch[][] = $state(buildBracket(data.matches));
@@ -58,8 +75,10 @@
 	}
 
 	async function save() {
-		await updateBracket({
-			matches: rounds.flatMap((round) => round)
+		await updateDivision({
+			id: division.id,
+			name: division.name,
+			bracketMatches: rounds.flatMap((round) => round)
 		});
 	}
 
@@ -104,13 +123,21 @@
 />
 
 <AdminCard title="Grupper">
-	<div class="space-y-1 overflow-hidden rounded-lg">
-		{#each division.groups as { id, name } (id)}
-			<AdminLink href="/admin/grupp/{id}">
-				{name}
-			</AdminLink>
-		{/each}
-	</div>
+	{#if division.groups.length === 0}
+		<AdminEmptyNotice bind:createDialogOpen={createGroupOpen}>
+			Denna division har inga grupper.
+		</AdminEmptyNotice>
+	{:else}
+		<div class="space-y-1 overflow-hidden rounded-lg">
+			{#each division.groups as { id, name } (id)}
+				<AdminLink href="/admin/grupp/{id}">
+					{name}
+				</AdminLink>
+			{/each}
+		</div>
+
+		<Button icon="mdi:add" onclick={() => (createGroupOpen = true)} />
+	{/if}
 </AdminCard>
 
 <AdminCard title="Slutspel">
@@ -137,7 +164,27 @@
 </AdminCard>
 
 <AdminCard title="Inställningar">
-	<Button icon="mdi:trash-can" label="Radera division" kind="negative" onclick={onDeleteDivision} />
+	<Label label="Namn">
+		<InputField bind:value={division.name} oninput={saveCtx.setDirty} />
+	</Label>
+
+	<Button icon="mdi:trash-can" label="Radera division" kind="negative" onclick={submitDelete} />
 </AdminCard>
 
 <EditMatchDialog />
+
+<CreateDialog
+	title="Skapa grupp"
+	bind:open={createGroupOpen}
+	oncreate={submitNewGroup}
+	onclose={() => {
+		newGroupName = '';
+	}}
+	disabled={!newGroupName}
+>
+	<Label label="Namn">
+		<InputField bind:value={newGroupName} placeholder="T.ex. Grupp A..." onenter={submitNewGroup} />
+	</Label>
+</CreateDialog>
+
+<SaveToast />

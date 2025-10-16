@@ -4,6 +4,18 @@ import { toSlug } from '$lib/util';
 import { eq } from 'drizzle-orm';
 import * as z from 'zod';
 
+export const editSeason = command(
+	z.object({
+		id: z.uuidv4(),
+		name: z.string().nonempty()
+	}),
+	async ({ id, name }) => {
+		const slug = toSlug(name.split(' ').at(-1) ?? name);
+
+		await db.update(schema.season).set({ name, slug }).where(eq(schema.season.id, id));
+	}
+);
+
 export const createDivision = command(
 	z.object({
 		name: z.string(),

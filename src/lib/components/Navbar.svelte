@@ -28,10 +28,6 @@
 			label: 'Ställningar'
 		},
 		{
-			href: '/',
-			label: 'Arkiv'
-		},
-		{
 			href: '/om',
 			label: 'Om oss'
 		},

@@ -1,18 +1,29 @@
 <script lang="ts">
 	import { RosterContext } from '$lib/state/rosters.svelte';
+	import Select from './Select.svelte';
 
 	type Props = {
 		selectedId?: string | null;
 		disabled?: boolean;
+		onValueChange?: () => void;
 	};
 
-	let { selectedId = $bindable(), disabled }: Props = $props();
+	let { selectedId = $bindable(), disabled, onValueChange }: Props = $props();
 
 	const rosters = RosterContext.get();
 </script>
 
-<select bind:value={selectedId} {disabled}>
-	{#each rosters.map as [id, { name }] (id)}
-		<option value={id}>{name}</option>
-	{/each}
-</select>
+<Select
+	type="single"
+	triggerClass="w-full"
+	bind:value={selectedId as string | undefined}
+	items={rosters.map
+		.values()
+		.map((roster) => ({
+			label: roster.name,
+			value: roster.id
+		}))
+		.toArray()}
+	{disabled}
+	{onValueChange}
+/>

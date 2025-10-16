@@ -5,6 +5,7 @@
 	import AdminLink from '$lib/components/AdminLink.svelte';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import CreateDialog from '$lib/components/CreateDialog.svelte';
 	import Dialog from '$lib/components/Dialog.svelte';
 	import EditMatchDialog from '$lib/components/EditMatchDialog.svelte';
 	import InputField from '$lib/components/InputField.svelte';
@@ -30,7 +31,6 @@
 	let addRosterOpen = $state(false);
 	let addRosterMode: 'new' | 'existing' = $state('new');
 	let newRosterName = $state('');
-	let addingRoster = $state(false);
 
 	async function save() {
 		await editGroup({
@@ -55,25 +55,13 @@
 	}
 
 	async function submitNewRoster() {
-		addingRoster = true;
+		const { roster } = await createAndAddRoster({
+			groupId: group.id,
+			seasonSlug: season.slug,
+			name: newRosterName
+		});
 
-		try {
-			const { id } = await createAndAddRoster({
-				groupId: group.id,
-				seasonSlug: season.slug,
-				name: newRosterName
-			});
-
-			await goto(`/admin/roster/${id}`);
-		} finally {
-			addingRoster = false;
-		}
-	}
-
-	function resetNewRoster() {
-		addRosterOpen = false;
-		addRosterMode = 'new';
-		newRosterName = '';
+		await goto(`/admin/roster/${roster.id}`);
 	}
 </script>
 
@@ -114,24 +102,14 @@
 	<Button icon="mdi:trash-can" label="Radera grupp" kind="negative" onclick={submitDelete} />
 </AdminCard>
 
-<Dialog
+<CreateDialog
 	title="Skapa roster"
 	bind:open={addRosterOpen}
-	buttons={[
-		{
-			label: 'Avbryt',
-			kind: 'secondary',
-			disabled: addingRoster,
-			onclick: resetNewRoster
-		},
-		{
-			label: 'Skapa',
-			icon: 'mdi:create',
-			disabled: !newRosterName,
-			loading: addingRoster,
-			onclick: submitNewRoster
-		}
-	]}
+	oncreate={submitNewRoster}
+	onclose={() => {
+		addRosterMode = 'new';
+		newRosterName = '';
+	}}
 >
 	<Label label="Namn">
 		<InputField
@@ -140,22 +118,6 @@
 			onenter={submitNewRoster}
 		/>
 	</Label>
-
-	<!-- <Tabs
-		bind:selected={addRosterMode}
-		items={[
-			{
-				label: 'Nytt lag',
-				value: 'new'
-			},
-			{
-				label: 'Existerande lag',
-				value: 'existing'
-			}
-		]}
-	/>
-
-	{#if addRosterMode === 'new'}{:else}{/if} -->
-</Dialog>
+</CreateDialog>
 
 <SaveToast />

@@ -83,7 +83,13 @@ export type TableScore = {
 
 type MatchWithoutIds = Omit<FullMatch, 'id' | 'groupId' | 'played' | 'order'>;
 
-export function calculateStandings(rosters: { id: string }[], matches: MatchWithoutIds[]) {
+export function calculateStandings(
+	rosters: { id: string }[],
+	matches: MatchWithoutIds[]
+): {
+	rosterId: string;
+	score: TableScore;
+}[] {
 	const rosterScores = new Map<string, TableScore>();
 
 	for (const roster of rosters) {

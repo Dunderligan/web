@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { invalidateAll } from '$app/navigation';
-	import { quadOut, quartOut } from 'svelte/easing';
+	import { quartOut } from 'svelte/easing';
 	import Button from './Button.svelte';
 	import { fly } from 'svelte/transition';
 	import { SaveContext } from '$lib/state/save.svelte';

@@ -1,12 +1,21 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import AdminCard from '$lib/components/AdminCard.svelte';
+	import AdminEmptyNotice from '$lib/components/AdminEmptyNotice.svelte';
+	import AdminLink from '$lib/components/AdminLink.svelte';
+	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
+	import Button from '$lib/components/Button.svelte';
+	import CreateDialog from '$lib/components/CreateDialog.svelte';
 	import Dialog from '$lib/components/Dialog.svelte';
+	import InputField from '$lib/components/InputField.svelte';
+	import Label from '$lib/components/Label.svelte';
 	import { createSeason } from './page.remote.js';
 
 	let { data } = $props();
 
 	let seasons = $state(data.seasons);
 
-	let createDialogOpen = $state(false);
+	let createSeasonOpen = $state(false);
 
 	let newSeasonName = $state('');
 	let newSeasonStartedAt = $state(new Date());
@@ -17,47 +26,45 @@
 			startedAt: newSeasonStartedAt
 		});
 
-		seasons.push(season);
-
-		newSeasonName = '';
-		createDialogOpen = false;
+		await goto(`/admin/sasong/${season.id}`);
 	}
 </script>
 
-<div class="space-y-6">
-	<h1 class="text-4xl font-bold">Admin</h1>
+<Breadcrumbs crumbs={[]} />
 
-	<h1 class="text-2xl font-semibold">Säsonger</h1>
-
-	<table class="w-full">
-		<thead>
-			<tr>
-				<th> Namn </th>
-				<th> Inleddes </th>
-				<th> Avslutades </th>
-			</tr>
-		</thead>
-		<tbody>
-			{#each seasons as season (season.id)}
-				<tr>
-					<td>
-						<a href="/admin/sasong/{season.id}">{season.name}</a>
-					</td>
-					<td>
-						{season.startedAt.toLocaleDateString()}
-					</td>
-					<td>
-						{season.endedAt?.toLocaleDateString() ?? 'N/A'}
-					</td>
-				</tr>
+<AdminCard title="Säsonger">
+	{#if seasons.length === 0}
+		<AdminEmptyNotice bind:createDialogOpen={createSeasonOpen}></AdminEmptyNotice>
+	{:else}
+		<div class="space-y-1 overflow-hidden rounded-lg">
+			{#each seasons as { id, name } (id)}
+				<AdminLink href="/admin/sasong/{id}">
+					{name}
+				</AdminLink>
 			{/each}
-		</tbody>
-	</table>
+		</div>
 
-	<button onclick={() => (createDialogOpen = true)}>Skapa säsong</button>
-</div>
+		<Button icon="mdi:plus" onclick={() => (createSeasonOpen = true)} />
+	{/if}
+</AdminCard>
 
-<Dialog title="Skapa säsong" bind:open={createDialogOpen}>
+<Dialog title="Skapa säsong" bind:open={createSeasonOpen}>
 	<input type="text" bind:value={newSeasonName} placeholder="Namn" />
 	<button onclick={submitNewSeason}>Skapa</button>
 </Dialog>
+
+<CreateDialog
+	title="Skapa säsong"
+	bind:open={createSeasonOpen}
+	oncreate={submitNewSeason}
+	onclose={() => (newSeasonName = '')}
+	disabled={!newSeasonName}
+>
+	<Label label="Namn">
+		<InputField
+			bind:value={newSeasonName}
+			placeholder="T.ex. Säsong 1..."
+			onenter={submitNewSeason}
+		/>
+	</Label>
+</CreateDialog>

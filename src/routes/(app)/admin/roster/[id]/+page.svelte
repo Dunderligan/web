@@ -4,6 +4,7 @@
 	import AdminEmptyNotice from '$lib/components/AdminEmptyNotice.svelte';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import CreateDialog from '$lib/components/CreateDialog.svelte';
 	import Dialog from '$lib/components/Dialog.svelte';
 	import Icon from '$lib/components/Icon.svelte';
 	import InputField from '$lib/components/InputField.svelte';
@@ -88,7 +89,7 @@
 		newPlayerBattletag = '';
 	}
 
-	async function addSocial() {
+	async function submitNewSocial() {
 		team.socials.push({
 			platform: newPlatform,
 			url: newSocialUrl
@@ -350,7 +351,7 @@
 			icon: 'mdi:create',
 			label: 'Skapa',
 			kind: 'primary',
-			onclick: addSocial,
+			onclick: submitNewSocial,
 			disabled: !newSocialUrl || !newPlatform
 		}
 	]}
@@ -372,27 +373,16 @@
 	</Label>
 </Dialog>
 
-<Dialog
+<CreateDialog
 	title="Lägg till spelare"
 	bind:open={newPlayerOpen}
-	buttons={[
-		{
-			label: 'Avbryt',
-			kind: 'secondary',
-			onclick: resetNewPlayer
-		},
-		{
-			icon: 'mdi:create',
-			label: 'Skapa',
-			kind: 'primary',
-			onclick: addNewPlayer,
-			disabled: !newPlayerBattletag
-		}
-	]}
+	onclose={resetNewPlayer}
+	oncreate={addNewPlayer}
+	disabled={!newPlayerBattletag}
 >
 	<Label label="Battletag">
 		<InputField bind:value={newPlayerBattletag} placeholder="Spelare#0000" />
 	</Label>
-</Dialog>
+</CreateDialog>
 
 <SaveToast />

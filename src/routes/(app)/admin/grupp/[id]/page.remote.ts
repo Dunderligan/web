@@ -44,7 +44,7 @@ export const createAndAddRoster = command(
 			})
 			.returning({ id: schema.roster.id });
 
-		return { id: roster.id };
+		return { roster };
 	}
 );
 

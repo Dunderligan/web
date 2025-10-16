@@ -6,9 +6,14 @@
 	type Props = {
 		createDialogOpen: boolean;
 		children?: Snippet;
+		createButtonLabel?: string;
 	};
 
-	let { createDialogOpen = $bindable(false), children }: Props = $props();
+	let {
+		createDialogOpen = $bindable(false),
+		children,
+		createButtonLabel = 'Lägg till'
+	}: Props = $props();
 </script>
 
 <Notice kind="info">
@@ -16,7 +21,7 @@
 
 	<Button
 		icon="mdi:add"
-		label="Lägg till"
+		label={createButtonLabel}
 		kind="transparent"
 		class="ml-auto"
 		onclick={() => (createDialogOpen = true)}
