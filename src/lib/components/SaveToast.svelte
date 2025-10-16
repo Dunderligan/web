@@ -21,6 +21,7 @@
 				kind="tertiary"
 				onclick={context.discard}
 				loading={context.discarding}
+				disabled={context.saving}
 			/>
 
 			<Button
@@ -29,6 +30,7 @@
 				kind="primary"
 				onclick={context.save}
 				loading={context.saving}
+				disabled={context.discarding}
 			/>
 		</div>
 	{/if}

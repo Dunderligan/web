@@ -68,7 +68,7 @@
 	<Select.Trigger
 		class={[
 			triggerClass,
-			'group flex items-center overflow-hidden rounded-lg border border-transparent bg-gray-100 py-2 pr-2 pl-4 font-medium text-gray-800 ring-accent-600 transition-all duration-75 data-[disabled]:cursor-not-allowed data-[disabled]:bg-gray-200 data-[disabled]:text-gray-500 data-[state=open]:bg-white data-[state=open]:ring-2'
+			'group flex items-center overflow-hidden rounded-lg border border-transparent bg-gray-100 py-2 pr-2 pl-4 font-medium text-gray-800 ring-accent-600 transition-all duration-75 data-[disabled]:cursor-not-allowed data-[disabled]:bg-gray-200 data-[disabled]:text-gray-500 data-[state=open]:ring-2'
 		]}
 	>
 		{#if selectedItem}
@@ -96,7 +96,7 @@
 					{#if open}
 						<div
 							{...props}
-							class="z-50 w-[var(--bits-select-anchor-width)] min-w-40 rounded-lg border border-gray-200 bg-white p-1.5 shadow-md"
+							class="z-50 max-h-96 w-[var(--bits-select-anchor-width)] min-w-40 overflow-y-auto rounded-lg border border-gray-200 bg-white p-1.5 shadow-md"
 							in:fly={{ y: -5, duration: 80, easing: quadOut }}
 						>
 							<Select.Viewport>
@@ -107,7 +107,7 @@
 											item.value === value
 												? 'font-medium text-gray-600'
 												: 'font-medium text-gray-500 hover:text-gray-600',
-											'flex cursor-pointer items-center rounded-md px-4 py-1.5 text-left hover:bg-gray-100'
+											'flex cursor-pointer items-center rounded-md px-4 py-1.5 text-left hover:bg-gray-100 data-[highlighted]:bg-gray-100 data-[highlighted]:text-gray-600'
 										]}
 									>
 										{#snippet children({ selected })}

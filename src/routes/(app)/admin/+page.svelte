@@ -34,7 +34,7 @@
 
 <AdminCard title="Säsonger">
 	{#if seasons.length === 0}
-		<AdminEmptyNotice bind:createDialogOpen={createSeasonOpen}></AdminEmptyNotice>
+		<AdminEmptyNotice oncreateclick={() => (createSeasonOpen = true)}></AdminEmptyNotice>
 	{:else}
 		<div class="space-y-1 overflow-hidden rounded-lg">
 			{#each seasons as { id, name } (id)}

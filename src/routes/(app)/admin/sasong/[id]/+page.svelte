@@ -61,7 +61,7 @@
 
 <AdminCard title="Divisioner">
 	{#if season.divisions.length === 0}
-		<AdminEmptyNotice bind:createDialogOpen={createDivisionOpen}>
+		<AdminEmptyNotice oncreateclick={() => (createDivisionOpen = true)}>
 			Denna säsong har inga divisioner.
 		</AdminEmptyNotice>
 	{:else}

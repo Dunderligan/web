@@ -6,7 +6,7 @@
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import CreateDialog from '$lib/components/CreateDialog.svelte';
-	import Dialog from '$lib/components/Dialog.svelte';
+	import EditableMatch from '$lib/components/EditableMatch.svelte';
 	import EditMatchDialog from '$lib/components/EditMatchDialog.svelte';
 	import InputField from '$lib/components/InputField.svelte';
 	import Label from '$lib/components/Label.svelte';
@@ -15,27 +15,57 @@
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
 	import { RosterContext } from '$lib/state/rosters.svelte.js';
 	import { SaveContext } from '$lib/state/save.svelte';
-	import { createAndAddRoster, deleteGroup, editGroup } from './page.remote';
+	import { createAndAddRoster, deleteGroup, updateGroup, getTeams } from './page.remote';
+	import { v4 as uuidv4 } from 'uuid';
 
 	const { data } = $props();
 
-	const group = $state(data.group);
+	let group = $state(data.group);
+
 	const { season, division } = $derived(data);
 
 	RosterContext.set(new RosterContext(data.group.rosters));
 	SaveContext.set(new SaveContext(save));
 
+	let rosterCtx = RosterContext.get();
 	let confirmCtx = ConfirmContext.get();
 	let saveCtx = SaveContext.get();
 
 	let addRosterOpen = $state(false);
-	let addRosterMode: 'new' | 'existing' = $state('new');
+
+	let newRosterHasTeam = $state(false);
+	let newRosterTeamId: string | undefined = $state();
 	let newRosterName = $state('');
 
+	let teams: { id: string; rosters: { id: string; name: string }[] }[] = $state([]);
+	let fetchedTeams = false;
+
+	$effect(() => {
+		group = data.group;
+		// rosterCtx.set(group.rosters);
+	});
+
+	$effect(() => {
+		if (addRosterOpen && newRosterHasTeam && teams.length === 0 && !fetchedTeams) {
+			fetchRosters();
+		}
+	});
+
+	async function fetchRosters() {
+		fetchedTeams = true;
+
+		try {
+			teams = await getTeams();
+		} catch {
+			fetchedTeams = false;
+		}
+	}
+
 	async function save() {
-		await editGroup({
+		await updateGroup({
 			id: group.id,
-			name: group.name
+			name: group.name,
+			matches: group.matches
 		});
 	}
 
@@ -63,6 +93,30 @@
 
 		await goto(`/admin/roster/${roster.id}`);
 	}
+
+	function addMatchAndEdit() {
+		const match = {
+			id: uuidv4(),
+			groupId: data.group.id,
+			played: false,
+			divisionId: null,
+			draws: null,
+			nextMatchId: null,
+			playedAt: null,
+			rosterAId: null,
+			rosterBId: null,
+			scheduledAt: null,
+			teamAScore: null,
+			teamBScore: null,
+			vodUrl: null,
+			createdAt: null,
+			order: null
+		};
+
+		group.matches.unshift(match);
+		rosterCtx.editMatch(group.matches[0]);
+		saveCtx.setDirty();
+	}
 </script>
 
 <EditMatchDialog />
@@ -77,7 +131,7 @@
 
 <AdminCard title="Lag">
 	{#if group.rosters.length === 0}
-		<AdminEmptyNotice bind:createDialogOpen={addRosterOpen}>
+		<AdminEmptyNotice oncreateclick={() => (addRosterOpen = true)}>
 			Denna grupp har inga lag.
 		</AdminEmptyNotice>
 	{:else}
@@ -94,6 +148,28 @@
 	{/if}
 </AdminCard>
 
+<AdminCard title="Gruppspel">
+	{#if group.matches.length === 0}
+		<AdminEmptyNotice oncreateclick={addMatchAndEdit}>
+			Denna grupp har inga matcher.
+		</AdminEmptyNotice>
+	{:else}
+		<div class="max-w-sm space-y-2 overflow-hidden rounded-lg">
+			{#each group.matches as match, i (match.id)}
+				<EditableMatch
+					{match}
+					ondelete={() => {
+						group.matches.splice(i, 1);
+						saveCtx.setDirty();
+					}}
+				/>
+			{/each}
+		</div>
+
+		<Button icon="mdi:add" class="mt-2" onclick={addMatchAndEdit} />
+	{/if}
+</AdminCard>
+
 <AdminCard title="Inställningar">
 	<Label label="Namn">
 		<InputField bind:value={group.name} oninput={saveCtx.setDirty} />
@@ -107,9 +183,11 @@
 	bind:open={addRosterOpen}
 	oncreate={submitNewRoster}
 	onclose={() => {
-		addRosterMode = 'new';
+		newRosterHasTeam = false;
+		newRosterTeamId = undefined;
 		newRosterName = '';
 	}}
+	disabled={!newRosterName || (newRosterHasTeam && !newRosterTeamId)}
 >
 	<Label label="Namn">
 		<InputField
@@ -118,6 +196,30 @@
 			onenter={submitNewRoster}
 		/>
 	</Label>
+
+	<!-- <Label label="Existerande lag?">
+		<input type="checkbox" bind:checked={newRosterHasTeam} />
+	</Label>
+
+	{#if newRosterHasTeam}
+		<Label label="Lag">
+			<Select
+				type="single"
+				bind:value={newRosterTeamId}
+				placeholder="Välj lag..."
+				triggerClass="grow"
+				items={teams.map((team) => ({
+					label: team.rosters[0].name,
+					value: team.id
+				}))}
+			>
+				{#snippet itemSnippet({ value })}
+					<RosterLogo id={value} class="mr-2 size-6" />
+				{/snippet}
+			</Select>
+		</Label>
+	{/if} -->
 </CreateDialog>
 
 <SaveToast />
+<EditMatchDialog />

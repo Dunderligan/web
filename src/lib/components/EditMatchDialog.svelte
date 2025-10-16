@@ -24,7 +24,7 @@
 	{open}
 	onOpenChange={(state) => {
 		if (!state) {
-			rosterCtx.stopEditing();
+			rosterCtx.stopMatchEdit();
 		}
 	}}
 >

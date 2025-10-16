@@ -1,24 +1,34 @@
-import { command } from '$app/server';
+import { command, query } from '$app/server';
+import { matchSchema } from '$lib/schemas';
 import { db, schema } from '$lib/server/db';
 import { toSlug } from '$lib/util';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import * as z from 'zod';
 
-export const editGroup = command(
+export const updateGroup = command(
 	z.object({
 		id: z.uuid(),
-		name: z.string().nonempty()
+		name: z.string().nonempty(),
+		matches: z.array(matchSchema)
 	}),
-	async ({ id, name }) => {
-		const slug = toSlug(name);
+	async ({ id, name, matches }) => {
+		await db.transaction(async (tx) => {
+			const slug = toSlug(name.split(' ').at(-1) ?? name);
 
-		await db
-			.update(schema.group)
-			.set({
-				name,
-				slug
-			})
-			.where(eq(schema.group.id, id));
+			await tx
+				.update(schema.group)
+				.set({
+					name,
+					slug
+				})
+				.where(eq(schema.group.id, id));
+
+			// delete all matches and recreate them
+			await tx.delete(schema.match).where(and(eq(schema.match.groupId, id)));
+
+			const inserts = matches.map((match) => ({ ...match, groupId: id }));
+			await tx.insert(schema.match).values(inserts);
+		});
 	}
 );
 
@@ -56,3 +66,22 @@ export const deleteGroup = command(
 		await db.delete(schema.group).where(eq(schema.group.id, id));
 	}
 );
+
+export const getTeams = query(async () => {
+	const teams = await db.query.team.findMany({
+		columns: {
+			id: true
+		},
+		with: {
+			rosters: {
+				limit: 1,
+				columns: {
+					id: true,
+					name: true
+				}
+			}
+		}
+	});
+
+	return teams;
+});

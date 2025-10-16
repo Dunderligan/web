@@ -19,6 +19,13 @@ export const load = async ({ params }) => {
 					slug: true
 				}
 			},
+			matches: {
+				orderBy: schema.match.playedAt,
+				columns: {
+					createdAt: false,
+					order: false
+				}
+			},
 			division: {
 				columns: {
 					createdAt: false,

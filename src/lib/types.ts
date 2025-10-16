@@ -94,6 +94,8 @@ export type FullMatch = {
 	order: number;
 };
 
+export type FullMatchWithoutOrder = Omit<FullMatch, 'order'>;
+
 export type ResolvedMatch = {
 	id: string;
 	played?: boolean | null;

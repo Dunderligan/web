@@ -30,7 +30,7 @@
 					<div
 						{...props}
 						transition:fade={{ duration: 80 }}
-						class="fixed inset-0 z-40 bg-black/50"
+						class="fixed inset-0 z-40 bg-black/30"
 					></div>
 				{/if}
 			{/snippet}
@@ -40,7 +40,7 @@
 				{#if open}
 					<div
 						class="fixed top-[50%] left-[50%] z-40 w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] space-y-2 rounded-xl bg-white p-8 shadow-xl sm:max-w-lg md:w-full"
-						transition:scale={{ duration: 80, start: 0.95, easing: sineOut }}
+						transition:scale={{ duration: 80, start: 0.99, easing: sineOut }}
 						{...props}
 					>
 						<Dialog.Title class="mb-4 text-center font-display text-2xl font-bold text-gray-900"

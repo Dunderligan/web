@@ -156,7 +156,7 @@ export const updateDivision = command(
 	}),
 	async ({ id, name, bracketMatches }) => {
 		await db.transaction(async (tx) => {
-			const slug = toSlug(name);
+			const slug = toSlug(name.split(' ').at(-1) ?? name);
 
 			await tx.update(schema.division).set({ slug, name }).where(eq(schema.division.id, id));
 

@@ -4,16 +4,12 @@
 	import Button from './Button.svelte';
 
 	type Props = {
-		createDialogOpen: boolean;
 		children?: Snippet;
+		oncreateclick?: () => void;
 		createButtonLabel?: string;
 	};
 
-	let {
-		createDialogOpen = $bindable(false),
-		children,
-		createButtonLabel = 'Lägg till'
-	}: Props = $props();
+	let { children, oncreateclick, createButtonLabel = 'Lägg till' }: Props = $props();
 </script>
 
 <Notice kind="info">
@@ -24,6 +20,6 @@
 		label={createButtonLabel}
 		kind="transparent"
 		class="ml-auto"
-		onclick={() => (createDialogOpen = true)}
+		onclick={oncreateclick}
 	/>
 </Notice>

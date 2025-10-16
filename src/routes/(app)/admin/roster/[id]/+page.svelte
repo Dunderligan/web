@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import AdminCard from '$lib/components/AdminCard.svelte';
 	import AdminEmptyNotice from '$lib/components/AdminEmptyNotice.svelte';
+	import AdminLink from '$lib/components/AdminLink.svelte';
 	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import CreateDialog from '$lib/components/CreateDialog.svelte';
@@ -147,7 +148,7 @@
 
 <AdminCard title="Medlemmar">
 	{#if roster.members.length === 0}
-		<AdminEmptyNotice bind:createDialogOpen={newPlayerOpen}>
+		<AdminEmptyNotice oncreateclick={() => (newPlayerOpen = true)}>
 			Detta roster har inga medlemmar.
 		</AdminEmptyNotice>
 	{:else}
@@ -223,11 +224,11 @@
 
 <AdminCard title="Sociala medier">
 	{#if team.socials.length === 0}
-		<AdminEmptyNotice bind:createDialogOpen={newSocialOpen}>
+		<AdminEmptyNotice oncreateclick={() => (newSocialOpen = true)}>
 			Detta lag har inga länkade sociala medier.
 		</AdminEmptyNotice>
 	{:else}
-		<div class="space-y-1.5 overflow-hidden rounded-lg py-1">
+		<div class="space-y-1.5 py-1">
 			{#each team.socials as social, i (social.platform)}
 				<Label>
 					{#snippet label()}
@@ -284,77 +285,29 @@
 	<Button icon="mdi:delete" label="Radera roster" kind="negative" onclick={submitDelete} />
 </AdminCard>
 
-<form>
-	<div>
-		<h2 class="text-xl font-semibold">Alla rosters</h2>
+<!-- {#if team.rosters.length > 1} -->
+<AdminCard title="Andra rosters">
+	<div class="space-y-1 overflow-hidden rounded-lg">
+		{#each team.rosters as { group, id, name } (id)}
+			{@const { division, season } = flattenGroup(group)}
 
-		<table class="w-full">
-			<thead>
-				<tr>
-					<th> Namn </th>
-					<th> Säsong </th>
-					<th> Division </th>
-					<th> Grupp </th>
-					<th> </th>
-				</tr>
-			</thead>
-			<tbody>
-				{#each team.rosters as roster (roster.id)}
-					{@const isCurrent = data.roster.id === roster.id}
-					{@const { group, division, season } = flattenGroup(roster.group)}
-
-					<tr>
-						<td>
-							{#if isCurrent}
-								&rang;
-							{/if}
-
-							{roster.name}
-						</td>
-						<td>
-							{season.name}
-						</td>
-						<td>
-							{division.name}
-						</td>
-						<td>
-							{group.name}
-						</td>
-						<td>
-							{#if !isCurrent}
-								<a href="/lag/{season.slug}/{roster.slug}/redigera">Redigera</a>
-							{/if}
-
-							<button>Radera</button>
-						</td>
-					</tr>
-				{/each}
-			</tbody>
-		</table>
-
-		<div class="mt-2">
-			<button onclick={submitNewRoster}>Skapa roster</button>
-		</div>
+			<AdminLink href="/admin/roster/{id}">
+				{season.name}, {division.name}
+				{#if name != roster.name}
+					({roster.name})
+				{/if}
+			</AdminLink>
+		{/each}
 	</div>
-</form>
+</AdminCard>
+<!-- {/if} -->
 
-<Dialog
+<CreateDialog
 	title="Lägg till social media"
 	bind:open={newSocialOpen}
-	buttons={[
-		{
-			label: 'Avbryt',
-			kind: 'secondary',
-			onclick: resetNewSocial
-		},
-		{
-			icon: 'mdi:create',
-			label: 'Skapa',
-			kind: 'primary',
-			onclick: submitNewSocial,
-			disabled: !newSocialUrl || !newPlatform
-		}
-	]}
+	oncreate={submitNewSocial}
+	onclose={resetNewSocial}
+	disabled={!newSocialUrl || !newPlatform}
 >
 	<Label label="Platform">
 		<Select
@@ -368,10 +321,11 @@
 			}))}
 		/>
 	</Label>
+
 	<Label label="URL">
-		<InputField bind:value={newSocialUrl} placeholder="https://x.com/..." />
+		<InputField bind:value={newSocialUrl} placeholder="https://{newPlatform}.com/..." />
 	</Label>
-</Dialog>
+</CreateDialog>
 
 <CreateDialog
 	title="Lägg till spelare"

@@ -124,7 +124,7 @@
 
 <AdminCard title="Grupper">
 	{#if division.groups.length === 0}
-		<AdminEmptyNotice bind:createDialogOpen={createGroupOpen}>
+		<AdminEmptyNotice oncreateclick={() => (createGroupOpen = true)}>
 			Denna division har inga grupper.
 		</AdminEmptyNotice>
 	{:else}
