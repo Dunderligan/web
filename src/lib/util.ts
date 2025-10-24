@@ -119,9 +119,7 @@ export function calculateStandings(
 		teamB.matchesPlayed += 1;
 	}
 
-	const sortedRosters = rosterScores
-		.entries()
-		.toArray()
+	const sortedRosters = [...rosterScores]
 		.map(([rosterId, score]) => ({
 			rosterId,
 			score

@@ -64,7 +64,7 @@
 		await goto(`/admin/grupp/${group.id}`);
 	}
 
-	let rounds: FullMatch[][] = $state(buildBracket(data.matches));
+	let rounds: FullMatch[][] = $state([]);
 
 	async function generate() {
 		const result = await generateBracket({
@@ -89,6 +89,11 @@
 
 		rounds = [];
 	}
+
+	$effect(() => {
+		console.log('refresh');
+		rounds = buildBracket(data.matches);
+	});
 
 	$effect(() => {
 		for (let i = 0; i < rounds.length - 1; i++) {

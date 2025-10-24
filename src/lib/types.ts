@@ -71,6 +71,10 @@ export type FullRoster = Roster & {
 	team?: never;
 };
 
+export type RosterWithGroup = Roster & {
+	group: BaseNestedGroup;
+};
+
 export type TeamSocial = {
 	platform: SocialPlatform;
 	url: string;

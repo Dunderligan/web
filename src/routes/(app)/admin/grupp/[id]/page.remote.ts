@@ -34,12 +34,16 @@ export const updateGroup = command(
 
 export const createAndAddRoster = command(
 	z.object({
-		groupId: z.uuid(),
+		groupId: z.uuidv4(),
 		seasonSlug: z.string(),
-		name: z.string().nonempty()
+		name: z.string().nonempty(),
+		teamId: z.uuidv4().nullable()
 	}),
-	async ({ groupId, seasonSlug, name }) => {
-		const [team] = await db.insert(schema.team).values({}).returning();
+	async ({ groupId, seasonSlug, name, teamId }) => {
+		if (!teamId) {
+			const [team] = await db.insert(schema.team).values({}).returning();
+			teamId = team.id;
+		}
 
 		const slug = toSlug(name);
 
@@ -50,7 +54,7 @@ export const createAndAddRoster = command(
 				slug,
 				groupId,
 				seasonSlug,
-				teamId: team.id
+				teamId
 			})
 			.returning({ id: schema.roster.id });
 
@@ -66,22 +70,3 @@ export const deleteGroup = command(
 		await db.delete(schema.group).where(eq(schema.group.id, id));
 	}
 );
-
-export const getTeams = query(async () => {
-	const teams = await db.query.team.findMany({
-		columns: {
-			id: true
-		},
-		with: {
-			rosters: {
-				limit: 1,
-				columns: {
-					id: true,
-					name: true
-				}
-			}
-		}
-	});
-
-	return teams;
-});

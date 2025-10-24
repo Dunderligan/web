@@ -12,10 +12,11 @@
 	import Label from '$lib/components/Label.svelte';
 	import RosterLogo from '$lib/components/RosterLogo.svelte';
 	import SaveToast from '$lib/components/SaveToast.svelte';
+	import TeamSelect from '$lib/components/TeamSelect.svelte';
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
 	import { RosterContext } from '$lib/state/rosters.svelte.js';
 	import { SaveContext } from '$lib/state/save.svelte';
-	import { createAndAddRoster, deleteGroup, updateGroup, getTeams } from './page.remote';
+	import { createAndAddRoster, deleteGroup, updateGroup } from './page.remote';
 	import { v4 as uuidv4 } from 'uuid';
 
 	const { data } = $props();
@@ -33,33 +34,13 @@
 
 	let addRosterOpen = $state(false);
 
-	let newRosterHasTeam = $state(false);
 	let newRosterTeamId: string | undefined = $state();
 	let newRosterName = $state('');
-
-	let teams: { id: string; rosters: { id: string; name: string }[] }[] = $state([]);
-	let fetchedTeams = false;
 
 	$effect(() => {
 		group = data.group;
 		// rosterCtx.set(group.rosters);
 	});
-
-	$effect(() => {
-		if (addRosterOpen && newRosterHasTeam && teams.length === 0 && !fetchedTeams) {
-			fetchRosters();
-		}
-	});
-
-	async function fetchRosters() {
-		fetchedTeams = true;
-
-		try {
-			teams = await getTeams();
-		} catch {
-			fetchedTeams = false;
-		}
-	}
 
 	async function save() {
 		await updateGroup({
@@ -88,7 +69,8 @@
 		const { roster } = await createAndAddRoster({
 			groupId: group.id,
 			seasonSlug: season.slug,
-			name: newRosterName
+			name: newRosterName,
+			teamId: newRosterTeamId ?? null
 		});
 
 		await goto(`/admin/roster/${roster.id}`);
@@ -183,12 +165,15 @@
 	bind:open={addRosterOpen}
 	oncreate={submitNewRoster}
 	onclose={() => {
-		newRosterHasTeam = false;
 		newRosterTeamId = undefined;
 		newRosterName = '';
 	}}
-	disabled={!newRosterName || (newRosterHasTeam && !newRosterTeamId)}
+	disabled={!newRosterName.trim()}
 >
+	<Label label="Lag">
+		<TeamSelect bind:value={newRosterTeamId} excludeGroupId={group.id} />
+	</Label>
+
 	<Label label="Namn">
 		<InputField
 			bind:value={newRosterName}

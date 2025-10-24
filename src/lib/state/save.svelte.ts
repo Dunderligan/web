@@ -24,7 +24,7 @@ export class SaveContext {
 
 			if (
 				!confirm(
-					'Är du säker på att du vill lämna sidan? Du har osparade ändringar som kanske inte sparas!'
+					'Är du säker på att du vill lämna sidan? Du har osparade ändringar som kommer förloras!'
 				)
 			) {
 				cancel();

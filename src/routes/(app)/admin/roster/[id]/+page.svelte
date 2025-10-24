@@ -82,6 +82,7 @@
 			}
 		});
 
+		saveCtx.setDirty();
 		resetNewPlayer();
 	}
 
@@ -285,22 +286,24 @@
 	<Button icon="mdi:delete" label="Radera roster" kind="negative" onclick={submitDelete} />
 </AdminCard>
 
-<!-- {#if team.rosters.length > 1} -->
-<AdminCard title="Andra rosters">
-	<div class="space-y-1 overflow-hidden rounded-lg">
-		{#each team.rosters as { group, id, name } (id)}
-			{@const { division, season } = flattenGroup(group)}
+{#if team.rosters.length > 1}
+	<AdminCard title="Andra rosters">
+		<div class="space-y-1 overflow-hidden rounded-lg">
+			{#each team.rosters as otherRoster (otherRoster.id)}
+				{@const { division, season } = flattenGroup(otherRoster.group)}
 
-			<AdminLink href="/admin/roster/{id}">
-				{season.name}, {division.name}
-				{#if name != roster.name}
-					({roster.name})
+				{#if otherRoster.id != roster.id}
+					<AdminLink href="/admin/roster/{otherRoster.id}">
+						{season.name}, {division.name}
+						{#if otherRoster.name != roster.name}
+							({otherRoster.name})
+						{/if}
+					</AdminLink>
 				{/if}
-			</AdminLink>
-		{/each}
-	</div>
-</AdminCard>
-<!-- {/if} -->
+			{/each}
+		</div>
+	</AdminCard>
+{/if}
 
 <CreateDialog
 	title="Lägg till social media"

@@ -24,10 +24,10 @@
 
 	const rosterTabItems = $derived(
 		team.rosters.map((roster) => {
-			const { season, division } = flattenGroup(roster.group);
+			const { season } = flattenGroup(roster.group);
 
 			return {
-				label: `${season.name} ${division.name}`,
+				label: `${season.name}`,
 				value: roster.id,
 				href: `/lag/${season.slug}/${roster.slug}`
 			};
