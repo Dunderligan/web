@@ -121,11 +121,11 @@ export function calculateStandings(
 
 	const sortedRosters = rosterScores
 		.entries()
+		.toArray()
 		.map(([rosterId, score]) => ({
 			rosterId,
 			score
 		}))
-		.toArray()
 		.sort(
 			(b, a) => a.score.mapWins - b.score.mapWins || a.score.matchesPlayed - b.score.matchesPlayed
 		);
