@@ -11,6 +11,7 @@
 	import InputField from '$lib/components/InputField.svelte';
 	import Label from '$lib/components/Label.svelte';
 	import RosterLogo from '$lib/components/RosterLogo.svelte';
+	import RosterLogoUpload from '$lib/components/RosterLogoUpload.svelte';
 	import SaveToast from '$lib/components/SaveToast.svelte';
 	import Select from '$lib/components/Select.svelte';
 	import Table from '$lib/components/Table.svelte';
@@ -24,7 +25,7 @@
 		enumToPgEnum,
 		roleIcon
 	} from '$lib/util';
-	import { createRoster, deleteRoster, editRoster, uploadLogo } from './page.remote';
+	import { createRoster, deleteRoster, editRoster } from './page.remote';
 
 	let { data } = $props();
 
@@ -77,7 +78,7 @@
 			tier: 1,
 			role: Role.DAMAGE,
 			player: {
-				id: null, // the backend will either link this up with an existing player, or create a new one
+				id: null as any as string, // the backend will either link this up with an existing player, or create a new one
 				battletag: newPlayerBattletag
 			}
 		});
@@ -265,22 +266,7 @@
 	</Label>
 
 	<Label label="Logotyp">
-		<form {...uploadLogo} enctype="multipart/form-data">
-			<label class="group relative flex size-24 cursor-pointer items-center justify-center">
-				<RosterLogo
-					id={roster.id}
-					class="absolute -z-10 h-full w-full transition-all group-hover:brightness-75"
-					imgSize={128}
-				/>
-				<div
-					class="hidden items-center justify-center rounded-lg bg-gray-600 p-2 text-xl text-white group-hover:flex"
-				>
-					<Icon icon="mdi:upload" />
-				</div>
-				<input type="file" name="file" accept="image/png" class="hidden" />
-			</label>
-			<input type="text" name="rosterId" value={roster.id} class="hidden" />
-		</form>
+		<RosterLogoUpload rosterId={roster.id} />
 	</Label>
 
 	<Button icon="mdi:delete" label="Radera roster" kind="negative" onclick={submitDelete} />

@@ -11,15 +11,12 @@
 	import SaveToast from '$lib/components/SaveToast.svelte';
 	import { ConfirmContext } from '$lib/state/confirm.svelte.js';
 	import { SaveContext } from '$lib/state/save.svelte.js';
-	import { createDivision, deleteSeason, editSeason } from './page.remote.js';
+	import { createDivision, deleteSeason } from './page.remote.js';
 
 	const { data } = $props();
 
 	const season = $state(data.season);
 
-	SaveContext.set(new SaveContext(save));
-
-	const saveCtx = SaveContext.get();
 	const confirmCtx = ConfirmContext.get();
 
 	let createDivisionOpen = $state(false);
@@ -48,13 +45,6 @@
 			}
 		});
 	}
-
-	async function save() {
-		await editSeason({
-			id: season.id,
-			name: season.name
-		});
-	}
 </script>
 
 <Breadcrumbs crumbs={[{ label: season.name, href: `/admin/sasong/${season.id}` }]} />
@@ -78,10 +68,6 @@
 </AdminCard>
 
 <AdminCard title="Inställningar">
-	<Label label="Namn">
-		<InputField bind:value={season.name} oninput={saveCtx.setDirty} />
-	</Label>
-
 	<Button icon="mdi:trash-can" label="Radera säsong" kind="negative" onclick={submitDelete} />
 </AdminCard>
 

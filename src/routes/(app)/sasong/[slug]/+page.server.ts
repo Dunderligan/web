@@ -1,4 +1,4 @@
-import { db, schema } from '$lib/server/db/index.js';
+import { db, schema } from '$lib/server/db';
 import { aggregateGroups, calculateStandings } from '$lib/util.js';
 import { error } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';

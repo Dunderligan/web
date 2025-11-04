@@ -188,9 +188,9 @@ export function roleIcon(role: Role): string {
 		case 'support':
 			return 'mdi:band-aid';
 		case 'flex':
-			return 'mdi:anonymous';
+			return 'mdi:stars';
 		case 'coach':
-			return 'mdi:brain';
+			return 'mdi:business';
 	}
 
 	return 'mdi:help';

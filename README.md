@@ -20,9 +20,9 @@ Kopiera sedan `.env.example` till `.env` och fyll i `DATABASE_URL`-fältet med U
 DATABASE_URL="postgresql://user:password@localhost/dunderligan"
 ```
 
-De andra fälten är inte nödvändiga för kärnfunktionalitet och kan lämnas blanka.
+De övriga fälten är inte nödvändiga för kärnfunktionalitet och kan lämnas blanka.
 
-Kör sedan följande kommandon för att starta en dev-session och öppna hemsidan i din webbläsare:
+Kör sedan följande kommandon för att installera dependencies, sätta upp databasen, samt starta en dev-session och öppna den i din webbläsare:
 
 ```bash
 pnpm install

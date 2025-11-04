@@ -1,15 +1,6 @@
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
-import * as schema from './schema';
-import { env } from '$env/dynamic/private';
-import { reset, seed } from 'drizzle-seed';
+import { reset } from 'drizzle-seed';
+import { db, schema } from '.';
 import { Rank, Role } from '$lib/types';
-
-if (!env.DATABASE_URL) throw new Error('DATABASE_URL is not set');
-
-const client = postgres(env.DATABASE_URL);
-
-const db = drizzle(client, { schema, casing: 'snake_case' });
 
 function rand() {
 	return Math.floor(100000 + Math.random() * 900000);
@@ -243,7 +234,3 @@ async function seedDb() {
 		})
 	);
 }
-
-// await seedDb();
-
-export { db, schema };

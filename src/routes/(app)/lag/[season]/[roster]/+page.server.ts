@@ -1,5 +1,5 @@
-import { nestedGroupQuery } from '$lib/server/db/helpers.js';
-import { db, schema } from '$lib/server/db/index.js';
+import { nestedGroupQuery } from '$lib/server/db/helpers';
+import { db, schema } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
 import { eq, and, desc, or } from 'drizzle-orm';
 

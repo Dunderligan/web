@@ -11,31 +11,6 @@ import { and, eq, inArray, not, sql } from 'drizzle-orm';
 import S3 from '$lib/server/s3';
 import * as z from 'zod';
 
-export const uploadLogo = form(async (data) => {
-	const file = data.get('file') as File;
-	if (!file) {
-		error(400, 'No file provided');
-	}
-
-	const rosterId = data.get('rosterId') as string;
-	if (!rosterId) {
-		error(400, 'No rosterId provided');
-	}
-
-	const buffer = Buffer.from(await file.arrayBuffer());
-
-	const command = new PutObjectCommand({
-		Bucket: S3_BUCKET_NAME,
-		Key: `logos/${rosterId}.png`,
-		Body: buffer,
-		ContentType: `image/png`
-	});
-
-	await S3.send(command);
-
-	console.log('uploaded logo');
-});
-
 export const editRoster = command(
 	z.object({
 		id: z.string(),
