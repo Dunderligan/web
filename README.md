@@ -1,6 +1,6 @@
-# Hemsidan
+# Hemsida
 
-Dunderligans officiella hemsida, [dunderligan.se](https://dunderligan.se).
+Dunderligans officiella webbplats, [dunderligan.se](https://dunderligan.se).
 
 ## Nördigheter
 
@@ -32,7 +32,7 @@ pnpm dev --open
 
 ## Kontakt
 
-Hemsidan utvecklas främst av Bobbo, som du kan hitta på Discord (användarnamn `kesomannen`). För buggrapporteringar och förslag kan du även skapa en Issue här på Github-sidan.
+Hemsidan utvecklas huvudsakligen av Bobbo, som du kan hitta på Discord (användarnamn `kesomannen`). För buggrapporteringar och förslag kan du även skapa en Issue här på Github-sidan.
 
 ## Licens
 
