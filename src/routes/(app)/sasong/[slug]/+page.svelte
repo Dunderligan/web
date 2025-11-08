@@ -49,9 +49,7 @@
 </script>
 
 <PageHeader>
-	<h1
-		class="mb-3 text-center font-display text-6xl font-extrabold text-black sm:text-left sm:text-7xl"
-	>
+	<h1 class="mb-3 text-center text-6xl font-extrabold text-black sm:text-left sm:text-7xl">
 		{season.name}
 	</h1>
 

@@ -27,7 +27,7 @@
 	<div
 		class={[
 			'flex h-12 items-center overflow-hidden pr-4',
-			match.played ? (won ? 'bg-gray-200' : 'bg-gray-50') : 'bg-gray-100'
+			match.played ? (won ? 'bg-gray-200' : 'bg-gray-50') : ' bg-gray-100'
 		]}
 	>
 		{#if roster}
