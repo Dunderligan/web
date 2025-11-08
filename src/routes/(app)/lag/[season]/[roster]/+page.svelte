@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { authClient, isAdmin } from '$lib/auth-client';
-	import Button from '$lib/components/Button.svelte';
-	import Match from '$lib/components/Match.svelte';
-	import MembersTable from '$lib/components/MembersTable.svelte';
-	import PageHeader from '$lib/components/PageHeader.svelte';
-	import PageSection from '$lib/components/PageSection.svelte';
-	import Rank from '$lib/components/Rank.svelte';
-	import RosterLogo from '$lib/components/RosterLogo.svelte';
-	import Tabs from '$lib/components/Tabs.svelte';
-	import TeamSocial from '$lib/components/TeamSocial.svelte';
+	import Button from '$lib/components/ui/Button.svelte';
+	import Match from '$lib/components/match/Match.svelte';
+	import MembersTable from '$lib/components/table/MembersTable.svelte';
+	import PageHeader from '$lib/components/structure/PageHeader.svelte';
+	import PageSection from '$lib/components/structure/PageSection.svelte';
+	import Rank from '$lib/components/ui/Rank.svelte';
+	import RosterLogo from '$lib/components/ui/RosterLogo.svelte';
+	import Tabs from '$lib/components/ui/Tabs.svelte';
+	import TeamSocial from '$lib/components/ui/TeamSocial.svelte';
 	import type { ClassValue } from '$lib/types';
 	import { averageRank, sortRole as compareRole, flattenGroup } from '$lib/util';
 

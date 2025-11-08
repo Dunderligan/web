@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { RosterContext } from '$lib/state/rosters.svelte';
-	import Select from './Select.svelte';
+	import Select from '../ui/Select.svelte';
 
 	type Props = {
 		selectedId?: string | null;

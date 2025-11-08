@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import AdminCard from '$lib/components/AdminCard.svelte';
+	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import AdminEmptyNotice from '$lib/components/AdminEmptyNotice.svelte';
 	import AdminLink from '$lib/components/AdminLink.svelte';
-	import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
-	import Button from '$lib/components/Button.svelte';
-	import CreateDialog from '$lib/components/CreateDialog.svelte';
-	import InputField from '$lib/components/InputField.svelte';
-	import Label from '$lib/components/Label.svelte';
-	import SaveToast from '$lib/components/SaveToast.svelte';
+	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
+	import Button from '$lib/components/ui/Button.svelte';
+	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
+	import InputField from '$lib/components/ui/InputField.svelte';
+	import Label from '$lib/components/ui/Label.svelte';
+	import SaveToast from '$lib/components/admin/SaveToast.svelte';
 	import { ConfirmContext } from '$lib/state/confirm.svelte.js';
 	import { SaveContext } from '$lib/state/save.svelte.js';
 	import { createDivision, deleteSeason } from './page.remote.js';

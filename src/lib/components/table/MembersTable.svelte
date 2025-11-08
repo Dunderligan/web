@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { Member } from '$lib/types';
 	import { capitalize, roleIcon } from '$lib/util';
-	import Icon from './Icon.svelte';
-	import Rank from './Rank.svelte';
+	import Icon from '../ui/Icon.svelte';
+	import Rank from '../ui/Rank.svelte';
 	import Table from './Table.svelte';
 
 	type Props = {

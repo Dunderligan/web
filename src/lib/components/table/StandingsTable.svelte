@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Roster } from '$lib/types';
 	import type { TableScore } from '$lib/util';
-	import RosterLogo from './RosterLogo.svelte';
+	import RosterLogo from '../ui/RosterLogo.svelte';
 	import Table from './Table.svelte';
 
 	type Props = {

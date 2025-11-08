@@ -2,7 +2,7 @@
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
 	import { RosterContext } from '$lib/state/rosters.svelte';
 	import type { FullMatchWithoutOrder } from '$lib/types';
-	import Button from './Button.svelte';
+	import Button from '../ui/Button.svelte';
 
 	type Props = {
 		match: FullMatchWithoutOrder;

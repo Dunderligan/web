@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { RosterContext } from '$lib/state/rosters.svelte';
 	import { SaveContext } from '$lib/state/save.svelte';
-	import Dialog from './Dialog.svelte';
-	import InputField from './InputField.svelte';
-	import Label from './Label.svelte';
-	import RosterSelect from './RosterSelect.svelte';
+	import Dialog from '../ui/Dialog.svelte';
+	import InputField from '../ui/InputField.svelte';
+	import Label from '../ui/Label.svelte';
+	import RosterSelect from '../admin/RosterSelect.svelte';
 
 	const rosterCtx = RosterContext.get();
 	const saveCtx = SaveContext.get();

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
-	import Dialog from './Dialog.svelte';
+	import Dialog from '../ui/Dialog.svelte';
 
 	let context = ConfirmContext.get();
 

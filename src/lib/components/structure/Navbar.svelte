@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { authClient } from '$lib/auth-client';
 	import { DropdownMenu } from 'bits-ui';
-	import Icon from './Icon.svelte';
+	import Icon from '../ui/Icon.svelte';
 
 	type Props = {
 		dark?: boolean;

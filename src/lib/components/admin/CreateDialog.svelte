@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import Dialog from './Dialog.svelte';
+	import Dialog from '../ui/Dialog.svelte';
 
 	type Props = {
 		title: string;

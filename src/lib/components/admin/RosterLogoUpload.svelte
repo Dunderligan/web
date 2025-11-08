@@ -2,8 +2,8 @@
 	import { enhance } from '$app/forms';
 	import { uploadRosterLogo } from '$lib/common.remote';
 	import { SaveContext } from '$lib/state/save.svelte';
-	import Icon from './Icon.svelte';
-	import RosterLogo from './RosterLogo.svelte';
+	import Icon from '../ui/Icon.svelte';
+	import RosterLogo from '../ui/RosterLogo.svelte';
 
 	type Props = {
 		rosterId: string;

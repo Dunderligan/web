@@ -2,7 +2,7 @@
 	import { queryTeams } from '$lib/common.remote';
 	import type { RosterWithGroup } from '$lib/types';
 	import { Combobox } from 'bits-ui';
-	import RosterLogo from './RosterLogo.svelte';
+	import RosterLogo from '../ui/RosterLogo.svelte';
 
 	type Props = {
 		value?: string;

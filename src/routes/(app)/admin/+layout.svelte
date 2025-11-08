@@ -1,7 +1,7 @@
 <script lang="ts">
-	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
-	import PageSection from '$lib/components/PageSection.svelte';
-	import SaveToast from '$lib/components/SaveToast.svelte';
+	import ConfirmDialog from '$lib/components/admin/ConfirmDialog.svelte';
+	import PageSection from '$lib/components/structure/PageSection.svelte';
+	import SaveToast from '$lib/components/admin/SaveToast.svelte';
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
 
 	let { children } = $props();

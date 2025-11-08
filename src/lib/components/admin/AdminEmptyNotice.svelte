@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import Notice from './Notice.svelte';
-	import Button from './Button.svelte';
+	import Notice from '../ui/Notice.svelte';
+	import Button from '../ui/Button.svelte';
 
 	type Props = {
 		children?: Snippet;

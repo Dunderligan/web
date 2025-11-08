@@ -1,14 +1,15 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { authClient, isAdmin } from '$lib/auth-client';
-	import BracketMatch from '$lib/components/BracketMatch.svelte';
-	import Button from '$lib/components/Button.svelte';
-	import Icon from '$lib/components/Icon.svelte';
-	import PageHeader from '$lib/components/PageHeader.svelte';
-	import PageSection from '$lib/components/PageSection.svelte';
-	import StandingsTable from '$lib/components/StandingsTable.svelte';
-	import Tabs from '$lib/components/Tabs.svelte';
+	import BracketMatch from '$lib/components/match/BracketMatch.svelte';
+	import Button from '$lib/components/ui/Button.svelte';
+	import Icon from '$lib/components/ui/Icon.svelte';
+	import PageHeader from '$lib/components/structure/PageHeader.svelte';
+	import PageSection from '$lib/components/structure/PageSection.svelte';
+	import StandingsTable from '$lib/components/table/StandingsTable.svelte';
+	import Tabs from '$lib/components/ui/Tabs.svelte';
 	import { buildBracket } from '$lib/util';
+	import Bracket from '$lib/components/match/Bracket.svelte';
 
 	const session = authClient.useSession();
 
@@ -123,33 +124,22 @@
 				seasonSlug={season.slug}
 			/>
 		{:else}
-			{@const rounds = buildBracket(activeDivision.matches)}
+			<Bracket
+				seasonSlug={season.slug}
+				rounds={buildBracket(
+					activeDivision.matches.map((match) => {
+						// resolve match rosters
+						const rosterA = activeDivision.rosters.find((roster) => roster.id === match.rosterAId);
+						const rosterB = activeDivision.rosters.find((roster) => roster.id === match.rosterBId);
 
-			<div class="w-full overflow-x-auto rounded-lg p-1">
-				<div class="flex min-w-3xl items-stretch gap-4">
-					{#each rounds as round}
-						<div class="flex flex-col justify-around gap-8" style="width: {100 / rounds.length}%;">
-							{#each round as match}
-								{@const rosterA = activeDivision.rosters.find(
-									(roster) => roster.id === match.rosterAId
-								)}
-								{@const rosterB = activeDivision.rosters.find(
-									(roster) => roster.id === match.rosterBId
-								)}
-
-								<BracketMatch
-									seasonSlug={season.slug}
-									match={{
-										rosterA,
-										rosterB,
-										...match
-									}}
-								/>
-							{/each}
-						</div>
-					{/each}
-				</div>
-			</div>
+						return {
+							rosterA,
+							rosterB,
+							...match
+						};
+					})
+				)}
+			/>
 		{/if}
 
 		{#if isAdmin($session.data?.user)}

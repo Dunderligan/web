@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { quartOut } from 'svelte/easing';
-	import Button from './Button.svelte';
+	import Button from '../ui/Button.svelte';
 	import { fly } from 'svelte/transition';
 	import { SaveContext } from '$lib/state/save.svelte';
 	import { Portal } from 'bits-ui';

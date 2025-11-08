@@ -1,6 +1,6 @@
 <script lang="ts">
-	import PageHeader from '$lib/components/PageHeader.svelte';
-	import PageSection from '$lib/components/PageSection.svelte';
+	import PageHeader from '$lib/components/structure/PageHeader.svelte';
+	import PageSection from '$lib/components/structure/PageSection.svelte';
 </script>
 
 <PageHeader>

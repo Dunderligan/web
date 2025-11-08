@@ -1,6 +1,7 @@
 import { reset } from 'drizzle-seed';
-import { db, schema } from '.';
+import { schema } from '.';
 import { Rank, Role } from '$lib/types';
+import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
 function rand() {
 	return Math.floor(100000 + Math.random() * 900000);
@@ -84,7 +85,7 @@ function generateTeamName() {
 	}
 }
 
-async function seedDb() {
+export async function seed(db: PostgresJsDatabase<typeof schema>) {
 	const seedSchema = {
 		team: schema.team,
 		player: schema.player,

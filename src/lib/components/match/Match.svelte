@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ResolvedMatch, MatchRoster, ClassValue } from '$lib/types';
-	import Icon from './Icon.svelte';
-	import RosterLogo from './RosterLogo.svelte';
+	import Icon from '../ui/Icon.svelte';
+	import RosterLogo from '../ui/RosterLogo.svelte';
 
 	type Props = {
 		match: ResolvedMatch;

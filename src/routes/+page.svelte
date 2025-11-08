@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Button from '$lib/components/Button.svelte';
-	import Match from '$lib/components/Match.svelte';
-	import PageSection from '$lib/components/PageSection.svelte';
+	import Button from '$lib/components/ui/Button.svelte';
+	import Match from '$lib/components/match/Match.svelte';
+	import PageSection from '$lib/components/structure/PageSection.svelte';
 
 	let { data } = $props();
 </script>

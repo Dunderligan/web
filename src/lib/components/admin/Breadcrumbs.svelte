@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Icon from './Icon.svelte';
+	import Icon from '../ui/Icon.svelte';
 
 	type Crumb = {
 		label: string;
