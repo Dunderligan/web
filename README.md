@@ -1,6 +1,6 @@
 # Hemsida
 
-Dunderligans officiella webbplats, [dunderligan.se](https://dunderligan.se).
+Dunderligans officiella webbplats, [dunderligan.se](https://dunderligan.se). **Work in progress!!**
 
 ## Nördigheter
 
