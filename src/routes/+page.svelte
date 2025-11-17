@@ -6,12 +6,14 @@
 	let { data } = $props();
 </script>
 
-<header class="relative h-[40rem] w-full px-4 sm:h-[45rem]">
-	<div id="color-overlay" class="fixed top-0 bottom-0 left-0 -z-10 w-full"></div>
-	<div id="background" class="absolute top-0 bottom-0 left-0 -z-20 w-full"></div>
+<header class="relative h-[50rem] w-full px-4 sm:h-[45rem]">
+	<!-- <div id="color-overlay" class="fixed top-0 bottom-0 left-0 -z-10 w-full"></div> -->
+	<!-- <div id="background" class="absolute top-0 bottom-0 left-0 -z-20 w-full"></div> -->
+
+	<video src="/hero.mp4" class="fixed inset-0 -z-10 brightness-50" autoplay muted loop></video>
 
 	<div
-		class="mx-auto flex h-full max-w-4xl flex-col justify-center gap-6 pt-12 text-left font-display"
+		class="mx-auto flex h-full max-w-4xl flex-col justify-center gap-6 pt-8 text-left font-display"
 	>
 		<h1 class="text-4xl font-extrabold text-white text-shadow-xs sm:text-6xl">
 			Sveriges <span class="underline">största</span><br /> återkommande

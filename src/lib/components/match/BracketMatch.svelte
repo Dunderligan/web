@@ -5,22 +5,36 @@
 	type Props = {
 		match: ResolvedMatch;
 		seasonSlug: string;
+		prevMatches: number;
+		isFirst: boolean;
+		isLast: boolean;
 	};
 
-	let { match, seasonSlug }: Props = $props();
+	let { match, seasonSlug, prevMatches, isFirst, isLast }: Props = $props();
 
 	const teamAWon =
 		match.played === false ? null : (match.teamAScore ?? 0) > (match.teamBScore ?? 0);
+
+	const verticalLineHeight = $derived(66 * prevMatches - 48);
 </script>
 
-<div class="flex h-[100px]">
+<div
+	class={[!isFirst && 'not-first-match', !isLast && 'not-last-match', 'relative flex h-[100px]']}
+>
 	<div class="grow overflow-hidden rounded-lg">
 		{@render side(match.rosterA, teamAWon === true, match.teamAScore)}
 
-		<div class="h-[1px] w-full bg-gray-200"></div>
+		<div class="h-[2px] w-full bg-gray-200"></div>
 
 		{@render side(match.rosterB, teamAWon === false, match.teamBScore)}
 	</div>
+
+	{#if !isFirst}
+		<div
+			class="vertical-line"
+			style="top: calc(-{verticalLineHeight}% + 1px); bottom: calc(-{verticalLineHeight}% + 1px);"
+		></div>
+	{/if}
 </div>
 
 {#snippet side(roster?: MatchRoster | null, won?: boolean | null, score?: number | null)}
@@ -60,3 +74,33 @@
 		{/if}
 	</div>
 {/snippet}
+
+<style>
+	.not-last-match::after,
+	.not-first-match::before {
+		content: '';
+		position: absolute;
+		background-color: var(--color-gray-200);
+		height: 2px;
+	}
+
+	.not-last-match::after {
+		top: calc(50% - 2px);
+		right: -24px;
+		left: 100%;
+	}
+
+	.not-first-match::before {
+		top: calc(50% - 2px);
+		right: 100%;
+		left: -24px;
+	}
+
+	.vertical-line {
+		position: absolute;
+		left: -24px;
+		width: 2px;
+		transform: translateY(-1px);
+		background-color: var(--color-gray-200);
+	}
+</style>
