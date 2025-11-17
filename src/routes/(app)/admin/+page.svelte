@@ -34,7 +34,9 @@
 
 <AdminCard title="Säsonger">
 	{#if seasons.length === 0}
-		<AdminEmptyNotice oncreateclick={() => (createSeasonOpen = true)}></AdminEmptyNotice>
+		<AdminEmptyNotice oncreateclick={() => (createSeasonOpen = true)}>
+			Det finns inga säsonger!
+		</AdminEmptyNotice>
 	{:else}
 		<div class="space-y-1 overflow-hidden rounded-lg">
 			{#each seasons as { id, name } (id)}

@@ -4,7 +4,8 @@ import { db } from './db';
 import {
 	BATTLENET_CLIENT_ID,
 	BATTLENET_CLIENT_SECRET,
-	BETTER_AUTH_SECRET
+	BETTER_AUTH_SECRET,
+	BETTER_AUTH_URL
 } from '$env/static/private';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
@@ -35,7 +36,7 @@ export const auth = betterAuth({
 					clientSecret: BATTLENET_CLIENT_SECRET,
 					authorizationUrl: 'https://oauth.battle.net/authorize',
 					tokenUrl: 'https://oauth.battle.net/token',
-					redirectURI: 'http://localhost:5173/api/auth/callback/battlenet',
+					redirectURI: `${BETTER_AUTH_URL}api/auth/callback/battlenet`,
 					scopes: ['openid'],
 					getUserInfo: async (tokens) => {
 						const result = await fetch('https://oauth.battle.net/userinfo', {
