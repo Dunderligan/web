@@ -23,7 +23,7 @@
 <div
 	class={[
 		classProp,
-		'grid w-full gap-y-1 overflow-hidden overflow-x-scroll rounded-lg text-gray-700'
+		'grid w-full gap-y-1 overflow-hidden overflow-x-auto rounded-lg text-gray-700'
 	]}
 >
 	{#each columns as column}
