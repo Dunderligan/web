@@ -119,6 +119,7 @@ export type MatchRoster = {
 	id: string;
 	name: string;
 	slug: string;
+	seasonSlug?: string | null;
 };
 
 export type ButtonKind = 'primary' | 'secondary' | 'tertiary' | 'transparent' | 'negative';

@@ -12,11 +12,11 @@
 	const { icon, classes } = $derived(
 		{
 			info: {
-				icon: 'mdi:info',
+				icon: 'ph:info',
 				classes: 'bg-accent-50 text-accent-800'
 			},
 			warn: {
-				icon: 'mdi:warning',
+				icon: 'ph:warning',
 				classes: 'bg-yellow-50 text-yellow-800'
 			}
 		}[kind]

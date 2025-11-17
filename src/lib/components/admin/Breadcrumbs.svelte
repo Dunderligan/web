@@ -15,16 +15,13 @@
 
 <div class="flex items-center gap-4 font-display text-lg">
 	<a href="/admin" class="flex items-center justify-center">
-		<Icon icon="mdi:home-outline" class="text-2xl text-gray-600" />
+		<Icon icon="ph:house" class="text-2xl text-gray-600" />
 	</a>
 
 	{#each crumbs as { label, href }, i}
 		{@const isLast = i == crumbs.length - 1}
 
-		<Icon
-			class={[!isLast && 'hidden sm:block', 'text-2xl text-gray-600']}
-			icon="mdi:keyboard-arrow-right"
-		/>
+		<Icon class={[!isLast && 'hidden sm:block', 'text-2xl text-gray-600']} icon="ph:caret-right" />
 
 		<a
 			{href}

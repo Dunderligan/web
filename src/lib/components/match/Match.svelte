@@ -27,13 +27,13 @@
 
 			{#if match.vodUrl}
 				<a class="hover:underline" href={match.vodUrl}>
-					<Icon icon="mdi:external-link" />
+					<Icon icon="ph:arrow-square-out" />
 					VOD
 				</a>
 			{/if}
 		{:else}
 			<div>
-				<Icon icon="mdi:timetable" />
+				<Icon icon="ph:calendar-blank" />
 				Planerad
 
 				{#if match.scheduledAt}
@@ -89,7 +89,7 @@
 		</a>
 
 		{#if won}
-			<Icon icon="mdi:crown" class="text-xl text-accent-600" />
+			<Icon icon="ph:crown-simple-fill" class="text-xl text-accent-600" />
 		{/if}
 
 		{#if match.played}

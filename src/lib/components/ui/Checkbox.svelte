@@ -18,6 +18,6 @@
 	]}
 >
 	{#if checked}
-		<Icon icon="mdi:check" />
+		<Icon icon="ph:check" />
 	{/if}
 </Checkbox.Root>

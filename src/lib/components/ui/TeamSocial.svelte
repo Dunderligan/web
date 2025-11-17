@@ -15,7 +15,7 @@
 <a {href} class={classProp} target="_blank" rel="noopener noreferrer"
 	><Icon
 		class=" text-accent-500 transition-colors hover:text-accent-600"
-		icon="mdi:{platform}"
+		icon="ph:{platform}-logo-fill"
 		title={capitalize(platform)}
 	/></a
 >

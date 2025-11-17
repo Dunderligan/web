@@ -30,7 +30,7 @@
 		<div
 			class="hidden items-center justify-center rounded-lg bg-gray-600 p-2 text-xl text-white group-hover:flex"
 		>
-			<Icon icon="mdi:upload" />
+			<Icon icon="ph:upload-simple" />
 		</div>
 		<input type="file" name="file" accept="image/png" class="hidden" {onchange} bind:files />
 	</label>

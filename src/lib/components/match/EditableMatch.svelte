@@ -24,14 +24,14 @@
 
 	<div class="absolute top-3 right-3 flex items-center">
 		<Button
-			icon="mdi:edit"
+			icon="ph:pencil-simple"
 			kind="tertiary"
 			onclick={() => rosterCtx.editMatch(match, canEditRosters)}
 			title="Redigera"
 		/>
 
 		{#if canDelete}
-			<Button icon="mdi:trash" kind="tertiary" onclick={ondelete} title="Radera" />
+			<Button icon="ph:trash" kind="tertiary" onclick={ondelete} title="Radera" />
 		{/if}
 	</div>
 </div>

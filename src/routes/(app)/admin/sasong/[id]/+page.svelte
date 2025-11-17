@@ -63,12 +63,12 @@
 			{/each}
 		</div>
 
-		<Button icon="mdi:plus" onclick={() => (createDivisionOpen = true)} />
+		<Button icon="ph:plus" onclick={() => (createDivisionOpen = true)} />
 	{/if}
 </AdminCard>
 
 <AdminCard title="Inställningar">
-	<Button icon="mdi:trash-can" label="Radera säsong" kind="negative" onclick={submitDelete} />
+	<Button icon="ph:trash" label="Radera säsong" kind="negative" onclick={submitDelete} />
 </AdminCard>
 
 <CreateDialog

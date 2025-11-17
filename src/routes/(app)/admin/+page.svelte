@@ -44,7 +44,7 @@
 			{/each}
 		</div>
 
-		<Button icon="mdi:plus" onclick={() => (createSeasonOpen = true)} />
+		<Button icon="ph:plus" onclick={() => (createSeasonOpen = true)} />
 	{/if}
 </AdminCard>
 

@@ -11,7 +11,14 @@
 	<!-- <div id="color-overlay" class="fixed top-0 bottom-0 left-0 -z-10 w-full"></div> -->
 	<!-- <div id="background" class="absolute top-0 bottom-0 left-0 -z-20 w-full"></div> -->
 
-	<video src="/hero.mp4" class="fixed inset-0 -z-10 brightness-50" autoplay muted loop></video>
+	<video
+		src="https://cdn.kesomannen.com/dunderligan/hero.mp4"
+		class="absolute top-0 left-0 -z-10 h-full w-full bg-accent-800 object-cover brightness-50"
+		autoplay
+		muted
+		loop
+		preload="auto"
+	></video>
 
 	<div
 		class="mx-auto flex h-full max-w-4xl flex-col justify-center gap-6 pt-8 text-left font-display"
@@ -26,7 +33,7 @@
 		</p>
 
 		<Button
-			icon="mdi:arrow-right"
+			icon="ph:arrow-right"
 			class="max-w-max shadow-lg"
 			label="Se ställningar"
 			href="/sasong/test"
@@ -45,7 +52,7 @@
 	<div class="max-w-2xl space-y-2">
 		{#await matches}
 			{#each Array.from({ length: 3 })}
-				<div class="h-16 animate-pulse rounded-lg bg-gray-200"></div>
+				<div class="h-24 animate-pulse rounded-lg bg-gray-100"></div>
 			{/each}
 		{:then matches}
 			{#each matches as match (match.id)}

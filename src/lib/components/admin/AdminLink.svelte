@@ -16,5 +16,5 @@
 >
 	<span class="text-lg font-semibold">{@render children?.()}</span>
 
-	<Icon icon="mdi:arrow-right" class="text-xl" />
+	<Icon icon="ph:arrow-right" class="text-xl" />
 </a>

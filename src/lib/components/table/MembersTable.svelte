@@ -37,7 +37,7 @@
 			{player.battletag}
 
 			{#if isCaptain}
-				<Icon icon="mdi:crown" class="mb-0.5 ml-2" title="Lagkapten" />
+				<Icon icon="ph:crown-simple" class="mb-0.5 ml-2" title="Lagkapten" />
 			{/if}
 		</div>
 

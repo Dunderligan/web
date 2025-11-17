@@ -33,7 +33,7 @@
 			/>
 
 			<Button
-				icon="mdi:content-save"
+				icon="ph:floppy-disk"
 				label="Spara"
 				kind="primary"
 				onclick={onsaveclick}

@@ -3,86 +3,124 @@
 @import 'tailwindcss';
 
 @layer base {
-    button:enabled {
-        cursor: pointer;
-    }
+	button:enabled {
+		cursor: pointer;
+	}
 
-    iconify-icon {
-        display: inline-block;
-        width: 1em;
-        height: 1em;
-    }
+	iconify-icon {
+		display: inline-block;
+		width: 1em;
+		height: 1em;
+	}
+}
+
+@layer components {
+	.floating {
+		z-index: 50;
+		max-height: calc(var(--spacing) * 96);
+		min-width: calc(var(--spacing) * 40);
+		overflow-y: auto;
+		border-radius: var(--radius-lg);
+		border-style: var(--tw-border-style);
+		border-width: 1px;
+		border-color: var(--color-gray-200);
+		background-color: var(--color-white);
+		padding: calc(var(--spacing) * 1.5);
+		--tw-shadow:
+			0 4px 6px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1)),
+			0 2px 4px -2px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
+		box-shadow:
+			var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow),
+			var(--tw-ring-shadow), var(--tw-shadow);
+	}
+
+	.floating-item {
+		display: flex;
+		cursor: pointer;
+		align-items: center;
+		border-radius: var(--radius-md);
+		padding: calc(var(--spacing) * 1.5) calc(var(--spacing) * 4);
+		text-align: left;
+		font-weight: 500;
+		color: var(--color-gray-600);
+	}
+
+	.floating-item:hover,
+	.floating-item[data-highlighted] {
+		background-color: var(--color-gray-100);
+		color: var(--color-gray-700);
+	}
 }
 
 @theme {
-    --default-font-family: 'Rajdhani', sans-serif;
-    --font-display: 'Inter', 'Rajdhani', sans-serif;
+	--default-font-family: 'Rajdhani', sans-serif;
+	--font-display: 'Inter', 'Rajdhani', sans-serif;
 
-    --default-transition-duration: 150ms;
+	--default-transition-duration: 150ms;
 
-    --color-*: initial;
+	--color-*: initial;
 
-    --color-transparent: rgba(0, 0, 0, 0);
-    --color-black: rgb(0, 0, 0);
-    --color-white: rgb(255, 255, 255);
+	--color-transparent: rgba(0, 0, 0, 0);
+	--color-black: rgb(0, 0, 0);
+	--color-white: rgb(255, 255, 255);
 
-    --color-accent-50: rgb(250, 245, 249);
-    --color-accent-100: rgb(247, 236, 244);
-    --color-accent-200: rgb(240, 218, 234);
-    --color-accent-300: rgb(229, 188, 218);
-    --color-accent-400: rgb(211, 147, 192);
-    --color-accent-500: rgb(191, 105, 164);
-    --color-accent-600: rgb(174, 84, 141);
-    --color-accent-700: rgb(148, 66, 116);
-    --color-accent-800: rgb(123, 57, 97);
-    --color-accent-900: rgb(104, 51, 82);
-    --color-accent-950: rgb(62, 25, 47);
+	--color-accent-50: rgb(250, 245, 249);
+	--color-accent-100: rgb(247, 236, 244);
+	--color-accent-200: rgb(240, 218, 234);
+	--color-accent-300: rgb(229, 188, 218);
+	--color-accent-400: rgb(211, 147, 192);
+	--color-accent-500: rgb(191, 105, 164);
+	--color-accent-600: rgb(174, 84, 141);
+	--color-accent-700: rgb(148, 66, 116);
+	--color-accent-800: rgb(123, 57, 97);
+	--color-accent-900: rgb(104, 51, 82);
+	--color-accent-950: rgb(62, 25, 47);
 
-    --color-gray-50: rgb(249, 250, 251);
-    --color-gray-100: rgb(243, 244, 246);
-    --color-gray-200: rgb(229, 231, 235);
-    --color-gray-300: rgb(209, 213, 220);
-    --color-gray-400: rgb(153, 161, 175);
-    --color-gray-500: rgb(106, 114, 130);
-    --color-gray-600: rgb(74, 85, 101);
-    --color-gray-700: rgb(54, 65, 83);
-    --color-gray-800: rgb(30, 41, 57);
-    --color-gray-900: rgb(16, 24, 40);
-    --color-gray-950: rgb(3, 7, 18);
+	--color-gray-50: rgb(249, 250, 251);
+	--color-gray-100: rgb(243, 244, 246);
+	--color-gray-200: rgb(229, 231, 235);
+	--color-gray-300: rgb(209, 213, 220);
+	--color-gray-400: rgb(153, 161, 175);
+	--color-gray-500: rgb(106, 114, 130);
+	--color-gray-600: rgb(74, 85, 101);
+	--color-gray-700: rgb(54, 65, 83);
+	--color-gray-800: rgb(30, 41, 57);
+	--color-gray-900: rgb(16, 24, 40);
+	--color-gray-950: rgb(3, 7, 18);
 
-    --color-red-50: rgb(254, 242, 242);
-    --color-red-100: rgb(255, 226, 226);
-    --color-red-200: rgb(255, 201, 201);
-    --color-red-300: rgb(255, 162, 162);
-    --color-red-400: rgb(255, 100, 103);
-    --color-red-500: rgb(251, 44, 54);
-    --color-red-600: rgb(231, 0, 11);
-    --color-red-700: rgb(193, 0, 7);
-    --color-red-800: rgb(159, 7, 18);
-    --color-red-900: rgb(130, 24, 26);
-    --color-red-950: rgb(70, 8, 9);
+	--color-red-50: rgb(254, 242, 242);
+	--color-red-100: rgb(255, 226, 226);
+	--color-red-200: rgb(255, 201, 201);
+	--color-red-300: rgb(255, 162, 162);
+	--color-red-400: rgb(255, 100, 103);
+	--color-red-500: rgb(251, 44, 54);
+	--color-red-600: rgb(231, 0, 11);
+	--color-red-700: rgb(193, 0, 7);
+	--color-red-800: rgb(159, 7, 18);
+	--color-red-900: rgb(130, 24, 26);
+	--color-red-950: rgb(70, 8, 9);
 
-    --color-yellow-50: rgb(254, 252, 232);
-    --color-yellow-100: rgb(254, 249, 194);
-    --color-yellow-200: rgb(255, 240, 133);
-    --color-yellow-300: rgb(255, 223, 32);
-    --color-yellow-400: rgb(253, 199, 0);
-    --color-yellow-500: rgb(240, 177, 0);
-    --color-yellow-600: rgb(208, 135, 0);
-    --color-yellow-700: rgb(166, 95, 0);
-    --color-yellow-800: rgb(137, 75, 0);
-    --color-yellow-900: rgb(115, 62, 10);
-    --color-yellow-950: rgb(67, 32, 4);
-    
-    --color-green-50: rgb(240, 253, 244);
-    --color-green-100: rgb(220, 252, 231);
-    --color-green-200: rgb(185, 248, 207);
-    --color-green-300: rgb(123, 241, 168);
-    --color-green-400: rgb(5, 223, 114);
-    --color-green-500: rgb(0, 201, 80);
-    --color-green-600: rgb(0, 166, 62);
-    --color-green-700: rgb(0, 130, 54);
-    --color-green-800: rgb(1, 102, 48);
-    --color-green-900: rgb(13, 84, 43);
-    --color-green-950: rgb(3, 46, 21);
+	--color-yellow-50: rgb(254, 252, 232);
+	--color-yellow-100: rgb(254, 249, 194);
+	--color-yellow-200: rgb(255, 240, 133);
+	--color-yellow-300: rgb(255, 223, 32);
+	--color-yellow-400: rgb(253, 199, 0);
+	--color-yellow-500: rgb(240, 177, 0);
+	--color-yellow-600: rgb(208, 135, 0);
+	--color-yellow-700: rgb(166, 95, 0);
+	--color-yellow-800: rgb(137, 75, 0);
+	--color-yellow-900: rgb(115, 62, 10);
+	--color-yellow-950: rgb(67, 32, 4);
+
+	--color-green-50: rgb(240, 253, 244);
+	--color-green-100: rgb(220, 252, 231);
+	--color-green-200: rgb(185, 248, 207);
+	--color-green-300: rgb(123, 241, 168);
+	--color-green-400: rgb(5, 223, 114);
+	--color-green-500: rgb(0, 201, 80);
+	--color-green-600: rgb(0, 166, 62);
+	--color-green-700: rgb(0, 130, 54);
+	--color-green-800: rgb(1, 102, 48);
+	--color-green-900: rgb(13, 84, 43);
+	--color-green-950: rgb(3, 46, 21);
 }

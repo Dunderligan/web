@@ -42,7 +42,7 @@
 		},
 		{
 			label: 'Skapa',
-			icon: 'mdi:create',
+			icon: 'ph:plus',
 			disabled,
 			loading,
 			onclick: create

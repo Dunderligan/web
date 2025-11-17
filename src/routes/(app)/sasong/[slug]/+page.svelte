@@ -62,7 +62,7 @@
 				'mr-1 flex max-w-max items-center gap-1 rounded-full py-1 pr-3 pl-2 text-sm'
 			]}
 		>
-			<Icon icon={isOngoing ? 'mdi:circle-outline' : 'mdi:pause'} class="text-xl" />
+			<Icon icon={isOngoing ? 'ph:circle' : 'ph:pause'} class="text-xl" />
 
 			{isOngoing ? 'Pågående' : 'Avslutad'}
 		</div>
@@ -99,13 +99,13 @@
 				selected={mode}
 				items={[
 					{
-						icon: 'mdi:table',
+						icon: 'ph:table',
 						label: 'Gruppspel',
 						value: 'group',
 						href: `?div=${activeDivision.slug}&visa=gruppspel`
 					},
 					{
-						icon: 'mdi:bracket',
+						icon: 'ph:brackets-curly',
 						label: 'Slutspel',
 						value: 'bracket',
 						href: `?div=${activeDivision.slug}&visa=slutspel`,
@@ -143,7 +143,7 @@
 		{#if isAdmin($session.data?.user)}
 			<Button
 				label="Redigera division"
-				icon="mdi:edit"
+				icon="ph:pencil-simple"
 				kind="secondary"
 				class="mt-4 max-w-max"
 				href="/admin/division/{activeDivision.id}"

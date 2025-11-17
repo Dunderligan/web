@@ -102,7 +102,7 @@
 			kind="secondary"
 			class={[classProp, 'w-max']}
 			label="Redigera lag"
-			icon="mdi:pencil"
+			icon="ph:pencil-simple"
 		/>
 	{/if}
 {/snippet}

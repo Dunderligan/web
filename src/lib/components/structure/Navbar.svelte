@@ -2,6 +2,7 @@
 	import { authClient } from '$lib/auth-client';
 	import { DropdownMenu } from 'bits-ui';
 	import Icon from '../ui/Icon.svelte';
+	import Button from '../ui/Button.svelte';
 
 	type Props = {
 		dark?: boolean;
@@ -30,18 +31,20 @@
 		{
 			href: '/om',
 			label: 'Om oss'
-		},
-		{
-			href: '/admin',
-			label: 'Admin'
 		}
 	];
+
+	const shownName = $derived.by(() => {
+		const tag = $session.data?.user.name;
+		if (!tag) return null;
+		return tag.split('#')[0];
+	});
 </script>
 
 <nav
 	class={[
 		dark ? 'to-gray-900/30 text-gray-200' : 'to-gray-300/80 text-gray-800',
-		'fixed z-40 h-18 w-screen bg-gradient-to-t px-8 pt-4 backdrop-blur-[2px]'
+		'fixed z-30 h-18 w-screen bg-gradient-to-t px-8 pt-4 backdrop-blur-[2px]'
 	]}
 >
 	<div class="mx-auto flex h-full max-w-3xl items-center justify-between gap-2">
@@ -55,18 +58,34 @@
 			{/each}
 		</div>
 
-		<div class="flex items-center gap-6 text-2xl">
-			<button>
+		<div class="flex items-center gap-6">
+			<!-- <button>
 				<Icon icon="mdi:white-balance-sunny" />
-			</button>
+			</button> -->
 
-			<button onclick={login}>
-				<Icon icon="mdi:account-circle" />
-			</button>
+			{#if $session.data?.user}
+				<DropdownMenu.Root>
+					<DropdownMenu.Trigger
+						class={[dark ? 'text-gray-200' : 'text-gray-800', 'text-lg font-semibold']}
+					>
+						{shownName}
+					</DropdownMenu.Trigger>
+					<DropdownMenu.Content class="floating" avoidCollisions={false}>
+						<DropdownMenu.Item class="floating-item">
+							<a href="/admin" class="space-y-2"> Admin </a>
+						</DropdownMenu.Item>
+						<DropdownMenu.Item class="floating-item gap-2" onclick={logout}>
+							Logga ut</DropdownMenu.Item
+						>
+					</DropdownMenu.Content>
+				</DropdownMenu.Root>
+			{:else}
+				<Button onclick={login} kind="tertiary" label="Logga in" />
+			{/if}
 
 			<DropdownMenu.Root>
 				<DropdownMenu.Trigger class="sm:hidden">
-					<Icon icon="mdi:menu" class="text-2xl" />
+					<Icon icon="ph:list" class="text-2xl" />
 				</DropdownMenu.Trigger>
 				<DropdownMenu.Content
 					class="z-50 flex w-lvw flex-col items-stretch gap-1 bg-white py-6 shadow-lg"

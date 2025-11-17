@@ -139,7 +139,7 @@
 			{/each}
 		</div>
 
-		<Button icon="mdi:add" onclick={() => (createGroupOpen = true)} />
+		<Button icon="ph:plus" onclick={() => (createGroupOpen = true)} />
 	{/if}
 </AdminCard>
 
@@ -155,12 +155,12 @@
 			{/each}
 		</div>
 
-		<Button icon="mdi:trash-can" label="Radera bracket" kind="negative" onclick={onDeleteBracket} />
+		<Button icon="ph:trash" label="Radera bracket" kind="negative" onclick={onDeleteBracket} />
 	{:else}
 		<Notice kind="info">
 			Denna division har inget bracket.
 
-			<Button kind="transparent" icon="mdi:add" label="Generera" class="ml-auto" onclick={generate}
+			<Button kind="transparent" icon="ph:plus" label="Generera" class="ml-auto" onclick={generate}
 			></Button>
 		</Notice>
 	{/if}
@@ -171,7 +171,7 @@
 		<InputField bind:value={division.name} oninput={saveCtx.setDirty} />
 	</Label>
 
-	<Button icon="mdi:trash-can" label="Radera division" kind="negative" onclick={submitDelete} />
+	<Button icon="ph:trash" label="Radera division" kind="negative" onclick={submitDelete} />
 </AdminCard>
 
 <EditMatchDialog />

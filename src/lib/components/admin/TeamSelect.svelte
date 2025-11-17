@@ -62,21 +62,14 @@
 		oninput={(evt) => (searchQuery = evt.currentTarget.value)}
 	></Combobox.Input>
 	{#if searchQuery.length >= 2}
-		<Combobox.Content
-			class="z-50 max-h-96 w-[var(--bits-combobox-anchor-width)] min-w-40 space-y-2 overflow-y-auto rounded-lg border border-gray-200 bg-white p-1.5 shadow-md"
-		>
+		<Combobox.Content class="floating w-[var(--bits-combobox-anchor-width)]">
 			{#if loading}
 				<div class="py-2 text-center font-medium text-gray-400">Laddar...</div>
 			{:else if teams.size === 0}
 				<div class="py-2 text-center font-medium text-gray-600">Inga lag hittades</div>
 			{:else}
 				{#each teams as [teamId, rosters] (teamId)}
-					<Combobox.Item
-						value={teamId}
-						class={[
-							'cursor-pointer items-center space-y-2 rounded-md px-4 py-1.5 text-left font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-600 data-[highlighted]:bg-gray-100 data-[highlighted]:text-gray-600'
-						]}
-					>
+					<Combobox.Item value={teamId} class={['floating-item space-y-2']}>
 						{#each rosters as roster (roster.id)}
 							<div class="flex items-center">
 								<RosterLogo id={roster.id} class="mr-3 size-8" />

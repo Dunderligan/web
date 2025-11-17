@@ -182,18 +182,18 @@ export function capitalize(str: string) {
 export function roleIcon(role: Role): string {
 	switch (role) {
 		case 'tank':
-			return 'mdi:shield-outline';
+			return 'ph:shield';
 		case 'damage':
-			return 'mdi:sword-cross';
+			return 'ph:sword';
 		case 'support':
-			return 'mdi:band-aid';
+			return 'ph:bandaids';
 		case 'flex':
-			return 'mdi:stars';
+			return 'ph:star';
 		case 'coach':
-			return 'mdi:business';
+			return 'ph:suitcase';
 	}
 
-	return 'mdi:help';
+	return 'ph:question-mark';
 }
 
 export function aggregateGroups<R, M>(groups: { rosters: R[]; matches: M[] }[]) {

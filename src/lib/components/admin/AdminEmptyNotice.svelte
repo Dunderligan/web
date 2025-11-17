@@ -16,7 +16,7 @@
 	{@render children?.()}
 
 	<Button
-		icon="mdi:add"
+		icon="ph:plus"
 		label={createButtonLabel}
 		kind="transparent"
 		class="ml-auto shrink-0"

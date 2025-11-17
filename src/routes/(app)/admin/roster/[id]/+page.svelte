@@ -207,7 +207,7 @@
 				<div class="flex items-center bg-gray-200 pr-4">
 					<Button
 						title="Ta bort"
-						icon="mdi:remove"
+						icon="ph:trash"
 						kind="tertiary"
 						onclick={() => {
 							roster.members.splice(index, 1);
@@ -218,7 +218,7 @@
 			{/snippet}
 		</Table>
 
-		<Button kind="primary" icon="mdi:add" onclick={() => (newPlayerOpen = true)} />
+		<Button kind="primary" icon="ph:plus" onclick={() => (newPlayerOpen = true)} />
 	{/if}
 </AdminCard>
 
@@ -232,14 +232,14 @@
 			{#each team.socials as social, i (social.platform)}
 				<Label>
 					{#snippet label()}
-						<Icon class="text-2xl" icon="mdi:{social.platform}" />
+						<Icon class="text-2xl" icon="ph:{social.platform}-logo-fill" />
 						{formatSocialPlatform(social.platform)}
 					{/snippet}
 
 					<InputField bind:value={social.url} placeholder="URL" />
 
 					<Button
-						icon="mdi:delete"
+						icon="ph:tash"
 						class="ml-2"
 						kind="tertiary"
 						title="Radera"
@@ -253,7 +253,7 @@
 		</div>
 
 		{#if remainingPlatforms.length > 0}
-			<Button icon="mdi:add" onclick={() => (newSocialOpen = true)} />
+			<Button icon="ph:plus" onclick={() => (newSocialOpen = true)} />
 		{/if}
 	{/if}
 </AdminCard>
@@ -267,7 +267,7 @@
 		<RosterLogoUpload rosterId={roster.id} />
 	</Label>
 
-	<Button icon="mdi:delete" label="Radera roster" kind="negative" onclick={submitDelete} />
+	<Button icon="ph:trash" label="Radera roster" kind="negative" onclick={submitDelete} />
 </AdminCard>
 
 {#if team.rosters.length > 1}
@@ -301,7 +301,7 @@
 			type="single"
 			triggerClass="grow"
 			bind:value={newPlatform}
-			itemIcon={(platform) => `mdi:${platform}`}
+			itemIcon={(platform) => `ph:${platform}-logo-fill`}
 			items={remainingPlatforms.map((platform) => ({
 				label: formatSocialPlatform(platform),
 				value: platform

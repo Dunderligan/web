@@ -126,7 +126,7 @@
 			{/each}
 		</div>
 
-		<Button icon="mdi:add" class="mt-2" onclick={() => (addRosterOpen = true)} />
+		<Button icon="ph:plus" class="mt-2" onclick={() => (addRosterOpen = true)} />
 	{/if}
 </AdminCard>
 
@@ -136,7 +136,7 @@
 			Denna grupp har inga matcher.
 		</AdminEmptyNotice>
 	{:else}
-		<div class="max-w-sm space-y-2 overflow-hidden rounded-lg">
+		<div class="grid grid-cols-2 gap-2 overflow-hidden rounded-lg">
 			{#each group.matches as match, i (match.id)}
 				<EditableMatch
 					{match}
@@ -148,7 +148,7 @@
 			{/each}
 		</div>
 
-		<Button icon="mdi:add" class="mt-2" onclick={addMatchAndEdit} />
+		<Button icon="ph:plus" class="mt-2" onclick={addMatchAndEdit} />
 	{/if}
 </AdminCard>
 
@@ -157,7 +157,7 @@
 		<InputField bind:value={group.name} oninput={saveCtx.setDirty} />
 	</Label>
 
-	<Button icon="mdi:trash-can" label="Radera grupp" kind="negative" onclick={submitDelete} />
+	<Button icon="ph:trash" label="Radera grupp" kind="negative" onclick={submitDelete} />
 </AdminCard>
 
 <CreateDialog

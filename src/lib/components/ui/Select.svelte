@@ -85,7 +85,7 @@
 		</div>
 
 		<Icon
-			icon="mdi:arrow-down-drop"
+			icon="ph:caret-down"
 			class={[open && 'rotate-180', 'ml-auto transform text-lg text-gray-400']}
 		/>
 	</Select.Trigger>
@@ -96,24 +96,19 @@
 					{#if open}
 						<div
 							{...props}
-							class="z-50 max-h-96 w-[var(--bits-select-anchor-width)] min-w-40 overflow-y-auto rounded-lg border border-gray-200 bg-white p-1.5 shadow-md"
+							class="floating w-[var(--bits-select-anchor-width)]"
 							in:fly={{ y: -5, duration: 80, easing: quadOut }}
 						>
 							<Select.Viewport>
 								{#each items as item, i (i + item.value)}
-									<Select.Item
-										{...item}
-										class={[
-											'flex cursor-pointer items-center rounded-md px-4 py-1.5 text-left font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-700 data-[highlighted]:bg-gray-100 data-[highlighted]:text-gray-700'
-										]}
-									>
+									<Select.Item {...item} class="floating-item">
 										{#snippet children({ selected })}
 											{@render renderedItemIcon(item.value)}
 
 											<span>{item.label}</span>
 
 											{#if selected}
-												<Icon icon="mdi:circle" class="ml-auto text-xs text-accent-400" />
+												<Icon icon="ph:check" class="ml-auto text-xs text-accent-400" />
 											{/if}
 										{/snippet}
 									</Select.Item>
