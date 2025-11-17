@@ -9,7 +9,7 @@ export const createSeason = command(
 		startedAt: z.date()
 	}),
 	async ({ name, startedAt }) => {
-		const slug = toSlug(name);
+		const slug = toSlug(name.split(' ').at(-1) ?? name);
 
 		const [season] = await db
 			.insert(schema.season)
