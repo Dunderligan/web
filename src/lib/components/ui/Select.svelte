@@ -84,10 +84,7 @@
 			{label ?? selectedLabel ?? placeholder}
 		</div>
 
-		<Icon
-			icon="ph:caret-down"
-			class={[open && 'rotate-180', 'ml-auto transform text-lg text-gray-400']}
-		/>
+		<Icon icon="ph:caret-down" class={[open && 'rotate-180', 'ml-auto transform text-gray-400']} />
 	</Select.Trigger>
 	<Select.Portal>
 		<Select.Content forceMount {avoidCollisions}>
