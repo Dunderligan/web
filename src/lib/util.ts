@@ -7,6 +7,7 @@ import {
 	type Role,
 	type FullMatch
 } from './types';
+import { PUBLIC_CDN_ENDPOINT, PUBLIC_S3_BUCKET_NAME } from '$env/static/public';
 // import { PUBLIC_CDN_ENDPOINT } from '$env/static/public';
 
 const rankNums: Record<Rank, number> = {
@@ -164,14 +165,17 @@ export function buildBracket<T extends { id: string; nextMatchId?: string | null
 	return rounds;
 }
 
+export function cdnSrc(path: string) {
+	return `${PUBLIC_CDN_ENDPOINT}/${PUBLIC_S3_BUCKET_NAME}${path}`;
+}
+
 export function cdnImageSrc(path: string, { width, height }: { width: number; height?: number }) {
 	let filters = `format=auto,fit=scale-down,width=${width}`;
 	if (height) {
 		filters += `,height=${height}`;
 	}
 
-	// return `${PUBLIC_CDN_ENDPOINT}/cdn-cgi/image/${filters}/dunderligan${path}`;
-	return `https://cdn.kesomannen.com/cdn-cgi/image/${filters}/dunderligan${path}`;
+	return `${PUBLIC_CDN_ENDPOINT}/cdn-cgi/image/${filters}/${PUBLIC_S3_BUCKET_NAME}${path}`;
 }
 
 export function capitalize(str: string) {

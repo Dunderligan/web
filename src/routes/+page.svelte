@@ -3,6 +3,7 @@
 	import Match from '$lib/components/match/Match.svelte';
 	import PageSection from '$lib/components/structure/PageSection.svelte';
 	import type { ResolvedMatch } from '$lib/types';
+	import { cdnSrc } from '$lib/util';
 
 	let { data } = $props();
 </script>
@@ -19,7 +20,7 @@
 	<!-- <div id="background" class="absolute top-0 bottom-0 left-0 -z-20 w-full"></div> -->
 
 	<video
-		src="https://cdn.kesomannen.com/dunderligan/hero.mp4"
+		src={cdnSrc('/trailer.mp4')}
 		class="absolute top-0 left-0 -z-10 h-full w-full bg-accent-800 object-cover brightness-50"
 		autoplay
 		muted
