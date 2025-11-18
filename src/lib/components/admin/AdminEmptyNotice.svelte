@@ -7,16 +7,22 @@
 		children?: Snippet;
 		oncreateclick?: () => void;
 		createButtonLabel?: string;
+		createButtonIcon?: string;
 	};
 
-	let { children, oncreateclick, createButtonLabel = 'Lägg till' }: Props = $props();
+	let {
+		children,
+		oncreateclick,
+		createButtonLabel = 'Lägg till',
+		createButtonIcon = 'ph:plus'
+	}: Props = $props();
 </script>
 
 <Notice kind="info">
 	{@render children?.()}
 
 	<Button
-		icon="ph:plus"
+		icon={createButtonIcon}
 		label={createButtonLabel}
 		kind="transparent"
 		class="ml-auto shrink-0"

@@ -14,6 +14,10 @@
 	let files: FileList | null = $state(null);
 	let form: HTMLFormElement;
 
+	const srcOverride = $derived.by(() =>
+		files && files.length > 0 ? URL.createObjectURL(files[0]) : null
+	);
+
 	function onchange() {
 		form.submit();
 	}
@@ -25,7 +29,7 @@
 			id={rosterId}
 			class="absolute -z-10 h-full w-full transition-all group-hover:brightness-75"
 			imgSize={128}
-			src={files && files.length > 0 ? URL.createObjectURL(files[0]) : null}
+			src={srcOverride}
 		/>
 		<div
 			class="hidden items-center justify-center rounded-lg bg-gray-600 p-2 text-xl text-white group-hover:flex"

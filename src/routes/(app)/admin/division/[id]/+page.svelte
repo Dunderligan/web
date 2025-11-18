@@ -28,10 +28,10 @@
 	const { data } = $props();
 
 	const division = $state(data.division);
-	const { season } = $derived(division);
+	const season = $state(division.season);
 
 	RosterContext.set(new RosterContext(data.division.groups.flatMap((group) => group.rosters)));
-	SaveContext.set(new SaveContext(save));
+	SaveContext.set(new SaveContext({ save, href: `/sasong/${season.slug}?div=${division.slug}` }));
 
 	const saveCtx = SaveContext.get();
 	const confirmCtx = ConfirmContext.get();
@@ -186,7 +186,7 @@
 	disabled={!newGroupName}
 >
 	<Label label="Namn">
-		<InputField bind:value={newGroupName} placeholder="T.ex. Grupp A..." onenter={submitNewGroup} />
+		<InputField bind:value={newGroupName} placeholder="T.ex. Grupp A..." />
 	</Label>
 </CreateDialog>
 

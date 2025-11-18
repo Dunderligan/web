@@ -12,9 +12,10 @@ import S3 from './server/s3';
 export const queryTeams = query(
 	z.object({
 		query: z.string(),
-		excludeGroupId: z.uuidv4().optional()
+		excludeSeasonId: z.uuidv4().optional()
 	}),
-	async ({ query, excludeGroupId }) => {
+	async ({ query, excludeSeasonId }) => {
+		// gather rosters that match the query from any team/season
 		const rosters = await db.query.roster.findMany({
 			limit: 15,
 			where: ilike(schema.roster.name, `%${query}%`),
@@ -33,16 +34,17 @@ export const queryTeams = query(
 			}
 		});
 
+		// group the rosters by their team
 		const teams = new Map<string, RosterWithGroup[]>();
 
 		for (const { team, ...roster } of rosters) {
-			if (roster.group.id === excludeGroupId) continue;
+			if (roster.group.division.season.id === excludeSeasonId) continue;
 
-			const list = teams.get(team.id) ?? [];
-			list.push(roster);
-			teams.set(team.id, list);
+			const rosters = teams.get(team.id) ?? [];
+			rosters.push(roster);
+			teams.set(team.id, rosters);
 
-			// return max 5 teams
+			// return max 5 unique teams
 			if (teams.size >= 5) break;
 		}
 

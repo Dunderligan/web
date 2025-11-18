@@ -23,11 +23,13 @@
 		enumToPgEnum,
 		roleIcon
 	} from '$lib/util';
-	import { createRoster, deleteRoster, editRoster } from './page.remote';
+	import { createRoster, deleteRoster, editRoster, editRosterTeam } from './page.remote';
+	import Notice from '$lib/components/ui/Notice.svelte';
+	import Dialog from '$lib/components/ui/Dialog.svelte';
+	import TeamSelect from '$lib/components/admin/TeamSelect.svelte';
+	import Checkbox from '$lib/components/ui/Checkbox.svelte';
 
 	let { data } = $props();
-
-	SaveContext.set(new SaveContext(save));
 
 	$effect(() => {
 		roster = data.roster;
@@ -36,7 +38,10 @@
 
 	let roster = $state(data.roster);
 	let team = $state(data.team);
+
 	let { group, division, season } = $derived(flattenGroup(roster.group));
+
+	SaveContext.set(new SaveContext({ save, href: `/lag/${roster.slug}/${season.slug}` }));
 
 	let newPlayerOpen = $state(false);
 	let newPlayerBattletag = $state('');
@@ -51,7 +56,8 @@
 	let newPlatform = $state(SocialPlatform.TWITTER);
 	let newSocialUrl = $state('');
 
-	let newGroupId = $state('');
+	let linkTeamOpen = $state(false);
+	let linkTeamId: string | undefined = $state();
 
 	let confirm = ConfirmContext.get();
 	let saveCtx = SaveContext.get();
@@ -109,18 +115,6 @@
 		}
 	}
 
-	async function submitNewRoster() {
-		await createRoster({
-			name: roster.name + ' version 2',
-			groupId: newGroupId,
-			teamId: team.id
-		});
-
-		newGroupId = '';
-
-		await goto(`/admin/roster/${roster.id}`);
-	}
-
 	async function submitDelete() {
 		await confirm.confirm({
 			title: 'Radera roster',
@@ -134,6 +128,12 @@
 				await goto(`/admin/grupp/${group.id}`);
 			}
 		});
+	}
+
+	async function linkTeam() {
+		if (!linkTeamId) return;
+
+		await editRosterTeam({ rosterId: roster.id, teamId: linkTeamId });
 	}
 </script>
 
@@ -153,13 +153,17 @@
 		</AdminEmptyNotice>
 	{:else}
 		<Table
-			columns={[{ label: 'Battletag', center: false }, 'Roll', 'Rank', '']}
+			columns={[{ label: 'Battletag', center: false }, 'Kapten', 'Roll', 'Rank', '']}
 			rows={roster.members}
-			class="grid-cols-[1fr_160px_250px_50px]"
+			class="grid-cols-[1fr_80px_160px_250px_50px]"
 		>
 			{#snippet row({ value: member, index })}
 				<div class="flex items-center bg-gray-200 px-6 py-4 text-lg font-semibold">
 					{member.player.battletag}
+				</div>
+
+				<div class="flex items-center justify-center gap-2 bg-gray-200 pr-2">
+					<Checkbox bind:checked={member.isCaptain} onCheckedChange={saveCtx.setDirty} />
 				</div>
 
 				<div class="flex items-center bg-gray-200 pr-4">
@@ -239,7 +243,7 @@
 					<InputField bind:value={social.url} placeholder="URL" />
 
 					<Button
-						icon="ph:tash"
+						icon="ph:trash"
 						class="ml-2"
 						kind="tertiary"
 						title="Radera"
@@ -270,8 +274,8 @@
 	<Button icon="ph:trash" label="Radera roster" kind="negative" onclick={submitDelete} />
 </AdminCard>
 
-{#if team.rosters.length > 1}
-	<AdminCard title="Andra rosters">
+<AdminCard title="Länkade rosters">
+	{#if team.rosters.length > 1}
 		<div class="space-y-1 overflow-hidden rounded-lg">
 			{#each team.rosters as otherRoster (otherRoster.id)}
 				{@const { division, season } = flattenGroup(otherRoster.group)}
@@ -286,8 +290,15 @@
 				{/if}
 			{/each}
 		</div>
-	</AdminCard>
-{/if}
+	{:else}
+		<AdminEmptyNotice
+			createButtonLabel="Länka"
+			createButtonIcon="ph:link"
+			oncreateclick={() => (linkTeamOpen = true)}
+			>{roster.name} är inte länkat till något annat roster.
+		</AdminEmptyNotice>
+	{/if}
+</AdminCard>
 
 <CreateDialog
 	title="Lägg till social media"
@@ -317,12 +328,25 @@
 <CreateDialog
 	title="Lägg till spelare"
 	bind:open={newPlayerOpen}
-	onclose={resetNewPlayer}
 	oncreate={addNewPlayer}
+	onclose={resetNewPlayer}
 	disabled={!newPlayerBattletag}
 >
 	<Label label="Battletag">
 		<InputField bind:value={newPlayerBattletag} placeholder="Spelare#0000" />
+	</Label>
+</CreateDialog>
+
+<CreateDialog
+	title="Länka roster"
+	createLabel="Länka"
+	oncreate={linkTeam}
+	onclose={() => (linkTeamId = undefined)}
+	bind:open={linkTeamOpen}
+	disabled={!linkTeamId}
+>
+	<Label label="Lag">
+		<TeamSelect excludeSeasonId={season.id} bind:value={linkTeamId} />
 	</Label>
 </CreateDialog>
 

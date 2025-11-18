@@ -17,6 +17,8 @@
 
 	const season = $state(data.season);
 
+	SaveContext.set(new SaveContext({ href: `/sasong/${season.slug}` }));
+
 	const confirmCtx = ConfirmContext.get();
 
 	let createDivisionOpen = $state(false);
@@ -78,11 +80,7 @@
 	onclose={() => (newDivisionName = '')}
 >
 	<Label label="Namn">
-		<InputField
-			bind:value={newDivisionName}
-			placeholder="T.ex. Division 1..."
-			onenter={submitNewDivision}
-		/>
+		<InputField bind:value={newDivisionName} placeholder="T.ex. Division 1..." />
 	</Label>
 </CreateDialog>
 

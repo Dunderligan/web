@@ -17,9 +17,17 @@
 	type Props = {
 		title: string;
 		buttons?: ButtonType[];
+		onsubmit?: () => void;
 	} & DialogRootProps;
 
-	let { title, buttons, open = $bindable(false), children, ...restProps }: Props = $props();
+	let {
+		title,
+		buttons,
+		open = $bindable(false),
+		children,
+		onsubmit,
+		...restProps
+	}: Props = $props();
 </script>
 
 <Dialog.Root {...restProps} bind:open>
@@ -41,6 +49,11 @@
 					<div
 						class="fixed top-[50%] left-[50%] z-40 w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] space-y-2 rounded-xl bg-white p-8 shadow-xl sm:max-w-lg md:w-full"
 						transition:fade={{ duration: 25 }}
+						onkeydown={(evt) => {
+							if (evt.key === 'Enter') {
+								onsubmit?.();
+							}
+						}}
 						{...props}
 					>
 						<Dialog.Title class="mb-4 text-center font-display text-2xl font-bold text-gray-900"

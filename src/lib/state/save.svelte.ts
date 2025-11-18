@@ -12,16 +12,17 @@ export class SaveContext {
 	saving = $state(false);
 	discarding = $state(false);
 
-	private saveAction: () => Promise<void>;
+	private saveAction?: () => Promise<void>;
 	private discardAction: () => Promise<void>;
 
 	href?: string;
 
-	constructor(
-		save: () => Promise<void>,
-		options?: { discard?: () => Promise<void>; href?: string }
-	) {
-		this.saveAction = save;
+	constructor(options?: {
+		save?: () => Promise<void>;
+		discard?: () => Promise<void>;
+		href?: string;
+	}) {
+		this.saveAction = options?.save;
 		this.discardAction = options?.discard ?? invalidateAll;
 
 		this.href = options?.href;
@@ -46,7 +47,7 @@ export class SaveContext {
 	save = async () => {
 		try {
 			this.saving = true;
-			await this.saveAction();
+			await this.saveAction?.();
 
 			this.isDirty = false;
 		} finally {

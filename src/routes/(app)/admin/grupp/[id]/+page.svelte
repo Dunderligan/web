@@ -18,24 +18,27 @@
 	import { SaveContext } from '$lib/state/save.svelte';
 	import { createAndAddRoster, deleteGroup, updateGroup } from './page.remote';
 	import { v4 as uuidv4 } from 'uuid';
+	import CreateRosterDialog from '$lib/components/admin/CreateRosterDialog.svelte';
 
 	const { data } = $props();
 
 	let group = $state(data.group);
-
-	const { season, division } = $derived(data);
+	let division = $state(data.division);
+	let season = $state(data.season);
 
 	RosterContext.set(new RosterContext(data.group.rosters));
-	SaveContext.set(new SaveContext(save));
+	SaveContext.set(
+		new SaveContext({
+			save,
+			href: `/sasong/${season.slug}?div=${division.slug}`
+		})
+	);
 
 	let rosterCtx = RosterContext.get();
 	let confirmCtx = ConfirmContext.get();
 	let saveCtx = SaveContext.get();
 
 	let addRosterOpen = $state(false);
-
-	let newRosterTeamId: string | undefined = $state();
-	let newRosterName = $state('');
 
 	$effect(() => {
 		group = data.group;
@@ -65,12 +68,12 @@
 		});
 	}
 
-	async function submitNewRoster() {
+	async function submitNewRoster(name: string, teamId?: string) {
 		const { roster } = await createAndAddRoster({
 			groupId: group.id,
 			seasonSlug: season.slug,
-			name: newRosterName,
-			teamId: newRosterTeamId && newRosterTeamId.length > 0 ? newRosterTeamId : null
+			name: name,
+			teamId
 		});
 
 		await goto(`/admin/roster/${roster.id}`);
@@ -160,51 +163,10 @@
 	<Button icon="ph:trash" label="Radera grupp" kind="negative" onclick={submitDelete} />
 </AdminCard>
 
-<CreateDialog
-	title="Skapa roster"
+<CreateRosterDialog
 	bind:open={addRosterOpen}
-	oncreate={submitNewRoster}
-	onclose={() => {
-		newRosterTeamId = undefined;
-		newRosterName = '';
-	}}
-	disabled={!newRosterName.trim()}
->
-	<Label label="Lag">
-		<TeamSelect bind:value={newRosterTeamId} excludeGroupId={group.id} />
-	</Label>
-
-	<Label label="Namn">
-		<InputField
-			bind:value={newRosterName}
-			placeholder="T.ex. Groot Gaming..."
-			onenter={submitNewRoster}
-		/>
-	</Label>
-
-	<!-- <Label label="Existerande lag?">
-		<input type="checkbox" bind:checked={newRosterHasTeam} />
-	</Label>
-
-	{#if newRosterHasTeam}
-		<Label label="Lag">
-			<Select
-				type="single"
-				bind:value={newRosterTeamId}
-				placeholder="Välj lag..."
-				triggerClass="grow"
-				items={teams.map((team) => ({
-					label: team.rosters[0].name,
-					value: team.id
-				}))}
-			>
-				{#snippet itemSnippet({ value })}
-					<RosterLogo id={value} class="mr-2 size-6" />
-				{/snippet}
-			</Select>
-		</Label>
-	{/if} -->
-</CreateDialog>
-
-<SaveToast />
+	onsubmit={submitNewRoster}
+	excludeSeasonId={season.id}
+/>
 <EditMatchDialog />
+<SaveToast />

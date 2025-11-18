@@ -180,3 +180,13 @@ export const deleteRoster = command(
 		await S3.send(command);
 	}
 );
+
+export const editRosterTeam = command(
+	z.object({
+		rosterId: z.uuid(),
+		teamId: z.uuid()
+	}),
+	async ({ teamId, rosterId }) => {
+		await db.update(schema.roster).set({ teamId }).where(eq(schema.roster.id, rosterId));
+	}
+);

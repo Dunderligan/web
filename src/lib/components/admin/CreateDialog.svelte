@@ -6,12 +6,21 @@
 		title: string;
 		open?: boolean;
 		disabled?: boolean;
+		createLabel?: string;
 		oncreate?: () => Promise<void>;
 		onclose?: () => void;
 		children: Snippet;
 	};
 
-	let { title, open = $bindable(false), disabled, oncreate, onclose, children }: Props = $props();
+	let {
+		title,
+		open = $bindable(false),
+		disabled,
+		createLabel = 'Skapa',
+		oncreate,
+		onclose,
+		children
+	}: Props = $props();
 
 	let loading = $state(false);
 
@@ -33,6 +42,9 @@
 <Dialog
 	{title}
 	bind:open
+	onsubmit={() => {
+		if (!loading && !disabled) create();
+	}}
 	buttons={[
 		{
 			label: 'Avbryt',
@@ -41,7 +53,7 @@
 			onclick: close
 		},
 		{
-			label: 'Skapa',
+			label: createLabel,
 			icon: 'ph:plus',
 			disabled,
 			loading,

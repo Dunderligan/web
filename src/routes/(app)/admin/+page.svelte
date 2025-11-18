@@ -10,8 +10,11 @@
 	import InputField from '$lib/components/ui/InputField.svelte';
 	import Label from '$lib/components/ui/Label.svelte';
 	import { createSeason } from './page.remote.js';
+	import { SaveContext } from '$lib/state/save.svelte.js';
 
 	let { data } = $props();
+
+	SaveContext.set(new SaveContext());
 
 	let seasons = $state(data.seasons);
 

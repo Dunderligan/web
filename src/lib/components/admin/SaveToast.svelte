@@ -4,42 +4,91 @@
 	import { fly } from 'svelte/transition';
 	import { SaveContext } from '$lib/state/save.svelte';
 	import { Portal } from 'bits-ui';
-	import { goto } from '$app/navigation';
 
 	const context = SaveContext.get();
 
+	type SaveState = 'default' | 'success' | 'error' | 'reset';
+
+	let saveState: SaveState = $state('default');
+
+	const isShown = $derived(saveState !== 'default' || context.isDirty);
+
+	const text = $derived.by(() => {
+		switch (saveState) {
+			case 'default':
+				return 'Försiktigt! Du har osparade ändringar!';
+			case 'success':
+				return 'Sparat!';
+			case 'error':
+				return 'Kunde inte spara dina ändringar!';
+			case 'reset':
+				return 'Återställde dina ändringar.';
+		}
+	});
+
 	async function onsaveclick() {
-		await context.save();
-		if (context.href) {
-			await goto(context.href);
+		try {
+			await context.save();
+			saveState = 'success';
+			hideAfter(1000);
+		} catch {
+			saveState = 'error';
+			hideAfter(2000);
+		}
+	}
+
+	async function ondiscardclick() {
+		await context.discard();
+		saveState = 'reset';
+		hideAfter(750);
+	}
+
+	function hideAfter(millis: number) {
+		setTimeout(() => (saveState = 'default'), millis);
+	}
+
+	function onkeydown(evt: KeyboardEvent) {
+		if (evt.key === 's' && evt.ctrlKey && isShown) {
+			onsaveclick();
+			evt.preventDefault();
 		}
 	}
 </script>
 
+<svelte:window {onkeydown} />
+
 <Portal>
-	{#if context.isDirty}
+	{#if isShown}
 		<div
-			class="fixed bottom-8 left-1/2 z-20 flex w-full max-w-3xl translate-x-[-50%] items-center gap-2 rounded-xl border border-gray-100 bg-white py-3 pr-4 pl-8 text-lg font-semibold text-gray-600 shadow-sm"
+			class={[
+				saveState == 'default' && 'border-gray-100 bg-white text-gray-600',
+				saveState == 'success' && 'border-green-100 bg-green-50 text-green-700',
+				saveState == 'error' && 'border-red-100 bg-red-50 text-red-700',
+				saveState == 'reset' && 'border-gray-100 bg-gray-50 text-gray-700',
+				'fixed bottom-8 left-1/2 z-20 flex h-16 w-full max-w-3xl translate-x-[-50%] items-center gap-2 rounded-xl border pr-4 pl-8 text-lg font-semibold shadow-sm'
+			]}
 			transition:fly={{ y: 10, duration: 150, easing: quartOut }}
 		>
-			<span class="mr-auto"> Försiktigt! Du har osparade ändringar! </span>
+			<span class="mr-auto"> {text} </span>
 
-			<Button
-				label="Återställ"
-				kind="tertiary"
-				onclick={context.discard}
-				loading={context.discarding}
-				disabled={context.saving}
-			/>
+			{#if saveState === 'default'}
+				<Button
+					label="Återställ"
+					kind="tertiary"
+					onclick={ondiscardclick}
+					loading={context.discarding}
+					disabled={context.saving}
+				/>
 
-			<Button
-				icon="ph:floppy-disk"
-				label="Spara"
-				kind="primary"
-				onclick={onsaveclick}
-				loading={context.saving}
-				disabled={context.discarding}
-			/>
+				<Button
+					icon="ph:floppy-disk"
+					label="Spara"
+					kind="primary"
+					onclick={onsaveclick}
+					loading={context.saving}
+					disabled={context.discarding}
+				/>
+			{/if}
 		</div>
 	{/if}
 </Portal>

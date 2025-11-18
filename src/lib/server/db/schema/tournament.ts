@@ -100,7 +100,7 @@ export const roster = pgTable(
 			.references(() => group.id, { onDelete: 'cascade' }),
 		...timestamps
 	},
-	(t) => [unique().on(t.slug, t.seasonSlug)]
+	(t) => [unique().on(t.slug, t.seasonSlug), unique().on(t.teamId, t.seasonSlug)]
 );
 
 export const rosterRelations = relations(roster, ({ one, many }) => ({
