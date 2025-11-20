@@ -1,14 +1,13 @@
-import type { User } from '$lib/auth-client';
-import type { Session } from 'better-auth';
+import type { Session, User } from '$lib/server/db/schema';
 
 declare global {
 	namespace App {
 		interface Locals {
-			session?: Session;
-			user?: User;
+			session: Session | null;
+			user: User | null;
 		}
 		interface PageData {
-			user?: User;
+			user: User | null;
 		}
 	}
 }

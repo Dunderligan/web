@@ -1,24 +1,40 @@
-import { auth } from '$lib/server/auth';
-import { svelteKitHandler } from 'better-auth/svelte-kit';
-import { building } from '$app/environment';
-import { redirect } from '@sveltejs/kit';
+import { error, type Handle } from '@sveltejs/kit';
+import session from '$lib/server/session';
+import { sequence } from '@sveltejs/kit/hooks';
 
-export async function handle({ event, resolve }) {
-	const session = await auth.api.getSession({
-		headers: event.request.headers
-	});
+const handleAuth: Handle = async ({ event, resolve }) => {
+	const sessionToken = event.cookies.get(session.SESSION_COOKIE_NAME);
 
-	if (session) {
-		event.locals.session = session.session;
-		event.locals.user = session.user;
+	if (!sessionToken) {
+		event.locals.user = null;
+		event.locals.session = null;
+		return resolve(event);
+	}
+
+	const { session: userSession, user } = await session.validateToken(sessionToken);
+
+	if (userSession) {
+		session.setTokenCookie(event.cookies, sessionToken, userSession.expiresAt);
 	} else {
-		delete event.locals.session;
-		delete event.locals.user;
+		session.deleteTokenCookie(event.cookies);
 	}
 
-	if (event.url.pathname.startsWith('/admin') && session?.user.role !== 'admin') {
-		redirect(303, '/');
+	event.locals.user = user;
+	event.locals.session = userSession;
+
+	return resolve(event);
+};
+
+const guardAdmin: Handle = async ({ event, resolve }) => {
+	if (!event.url.pathname.startsWith('/admin')) {
+		return resolve(event);
 	}
 
-	return svelteKitHandler({ event, resolve, auth, building });
-}
+	if (!event.locals.user?.isAdmin) {
+		error(403);
+	}
+
+	return resolve(event);
+};
+
+export const handle: Handle = sequence(handleAuth, guardAdmin);

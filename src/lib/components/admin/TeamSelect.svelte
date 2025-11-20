@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { queryTeams } from '$lib/common.remote';
 	import type { RosterWithGroup } from '$lib/types';
 	import { Combobox } from 'bits-ui';
 	import RosterLogo from '../ui/RosterLogo.svelte';
+	import { queryTeams } from '$lib/remote/team.remote';
 
 	type Props = {
 		value?: string;

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { uploadRosterLogo } from '$lib/common.remote';
-	import { SaveContext } from '$lib/state/save.svelte';
+	import { uploadRosterLogo } from '$lib/remote/roster.remote';
 	import Icon from '../ui/Icon.svelte';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 

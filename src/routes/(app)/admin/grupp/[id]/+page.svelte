@@ -5,20 +5,19 @@
 	import AdminLink from '$lib/components/admin/AdminLink.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
-	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
 	import EditableMatch from '$lib/components/match/EditableMatch.svelte';
 	import EditMatchDialog from '$lib/components/match/EditMatchDialog.svelte';
 	import InputField from '$lib/components/ui/InputField.svelte';
 	import Label from '$lib/components/ui/Label.svelte';
 	import RosterLogo from '$lib/components/ui/RosterLogo.svelte';
 	import SaveToast from '$lib/components/admin/SaveToast.svelte';
-	import TeamSelect from '$lib/components/admin/TeamSelect.svelte';
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
-	import { RosterContext } from '$lib/state/rosters.svelte.js';
+	import { RosterContext } from '$lib/state/rosters.svelte';
 	import { SaveContext } from '$lib/state/save.svelte';
-	import { createAndAddRoster, deleteGroup, updateGroup } from './page.remote';
 	import { v4 as uuidv4 } from 'uuid';
 	import CreateRosterDialog from '$lib/components/admin/CreateRosterDialog.svelte';
+	import { deleteGroup, updateGroup } from '$lib/remote/group.remote';
+	import { createAndAddRoster } from '$lib/remote/roster.remote';
 
 	const { data } = $props();
 

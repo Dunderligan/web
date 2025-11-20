@@ -9,10 +9,11 @@
 	import InputField from '$lib/components/ui/InputField.svelte';
 	import Label from '$lib/components/ui/Label.svelte';
 	import SaveToast from '$lib/components/admin/SaveToast.svelte';
-	import { ConfirmContext } from '$lib/state/confirm.svelte.js';
-	import { SaveContext } from '$lib/state/save.svelte.js';
-	import { createDivision, deleteSeason, editSeason } from './page.remote.js';
+	import { ConfirmContext } from '$lib/state/confirm.svelte';
+	import { SaveContext } from '$lib/state/save.svelte';
 	import DateInput from '$lib/components/ui/DateInput.svelte';
+	import { createDivision } from '$lib/remote/division.remote';
+	import { deleteSeason, editSeason } from '$lib/remote/season.remote';
 
 	const { data } = $props();
 

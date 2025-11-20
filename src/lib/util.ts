@@ -7,7 +7,9 @@ import {
 	type Role,
 	type FullMatch
 } from './types';
-import { PUBLIC_CDN_ENDPOINT, PUBLIC_S3_BUCKET_NAME } from '$env/static/public';
+// import { PUBLIC_CDN_ENDPOINT } from '$env/static/public';
+
+const PUBLIC_CDN_ENDPOINT = 'https://cdn.dunderligan.se';
 
 const rankNums: Record<Rank, number> = {
 	bronze: 0,

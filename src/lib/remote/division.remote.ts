@@ -7,33 +7,33 @@ import { v4 as uuidv4 } from 'uuid';
 import { matchSchema } from '$lib/schemas';
 import type { FullMatch } from '$lib/types';
 
+export const createDivision = command(
+	z.object({
+		name: z.string(),
+		seasonId: z.uuidv4()
+	}),
+	async ({ name, seasonId }) => {
+		const slug = toSlug(name.split(' ').at(-1) ?? name);
+
+		const [division] = await db
+			.insert(schema.division)
+			.values({
+				name,
+				seasonId,
+				slug
+			})
+			.returning();
+
+		return { division };
+	}
+);
+
 export const deleteDivision = command(
 	z.object({
 		id: z.uuidv4()
 	}),
 	async ({ id }) => {
 		await db.delete(schema.division).where(eq(schema.division.id, id));
-	}
-);
-
-export const createGroup = command(
-	z.object({
-		name: z.string(),
-		divisionId: z.uuidv4()
-	}),
-	async ({ name, divisionId }) => {
-		const slug = toSlug(name.split(' ').at(-1) ?? name);
-
-		const [group] = await db
-			.insert(schema.group)
-			.values({
-				name,
-				divisionId,
-				slug
-			})
-			.returning();
-
-		return { group };
 	}
 );
 

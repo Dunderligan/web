@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { authClient, isAdmin } from '$lib/auth-client';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Match from '$lib/components/match/Match.svelte';
 	import MembersTable from '$lib/components/table/MembersTable.svelte';
@@ -11,8 +10,7 @@
 	import TeamSocial from '$lib/components/ui/TeamSocial.svelte';
 	import type { ClassValue } from '$lib/types';
 	import { averageRank, cdnImageSrc, sortRole as compareRole, flattenGroup } from '$lib/util';
-
-	const session = authClient.useSession();
+	import { page } from '$app/state';
 
 	let { data } = $props();
 
@@ -117,7 +115,7 @@
 </PageSection>
 
 {#snippet editButton(classProp: ClassValue)}
-	{#if isAdmin($session.data?.user)}
+	{#if page.data.user?.isAdmin}
 		<Button
 			href="/admin/roster/{roster.id}"
 			kind="secondary"

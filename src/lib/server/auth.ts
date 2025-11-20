@@ -1,63 +1,35 @@
-import { betterAuth } from 'better-auth';
-import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { db } from './db';
-import {
-	BATTLENET_CLIENT_ID,
-	BATTLENET_CLIENT_SECRET,
-	BETTER_AUTH_SECRET,
-	BETTER_AUTH_URL
-} from '$env/static/private';
-import { sveltekitCookies } from 'better-auth/svelte-kit';
-import { getRequestEvent } from '$app/server';
-import { genericOAuth } from 'better-auth/plugins';
+import { db, schema } from './db';
+import { eq } from 'drizzle-orm';
 
-export const auth = betterAuth({
-	secret: BETTER_AUTH_SECRET,
-	database: drizzleAdapter(db, {
-		provider: 'pg'
-	}),
-	user: {
-		additionalFields: {
-			role: {
-				type: 'string',
-				required: false,
-				defaultValue: 'user',
-				input: false
-			}
-		}
-	},
-	plugins: [
-		sveltekitCookies(getRequestEvent),
-		genericOAuth({
-			config: [
-				{
-					providerId: 'battlenet',
-					clientId: BATTLENET_CLIENT_ID,
-					clientSecret: BATTLENET_CLIENT_SECRET,
-					authorizationUrl: 'https://oauth.battle.net/authorize',
-					tokenUrl: 'https://oauth.battle.net/token',
-					redirectURI: `${BETTER_AUTH_URL}api/auth/callback/battlenet`,
-					scopes: ['openid'],
-					getUserInfo: async (tokens) => {
-						const result = await fetch('https://oauth.battle.net/userinfo', {
-							headers: {
-								Authorization: `Bearer ${tokens.accessToken}`
-							}
-						}).then((res) => res.json());
+async function getUserFromBattlenetId(battlenetId: number) {
+	const results = await db
+		.select()
+		.from(schema.user)
+		.where(eq(schema.user.battlenetId, battlenetId));
 
-						return {
-							id: result.id,
-							name: result.battletag,
-							// better-auth requires an email, but battle.net doesn't return one
-							// this fake email format is borrowed from the X/Twitter OAuth plugin
-							email: `${result.id}@https://battle.net`,
-							emailVerified: true,
-							createdAt: new Date(),
-							updatedAt: new Date()
-						};
-					}
-				}
-			]
+	if (!results) return null;
+	return results[0];
+}
+
+async function createUser(battlenetId: number, battletag: string) {
+	const [{ id }] = await db
+		.insert(schema.user)
+		.values({
+			battletag,
+			battlenetId
 		})
-	]
-});
+		.returning({
+			id: schema.user.id
+		});
+
+	return {
+		id,
+		battlenetId,
+		battletag
+	};
+}
+
+export default {
+	getUserFromBattlenetId,
+	createUser
+};

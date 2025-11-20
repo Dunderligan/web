@@ -17,13 +17,13 @@
 	import { SaveContext } from '$lib/state/save.svelte';
 	import type { FullMatch } from '$lib/types';
 	import { buildBracket } from '$lib/util';
+	import { createGroup } from '$lib/remote/group.remote';
 	import {
-		createGroup,
 		deleteBracket,
 		deleteDivision,
 		generateBracket,
 		updateDivision
-	} from './page.remote';
+	} from '$lib/remote/division.remote';
 
 	const { data } = $props();
 

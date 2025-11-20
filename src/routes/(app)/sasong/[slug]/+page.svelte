@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { authClient, isAdmin } from '$lib/auth-client';
-	import BracketMatch from '$lib/components/match/BracketMatch.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Icon from '$lib/components/ui/Icon.svelte';
 	import PageHeader from '$lib/components/structure/PageHeader.svelte';
@@ -11,7 +9,7 @@
 	import { buildBracket } from '$lib/util';
 	import Bracket from '$lib/components/match/Bracket.svelte';
 
-	const session = authClient.useSession();
+	// const session = authClient.useSession();
 
 	let { data } = $props();
 
@@ -162,7 +160,7 @@
 			/>
 		{/if}
 
-		{#if isAdmin($session.data?.user)}
+		{#if page.data.user?.isAdmin}
 			<Button
 				label="Redigera division"
 				icon="ph:pencil-simple"

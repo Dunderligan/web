@@ -1,27 +1,16 @@
 <script lang="ts">
-	import { authClient } from '$lib/auth-client';
 	import { DropdownMenu } from 'bits-ui';
 	import Icon from '../ui/Icon.svelte';
 	import Button from '../ui/Button.svelte';
+	import { page } from '$app/state';
+	import { invalidateAll } from '$app/navigation';
+	import { logout } from '$lib/remote/auth.remote';
 
 	type Props = {
 		dark?: boolean;
 	};
 
 	let { dark }: Props = $props();
-
-	const session = authClient.useSession();
-
-	async function login() {
-		await authClient.signIn.social({
-			provider: 'battlenet',
-			scopes: ['openid']
-		});
-	}
-
-	async function logout() {
-		await authClient.signOut();
-	}
 
 	const links = [
 		{
@@ -39,10 +28,15 @@
 	];
 
 	const shownName = $derived.by(() => {
-		const tag = $session.data?.user.name;
-		if (!tag) return null;
-		return tag.split('#')[0];
+		const battletag = page.data.user?.battletag;
+		if (!battletag) return null;
+		return battletag.split('#')[0];
 	});
+
+	async function onLogout() {
+		await logout();
+		await invalidateAll();
+	}
 </script>
 
 <nav
@@ -67,7 +61,7 @@
 				<Icon icon="mdi:white-balance-sunny" />
 			</button> -->
 
-			{#if $session.data?.user}
+			{#if page.data.user}
 				<DropdownMenu.Root>
 					<DropdownMenu.Trigger
 						class={[dark ? 'text-gray-200' : 'text-gray-800', 'text-lg font-semibold']}
@@ -75,16 +69,19 @@
 						{shownName}
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Content class="floating" avoidCollisions={false}>
-						<DropdownMenu.Item class="floating-item">
-							<a href="/admin" class="grow"> Admin </a>
+						{#if page.data.user.isAdmin}
+							<DropdownMenu.Item class="floating-item">
+								<a href="/admin" class="grow"> Admin </a>
+							</DropdownMenu.Item>
+						{/if}
+
+						<DropdownMenu.Item class="floating-item gap-2" onclick={onLogout}>
+							Logga ut
 						</DropdownMenu.Item>
-						<DropdownMenu.Item class="floating-item gap-2" onclick={logout}>
-							Logga ut</DropdownMenu.Item
-						>
 					</DropdownMenu.Content>
 				</DropdownMenu.Root>
 			{:else}
-				<Button onclick={login} kind="tertiary" label="Logga in" />
+				<Button href="/api/login/battlenet" kind="tertiary" label="Logga in" />
 			{/if}
 
 			<DropdownMenu.Root>

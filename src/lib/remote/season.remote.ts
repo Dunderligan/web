@@ -4,24 +4,24 @@ import { toSlug } from '$lib/util';
 import { eq } from 'drizzle-orm';
 import * as z from 'zod';
 
-export const createDivision = command(
+export const createSeason = command(
 	z.object({
 		name: z.string(),
-		seasonId: z.uuidv4()
+		startedAt: z.date()
 	}),
-	async ({ name, seasonId }) => {
+	async ({ name, startedAt }) => {
 		const slug = toSlug(name.split(' ').at(-1) ?? name);
 
-		const [division] = await db
-			.insert(schema.division)
+		const [season] = await db
+			.insert(schema.season)
 			.values({
 				name,
-				seasonId,
-				slug
+				slug,
+				startedAt
 			})
 			.returning();
 
-		return { division };
+		return { season };
 	}
 );
 

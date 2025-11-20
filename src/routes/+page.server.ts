@@ -1,7 +1,9 @@
 import { db, schema } from '$lib/server/db';
+import session from '$lib/server/session.js';
+import { fail, redirect } from '@sveltejs/kit';
 import { asc, desc, eq, SQL } from 'drizzle-orm';
 
-const getMatches = async (played: boolean, orderBy: SQL) => {
+const getMatches = async ({ played, orderBy }: { played: boolean; orderBy: SQL }) => {
 	return await db.query.match.findMany({
 		limit: 3,
 		orderBy,
@@ -39,8 +41,8 @@ const getMatches = async (played: boolean, orderBy: SQL) => {
 export const load = async () => {
 	return {
 		matches: {
-			upcoming: getMatches(false, desc(schema.match.scheduledAt)),
-			latest: getMatches(true, asc(schema.match.playedAt))
+			upcoming: getMatches({ played: false, orderBy: asc(schema.match.scheduledAt) }),
+			latest: getMatches({ played: true, orderBy: desc(schema.match.playedAt) })
 		}
 	};
 };

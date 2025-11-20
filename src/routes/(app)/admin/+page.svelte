@@ -6,12 +6,11 @@
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
-	import Dialog from '$lib/components/ui/Dialog.svelte';
 	import InputField from '$lib/components/ui/InputField.svelte';
 	import Label from '$lib/components/ui/Label.svelte';
-	import { createSeason } from './page.remote.js';
-	import { SaveContext } from '$lib/state/save.svelte.js';
+	import { SaveContext } from '$lib/state/save.svelte';
 	import DateInput from '$lib/components/ui/DateInput.svelte';
+	import { createSeason } from '$lib/remote/season.remote';
 
 	let { data } = $props();
 

@@ -23,11 +23,9 @@
 		enumToPgEnum,
 		roleIcon
 	} from '$lib/util';
-	import { createRoster, deleteRoster, editRoster, editRosterTeam } from './page.remote';
-	import Notice from '$lib/components/ui/Notice.svelte';
-	import Dialog from '$lib/components/ui/Dialog.svelte';
 	import TeamSelect from '$lib/components/admin/TeamSelect.svelte';
 	import Checkbox from '$lib/components/ui/Checkbox.svelte';
+	import { deleteRoster, editRoster, editRosterTeam } from '$lib/remote/roster.remote';
 
 	let { data } = $props();
 

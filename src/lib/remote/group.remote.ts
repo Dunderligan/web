@@ -1,9 +1,30 @@
-import { command, query } from '$app/server';
+import { command } from '$app/server';
 import { matchSchema } from '$lib/schemas';
 import { db, schema } from '$lib/server/db';
 import { toSlug } from '$lib/util';
 import { and, eq } from 'drizzle-orm';
 import * as z from 'zod';
+
+export const createGroup = command(
+	z.object({
+		name: z.string(),
+		divisionId: z.uuidv4()
+	}),
+	async ({ name, divisionId }) => {
+		const slug = toSlug(name.split(' ').at(-1) ?? name);
+
+		const [group] = await db
+			.insert(schema.group)
+			.values({
+				name,
+				divisionId,
+				slug
+			})
+			.returning();
+
+		return { group };
+	}
+);
 
 export const updateGroup = command(
 	z.object({
@@ -32,36 +53,6 @@ export const updateGroup = command(
 				await tx.insert(schema.match).values(inserts);
 			}
 		});
-	}
-);
-
-export const createAndAddRoster = command(
-	z.object({
-		groupId: z.uuidv4(),
-		seasonSlug: z.string(),
-		name: z.string().nonempty(),
-		teamId: z.uuidv4().nullable().optional()
-	}),
-	async ({ groupId, seasonSlug, name, teamId }) => {
-		if (!teamId) {
-			const [team] = await db.insert(schema.team).values({}).returning();
-			teamId = team.id;
-		}
-
-		const slug = toSlug(name);
-
-		const [roster] = await db
-			.insert(schema.roster)
-			.values({
-				name,
-				slug,
-				groupId,
-				seasonSlug,
-				teamId
-			})
-			.returning({ id: schema.roster.id });
-
-		return { roster };
 	}
 );
 
