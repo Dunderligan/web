@@ -6,7 +6,7 @@
 
 <div class="relative flex min-h-screen flex-col overflow-hidden">
 	<div
-		class="pointer-events-none fixed top-32 left-[-50rem] size-[100rem] rounded-full bg-accent-400/20"
+		class="pointer-events-none fixed top-32 left-[-50rem] size-[100rem] rounded-full bg-accent-400/20 transition-opacity duration-1000"
 		id="splotch"
 	></div>
 

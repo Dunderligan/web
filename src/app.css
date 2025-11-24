@@ -27,6 +27,12 @@
 			color 150ms ease-in-out,
 			background-color 150ms ease-in-out;
 	}
+
+	*:focus-visible {
+		outline: 2px solid var(--color-accent-600);
+		outline-offset: 2px;
+		border-radius: 4px;
+	}
 }
 
 @layer components {
