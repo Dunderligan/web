@@ -63,7 +63,7 @@
 }
 
 @theme {
-	--default-font-family: 'Rajdhani', sans-serif;
+	--default-font-family: 'Rajdhani', 'Inter', sans-serif;
 	--font-display: 'Inter', 'Rajdhani', sans-serif;
 
 	--color-*: initial;

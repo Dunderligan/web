@@ -11,10 +11,9 @@ import {
 	type AnyPgColumn,
 	check
 } from 'drizzle-orm/pg-core';
-import { timestamps } from './util';
+import { timestamps, enumToPgEnum } from './util';
 import { relations, sql } from 'drizzle-orm';
-import { MatchType, Rank, Role, SocialPlatform } from '$lib/types';
-import { enumToPgEnum } from '$lib/util';
+import { MatchType, Rank, Role, SocialPlatform } from '../../../types';
 
 export const season = pgTable('season', {
 	id: uuid().primaryKey().defaultRandom(),

@@ -9,6 +9,9 @@
 	import { seasonState } from '$lib/util';
 	import Bracket from '$lib/components/match/Bracket.svelte';
 	import { buildBracketRounds } from '$lib/bracket.js';
+	import Subheading from '$lib/components/ui/Subheading.svelte';
+	import Match from '$lib/components/match/Match.svelte';
+	import type { FullMatch, FullMatchWithoutOrder, ResolvedMatch } from '$lib/types.js';
 
 	// const session = authClient.useSession();
 
@@ -53,6 +56,18 @@
 			month: 'long',
 			day: 'numeric'
 		});
+	}
+
+	function resolveMatch(match: FullMatchWithoutOrder): ResolvedMatch {
+		// resolve match rosters
+		const rosterA = division.rosters.find((roster) => roster.id === match.rosterAId);
+		const rosterB = division.rosters.find((roster) => roster.id === match.rosterBId);
+
+		return {
+			rosterA,
+			rosterB,
+			...match
+		};
 	}
 </script>
 
@@ -156,22 +171,30 @@
 
 		{#if mode === 'group'}
 			<StandingsTable rosters={division.rosters} scores={division.table} seasonSlug={season.slug} />
+
+			{#if division.latestMatches.length > 0}
+				<Subheading class="mt-10 mb-4">Senaste matcherna</Subheading>
+
+				<div class="max-w-2xl space-y-2">
+					{#each division.latestMatches as match (match.id)}
+						<Match seasonSlug={season.slug} match={resolveMatch(match)} />
+					{/each}
+				</div>
+			{/if}
+
+			{#if division.upcomingMatches.length > 0}
+				<Subheading class="mt-10 mb-4">Kommande matcher</Subheading>
+
+				<div class="max-w-2xl space-y-2">
+					{#each division.upcomingMatches as match (match.id)}
+						<Match seasonSlug={season.slug} match={resolveMatch(match)} />
+					{/each}
+				</div>
+			{/if}
 		{:else}
 			<Bracket
 				seasonSlug={season.slug}
-				rounds={buildBracketRounds(
-					division.matches.map((match) => {
-						// resolve match rosters
-						const rosterA = division.rosters.find((roster) => roster.id === match.rosterAId);
-						const rosterB = division.rosters.find((roster) => roster.id === match.rosterBId);
-
-						return {
-							rosterA,
-							rosterB,
-							...match
-						};
-					})
-				)}
+				rounds={buildBracketRounds(division.matches.map(resolveMatch))}
 			/>
 		{/if}
 

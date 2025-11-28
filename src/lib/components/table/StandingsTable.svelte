@@ -31,12 +31,12 @@
 	{#snippet row({ index, value: { rosterId, score } })}
 		{@const { id, name, slug } = rosters.find((roster) => roster.id === rosterId)!}
 
-		<div class="group contents text-lg font-medium">
-			<div class="flex items-center justify-center bg-gray-100">
+		<div class="group row contents text-lg font-medium">
+			<div class="flex items-center justify-center">
 				{index + 1}
 			</div>
 
-			<div class="flex min-w-0 items-center gap-2 bg-gray-100 py-2 font-semibold">
+			<div class="flex min-w-0 items-center gap-2 py-2 font-semibold">
 				<RosterLogo {id} class="size-12" />
 
 				<a href="/lag/{slug}/{seasonSlug}" class="truncate hover:text-accent-600 hover:underline"
@@ -44,17 +44,24 @@
 				>
 			</div>
 
-			<div class="flex items-center justify-center bg-gray-100 text-xl font-semibold">
+			<div class="flex items-center justify-center text-xl font-semibold">
 				{score.mapWins}
 			</div>
 
-			<div class="flex items-center justify-center bg-gray-100">
+			<div class="flex items-center justify-center">
 				{score.mapWins}/{score.mapLosses}/{score.mapDraws}
 			</div>
 
-			<div class="flex items-center justify-center bg-gray-100">
+			<div class="flex items-center justify-center">
 				{score.matchesPlayed}
 			</div>
 		</div>
 	{/snippet}
 </Table>
+
+<style>
+	.row > div {
+		background-color: var(--color-gray-100);
+		transition-property: background-color;
+	}
+</style>

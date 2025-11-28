@@ -114,7 +114,7 @@ export type FullMatchWithoutOrder = Omit<FullMatch, 'order'>;
 
 export type ResolvedMatch = {
 	id: string;
-	played?: boolean | null;
+	played: boolean;
 	teamAScore?: number | null;
 	teamBScore?: number | null;
 	draws?: number | null;
@@ -146,6 +146,7 @@ export type LogicalMatch = {
 	teamAScore?: number | null;
 	teamBScore?: number | null;
 	draws?: number | null;
+	played: boolean;
 };
 
 export type ButtonKind = 'primary' | 'secondary' | 'tertiary' | 'transparent' | 'negative';

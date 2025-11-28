@@ -8,6 +8,7 @@
 		matchScore
 	} from '$lib/match';
 	import type { ResolvedMatch, ClassValue } from '$lib/types';
+	import { formatDate, formatDateTime } from '$lib/util';
 	import Icon from '../ui/Icon.svelte';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 
@@ -26,7 +27,7 @@
 	<div class="flex items-center gap-4 pb-1 text-sm font-medium text-gray-600 sm:justify-center">
 		{#if match.played}
 			<div>
-				{match.playedAt?.toLocaleDateString() ?? 'Okänt datum'}
+				{match.playedAt ? formatDate(match.playedAt) : 'Okänt datum'}
 			</div>
 
 			{#if match.vodUrl}
@@ -41,7 +42,7 @@
 				Planerad
 
 				{#if match.scheduledAt}
-					{match.scheduledAt.toLocaleString()}
+					{formatDateTime(match.scheduledAt)}
 				{/if}
 			</div>
 		{/if}

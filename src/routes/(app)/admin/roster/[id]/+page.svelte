@@ -16,13 +16,7 @@
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
 	import { SaveContext } from '$lib/state/save.svelte';
 	import { Rank, Role, SocialPlatform } from '$lib/types';
-	import {
-		formatSocialPlatform,
-		flattenGroup,
-		capitalize,
-		enumToPgEnum,
-		roleIcon
-	} from '$lib/util';
+	import { formatSocialPlatform, flattenGroup, capitalize, roleIcon } from '$lib/util';
 	import TeamSelect from '$lib/components/admin/TeamSelect.svelte';
 	import Checkbox from '$lib/components/ui/Checkbox.svelte';
 	import { deleteRoster, editRoster, editRosterTeam } from '$lib/remote/roster.remote';
@@ -171,7 +165,7 @@
 						bind:value={member.role}
 						onValueChange={saveCtx.setDirty}
 						itemIcon={(role) => roleIcon(role as Role)}
-						items={enumToPgEnum(Role).map((role) => ({
+						items={Object.values(Role).map((role) => ({
 							label: capitalize(role),
 							value: role
 						}))}
@@ -184,7 +178,7 @@
 						triggerClass="grow"
 						bind:value={member.rank}
 						onValueChange={saveCtx.setDirty}
-						items={enumToPgEnum(Rank).map((rank) => ({
+						items={Object.values(Rank).map((rank) => ({
 							label: capitalize(rank),
 							value: rank
 						}))}

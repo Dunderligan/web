@@ -57,7 +57,7 @@ export const load = async ({ params }) => {
 
 	const matches = await db.query.match.findMany({
 		where: and(or(eq(schema.match.rosterAId, data.id), eq(schema.match.rosterBId, data.id))),
-		limit: 10,
+		limit: 3,
 		orderBy: matchOrdering,
 		columns: {
 			id: true,

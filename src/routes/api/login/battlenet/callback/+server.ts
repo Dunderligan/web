@@ -7,7 +7,7 @@ import type { OAuth2Tokens } from 'arctic';
 import auth from '$lib/server/auth';
 import type { User } from '$lib/server/db/schema';
 
-type BattleNetUserResponse = {
+type BattlenetUserResponse = {
 	sub: string;
 	id: number;
 	battletag: string;
@@ -40,7 +40,7 @@ export const GET: RequestHandler = async ({ url, fetch, cookies }) => {
 		error(500);
 	}
 
-	const battlenetUser: BattleNetUserResponse = await userResponse.json();
+	const battlenetUser: BattlenetUserResponse = await userResponse.json();
 
 	const existingUser = await auth.getUserFromBattlenetId(battlenetUser.id);
 	let userId: string;

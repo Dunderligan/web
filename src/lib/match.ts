@@ -11,7 +11,7 @@ export function isInMatch(match: LogicalMatch, rosterId: string): boolean {
 
 export type MatchSide = 'A' | 'B';
 
-export function matchWinner(match: LogicalMatch & { played?: boolean | null }): MatchSide | null {
+export function matchWinner(match: LogicalMatch): MatchSide | null {
 	if (!match.played) return null;
 
 	const teamA = match.teamAScore ?? 0;
@@ -37,10 +37,7 @@ export function matchScoreOrZero(match: LogicalMatch, side: MatchSide): number {
 	return matchScore(match, side) ?? 0;
 }
 
-export function isWinner(
-	match: LogicalMatch & { played?: boolean | null },
-	side: MatchSide
-): boolean {
+export function isWinner(match: LogicalMatch, side: MatchSide): boolean {
 	const winner = matchWinner(match);
 	if (!winner) return false;
 	return winner === side;
