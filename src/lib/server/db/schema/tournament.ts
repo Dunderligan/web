@@ -11,8 +11,8 @@ import {
 	type AnyPgColumn,
 	check
 } from 'drizzle-orm/pg-core';
-import { timestamps, enumToPgEnum } from './util';
-import { relations, sql } from 'drizzle-orm';
+import { timestamps, enumToPgEnum, xor } from './util';
+import { and, isNotNull, isNull, not, or, relations, sql } from 'drizzle-orm';
 import { MatchType, Rank, Role, SocialPlatform } from '../../../types';
 
 export const season = pgTable('season', {
@@ -21,6 +21,7 @@ export const season = pgTable('season', {
 	slug: text().notNull().unique(),
 	startedAt: timestamp().notNull(),
 	endedAt: timestamp(),
+	legacyRanks: boolean().notNull().default(false),
 	...timestamps
 });
 
@@ -161,15 +162,17 @@ export const member = pgTable(
 		rosterId: uuid()
 			.notNull()
 			.references(() => roster.id, { onDelete: 'cascade' }),
-		rank: rankEnum().notNull(),
-		tier: integer().notNull(),
+		rank: rankEnum(),
+		tier: integer(),
+		sr: integer(),
 		role: roleEnum().notNull(),
 		isCaptain: boolean().notNull().default(false),
 		...timestamps
 	},
 	(t) => [
 		primaryKey({ columns: [t.playerId, t.rosterId] }),
-		check('tier', sql`${t.tier} >= 1 AND ${t.tier} <= 5`)
+		check('tier_range', sql`${t.tier} >= 1 AND ${t.tier} <= 5`),
+		check('notlegacy_sr_and_tier', not(and(isNotNull(t.sr), isNotNull(t.tier))!))
 	]
 );
 
@@ -186,27 +189,39 @@ export const memberRelations = relations(member, ({ one }) => ({
 
 export const matchType = pgEnum('match_type', enumToPgEnum(MatchType));
 
-export const match = pgTable('match', {
-	id: uuid().primaryKey().defaultRandom(),
-	/** The match's group. Must be set for group-stage matches, null otherwise. */
-	groupId: uuid().references(() => group.id, { onDelete: 'cascade' }),
-	/** The match's division. Must be set for bracket matches, null otherwise. */
-	divisionId: uuid().references(() => division.id, { onDelete: 'cascade' }),
-	rosterAId: uuid().references(() => roster.id, { onDelete: 'set null' }),
-	rosterBId: uuid().references(() => roster.id, { onDelete: 'set null' }),
-	teamAScore: integer(),
-	teamBScore: integer(),
-	draws: integer(),
-	played: boolean().notNull().default(false),
-	playedAt: timestamp(),
-	scheduledAt: timestamp(),
-	vodUrl: text(),
-	/** The next match in the bracket, if any. */
-	nextMatchId: uuid().references((): AnyPgColumn => match.id, { onDelete: 'set null' }),
-	/** The vertical order to display this match in a bracket. Ignored for group-stage matches. */
-	order: integer().notNull().default(0),
-	...timestamps
-});
+export const match = pgTable(
+	'match',
+	{
+		id: uuid().primaryKey().defaultRandom(),
+		/** The match's group. Must be set for group-stage matches, null otherwise. */
+		groupId: uuid().references(() => group.id, { onDelete: 'cascade' }),
+		/** The match's division. Must be set for bracket matches, null otherwise. */
+		divisionId: uuid().references(() => division.id, { onDelete: 'cascade' }),
+		rosterAId: uuid().references(() => roster.id, { onDelete: 'set null' }),
+		rosterBId: uuid().references(() => roster.id, { onDelete: 'set null' }),
+		teamAScore: integer(),
+		teamBScore: integer(),
+		draws: integer(),
+		played: boolean().notNull().default(false),
+		playedAt: timestamp(),
+		scheduledAt: timestamp(),
+		vodUrl: text(),
+		/** The next match in the bracket, if any. */
+		nextMatchId: uuid().references((): AnyPgColumn => match.id, { onDelete: 'set null' }),
+		/** The vertical order to display this match in a bracket. Ignored for group-stage matches. */
+		order: integer().notNull().default(0),
+		...timestamps
+	},
+	(t) => [
+		check(
+			'group_xor_division',
+			and(
+				or(isNull(t.groupId), isNull(t.divisionId)),
+				or(isNotNull(t.groupId), isNotNull(t.divisionId))
+			)!
+		)
+	]
+);
 
 export const matchRelations = relations(match, ({ one }) => ({
 	rosterA: one(roster, {

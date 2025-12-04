@@ -15,7 +15,10 @@ export const nestedDivisionQuery = {
 	...leagueQuery,
 	with: {
 		season: {
-			...leagueQuery
+			columns: {
+				legacyRanks: true,
+				...leagueQuery.columns
+			}
 		}
 	}
 } as const;

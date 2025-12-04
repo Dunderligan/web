@@ -12,7 +12,8 @@ export const load = async ({ params }) => {
 					isCaptain: true,
 					tier: true,
 					rank: true,
-					role: true
+					role: true,
+					sr: true
 				},
 				with: {
 					player: {

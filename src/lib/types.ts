@@ -7,6 +7,21 @@ export type FullRank = {
 	tier: number;
 };
 
+export type LegacyRank = {
+	sr: number;
+};
+
+export type AnyRank = FullRank | LegacyRank;
+
+export type NullableFullRank = {
+	rank: Rank | null;
+	tier: number | null;
+};
+
+export type NullableLegacyRank = {
+	sr: number | null;
+};
+
 export enum Rank {
 	BRONZE = 'bronze',
 	SILVER = 'silver',
@@ -63,9 +78,10 @@ export type FlattenedGroup<S = BaseLeague, D = S, G = S> = {
 };
 
 export type Member = {
-	rank: Rank;
-	tier: number;
 	role: Role;
+	rank: Rank | null;
+	tier: number | null;
+	sr: number | null;
 	isCaptain: boolean;
 	player: {
 		id?: string | null;

@@ -1,15 +1,18 @@
 <script lang="ts">
-	import type { ClassValue, FullRank } from '$lib/types';
-	import { capitalize } from '$lib/util';
+	import { Rank, type AnyRank, type ClassValue, type FullRank } from '$lib/types';
+	import { capitalize, getRank, getTierLabel, isLegacyRank } from '$lib/util';
 
 	type Props = {
 		class?: ClassValue;
 		collapse?: boolean;
-	} & FullRank;
+		rank: AnyRank;
+	};
 
-	let { class: classProp, collapse, rank, tier }: Props = $props();
+	let { class: classProp, collapse, rank }: Props = $props();
 </script>
 
-<img src="/rank/{rank}.png" alt="" class={[classProp, 'mr-2 inline size-7']} />
-<span class={['mr-1', collapse && 'hidden sm:inline']}>{capitalize(rank)}</span>
-<span>{tier}</span>
+<img src="/rank/{getRank(rank)}.png" alt="" class={[classProp, 'mr-2 inline size-7']} />
+{#if !isLegacyRank(rank)}
+	<span class={['mr-1', collapse && 'hidden sm:inline']}>{capitalize(getRank(rank))}</span>
+{/if}
+<span>{getTierLabel(rank)}</span>

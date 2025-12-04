@@ -9,7 +9,13 @@
 	import Tabs from '$lib/components/ui/Tabs.svelte';
 	import TeamSocial from '$lib/components/ui/TeamSocial.svelte';
 	import type { ClassValue } from '$lib/types';
-	import { averageRank, cdnImageSrc, sortRole as compareRole, flattenGroup } from '$lib/util';
+	import {
+		averageLegacyRank,
+		averageRank,
+		cdnImageSrc,
+		sortRole as compareRole,
+		flattenGroup
+	} from '$lib/util';
 	import { page } from '$app/state';
 	import Subheading from '$lib/components/ui/Subheading.svelte';
 
@@ -19,7 +25,11 @@
 	let { group, division, season } = $derived(flattenGroup(roster.group));
 
 	let sortedMembers = $derived(roster.members.toSorted((a, b) => compareRole(a.role, b.role)));
-	let average = $derived(averageRank(roster.members));
+	let average = $derived(
+		season.legacyRanks ? averageLegacyRank(roster.members) : averageRank(roster.members)
+	);
+
+	$inspect(roster.members);
 
 	const upcomingMatches = $derived(roster.matches.filter((match) => !match.played));
 	const latestMatches = $derived(roster.matches.filter((match) => match.played));
@@ -115,7 +125,7 @@
 			{#if average}
 				<div class="font-medium text-gray-700">Genomsnittlig rank</div>
 				<div class="text-xl font-semibold text-gray-800">
-					<Rank {...average} />
+					<Rank rank={average} />
 				</div>
 			{/if}
 		</div>

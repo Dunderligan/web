@@ -17,7 +17,7 @@ export const createRoster = command(
 		groupId: z.uuidv4(),
 		seasonSlug: z.string(),
 		name: z.string().nonempty(),
-		teamId: z.uuidv4().nullable().optional()
+		teamId: z.uuidv4().nullish()
 	}),
 	async ({ groupId, seasonSlug, name, teamId }) => {
 		await adminGuard();
@@ -70,8 +70,9 @@ export const editRoster = command(
 		members: z.array(
 			z.object({
 				role: z.enum(Role),
-				rank: z.enum(Rank),
-				tier: z.int().max(5).min(1),
+				rank: z.enum(Rank).nullable(),
+				tier: z.int().max(5).min(1).nullable(),
+				sr: z.int().min(0).nullable(),
 				isCaptain: z.boolean(),
 				player: z.object({
 					id: z.string().nullable(),
@@ -129,6 +130,7 @@ async function updateMembers(tx: Transaction, rosterId: string, members: Member[
 				role: member.role,
 				rank: member.rank,
 				tier: member.tier,
+				sr: member.sr,
 				isCaptain: member.isCaptain
 			};
 		})

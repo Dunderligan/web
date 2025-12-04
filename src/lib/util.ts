@@ -1,13 +1,15 @@
 import slugify from 'slugify';
 import {
+	Rank,
 	SocialPlatform,
 	type FullRank,
 	type NestedGroup,
-	type Rank,
 	type Role,
-	type FullMatch,
 	type NestedDivision,
-	type LogicalMatch
+	type NullableFullRank,
+	type NullableLegacyRank,
+	type LegacyRank,
+	type AnyRank
 } from './types';
 // import { PUBLIC_CDN_ENDPOINT } from '$env/static/public';
 
@@ -24,23 +26,76 @@ const rankNums: Record<Rank, number> = {
 	champion: 7
 };
 
-export function averageRank(ranks: FullRank[]): FullRank {
+export function averageRank(ranks: NullableFullRank[]): FullRank {
 	let total = 0;
+	let nonNullCount = 0;
 
-	for (const rank of ranks) {
-		total += rankNums[rank.rank] * 5 + (5 - rank.tier);
+	for (const { rank, tier } of ranks) {
+		if (!rank || !tier) continue;
+		nonNullCount++;
+		total += rankToNum({ rank, tier });
 	}
 
-	const avg = Math.round(total / ranks.length);
+	const avg = Math.round(total / nonNullCount);
 
-	const rankNum = Math.floor(avg / 5);
+	return numToRank(avg);
+}
+
+function rankToNum(rank: FullRank): number {
+	return rankNums[rank.rank] + 0.2 * (5 - rank.tier);
+}
+
+function numToRank(num: number): FullRank {
+	const rankNum = Math.floor(num);
 	const rank = Object.keys(rankNums).find((key) => rankNums[key as Rank] === rankNum) as Rank;
-	const tier = 5 - (avg % 5);
+	const tier = 5 - Math.round((num - rankNum) / 0.2);
 
 	return {
 		rank,
 		tier
 	};
+}
+
+export function averageLegacyRank(ranks: NullableLegacyRank[]): LegacyRank {
+	let total = 0;
+	let nonNullCount = 0;
+
+	for (const { sr } of ranks) {
+		if (sr === null) continue;
+		nonNullCount++;
+		total += sr;
+	}
+
+	return { sr: Math.round(total / nonNullCount) };
+}
+
+export function getRank(rank: AnyRank): Rank {
+	if ('rank' in rank) {
+		return rank.rank;
+	} else {
+		if (rank.sr < 1500) return Rank.BRONZE;
+		if (rank.sr < 2000) return Rank.SILVER;
+		if (rank.sr < 2500) return Rank.GOLD;
+		if (rank.sr < 3000) return Rank.PLATINUM;
+		if (rank.sr < 3500) return Rank.DIAMOND;
+		if (rank.sr < 4000) return Rank.MASTER;
+		return Rank.GRANDMASTER;
+	}
+}
+
+export function getTierLabel(rank: AnyRank): string {
+	if ('rank' in rank) {
+		return rank.tier.toString();
+	} else {
+		return `${Math.round(rank.sr / 100) / 10.0}k`;
+	}
+}
+
+export function isLegacyRank(rank: AnyRank): boolean {
+	if ('sr' in rank) {
+		return true;
+	}
+	return false;
 }
 
 const roleNums: Record<Role, number> = {

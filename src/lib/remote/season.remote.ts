@@ -8,9 +8,10 @@ import { adminGuard } from './auth.remote';
 export const createSeason = command(
 	z.object({
 		name: z.string(),
-		startedAt: z.date()
+		startedAt: z.date(),
+		useSr: z.boolean()
 	}),
-	async ({ name, startedAt }) => {
+	async ({ name, startedAt, useSr }) => {
 		await adminGuard();
 
 		const slug = toSlug(name);
@@ -20,7 +21,8 @@ export const createSeason = command(
 			.values({
 				name,
 				slug,
-				startedAt
+				startedAt,
+				useSr
 			})
 			.returning();
 
@@ -32,7 +34,7 @@ export const updateSeason = command(
 	z.object({
 		id: z.uuid(),
 		startedAt: z.date(),
-		endedAt: z.date().nullable().optional()
+		endedAt: z.date().nullish()
 	}),
 	async ({ id, startedAt, endedAt }) => {
 		await adminGuard();

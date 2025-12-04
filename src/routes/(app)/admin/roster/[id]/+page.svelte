@@ -12,14 +12,13 @@
 	import RosterLogoUpload from '$lib/components/admin/RosterLogoUpload.svelte';
 	import SaveToast from '$lib/components/admin/SaveToast.svelte';
 	import Select from '$lib/components/ui/Select.svelte';
-	import Table from '$lib/components/table/Table.svelte';
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
 	import { SaveContext } from '$lib/state/save.svelte';
 	import { Rank, Role, SocialPlatform } from '$lib/types';
-	import { formatSocialPlatform, flattenGroup, capitalize, roleIcon } from '$lib/util';
+	import { formatSocialPlatform, flattenGroup } from '$lib/util';
 	import TeamSelect from '$lib/components/admin/TeamSelect.svelte';
-	import Checkbox from '$lib/components/ui/Checkbox.svelte';
 	import { deleteRoster, editRoster, editRosterTeam } from '$lib/remote/roster.remote';
+	import AdminMembersTable from '$lib/components/table/AdminMembersTable.svelte';
 
 	let { data } = $props();
 
@@ -70,9 +69,10 @@
 	async function addNewPlayer() {
 		roster.members.push({
 			isCaptain: false,
-			rank: Rank.BRONZE,
-			tier: 1,
 			role: Role.DAMAGE,
+			rank: season.legacyRanks ? null : Rank.BRONZE,
+			tier: season.legacyRanks ? null : 1,
+			sr: season.legacyRanks ? 0 : null,
 			player: {
 				id: null as any as string, // the backend will either link this up with an existing player, or create a new one
 				battletag: newPlayerBattletag
@@ -127,6 +127,8 @@
 
 		await editRosterTeam({ rosterId: roster.id, teamId: linkTeamId });
 	}
+
+	$inspect(roster.members);
 </script>
 
 <Breadcrumbs
@@ -144,75 +146,13 @@
 			Detta roster har inga medlemmar.
 		</AdminEmptyNotice>
 	{:else}
-		<Table
-			columns={[{ label: 'Battletag', center: false }, 'Kapten', 'Roll', 'Rank', '']}
-			rows={roster.members}
-			class="grid-cols-[1fr_80px_160px_250px_50px]"
-		>
-			{#snippet row({ value: member, index })}
-				<div class="flex items-center bg-gray-200 px-6 py-4 text-lg font-semibold">
-					{member.player.battletag}
-				</div>
-
-				<div class="flex items-center justify-center gap-2 bg-gray-200 pr-2">
-					<Checkbox bind:checked={member.isCaptain} onCheckedChange={saveCtx.setDirty} />
-				</div>
-
-				<div class="flex items-center bg-gray-200 pr-4">
-					<Select
-						type="single"
-						triggerClass="grow"
-						bind:value={member.role}
-						onValueChange={saveCtx.setDirty}
-						itemIcon={(role) => roleIcon(role as Role)}
-						items={Object.values(Role).map((role) => ({
-							label: capitalize(role),
-							value: role
-						}))}
-					/>
-				</div>
-
-				<div class="flex items-center gap-2 bg-gray-200 pr-2">
-					<Select
-						type="single"
-						triggerClass="grow"
-						bind:value={member.rank}
-						onValueChange={saveCtx.setDirty}
-						items={Object.values(Rank).map((rank) => ({
-							label: capitalize(rank),
-							value: rank
-						}))}
-					>
-						{#snippet itemSnippet({ value })}
-							<img src="/rank/{value}.png" alt="" class="-m-1 mr-2 size-8" />
-						{/snippet}
-					</Select>
-
-					<Select
-						type="single"
-						triggerClass="w-1/4"
-						bind:value={() => member.tier.toString(), (str) => (member.tier = parseInt(str))}
-						onValueChange={saveCtx.setDirty}
-						items={[1, 2, 3, 4, 5].map((tier) => ({
-							label: tier.toString(),
-							value: tier.toString()
-						}))}
-					/>
-				</div>
-
-				<div class="flex items-center bg-gray-200 pr-4">
-					<Button
-						title="Ta bort"
-						icon="ph:trash"
-						kind="tertiary"
-						onclick={() => {
-							roster.members.splice(index, 1);
-							saveCtx.setDirty();
-						}}
-					/>
-				</div>
-			{/snippet}
-		</Table>
+		<AdminMembersTable
+			bind:members={roster.members}
+			legacyRanks={season.legacyRanks}
+			ondelete={(index) => {
+				roster.members.splice(index, 1);
+			}}
+		/>
 
 		<Button kind="primary" icon="ph:plus" onclick={() => (newPlayerOpen = true)} />
 	{/if}

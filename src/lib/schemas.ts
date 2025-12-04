@@ -2,13 +2,13 @@ import * as z from 'zod';
 
 export const matchSchema = z.object({
 	id: z.uuid(),
-	rosterAId: z.string().nullable().optional(),
-	rosterBId: z.string().nullable().optional(),
-	teamAScore: z.int().nullable().optional(),
-	teamBScore: z.int().nullable().optional(),
-	draws: z.int().nullable().optional(),
+	rosterAId: z.string().nullish(),
+	rosterBId: z.string().nullish(),
+	teamAScore: z.int().nullish(),
+	teamBScore: z.int().nullish(),
+	draws: z.int().nullish(),
 	played: z.boolean(),
-	vodUrl: z.url().nullable().optional(),
-	scheduledAt: z.date().nullable().optional(),
-	playedAt: z.date().nullable().optional()
+	vodUrl: z.url().nullish(),
+	scheduledAt: z.date().nullish(),
+	playedAt: z.date().nullish()
 });

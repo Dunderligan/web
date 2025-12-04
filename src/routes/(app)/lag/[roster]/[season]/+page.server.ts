@@ -1,7 +1,7 @@
 import { matchOrdering, matchRosterQuery, nestedGroupQuery } from '$lib/server/db/helpers';
 import { db, schema } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
-import { eq, and, desc, or } from 'drizzle-orm';
+import { eq, and, or } from 'drizzle-orm';
 
 export const load = async ({ params }) => {
 	const data = await db.query.roster.findFirst({
@@ -18,6 +18,7 @@ export const load = async ({ params }) => {
 					isCaptain: true,
 					tier: true,
 					rank: true,
+					sr: true,
 					role: true
 				},
 				with: {

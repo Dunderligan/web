@@ -13,6 +13,7 @@
 	import { createSeason } from '$lib/remote/season.remote';
 	import { seasonState } from '$lib/util.js';
 	import Icon from '$lib/components/ui/Icon.svelte';
+	import Checkbox from '$lib/components/ui/Checkbox.svelte';
 
 	let { data } = $props();
 
@@ -25,10 +26,13 @@
 	let newSeasonName = $state('');
 	let newSeasonStartedAt = $state(new Date());
 
+	let useSr = $state(false);
+
 	async function submitNewSeason() {
 		const { season } = await createSeason({
 			name: newSeasonName,
-			startedAt: newSeasonStartedAt
+			startedAt: newSeasonStartedAt,
+			useSr
 		});
 
 		await goto(`/admin/sasong/${season.id}`);
@@ -74,5 +78,9 @@
 
 	<Label label="Startdatum">
 		<DateInput bind:value={newSeasonStartedAt} type="date" required />
+	</Label>
+
+	<Label label="Använd SR-poäng">
+		<Checkbox bind:checked={useSr} />
 	</Label>
 </CreateDialog>
