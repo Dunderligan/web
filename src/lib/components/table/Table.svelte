@@ -26,13 +26,14 @@
 		'grid w-full gap-y-1 overflow-hidden overflow-x-auto rounded-lg text-gray-700'
 	]}
 >
-	{#each columns as column}
+	{#each columns as column, i}
 		{@const [label, center] =
 			typeof column === 'string' ? [column, true] : [column.label, column.center ?? true]}
 
 		<div
 			class={[
 				center ? 'text-center ' : 'text-left',
+				i === 0 && !center && 'pl-6',
 				'mb-0.5 bg-gray-50 py-2 font-medium text-gray-600'
 			]}
 		>

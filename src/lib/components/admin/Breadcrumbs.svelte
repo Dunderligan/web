@@ -8,10 +8,10 @@
 	};
 
 	type Props = {
-		crumbs: Crumb[];
+		crumbs?: Crumb[];
 	};
 
-	let { crumbs }: Props = $props();
+	let { crumbs = [] }: Props = $props();
 
 	const saveCtx = SaveContext.get();
 </script>

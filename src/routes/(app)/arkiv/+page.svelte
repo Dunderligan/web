@@ -15,9 +15,7 @@
 	<meta property="og:description" content="Se tidigare säsonger av Dunderligan." />
 </svelte:head>
 
-<PageHeader>
-	<h1 class="text-center text-6xl font-extrabold text-black sm:text-left sm:text-7xl">Arkiv</h1>
-</PageHeader>
+<PageHeader title="Arkiv"></PageHeader>
 
 <PageSection>
 	<Subheading class="mb-4">Säsonger</Subheading>

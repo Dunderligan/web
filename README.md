@@ -29,10 +29,18 @@ Kör sedan följande kommandon:
 ```bash
 pnpm install
 pnpm db:push
-pnpm dev --open
+pnpm dev
 ```
 
-För att fylla databasen med testdata, lägg till `--seed` argumentet:
+Öppna till slut http://localhost:5173/setup i din webbläsare för att göra klart installationen.
+
+Vid senare uppstart kan du lägga till `--open` argumentet för att automatiskt öppna upp sidan.
+
+### Seeding
+
+Medan man ut utvecklar kan det vara användbart att ha testdata att leka runt med. I projektet finns en funktion för att slumpmässigt generera en säsong med lag, matcher, spelare, o.s.v. 
+
+För att komma igång, stäng ner dev-servern och starta upp den med `--seed` argumentet:
 
 ```bash
 pnpm dev -- -- --seed
@@ -40,6 +48,10 @@ pnpm dev -- -- --seed
 
 > [!CAUTION]
 > `--seed` rensar den nuvarande databasen. Använd den **inte** på data du bryr dig om!
+
+Gå sedan till någon sida på `localhost:5173` och vänta i några sekunder.
+
+### Mer om databasen
 
 Om du gör ändringar i databas-schemat, kör `db:push` igen för att synka ändringarna med databasen.
 

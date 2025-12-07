@@ -42,7 +42,7 @@ export const GET: RequestHandler = async ({ url, fetch, cookies }) => {
 
 	const battlenetUser: BattlenetUserResponse = await userResponse.json();
 
-	const existingUser = await auth.getUserFromBattlenetId(battlenetUser.id);
+	const existingUser = await auth.getUserFromBattletag(battlenetUser.battletag);
 	let userId: string;
 
 	if (existingUser) {

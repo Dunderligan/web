@@ -12,6 +12,7 @@
 	import DateInput from '$lib/components/ui/DateInput.svelte';
 	import { createSeason } from '$lib/remote/season.remote';
 	import Checkbox from '$lib/components/ui/Checkbox.svelte';
+	import { page } from '$app/state';
 
 	let { data } = $props();
 
@@ -62,6 +63,14 @@
 		<Button icon="ph:plus" onclick={() => (createSeasonOpen = true)} />
 	{/if}
 </AdminCard>
+
+{#if page.data.user?.isSuperAdmin}
+	<AdminCard title="Användare">
+		<div class="overflow-hidden rounded-lg">
+			<AdminLink href="/admin/anvandare">Hantera användare</AdminLink>
+		</div>
+	</AdminCard>
+{/if}
 
 <CreateDialog
 	title="Skapa säsong"

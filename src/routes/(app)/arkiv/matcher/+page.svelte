@@ -30,7 +30,7 @@
 	}
 </script>
 
-<PageHeader>Matcher</PageHeader>
+<PageHeader title="Matcharkiv"></PageHeader>
 
 <PageSection>
 	{#if prev}

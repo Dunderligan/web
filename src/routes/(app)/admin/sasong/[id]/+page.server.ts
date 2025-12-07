@@ -4,7 +4,7 @@ import { error } from '@sveltejs/kit';
 export const load = async ({ params }) => {
 	const data = await db.query.season.findFirst({
 		where: {
-			slug: params.id
+			id: params.id
 		},
 		columns: {
 			createdAt: false

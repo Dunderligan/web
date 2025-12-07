@@ -16,11 +16,7 @@
 	/>
 </svelte:head>
 
-<PageHeader>
-	<h1 class="text-center font-display text-6xl font-extrabold text-black sm:text-left sm:text-7xl">
-		Om Dunderligan
-	</h1>
-</PageHeader>
+<PageHeader title="Om oss"></PageHeader>
 
 <PageSection class="text-lg font-medium text-gray-800">
 	<p class="mb-8">

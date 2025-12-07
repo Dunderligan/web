@@ -1,11 +1,8 @@
 import { db, schema } from './db';
 import { eq } from 'drizzle-orm';
 
-async function getUserFromBattlenetId(battlenetId: number) {
-	const results = await db
-		.select()
-		.from(schema.user)
-		.where(eq(schema.user.battlenetId, battlenetId));
+async function getUserFromBattletag(battletag: string) {
+	const results = await db.select().from(schema.user).where(eq(schema.user.battletag, battletag));
 
 	if (!results) return null;
 	return results[0];
@@ -30,6 +27,6 @@ async function createUser(battlenetId: number, battletag: string) {
 }
 
 export default {
-	getUserFromBattlenetId,
+	getUserFromBattletag,
 	createUser
 };
