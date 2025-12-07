@@ -21,10 +21,10 @@ importers:
         specifier: ^2.9.8
         version: 2.9.8(@internationalized/date@3.9.0)(svelte@5.38.6)
       drizzle-orm:
-        specifier: 1.0.0-beta.2-86f844e
+        specifier: ^1.0.0-beta
         version: 1.0.0-beta.2-86f844e(@types/mssql@9.1.8)(gel@2.1.1)(mssql@11.0.1)(postgres@3.4.7)
       drizzle-seed:
-        specifier: 1.0.0-beta.2-86f844e
+        specifier: ^1.0.0-beta
         version: 1.0.0-beta.2-86f844e(drizzle-orm@1.0.0-beta.2-86f844e(@types/mssql@9.1.8)(gel@2.1.1)(mssql@11.0.1)(postgres@3.4.7))
       iconify-icon:
         specifier: ^3.0.1
@@ -67,7 +67,7 @@ importers:
         specifier: ^22
         version: 22.18.0
       drizzle-kit:
-        specifier: 1.0.0-beta.2-86f844e
+        specifier: ^1.0.0-beta
         version: 1.0.0-beta.2-86f844e
       prettier:
         specifier: ^3.4.2

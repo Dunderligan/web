@@ -1,37 +1,6 @@
 import { db } from '$lib/server/db.js';
 
 export const load = async ({ url }) => {
-	const available = await db.query.season.findMany({
-		columns: {
-			id: true,
-			name: true
-		},
-		with: {
-			divisions: {
-				columns: {
-					id: true,
-					name: true
-				},
-				with: {
-					groups: {
-						columns: {
-							id: true,
-							name: true
-						},
-						with: {
-							rosters: {
-								columns: {
-									id: true,
-									name: true
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	});
-
 	const playedParam = url.searchParams.get('spelad');
 
 	const query = {
@@ -43,5 +12,5 @@ export const load = async ({ url }) => {
 		page: Number(url.searchParams.get('sida') ?? 0)
 	};
 
-	return { query, available, pageSize: 10 };
+	return { query, pageSize: 10 };
 };

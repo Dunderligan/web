@@ -173,7 +173,16 @@
 			<StandingsTable rosters={division.rosters} scores={division.table} seasonSlug={season.slug} />
 
 			{#if division.latestMatches.length > 0}
-				<Subheading class="mt-10 mb-4">Senaste matcherna</Subheading>
+				<div class="mt-10 mb-4 flex max-w-2xl items-center justify-between">
+					<Subheading>Senaste matcherna</Subheading>
+
+					<Button
+						href="/arkiv/matcher?division={division.id}&spelad=true&prev={page.url.pathname}"
+						label="Se alla"
+						icon="ph:arrow-right"
+						kind="secondary"
+					/>
+				</div>
 
 				<div class="max-w-2xl space-y-2">
 					{#each division.latestMatches as match (match.id)}

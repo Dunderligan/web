@@ -37,7 +37,7 @@
 		<Button kind="secondary" href={prev} icon="ph:arrow-left" label="Tillbaka" />
 	{/if}
 
-	<div class="max-w-2xl grow space-y-1">
+	<div class="max-w-2xl grow space-y-2">
 		<div class="mt-6 mb-4 flex items-center">
 			<Button
 				disabled={data.query.page === 0}

@@ -97,32 +97,36 @@
 
 		<MembersTable members={sortedMembers} />
 
-		<div class="mt-10 mb-4 flex items-center justify-between">
-			<Subheading>Senaste matcherna</Subheading>
+		{#if latestMatches.length > 0}
+			<div class="mt-10 mb-4 flex items-center justify-between">
+				<Subheading>Senaste matcherna</Subheading>
 
-			<Button
-				href="/arkiv/matcher?rosterId={roster.id}&spelad=true&prev={page.url.pathname}"
-				label="Se alla"
-				icon="ph:arrow-right"
-				kind="secondary"
-			/>
-		</div>
+				<Button
+					href="/arkiv/matcher?rosterId={roster.id}&spelad=true&prev={page.url.pathname}"
+					label="Se alla"
+					icon="ph:arrow-right"
+					kind="secondary"
+				/>
+			</div>
 
-		<div class="space-y-2">
-			{#each latestMatches as match (match.id)}
-				<Match seasonSlug={season.slug} {match} flipped={match.rosterB?.id === roster.id} />
-			{/each}
-		</div>
+			<div class="space-y-2">
+				{#each latestMatches as match (match.id)}
+					<Match seasonSlug={season.slug} {match} flipped={match.rosterB?.id === roster.id} />
+				{/each}
+			</div>
+		{/if}
 
-		<Subheading class="mt-10 mb-4">
-			<span>Kommande matcher</span>
-		</Subheading>
+		{#if upcomingMatches.length > 0}
+			<Subheading class="mt-10 mb-4">
+				<span>Kommande matcher</span>
+			</Subheading>
 
-		<div class="space-y-2">
-			{#each upcomingMatches as match (match.id)}
-				<Match seasonSlug={season.slug} {match} flipped={match.rosterB?.id === roster.id} />
-			{/each}
-		</div>
+			<div class="space-y-2">
+				{#each upcomingMatches as match (match.id)}
+					<Match seasonSlug={season.slug} {match} flipped={match.rosterB?.id === roster.id} />
+				{/each}
+			</div>
+		{/if}
 	</section>
 
 	<section class="shrink-0 sm:w-1/4">
