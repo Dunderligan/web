@@ -9,9 +9,9 @@ export const createSeason = command(
 	z.object({
 		name: z.string(),
 		startedAt: z.date(),
-		useSr: z.boolean()
+		legacyRanks: z.boolean()
 	}),
-	async ({ name, startedAt, useSr }) => {
+	async ({ name, startedAt, legacyRanks }) => {
 		await adminGuard();
 
 		const slug = toSlug(name);
@@ -22,7 +22,7 @@ export const createSeason = command(
 				name,
 				slug,
 				startedAt,
-				useSr
+				legacyRanks
 			})
 			.returning();
 

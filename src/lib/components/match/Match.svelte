@@ -1,12 +1,5 @@
 <script lang="ts">
-	import {
-		matchWinner,
-		matchRoster,
-		isWinner,
-		matchScoreOrZero,
-		type MatchSide,
-		matchScore
-	} from '$lib/match';
+	import { matchWinner, matchRoster, isWinner, matchScoreOrZero, type MatchSide } from '$lib/match';
 	import type { ResolvedMatch, ClassValue } from '$lib/types';
 	import { formatDate, formatDateTime } from '$lib/util';
 	import Icon from '../ui/Icon.svelte';
@@ -88,7 +81,7 @@
 				class={[
 					nameClass,
 					won ? 'text-gray-800' : 'text-gray-600',
-					'truncate text-lg font-semibold hover:text-accent-600 hover:underline'
+					'truncate text-lg font-semibold hover:underline'
 				]}
 			>
 				{roster.name}

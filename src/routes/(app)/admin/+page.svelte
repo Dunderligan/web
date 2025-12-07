@@ -11,8 +11,6 @@
 	import { SaveContext } from '$lib/state/save.svelte';
 	import DateInput from '$lib/components/ui/DateInput.svelte';
 	import { createSeason } from '$lib/remote/season.remote';
-	import { seasonState } from '$lib/util.js';
-	import Icon from '$lib/components/ui/Icon.svelte';
 	import Checkbox from '$lib/components/ui/Checkbox.svelte';
 
 	let { data } = $props();
@@ -26,13 +24,13 @@
 	let newSeasonName = $state('');
 	let newSeasonStartedAt = $state(new Date());
 
-	let useSr = $state(false);
+	let legacyRanks = $state(false);
 
 	async function submitNewSeason() {
 		const { season } = await createSeason({
 			name: newSeasonName,
 			startedAt: newSeasonStartedAt,
-			useSr
+			legacyRanks
 		});
 
 		await goto(`/admin/sasong/${season.id}`);
@@ -81,6 +79,6 @@
 	</Label>
 
 	<Label label="Använd SR-poäng">
-		<Checkbox bind:checked={useSr} />
+		<Checkbox bind:checked={legacyRanks} />
 	</Label>
 </CreateDialog>

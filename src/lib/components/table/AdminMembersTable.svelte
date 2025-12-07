@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { SaveContext } from '$lib/state/save.svelte';
-	import { type Member, Rank, Role } from '$lib/types';
+	import { type Member, Rank as RankEnum, Role } from '$lib/types';
 	import { capitalize, roleIcon } from '$lib/util';
 	import Button from '../ui/Button.svelte';
 	import Checkbox from '../ui/Checkbox.svelte';
@@ -8,6 +8,7 @@
 	import InputField from '../ui/InputField.svelte';
 	import Select from '../ui/Select.svelte';
 	import Table from './Table.svelte';
+	import Rank from '../ui/Rank.svelte';
 
 	type Props = {
 		legacyRanks: boolean;
@@ -53,10 +54,15 @@
 		<div class="flex items-center gap-2 bg-gray-200 pr-2">
 			{#if hasRank}
 				{#if legacyRanks}
+					<Rank rank={{ sr: member.sr ?? 0 }} hideLabel />
+
 					<InputField
 						type="number"
 						oninput={saveCtx.setDirty}
-						bind:value={() => member.sr, (value) => (member.sr = value ?? 0)}
+						placeholder="SR"
+						bind:value={
+							() => (member.sr === 0 ? null : member.sr), (value) => (member.sr = value ?? 0)
+						}
 					/>
 
 					<Button
@@ -74,18 +80,18 @@
 						triggerClass="grow"
 						onValueChange={saveCtx.setDirty}
 						bind:value={
-							() => member.rank!,
+							() => member.rank! as string,
 							(rank) => {
 								if (rank === 'clear') {
 									member.rank = null;
 									member.tier = null;
 								} else {
-									member.rank = rank;
+									member.rank = rank as RankEnum;
 								}
 							}
 						}
 						items={[
-							...Object.values(Rank).map((rank) => ({
+							...Object.values(RankEnum).map((rank) => ({
 								label: capitalize(rank),
 								value: rank
 							})),
@@ -120,9 +126,9 @@
 					kind="tertiary"
 					onclick={() => {
 						if (legacyRanks) {
-							member.sr = 1000;
+							member.sr = 0;
 						} else {
-							member.rank = Rank.BRONZE;
+							member.rank = RankEnum.BRONZE;
 							member.tier = 1;
 						}
 						saveCtx.setDirty();

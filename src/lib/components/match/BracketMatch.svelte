@@ -1,7 +1,9 @@
 <script lang="ts">
-	import { matchWinner } from '$lib/match';
-	import type { ResolvedMatch, MatchRoster } from '$lib/types';
+	import type { ResolvedMatch } from '$lib/types';
 	import RosterLogo from '../ui/RosterLogo.svelte';
+	import { matchRoster, isWinner, type MatchSide, matchScore } from '$lib/match';
+	import { formatDate, formatDateTime } from '$lib/util';
+	import Icon from '../ui/Icon.svelte';
 
 	type Props = {
 		match: ResolvedMatch;
@@ -21,8 +23,7 @@
 		hoveredId = $bindable(null)
 	}: Props = $props();
 
-	const winner = $derived(matchWinner(match));
-	const verticalLineHeight = $derived(66 * prevMatches - 48);
+	const verticalLineHeight = $derived(62 * prevMatches - 48);
 
 	function setHovered(rosterId?: string | null) {
 		hoveredId = rosterId ?? null;
@@ -30,15 +31,45 @@
 </script>
 
 <div
-	class={[!isFirst && 'not-first-match', !isLast && 'not-last-match', 'relative flex h-[100px]']}
+	class={[
+		!isFirst && 'not-first-match',
+		!isLast && 'not-last-match',
+		'relative flex h-[125px] flex-col rounded-lg'
+	]}
+	tabindex="0"
+	role="button"
 >
-	<div class="grow">
-		{@render side(match.rosterA, winner === 'A', match.teamAScore, 'rounded-t-lg')}
+	<div
+		class="flex h-[25px] items-center gap-4 rounded-t-lg bg-gray-50 px-4 text-sm font-medium text-gray-500"
+	>
+		{#if match.played}
+			<div>
+				{match.playedAt ? formatDate(match.playedAt) : 'Okänt datum'}
+			</div>
 
-		<div class="h-[2px] w-full bg-gray-200"></div>
+			{#if match.vodUrl}
+				<a class="hover:underline" href={match.vodUrl} target="_blank" rel="noopener noreferrer">
+					<Icon icon="ph:arrow-square-out" />
+					VOD
+				</a>
+			{/if}
+		{:else}
+			<div>
+				<Icon icon="ph:calendar-blank" />
+				Planerad
 
-		{@render side(match.rosterB, winner === 'B', match.teamBScore, 'rounded-b-lg')}
+				{#if match.scheduledAt}
+					{formatDateTime(match.scheduledAt)}
+				{/if}
+			</div>
+		{/if}
 	</div>
+
+	{@render side('A')}
+
+	<div class="h-[2px] w-full bg-gray-200"></div>
+
+	{@render side('B', 'rounded-b-lg')}
 
 	{#if !isFirst}
 		<div
@@ -48,16 +79,20 @@
 	{/if}
 </div>
 
-{#snippet side(
-	roster?: MatchRoster | null,
-	won?: boolean | null,
-	score?: number | null,
-	extraClass?: string
-)}
+{#snippet side(side: MatchSide, classProp?: string)}
+	{@const roster = matchRoster(match, side)}
+	{@const won = isWinner(match, side)}
+	{@const score = matchScore(match, side)}
+
+	<!-- onmouseenter={() => setHovered(roster?.id)}
+		onmouseleave={() => setHovered(null)}
+		onfocus={() => setHovered(roster?.id)}
+		onblur={() => setHovered(null)} -->
+
 	<div
 		class={[
-			extraClass,
-			'flex h-12 items-center pr-4 transition-all',
+			classProp,
+			'flex grow items-center pr-4 transition-all',
 			roster && hoveredId === roster?.id
 				? 'bg-gray-50'
 				: match.played
@@ -66,12 +101,6 @@
 						: 'bg-gray-50'
 					: 'bg-gray-100'
 		]}
-		onmouseenter={() => setHovered(roster?.id)}
-		onmouseleave={() => setHovered(null)}
-		onfocus={() => setHovered(roster?.id)}
-		onblur={() => setHovered(null)}
-		tabindex={roster ? 0 : undefined}
-		role="button"
 	>
 		{#if roster}
 			<div
@@ -93,7 +122,7 @@
 							? 'font-semibold text-gray-900'
 							: 'font-medium text-gray-700'
 						: 'font-medium text-gray-800',
-					'mr-auto truncate hover:text-accent-600 hover:underline'
+					'mr-auto truncate hover:underline'
 				]}
 			>
 				{roster?.name}
@@ -105,6 +134,7 @@
 {/snippet}
 
 <style>
+	/* Horizontal lines connecting rounds */
 	.not-last-match::after,
 	.not-first-match::before {
 		content: '';
@@ -114,23 +144,26 @@
 		z-index: -1;
 	}
 
+	/* Forwards line to next round. */
 	.not-last-match::after {
-		top: calc(50% - 2px);
+		top: calc(50% + 25px / 2 - 1px);
 		right: -24px;
 		left: 100%;
 	}
 
+	/* Backwards line to previous round. */
 	.not-first-match::before {
-		top: calc(50% - 2px);
+		top: calc(50% + 25px / 2 - 1px);
 		right: 100%;
 		left: -24px;
 	}
 
+	/* Vertical line connecting to previous/next match. */
 	.vertical-line {
 		position: absolute;
 		left: -24px;
 		width: 2px;
-		transform: translateY(-1px);
+		transform: translateY(calc(25px / 2));
 		background-color: var(--color-gray-200);
 		z-index: -1;
 	}
