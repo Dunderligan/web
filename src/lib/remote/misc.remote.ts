@@ -66,7 +66,12 @@ async function insertSeason(tx: Transaction, input: SeasonInput) {
 
 	const [season] = await tx
 		.insert(schema.season)
-		.values({ name, slug: toSlug(name), startedAt: new Date(), legacyRanks: input.legacyRanks })
+		.values({
+			name,
+			slug: toSlug(name),
+			startedAt: new Date(),
+			legacyRanks: input.legacyRanks
+		})
 		.returning();
 
 	for (const [divisionName, division] of Object.entries(input.divisions)) {

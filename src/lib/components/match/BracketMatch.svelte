@@ -129,7 +129,9 @@
 				{roster?.name}
 			</a>
 		{:else}
-			<div class="grow text-center font-medium text-gray-400">{match.played ? '---' : '???'}</div>
+			<div class="grow text-center font-medium text-gray-400">
+				{match.played ? '---' : '???'}
+			</div>
 		{/if}
 	</div>
 {/snippet}

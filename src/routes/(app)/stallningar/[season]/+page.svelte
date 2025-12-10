@@ -120,7 +120,8 @@
 			<span class="mx-2">•</span>
 
 			{#if state === 'upcoming'}
-				Startar {formatDateWithoutYear(season.startedAt)} {season.startedAt.getFullYear()}
+				Startar {formatDateWithoutYear(season.startedAt)}
+				{season.startedAt.getFullYear()}
 			{:else if state === 'ongoing'}
 				<span>Inleddes {formatDateWithoutYear(season.startedAt)}</span>
 				{#if season.endedAt}

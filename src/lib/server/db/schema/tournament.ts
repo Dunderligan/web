@@ -145,7 +145,9 @@ export const match = pgTable(
 		scheduledAt: timestamp(),
 		vodUrl: text(),
 		/** The next match in the bracket, if any. */
-		nextMatchId: uuid().references((): AnyPgColumn => match.id, { onDelete: 'set null' }),
+		nextMatchId: uuid().references((): AnyPgColumn => match.id, {
+			onDelete: 'set null'
+		}),
 		/** The vertical order to display this match in a bracket. Ignored for group-stage matches. */
 		order: integer().notNull().default(0),
 		...timestamps

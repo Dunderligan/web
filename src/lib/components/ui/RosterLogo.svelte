@@ -2,7 +2,12 @@
 	import type { ClassValue } from '$lib/types';
 	import { cdnImageSrc } from '$lib/util';
 
-	type Props = { id: string; class?: ClassValue; imgSize?: number; src?: string | null };
+	type Props = {
+		id: string;
+		class?: ClassValue;
+		imgSize?: number;
+		src?: string | null;
+	};
 
 	let { id, class: classProp, imgSize = 64, src: srcOverride }: Props = $props();
 

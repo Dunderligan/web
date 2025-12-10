@@ -9,15 +9,19 @@
 <div class="relative flex min-h-screen flex-col overflow-hidden">
 	<div
 		class="pointer-events-none fixed top-32 left-200 size-400 rounded-full bg-accent-400/20"
-		id="splotch" 
+		id="splotch"
 	></div>
 
 	<div class="mb-12 h-18"></div>
 
 	<PageSection topMargin={false} class="text-center">
 		<h2 class="mt-4 text-lg font-medium text-gray-700">Något gick fel:</h2>
-		<h1 class="mt-2 text-center text-8xl font-bold text-gray-900">{page.status}</h1>
-		<h1 class="text-center text-3xl font-semibold text-gray-800">{page.error?.message}</h1>
+		<h1 class="mt-2 text-center text-8xl font-bold text-gray-900">
+			{page.status}
+		</h1>
+		<h1 class="text-center text-3xl font-semibold text-gray-800">
+			{page.error?.message}
+		</h1>
 
 		{#if page.status === 404}
 			<Button
