@@ -4,12 +4,12 @@
 	import Button from '$lib/components/ui/Button.svelte';
 </script>
 
-<div id="background" class="fixed top-0 min-h-[35rem] w-full min-w-lg"></div>
+<div id="background" class="fixed top-0 min-h-140 w-full min-w-lg"></div>
 
 <div class="relative flex min-h-screen flex-col overflow-hidden">
 	<div
-		class="pointer-events-none fixed top-32 left-[-50rem] size-[100rem] rounded-full bg-accent-400/20"
-		id="splotch"
+		class="pointer-events-none fixed top-32 left-200 size-400 rounded-full bg-accent-400/20"
+		id="splotch" 
 	></div>
 
 	<div class="mb-12 h-18"></div>

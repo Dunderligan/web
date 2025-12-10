@@ -32,15 +32,15 @@ pnpm db:push
 pnpm dev
 ```
 
-Öppna till slut http://localhost:5173/setup i din webbläsare för att göra klart installationen.
+Öppna http://localhost:5173/setup i din webbläsare för att göra klart installationen.
 
-Vid senare uppstart kan du lägga till `--open` argumentet för att automatiskt öppna upp sidan.
+Vid senare uppstart kan du lägga till argumentet `--open` för att automatiskt öppna upp sidan.
 
 ### Seeding
 
-Medan man ut utvecklar kan det vara användbart att ha testdata att leka runt med. I projektet finns en funktion för att slumpmässigt generera en säsong med lag, matcher, spelare, o.s.v. 
+Medan man ut utvecklar kan det vara användbart att ha testdata att leka runt med. I projektet finns en funktion för att slumpmässigt generera en säsong med lag, matcher, spelare, o.s.v.
 
-För att komma igång, stäng ner dev-servern och starta upp den med `--seed` argumentet:
+För att komma igång, stäng ner dev-servern och starta upp den igen med `--seed` argumentet:
 
 ```bash
 pnpm dev -- -- --seed
@@ -53,7 +53,10 @@ Gå sedan till någon sida på `localhost:5173` och vänta i några sekunder.
 
 ### Mer om databasen
 
-Om du gör ändringar i databas-schemat, kör `db:push` igen för att synka ändringarna med databasen.
+Efter att du gjort ändringar i databas-schemat (`src/lib/server/db/schema`), kör `pnpm db:push` för att synka ändringarina med din lokala databas.
+När du känner dig redo att committa ändringarna, kör `pnpm db:generate` för att generera en SQL-fil som kommer köras mot produktionsdatabasen (se `db.ts`).
+
+De flesta datahämtingarna görs via drizzles relations-API och den bör användas i varje fall där det är möjligt. Muteringar görs via SvelteKits (experimentella) [remote functions](https://svelte.dev/docs/kit/remote-functions), som du hittar i `src/lib/remote`.
 
 ## Kontakt
 
