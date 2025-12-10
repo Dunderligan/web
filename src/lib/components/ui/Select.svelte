@@ -91,11 +91,7 @@
 			{#snippet child({ wrapperProps, props, open })}
 				<div {...wrapperProps}>
 					{#if open}
-						<div
-							{...props}
-							class="floating w-[var(--bits-select-anchor-width)]"
-							in:fly={{ y: -5, duration: 80, easing: quadOut }}
-						>
+						<div {...props} class="floating w-[var(--bits-select-anchor-width)]">
 							<Select.Viewport>
 								{#each items as item, i (i + item.value)}
 									<Select.Item {...item} class="floating-item">

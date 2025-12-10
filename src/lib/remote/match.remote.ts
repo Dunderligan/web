@@ -2,7 +2,7 @@ import { query } from '$app/server';
 import { db, schema } from '$lib/server/db';
 import {
 	fullMatchColumns,
-	groupMatchOrdering,
+	groupMatchOrder,
 	matchRosterQuery,
 	nestedDivisionQuery,
 	nestedGroupQuery
@@ -21,26 +21,46 @@ export const queryMatches = query(
 		page: z.number().min(0).default(0)
 	}),
 	async ({ rosterId, seasonId, divisionId, groupId, played, page }) => {
+		console.log(rosterId);
 		const results = await db.query.match.findMany({
 			limit: PAGE_SIZE,
 			offset: page * PAGE_SIZE,
-			orderBy: groupMatchOrdering,
+			orderBy: groupMatchOrder,
 			where: {
-				OR: [
+				AND: [
 					{
-						rosterAId: rosterId
+						OR: [
+							{
+								rosterAId: {
+									isNotNull: true
+								},
+								rosterBId: {
+									isNotNull: true
+								}
+							},
+							{
+								played: true
+							}
+						]
 					},
 					{
-						rosterBId: rosterId
+						OR: [
+							{
+								rosterAId: rosterId
+							},
+							{
+								rosterBId: rosterId
+							}
+						]
 					}
 				],
 				groupId,
-				group: {
-					divisionId,
-					division: {
-						seasonId
-					}
-				},
+				// group: {
+				// 	divisionId,
+				// 	division: {
+				// 		seasonId
+				// 	}
+				// },
 				played
 			},
 			columns: fullMatchColumns,

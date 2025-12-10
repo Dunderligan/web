@@ -13,6 +13,7 @@
 	import { createSeason } from '$lib/remote/season.remote';
 	import Checkbox from '$lib/components/ui/Checkbox.svelte';
 	import { page } from '$app/state';
+	import { uploadSeasonData } from '$lib/remote/misc.remote';
 
 	let { data } = $props();
 
@@ -27,6 +28,9 @@
 
 	let legacyRanks = $state(false);
 
+	let dataFiles = $state<FileList | null>(null);
+	let uploading = $state(false);
+
 	async function submitNewSeason() {
 		const { season } = await createSeason({
 			name: newSeasonName,
@@ -40,6 +44,22 @@
 	function resetNewSeason() {
 		newSeasonName = '';
 		newSeasonStartedAt = new Date();
+	}
+
+	async function uploadData() {
+		if (!dataFiles?.length) return;
+
+		uploading = true;
+		try {
+			const file = dataFiles[0];
+			const text = await file.text();
+			const json = JSON.parse(text);
+
+			const { season } = await uploadSeasonData(json);
+			await goto(`/admin/sasong/${season.id}`);
+		} finally {
+			uploading = false;
+		}
 	}
 </script>
 
@@ -71,6 +91,14 @@
 		</div>
 	</AdminCard>
 {/if}
+
+<AdminCard title="Ladda upp data">
+	<div>
+		<input bind:files={dataFiles} type="file" accept="application/json" />
+		<Button onclick={uploadData} disabled={!dataFiles?.length} loading={uploading}>Ladda upp</Button
+		>
+	</div>
+</AdminCard>
 
 <CreateDialog
 	title="Skapa säsong"

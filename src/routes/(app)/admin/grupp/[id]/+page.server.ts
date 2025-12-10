@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db';
-import { groupMatchOrdering as groupMatchOrdering } from '$lib/server/db/helpers';
+import { groupMatchOrder as groupMatchOrder } from '$lib/server/db/helpers';
 import { flattenGroup } from '$lib/util';
 import { error } from '@sveltejs/kit';
 
@@ -22,7 +22,7 @@ export const load = async ({ params }) => {
 				}
 			},
 			matches: {
-				orderBy: groupMatchOrdering,
+				orderBy: groupMatchOrder,
 				columns: {
 					createdAt: false,
 					order: false

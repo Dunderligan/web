@@ -13,9 +13,9 @@
 </script>
 
 <div class="w-full overflow-x-auto rounded-lg p-1">
-	<div class="flex min-w-3xl items-stretch gap-12">
+	<div class="flex gap-[60px]">
 		{#each rounds as round, i (i)}
-			<div class="flex flex-col justify-around gap-8" style="width: {100 / rounds.length}%;">
+			<div class="flex shrink-0 flex-col justify-around gap-8">
 				{#each round as match (match.id)}
 					<BracketMatch
 						bind:hoveredId={hoveredRosterId}

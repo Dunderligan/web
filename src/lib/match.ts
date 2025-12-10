@@ -11,6 +11,11 @@ export function isInMatch(match: LogicalMatch, rosterId: string): boolean {
 
 export type MatchSide = 'A' | 'B';
 
+export function flipSide(side: MatchSide, flip: boolean = true): MatchSide {
+	if (!flip) return side;
+	return side === 'A' ? 'B' : 'A';
+}
+
 export function matchScore(match: LogicalMatch, side: MatchSide): number | null {
 	if (side === 'A') return match.teamAScore ?? null;
 	if (side === 'B') return match.teamBScore ?? null;

@@ -127,8 +127,6 @@
 
 		await editRosterTeam({ rosterId: roster.id, teamId: linkTeamId });
 	}
-
-	$inspect(roster.members);
 </script>
 
 <Breadcrumbs

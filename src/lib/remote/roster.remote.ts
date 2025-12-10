@@ -1,7 +1,7 @@
 import { command, form } from '$app/server';
 import { S3_BUCKET_NAME } from '$env/static/private';
 import { db, schema } from '$lib/server/db';
-import { type Transaction } from '$lib/server/db/helpers';
+import { findOrCreatePlayer, type Transaction } from '$lib/server/db/helpers';
 import S3 from '$lib/server/s3';
 import { Rank, Role, SocialPlatform, type Member, type TeamSocial } from '$lib/types';
 import { toSlug } from '$lib/util';
@@ -138,21 +138,6 @@ async function updateMembers(tx: Transaction, rosterId: string, members: Member[
 
 	if (memberInserts.length > 0) {
 		await tx.insert(schema.member).values(memberInserts);
-	}
-}
-
-async function findOrCreatePlayer(tx: Transaction, battletag: string) {
-	const [existingPlayer] = await tx
-		.select()
-		.from(schema.player)
-		.where(eq(schema.player.battletag, battletag));
-
-	if (existingPlayer) {
-		return existingPlayer.id;
-	} else {
-		const [newPlayer] = await tx.insert(schema.player).values({ battletag }).returning();
-
-		return newPlayer.id;
 	}
 }
 

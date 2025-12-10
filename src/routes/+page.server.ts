@@ -1,11 +1,15 @@
 import { db } from '$lib/server/db';
-import { matchRosterQuery, nestedDivisionQuery, nestedGroupQuery } from '$lib/server/db/helpers';
-import { type OrderBy } from 'drizzle-orm';
+import {
+	groupMatchOrder,
+	matchRosterQuery,
+	nestedDivisionQuery,
+	nestedGroupQuery
+} from '$lib/server/db/helpers';
 
-const getMatches = async ({ played, orderBy }: { played: boolean; orderBy: OrderBy }) => {
+const getMatches = async ({ played }: { played: boolean }) => {
 	return await db.query.match.findMany({
 		limit: 3,
-		orderBy,
+		orderBy: groupMatchOrder,
 		where: {
 			played,
 			rosterAId: {
@@ -37,8 +41,8 @@ const getMatches = async ({ played, orderBy }: { played: boolean; orderBy: Order
 export const load = async () => {
 	return {
 		matches: {
-			upcoming: getMatches({ played: false, orderBy: { scheduledAt: 'asc' } }),
-			latest: getMatches({ played: true, orderBy: { scheduledAt: 'desc' } })
+			upcoming: getMatches({ played: false }),
+			latest: getMatches({ played: true })
 		}
 	};
 };

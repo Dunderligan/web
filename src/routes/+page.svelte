@@ -67,10 +67,10 @@
 				<div class="h-[140px] animate-pulse rounded-lg bg-gray-100 sm:h-[80px]"></div>
 			{/each}
 		{:then matches}
-			{#each matches as match (match.id)}
-				{@const seasonSlug = match.division?.season.slug ?? match.group!.division.season.slug}
+			{#each matches as { division, group, ...match } (match.id)}
+				{@const seasonSlug = division?.season.slug ?? group!.division.season.slug}
 
-				<Match {seasonSlug} {match} />
+				<Match {seasonSlug} {match} {division} {group} />
 			{/each}
 		{/await}
 	</div>

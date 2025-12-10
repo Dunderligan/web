@@ -32,7 +32,10 @@
 
 	RosterContext.set(new RosterContext(data.division.groups.flatMap((group) => group.rosters)));
 	SaveContext.set(
-		new SaveContext({ save, href: `/stallningar/${season.slug}?div=${division.slug}` })
+		new SaveContext({
+			save,
+			href: `/stallningar/${season.slug}?div=${division.slug}&visa=slutspel`
+		})
 	);
 
 	const saveCtx = SaveContext.get();

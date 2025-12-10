@@ -1,5 +1,5 @@
 import { db, schema } from '$lib/server/db';
-import { fullMatchColumns, groupMatchOrdering } from '$lib/server/db/helpers.js';
+import { fullMatchColumns, groupMatchOrder } from '$lib/server/db/helpers.js';
 import { calculateStandings } from '$lib/table';
 import { aggregateGroups } from '$lib/util';
 import { error } from '@sveltejs/kit';
@@ -51,7 +51,7 @@ export const load = async ({ params }) => {
 								}
 							},
 							matches: {
-								orderBy: groupMatchOrdering,
+								orderBy: groupMatchOrder,
 								columns: fullMatchColumns
 							}
 						}

@@ -9,22 +9,15 @@
 	import Tabs from '$lib/components/ui/Tabs.svelte';
 	import TeamSocial from '$lib/components/ui/TeamSocial.svelte';
 	import type { ClassValue } from '$lib/types';
-	import {
-		averageLegacyRank,
-		averageRank,
-		cdnImageSrc,
-		sortRole as compareRole,
-		flattenGroup
-	} from '$lib/util';
+	import { averageLegacyRank, averageRank, cdnImageSrc, flattenGroup } from '$lib/util';
 	import { page } from '$app/state';
 	import Subheading from '$lib/components/ui/Subheading.svelte';
 
 	let { data } = $props();
 
 	let { team, roster } = $derived(data);
-	let { group, division, season } = $derived(flattenGroup(roster.group));
+	let { division, season } = $derived(flattenGroup(roster.group));
 
-	let sortedMembers = $derived(roster.members.toSorted((a, b) => compareRole(a.role, b.role)));
 	let average = $derived(
 		season.legacyRanks ? averageLegacyRank(roster.members) : averageRank(roster.members)
 	);
@@ -37,7 +30,7 @@
 			const { season } = flattenGroup(roster.group);
 
 			return {
-				label: `${season.name}`,
+				label: season.name,
 				value: roster.id,
 				href: `/lag/${roster.slug}/${season.slug}`
 			};
@@ -95,19 +88,10 @@
 			</div>
 		{/if}
 
-		<MembersTable members={sortedMembers} />
+		<MembersTable members={roster.members} />
 
 		{#if latestMatches.length > 0}
-			<div class="mt-10 mb-4 flex items-center justify-between">
-				<Subheading>Senaste matcherna</Subheading>
-
-				<Button
-					href="/arkiv/matcher?rosterId={roster.id}&spelad=true&prev={page.url.pathname}"
-					label="Se alla"
-					icon="ph:arrow-right"
-					kind="secondary"
-				/>
-			</div>
+			<Subheading class="mt-10 mb-4">Senaste matcher</Subheading>
 
 			<div class="space-y-2">
 				{#each latestMatches as match (match.id)}
@@ -117,9 +101,7 @@
 		{/if}
 
 		{#if upcomingMatches.length > 0}
-			<Subheading class="mt-10 mb-4">
-				<span>Kommande matcher</span>
-			</Subheading>
+			<Subheading class="mt-10 mb-4">Kommande matcher</Subheading>
 
 			<div class="space-y-2">
 				{#each upcomingMatches as match (match.id)}
@@ -127,6 +109,14 @@
 				{/each}
 			</div>
 		{/if}
+
+		<Button
+			href="/arkiv/matcher?roster={roster.id}&prev={page.url.pathname}"
+			label="Se alla matcher"
+			icon="ph:arrow-right"
+			kind="secondary"
+			class="mt-6"
+		/>
 	</section>
 
 	<section class="shrink-0 sm:w-1/4">

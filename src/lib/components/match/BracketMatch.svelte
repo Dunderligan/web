@@ -23,7 +23,8 @@
 		hoveredId = $bindable(null)
 	}: Props = $props();
 
-	const verticalLineHeight = $derived(62 * prevMatches - 48);
+	// don't ask
+	const verticalLineHeight = $derived(32 * Math.pow(prevMatches, 2) - 34 * prevMatches + 16);
 
 	function setHovered(rosterId?: string | null) {
 		hoveredId = rosterId ?? null;
@@ -34,7 +35,7 @@
 	class={[
 		!isFirst && 'not-first-match',
 		!isLast && 'not-last-match',
-		'relative flex h-[125px] flex-col rounded-lg'
+		'relative h-[125px] w-[240px] rounded-lg'
 	]}
 	tabindex="0"
 	role="button"
@@ -92,7 +93,7 @@
 	<div
 		class={[
 			classProp,
-			'flex grow items-center pr-4 transition-all',
+			'flex h-[49px] items-center pr-4 transition-all',
 			roster && hoveredId === roster?.id
 				? 'bg-gray-50'
 				: match.played
@@ -128,7 +129,7 @@
 				{roster?.name}
 			</a>
 		{:else}
-			<div class="grow text-center font-medium text-gray-400">???</div>
+			<div class="grow text-center font-medium text-gray-400">{match.played ? '---' : '???'}</div>
 		{/if}
 	</div>
 {/snippet}
@@ -147,7 +148,7 @@
 	/* Forwards line to next round. */
 	.not-last-match::after {
 		top: calc(50% + 25px / 2 - 1px);
-		right: -24px;
+		right: -32px;
 		left: 100%;
 	}
 
@@ -155,13 +156,13 @@
 	.not-first-match::before {
 		top: calc(50% + 25px / 2 - 1px);
 		right: 100%;
-		left: -24px;
+		left: -30px;
 	}
 
 	/* Vertical line connecting to previous/next match. */
 	.vertical-line {
 		position: absolute;
-		left: -24px;
+		left: -30px;
 		width: 2px;
 		transform: translateY(calc(25px / 2));
 		background-color: var(--color-gray-200);

@@ -30,6 +30,14 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Matcharkiv - Dunderligan</title>
+	<meta name="description" content="Bläddra igenom Dunderligans matcharkiv." />
+
+	<meta property="og:title" content="Matcharkiv - Dunderligan" />
+	<meta property="og:description" content="Bläddra igenom Dunderligans matcharkiv." />
+</svelte:head>
+
 <PageHeader title="Matcharkiv"></PageHeader>
 
 <PageSection>
@@ -59,13 +67,11 @@
 
 		{#await matchQuery}
 			{#each Array.from({ length: data.pageSize })}
-				<div class="h-[136px] animate-pulse rounded-lg bg-gray-100 sm:h-[96px]"></div>
+				<div class="h-[136px] animate-pulse rounded-lg bg-gray-100 sm:h-24"></div>
 			{/each}
 		{:then results}
 			{#each results.matches.slice(0, data.pageSize) as { group, division, ...match } (match.id)}
-				{@const season = group ? flattenGroup(group).season : division?.season}
-
-				<Match seasonSlug={season!.slug} {match} />
+				<Match {match} {group} {division} />
 			{:else}
 				<div class="text-center py-10 text-gray-700 space-y-2 bg-gray-100 rounded-lg">
 					<Icon icon="ph:ghost" class="text-5xl block mx-auto" />

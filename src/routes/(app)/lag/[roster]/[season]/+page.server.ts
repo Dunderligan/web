@@ -1,6 +1,12 @@
-import { groupMatchOrdering, matchRosterQuery, nestedGroupQuery } from '$lib/server/db/helpers';
+import {
+	groupMatchOrder,
+	matchRosterQuery,
+	nestedGroupQuery,
+	rolesOrder
+} from '$lib/server/db/helpers';
 import { db } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
+import { sql } from 'drizzle-orm';
 
 export const load = async ({ params }) => {
 	const data = await db.query.roster.findFirst({
@@ -16,6 +22,7 @@ export const load = async ({ params }) => {
 		},
 		with: {
 			members: {
+				orderBy: (t) => sql`${rolesOrder(t.role)}, ${t.playerId} ASC`,
 				columns: {
 					isCaptain: true,
 					tier: true,
@@ -70,7 +77,7 @@ export const load = async ({ params }) => {
 			]
 		},
 		limit: 3,
-		orderBy: groupMatchOrdering,
+		orderBy: groupMatchOrder,
 		columns: {
 			id: true,
 			teamAScore: true,

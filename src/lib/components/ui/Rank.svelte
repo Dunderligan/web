@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Rank, type AnyRank, type ClassValue, type FullRank } from '$lib/types';
+	import { type AnyRank, type ClassValue } from '$lib/types';
 	import { capitalize, getRank, getTierLabel, isLegacyRank } from '$lib/util';
 
 	type Props = {
@@ -14,7 +14,8 @@
 
 <img
 	src="/rank/{getRank(rank)}.png"
-	alt=""
+	alt={getRank(rank)}
+	title={capitalize(getRank(rank))}
 	class={[classProp, !hideLabel && 'mr-2', 'inline size-7']}
 />
 {#if !hideLabel}

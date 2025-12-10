@@ -98,18 +98,6 @@ export function isLegacyRank(rank: AnyRank): boolean {
 	return false;
 }
 
-const roleNums: Record<Role, number> = {
-	tank: 0,
-	damage: 1,
-	support: 2,
-	flex: 3,
-	coach: 4
-};
-
-export function sortRole(a: Role, b: Role) {
-	return roleNums[a] - roleNums[b];
-}
-
 export function formatSocialPlatform(platform: SocialPlatform) {
 	switch (platform) {
 		case SocialPlatform.TWITTER:

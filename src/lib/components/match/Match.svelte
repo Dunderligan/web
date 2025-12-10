@@ -1,19 +1,41 @@
 <script lang="ts">
-	import { matchWinner, matchRoster, isWinner, matchScoreOrZero, type MatchSide } from '$lib/match';
-	import type { ResolvedMatch, ClassValue } from '$lib/types';
+	import {
+		matchWinner,
+		matchRoster,
+		isWinner,
+		matchScoreOrZero,
+		type MatchSide,
+		flipSide
+	} from '$lib/match';
+	import type { ResolvedMatch, ClassValue, NestedDivision, NestedGroup } from '$lib/types';
 	import { formatDate, formatDateTime } from '$lib/util';
 	import Icon from '../ui/Icon.svelte';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 
 	type Props = {
 		match: ResolvedMatch;
-		seasonSlug: string;
+		division?: NestedDivision | null;
+		group?: NestedGroup | null;
+		seasonSlug?: string;
 		flipped?: boolean;
 	};
 
-	let { match, seasonSlug, flipped = false }: Props = $props();
+	let {
+		match,
+		division: divisionProp,
+		group,
+		seasonSlug: seasonSlugProp,
+		flipped = false
+	}: Props = $props();
 
 	const winner = $derived(matchWinner(match));
+
+	const leftTeam = $derived(flipped ? 'B' : 'A');
+	const rightTeam = $derived(flipSide(leftTeam));
+
+	const isBracketMatch = $derived(divisionProp ? true : group ? false : null);
+	const division = $derived(divisionProp ?? group?.division);
+	const seasonSlug = $derived(seasonSlugProp ?? division?.season.slug);
 </script>
 
 <div class="relative overflow-hidden rounded-lg bg-gray-100 px-6 py-3">
@@ -39,29 +61,42 @@
 				{/if}
 			</div>
 		{/if}
+
+		{#if division}
+			<a
+				href="/stallningar/{division.season.slug}?div={division.slug}&visa={isBracketMatch
+					? 'slutspel'
+					: 'gruppspel'}"
+				class="hover:underline"
+			>
+				<Icon icon="ph:link" />
+				{division.name},
+				{division.season.name}
+			</a>
+		{/if}
 	</div>
 	<div class="flex flex-col items-center gap-2 sm:flex-row">
-		{@render side(flipped ? 'B' : 'A', {
+		{@render side(leftTeam, {
 			root: 'flex-row sm:flex-row-reverse'
 		})}
 
 		<div class="hidden w-18 shrink-0 text-center text-3xl text-gray-600 sm:block">
 			{#if match.played}
-				<span class={[winner === (flipped ? 'B' : 'A') && 'text-accent-600', 'font-bold']}
-					>{matchScoreOrZero(match, flipped ? 'B' : 'A')}
+				<span class={[winner === leftTeam && 'text-accent-600', 'font-bold']}
+					>{matchScoreOrZero(match, leftTeam)}
 				</span>
 
 				<span class="font-bold">-</span>
 
-				<span class={[winner === (flipped ? 'A' : 'B') && 'text-accent-600', 'font-bold']}
-					>{matchScoreOrZero(match, flipped ? 'A' : 'B')}</span
+				<span class={[winner === rightTeam && 'text-accent-600', 'font-bold']}
+					>{matchScoreOrZero(match, rightTeam)}</span
 				>
 			{:else}
 				<span class="font-semibold">? - ?</span>
 			{/if}
 		</div>
 
-		{@render side(flipped ? 'A' : 'B')}
+		{@render side(rightTeam)}
 	</div>
 </div>
 
@@ -86,21 +121,29 @@
 			>
 				{roster.name}
 			</a>
+		{:else}
+			<div class="ml-2 font-medium text-gray-500">
+				{#if match.played}
+					W/O
+				{:else}
+					Okänt lag
+				{/if}
+			</div>
+		{/if}
 
-			{#if won}
-				<Icon icon="ph:crown-simple-fill" class="text-xl text-accent-600" />
-			{/if}
+		{#if won}
+			<Icon icon="ph:crown-simple-fill" class="text-xl text-accent-600" />
+		{/if}
 
-			{#if match.played}
-				<div
-					class={[
-						won ? 'text-accent-600' : 'text-gray-600',
-						'ml-auto text-3xl font-extrabold sm:hidden'
-					]}
-				>
-					{matchScoreOrZero(match, side)}
-				</div>
-			{/if}
+		{#if match.played}
+			<div
+				class={[
+					won ? 'text-accent-600' : 'text-gray-600',
+					'ml-auto text-3xl font-extrabold sm:hidden'
+				]}
+			>
+				{matchScoreOrZero(match, side)}
+			</div>
 		{/if}
 	</div>
 {/snippet}
