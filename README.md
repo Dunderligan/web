@@ -10,6 +10,18 @@ Projektet använder [SvelteKit](https://svelte.dev/) för frontend och backend, 
 
 Förutom de två används inga molntjänster, utan hemsidan driftas i en Docker container på hårdvara från Linköping Universitets datorförening [Lysator](https://www.lysator.liu.se/).
 
+## Dokumentation
+
+Utförlig dokumentation finns tillgänglig för olika delar av projektet:
+
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Översikt över systemarkitektur, teknologier och designbeslut
+- **[DATABASE.md](DATABASE.md)** - Databasschema, relationer och frågemönster
+- **[API.md](API.md)** - Remote functions API och autentisering
+- **[COMPONENTS.md](COMPONENTS.md)** - Komponentbibliotek och användning
+- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Deployment-guide och produktionsinställningar
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Riktlinjer för att bidra till projektet
+- **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** - Felsökningsguide för vanliga problem
+
 ## Utveckling
 
 För att köra hemsidan lokalt behövder du ha [NodeJS](https://nodejs.org/en) och [pnpm](https://pnpm.io/) installerade.
