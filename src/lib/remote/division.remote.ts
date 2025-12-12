@@ -82,7 +82,7 @@ export const generateBracket = command(
 
 		const qualifying = rosters.slice(0, playoffLine ?? undefined);
 		const rounds = createBracket(qualifying, groupMatches, {
-			avoidPreviousMatches: false
+			avoidPreviousMatches: true
 		});
 
 		const matchInserts = rounds.flatMap((round) =>
