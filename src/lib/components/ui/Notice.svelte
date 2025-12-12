@@ -13,11 +13,11 @@
 		{
 			info: {
 				icon: 'ph:info',
-				classes: 'bg-accent-50 text-accent-800'
+				classes: 'bg-accent-50 text-accent-800 dark:bg-accent-950 dark:text-accent-300'
 			},
 			warn: {
 				icon: 'ph:warning',
-				classes: 'bg-yellow-50 text-yellow-800'
+				classes: 'bg-yellow-50 text-yellow-800 dark:bg-yellow-950 dark:text-yellow-300'
 			}
 		}[kind]
 	);

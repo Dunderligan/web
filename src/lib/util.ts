@@ -11,6 +11,8 @@ import {
 	type LegacyRank,
 	type AnyRank
 } from './types';
+import { browser } from '$app/environment';
+import { getRequestEvent } from '$app/server';
 // import { PUBLIC_CDN_ENDPOINT } from '$env/static/public';
 
 const PUBLIC_CDN_ENDPOINT = 'https://cdn.dunderligan.se';
@@ -209,4 +211,34 @@ export function formatDateTime(date: Date): string {
 		hour: '2-digit',
 		minute: '2-digit'
 	});
+}
+
+/** Client/server agnostic cookie functions */
+
+export async function getCookie(name: string): Promise<string | null> {
+	if (browser) {
+		const cookie = await cookieStore.get(name);
+		return cookie?.value ?? null;
+	} else {
+		const { cookies } = getRequestEvent();
+		return cookies.get(name) ?? null;
+	}
+}
+
+export function setCookie(name: string, value: string) {
+	if (browser) {
+		document.cookie = `${name}=${value}; path=/;`;
+	} else {
+		const { cookies } = getRequestEvent();
+		cookies.set(name, value, { path: '/', httpOnly: false });
+	}
+}
+
+export async function deleteCookie(name: string) {
+	if (browser) {
+		await cookieStore.delete(name);
+	} else {
+		const { cookies } = getRequestEvent();
+		cookies.delete(name, { path: '/', httpOnly: false });
+	}
 }

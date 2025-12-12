@@ -33,7 +33,7 @@
 		preload="auto"
 	></video>
 
-	<div class="mx-auto flex h-full max-w-4xl flex-col justify-center gap-6 pt-8 text-left">
+	<div class="z-10 mx-auto flex h-full max-w-4xl flex-col justify-center gap-6 pt-8 text-left">
 		<h1 class="font-display text-4xl font-extrabold text-white text-shadow-xs sm:text-6xl">
 			Sveriges <span class="underline">största</span><br /> återkommande
 			<br />Overwatchturnering

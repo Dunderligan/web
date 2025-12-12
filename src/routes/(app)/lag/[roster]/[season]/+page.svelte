@@ -57,9 +57,7 @@
 	<RosterLogo id={roster.id} class="size-40" imgSize={256} />
 
 	<div>
-		<h1
-			class="mb-1 text-center font-display text-5xl font-extrabold text-black sm:text-left sm:text-6xl"
-		>
+		<h1 class="mb-1 text-center font-display text-5xl font-extrabold sm:text-left sm:text-6xl">
 			{roster.name}
 		</h1>
 		<div class="flex items-center justify-center gap-3 sm:justify-start">
@@ -71,15 +69,15 @@
 </PageHeader>
 
 <PageSection class="flex flex-col-reverse gap-10 sm:flex-row">
-	<section class="shrink grow">
+	<section class="shrink grow text-gray-700 dark:text-gray-300">
 		{#if rosterTabItems.length > 1}
 			<div class="mb-6 flex items-center gap-6">
-				<h3 class="text-xl font-semibold text-gray-700">Rosters</h3>
+				<h3 class="text-xl font-semibold">Rosters</h3>
 
 				<Tabs class="grow" items={rosterTabItems} selected={roster.id} />
 			</div>
 		{:else}
-			<div class="mb-6 text-lg font-medium text-gray-700">
+			<div class="mb-6 text-lg font-medium">
 				Spelar i <a
 					href="/stallningar/{season.slug}?div={division.slug}"
 					class="font-bold text-accent-600 hover:text-accent-700 hover:underline"
@@ -124,8 +122,8 @@
 
 		<div>
 			{#if average}
-				<div class="font-medium text-gray-700">Genomsnittlig rank</div>
-				<div class="text-xl font-semibold text-gray-800">
+				<div class="font-medium text-gray-700 dark:text-gray-400">Genomsnittlig rank</div>
+				<div class="text-xl font-semibold text-gray-800 dark:text-gray-300">
 					<Rank rank={average} />
 				</div>
 			{/if}

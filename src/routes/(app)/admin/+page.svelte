@@ -46,7 +46,7 @@
 		newSeasonStartedAt = new Date();
 	}
 
-	async function uploadData() {
+	async function uploadData(func: (json: any) => Promise<{ season: { id: string } }>) {
 		if (!dataFiles?.length) return;
 
 		uploading = true;
@@ -55,7 +55,7 @@
 			const text = await file.text();
 			const json = JSON.parse(text);
 
-			const { season } = await uploadSeasonData(json);
+			const { season } = await func(json);
 			await goto(`/admin/sasong/${season.id}`);
 		} finally {
 			uploading = false;
@@ -75,7 +75,7 @@
 			{#each seasons as { id, name, startedAt } (id)}
 				<AdminLink href="/admin/sasong/{id}">
 					<span>{name}</span>
-					<span class="ml-2 text-base font-medium text-gray-700">{startedAt.getFullYear()}</span>
+					<span class="ml-2 text-base font-medium">{startedAt.getFullYear()}</span>
 				</AdminLink>
 			{/each}
 		</div>
@@ -84,18 +84,19 @@
 	{/if}
 </AdminCard>
 
-{#if page.data.user?.isSuperAdmin}
-	<AdminCard title="Användare">
-		<div class="overflow-hidden rounded-lg">
-			<AdminLink href="/admin/anvandare">Hantera användare</AdminLink>
-		</div>
-	</AdminCard>
-{/if}
+<AdminCard title="Användare">
+	<div class="overflow-hidden rounded-lg">
+		<AdminLink href="/admin/anvandare">Hantera användare</AdminLink>
+	</div>
+</AdminCard>
 
 <AdminCard title="Ladda upp data">
 	<div>
 		<input bind:files={dataFiles} type="file" accept="application/json" />
-		<Button onclick={uploadData} disabled={!dataFiles?.length} loading={uploading}>Ladda upp</Button
+		<Button
+			onclick={() => uploadData(uploadSeasonData)}
+			disabled={!dataFiles?.length}
+			loading={uploading}>Ladda upp</Button
 		>
 	</div>
 </AdminCard>

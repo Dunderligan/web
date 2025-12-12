@@ -58,7 +58,9 @@
 		{#if row === 'playoffLine'}
 			<div class="my-2.5 border-t-2 border-dashed border-red-600"></div>
 			<div class="my-2.5 border-t-2 border-dashed border-red-600"></div>
-			<div class="my-auto text-center text-sm font-semibold text-red-600">Playoffs</div>
+			<div class="my-auto bg-transparent text-center text-sm font-semibold text-red-600">
+				Playoffs
+			</div>
 			<div class="my-2.5 border-t-2 border-dashed border-red-600"></div>
 			<div class="my-2.5 border-t-2 border-dashed border-red-600"></div>
 		{:else}
@@ -68,35 +70,27 @@
 			{@const isAfterLine = division.playoffLine && index > division.playoffLine}
 			{@const seed = isAfterLine ? index : index + 1}
 
-			<div class="group score-row relative contents text-lg font-medium">
-				<div class="relative flex items-center justify-center">
-					{seed}
-				</div>
+			<div class="relative flex items-center justify-center text-lg font-semibold">
+				{seed}
+			</div>
 
-				<div class="flex min-w-0 items-center gap-2 py-2 font-semibold">
-					<RosterLogo {id} class="size-12" />
+			<div class="flex min-w-0 items-center gap-2 py-2 text-lg font-semibold">
+				<RosterLogo {id} class="size-12" />
 
-					<a href="/lag/{slug}/{seasonSlug}" class="truncate hover:underline">{name}</a>
-				</div>
+				<a href="/lag/{slug}/{seasonSlug}" class="truncate hover:underline">{name}</a>
+			</div>
 
-				<div class="flex items-center justify-center text-xl font-semibold">
-					{score.mapWins}
-				</div>
+			<div class="flex items-center justify-center text-xl font-semibold">
+				{score.mapWins}
+			</div>
 
-				<div class="flex items-center justify-center">
-					{score.mapWins}/{score.mapLosses}/{score.mapDraws}
-				</div>
+			<div class="flex items-center justify-center text-lg font-medium">
+				{score.mapWins}/{score.mapLosses}/{score.mapDraws}
+			</div>
 
-				<div class="flex items-center justify-center">
-					{score.matchesPlayed}
-				</div>
+			<div class="flex items-center justify-center text-lg font-medium">
+				{score.matchesPlayed}
 			</div>
 		{/if}
 	{/snippet}
 </Table>
-
-<style>
-	.score-row > div {
-		background-color: var(--color-gray-100);
-	}
-</style>

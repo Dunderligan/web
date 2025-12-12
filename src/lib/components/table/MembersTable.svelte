@@ -29,11 +29,11 @@
 	class="grid-cols-[60px_1fr_100px] sm:grid-cols-[70px_1fr_220px]"
 >
 	{#snippet row({ value: { player, role, rank, sr, tier, isCaptain } })}
-		<div class="bg-gray-100 py-3.5 text-center text-xl">
+		<div class=" py-3.5 text-center text-xl">
 			<Icon icon={roleIcon(role)} title={capitalize(role)} />
 		</div>
 
-		<div class="flex items-center bg-gray-100 text-lg font-semibold">
+		<div class="flex items-center text-lg font-semibold">
 			{player.battletag}
 
 			{#if isCaptain}
@@ -41,7 +41,7 @@
 			{/if}
 		</div>
 
-		<div class="flex items-center bg-gray-100 text-lg font-medium">
+		<div class="flex items-center text-lg font-medium">
 			{#if rank && tier}
 				<Rank rank={{ rank, tier }} collapse />
 			{:else if sr}

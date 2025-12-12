@@ -6,7 +6,7 @@
 
 <div class="relative flex min-h-screen flex-col overflow-hidden">
 	<div
-		class="pointer-events-none fixed top-32 -left-200 size-400 rounded-full bg-accent-400/20"
+		class="pointer-events-none fixed top-32 -left-200 size-400 rounded-full bg-accent-400/20 dark:bg-accent-600/10"
 		id="splotch"
 	></div>
 
@@ -17,10 +17,17 @@
 
 <style>
 	#background {
-		background-image:
-			linear-gradient(to bottom, transparent, var(--color-gray-100) 100%), url('/striped-bg.png');
 		background-size: cover;
 		aspect-ratio: 16 / 9;
+		background-image:
+			linear-gradient(to bottom, transparent, var(--color-gray-100) 100%), url('/striped-bg.png');
+	}
+
+	:global(.dark) #background {
+		filter: brightness(0.7);
+		mix-blend-mode: multiply;
+		background-image:
+			linear-gradient(to bottom, transparent, var(--color-gray-800) 100%), url('/striped-bg.png');
 	}
 
 	#splotch {

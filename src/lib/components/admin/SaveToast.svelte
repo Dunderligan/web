@@ -62,10 +62,12 @@
 		<div
 			transition:fly={{ y: 10, duration: 150, easing: quartOut }}
 			class={[
-				saveState == 'default' && 'border-gray-100 bg-white text-gray-600',
-				saveState == 'success' && 'border-green-100 bg-green-50 text-green-700',
-				saveState == 'error' && 'border-red-100 bg-red-50 text-red-700',
-				saveState == 'reset' && 'border-gray-100 bg-gray-50 text-gray-700',
+				(saveState == 'default' || saveState === 'reset') &&
+					'border-gray-100 bg-white text-gray-600 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300',
+				saveState == 'success' &&
+					'border-green-100 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-950 dark:text-green-300',
+				saveState == 'error' &&
+					'border-red-100 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-200',
 				'fixed bottom-8 left-1/2 z-20 flex h-16 w-full max-w-3xl translate-x-[-50%] items-center gap-2 rounded-xl border pr-4 pl-8 text-lg font-semibold shadow-sm'
 			]}
 		>

@@ -25,7 +25,7 @@
 	];
 </script>
 
-<footer class="relative bg-gray-900 px-4 pt-10 pb-16 text-center font-medium text-gray-200">
+<footer class="relative bg-gray-900 px-4 pt-10 pb-16 text-center font-medium text-gray-300">
 	<div class="mx-auto flex max-w-4xl flex-col items-start gap-8 text-left md:flex-row">
 		<div class="w-full">
 			<img src="/logo.png" alt="Dunderligan" class="-mt-2 size-14" />

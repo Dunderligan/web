@@ -12,7 +12,7 @@
 
 <a
 	{href}
-	class="flex min-h-14 items-center justify-between bg-gray-100 px-6 py-2.5 text-gray-700 hover:bg-gray-200 hover:underline"
+	class="flex min-h-14 items-center justify-between bg-gray-100 px-6 py-2.5 text-gray-700 hover:bg-gray-200 hover:underline dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800"
 >
 	<span class="text-lg font-semibold">{@render children?.()}</span>
 

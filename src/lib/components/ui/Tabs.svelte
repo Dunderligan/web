@@ -46,7 +46,7 @@
 					? 'bg-gray-200 font-semibold text-gray-500'
 					: isSelected
 						? 'cursor-default bg-accent-600 font-bold text-white'
-						: 'bg-accent-200 font-semibold text-accent-800 hover:bg-accent-300 hover:text-accent-900'
+						: 'bg-accent-200 font-semibold text-accent-800 hover:bg-accent-300 hover:text-accent-900 dark:bg-accent-900 dark:text-accent-300 dark:hover:bg-accent-800 dark:hover:text-accent-200'
 			]}
 		>
 			{@const renderedIcon = isSelected && !hideSelectedIcon ? null : icon}

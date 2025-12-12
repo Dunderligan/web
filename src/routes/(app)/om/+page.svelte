@@ -18,7 +18,7 @@
 
 <PageHeader title="Om oss"></PageHeader>
 
-<PageSection class="text-lg font-medium text-gray-800">
+<PageSection class="text-lg font-medium">
 	<p class="mb-8">
 		Dunderligan är Sveriges största återkommande Overwatchturnering som årligen samlar 32 lag från
 		alla ranker för att göra upp om vem som är bäst. Turneringen delas upp i olika divisioner enligt

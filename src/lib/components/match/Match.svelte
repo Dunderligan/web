@@ -38,8 +38,10 @@
 	const seasonSlug = $derived(seasonSlugProp ?? division?.season.slug);
 </script>
 
-<div class="relative overflow-hidden rounded-lg bg-gray-100 px-6 py-3">
-	<div class="flex items-center gap-4 pb-1 text-sm font-medium text-gray-600 sm:justify-center">
+<div class="relative overflow-hidden rounded-lg bg-gray-100 px-6 py-3 dark:bg-gray-900">
+	<div
+		class="flex items-center gap-4 pb-1 text-sm font-medium text-gray-600 sm:justify-center dark:text-gray-400"
+	>
 		{#if match.played}
 			<div>
 				{match.playedAt ? formatDate(match.playedAt) : 'Okänt datum'}
@@ -80,19 +82,21 @@
 			root: 'flex-row sm:flex-row-reverse'
 		})}
 
-		<div class="hidden w-18 shrink-0 text-center text-3xl text-gray-800 sm:block">
+		<div
+			class="hidden w-18 shrink-0 text-center text-3xl text-gray-800 sm:block dark:text-gray-400"
+		>
 			{#if match.played}
-				<span class={[winner === leftTeam && 'text-accent-600', 'font-bold']}
+				<span class={[winner === leftTeam && 'text-accent-600 dark:text-accent-500', 'font-bold']}
 					>{matchScoreOrZero(match, leftTeam)}
 				</span>
 
 				<span class="font-bold">-</span>
 
-				<span class={[winner === rightTeam && 'text-accent-600', 'font-bold']}
+				<span class={[winner === rightTeam && 'text-accent-600 dark:text-accent-500', 'font-bold']}
 					>{matchScoreOrZero(match, rightTeam)}</span
 				>
 			{:else}
-				<span class="font-semibold">? - ?</span>
+				<span class="font-semibold">?</span>
 			{/if}
 		</div>
 
@@ -107,13 +111,13 @@
 	{@const roster = matchRoster(match, side)}
 	{@const won = roster && isWinner(match, side)}
 
-	<div class={[rootClass, 'flex w-full items-center gap-2']}>
+	<div class={[rootClass, 'flex w-full items-center gap-2 text-gray-800 dark:text-gray-300']}>
 		{#if roster}
 			<RosterLogo id={roster.id} class="size-10 sm:size-12" />
 
 			<a
 				href="/lag/{roster.slug}/{seasonSlug}"
-				class={[nameClass, 'truncate text-lg font-semibold text-gray-800 hover:underline']}
+				class={[nameClass, 'truncate text-lg font-semibold hover:underline']}
 			>
 				{roster.name}
 			</a>
@@ -132,12 +136,7 @@
 		{/if}
 
 		{#if match.played}
-			<div
-				class={[
-					won ? 'text-accent-600' : 'text-gray-600',
-					'ml-auto text-3xl font-extrabold sm:hidden'
-				]}
-			>
+			<div class={[won && 'text-accent-600', 'ml-auto text-3xl font-extrabold sm:hidden']}>
 				{matchScoreOrZero(match, side)}
 			</div>
 		{/if}

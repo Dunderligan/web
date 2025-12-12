@@ -24,7 +24,7 @@
 		{#each data.seasons as { id, name, slug, startedAt } (id)}
 			<AdminLink href="/stallningar/{slug}">
 				<span>{name}</span>
-				<span class="ml-2 text-base font-medium text-gray-700">{startedAt.getFullYear()}</span>
+				<span class="ml-2 text-base font-medium">{startedAt.getFullYear()}</span>
 			</AdminLink>
 		{/each}
 	</div>

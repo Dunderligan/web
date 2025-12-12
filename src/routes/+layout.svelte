@@ -5,8 +5,14 @@
 	import Footer from '$lib/components/structure/Footer.svelte';
 	import Navbar from '$lib/components/structure/Navbar.svelte';
 	import { page } from '$app/state';
+	import { ThemeState } from '$lib/state/theme.svelte';
 
-	let { children } = $props();
+	let { children, data } = $props();
+
+	// svelte-ignore state_referenced_locally
+	ThemeState.set(new ThemeState(data.theme));
+
+	const theme = ThemeState.get();
 </script>
 
 <svelte:head>
@@ -19,10 +25,12 @@
 	<meta property="og:image" content={favicon} />
 </svelte:head>
 
-<ProgressBar class="text-accent-500" zIndex={100} />
+<div class={['-z-20 bg-white dark:bg-gray-900', theme.theme === 'dark' && 'dark']}>
+	<ProgressBar class="text-accent-500" zIndex={100} />
 
-<Navbar dark={page.url.pathname === '/'} />
+	<Navbar dark={page.url.pathname === '/'} />
 
-{@render children()}
+	{@render children()}
 
-<Footer />
+	<Footer />
+</div>

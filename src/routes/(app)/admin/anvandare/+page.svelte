@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import SaveToast from '$lib/components/admin/SaveToast.svelte';
@@ -32,19 +33,19 @@
 		class="grid-cols-[1fr_100px_200px]"
 	>
 		{#snippet row({ value: user })}
-			<div class="flex items-center bg-gray-100 py-4 pl-6 text-lg font-semibold">
+			<div class="flex items-center py-4 pl-6 text-lg font-semibold">
 				{user.battletag}
 			</div>
 
-			<div class="flex items-center justify-center bg-gray-100">
+			<div class="flex items-center justify-center">
 				{#if user.isSuperAdmin}
 					<Icon icon="ph:shield-check" class="text-blue-600" title="Superadmin" />
-				{:else}
+				{:else if page.data?.user.isSuperAdmin}
 					<Checkbox bind:checked={user.isAdmin} onCheckedChange={saveCtx.setDirty} />
 				{/if}
 			</div>
 
-			<div class="flex items-center justify-center bg-gray-100 text-lg font-medium text-gray-700">
+			<div class="flex items-center justify-center text-lg font-medium">
 				{formatDate(user.createdAt)}
 			</div>
 		{/snippet}

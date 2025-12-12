@@ -16,7 +16,7 @@
 	const saveCtx = SaveContext.get();
 </script>
 
-<div class="flex items-center gap-4 font-display text-lg text-gray-600">
+<div class="flex items-center gap-4 font-display text-lg text-gray-600 dark:text-gray-400">
 	<a href="/admin" class="flex items-center justify-center">
 		<Icon icon="ph:house" class="text-xl" />
 	</a>
@@ -31,7 +31,7 @@
 			class={[
 				isLast
 					? 'font-bold text-accent-600 hover:text-accent-700 hover:underline'
-					: 'hidden font-medium hover:text-gray-700 hover:underline sm:block'
+					: 'hidden font-medium hover:text-gray-700 hover:underline sm:block dark:hover:text-gray-300'
 			]}>{label}</a
 		>
 	{/each}

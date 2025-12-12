@@ -68,7 +68,7 @@
 	<Select.Trigger
 		class={[
 			triggerClass,
-			'group flex items-center overflow-hidden rounded-lg bg-gray-100 px-4 py-2 font-medium text-gray-700 data-disabled:cursor-not-allowed data-disabled:bg-gray-200 data-disabled:text-gray-500'
+			'group flex items-center overflow-hidden rounded-lg bg-gray-100 px-4 py-2 font-medium text-gray-700 data-disabled:cursor-not-allowed data-disabled:bg-gray-200 data-disabled:text-gray-500 dark:bg-gray-800 dark:text-gray-300 dark:data-disabled:bg-gray-700 dark:data-disabled:text-gray-500'
 		]}
 	>
 		{#if selectedItem}

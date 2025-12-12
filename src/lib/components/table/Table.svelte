@@ -23,7 +23,7 @@
 <div
 	class={[
 		classProp,
-		'grid w-full gap-y-1 overflow-hidden overflow-x-auto rounded-lg text-gray-700'
+		'__table grid w-full gap-y-1 overflow-hidden overflow-x-auto rounded-lg text-gray-700 dark:text-gray-300'
 	]}
 >
 	{#each columns as column, i}
@@ -34,7 +34,7 @@
 			class={[
 				center ? 'text-center ' : 'text-left',
 				i === 0 && !center && 'pl-6',
-				'mb-0.5 bg-gray-50 py-2 font-medium text-gray-600'
+				'__table-header mb-0.5 bg-gray-50 py-2 font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-300'
 			]}
 		>
 			{label}
@@ -45,3 +45,13 @@
 		{@render row({ value, index })}
 	{/each}
 </div>
+
+<style>
+	:global(.dark .__table > :not(.__table-header)) {
+		background-color: var(--color-gray-900);
+	}
+
+	:global(.__table > :not(.__table-header)) {
+		background-color: var(--color-gray-100);
+	}
+</style>

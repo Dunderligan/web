@@ -1,5 +1,8 @@
-export const load = async ({ locals }) => {
+export const load = async ({ locals, cookies }) => {
+	const theme = cookies.get('theme') ?? null;
+
 	return {
-		user: locals.user
+		user: locals.user,
+		theme
 	};
 };

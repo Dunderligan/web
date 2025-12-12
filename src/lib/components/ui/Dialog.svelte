@@ -42,7 +42,7 @@
 				{#if open}
 					<div
 						{...props}
-						class="fixed inset-0 z-40 bg-black/30"
+						class="fixed inset-0 z-40 bg-black/40"
 						transition:fade={{ duration: 100 }}
 					></div>
 				{/if}
@@ -53,7 +53,7 @@
 				{#if open}
 					<div
 						class={[
-							'fixed top-[50%] left-[50%] z-40 w-full max-w-[calc(100%-1rem)] translate-x-[-50%] translate-y-[-50%] space-y-2 rounded-xl bg-white p-8 shadow-xl',
+							'fixed top-[50%] left-[50%] z-40 w-full max-w-[calc(100%-1rem)] translate-x-[-50%] translate-y-[-50%] space-y-2 rounded-xl bg-white p-8 shadow-xl dark:border dark:border-gray-800 dark:bg-gray-950',
 							wide ? 'sm:max-w-xl' : 'sm:max-w-lg'
 						]}
 						transition:fade={{ duration: 25 }}
@@ -67,7 +67,7 @@
 						<Dialog.Title
 							class={[
 								description ? 'mb-2' : 'mb-4',
-								'text-center font-display text-2xl font-bold text-gray-900'
+								'text-center font-display text-2xl font-bold text-gray-900 dark:text-gray-200'
 							]}>{title}</Dialog.Title
 						>
 

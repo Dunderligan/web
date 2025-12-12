@@ -5,6 +5,8 @@
 	import { page } from '$app/state';
 	import { invalidateAll } from '$app/navigation';
 	import { logout } from '$lib/remote/auth.remote';
+	import { ThemeState } from '$lib/state/theme.svelte';
+	import Dropdown from '../ui/Dropdown.svelte';
 
 	type Props = {
 		dark?: boolean;
@@ -27,11 +29,44 @@
 		}
 	];
 
+	const theme = ThemeState.get();
+
 	const shownName = $derived.by(() => {
 		const battletag = page.data.user?.battletag;
 		if (!battletag) return null;
 		return battletag.split('#')[0];
 	});
+
+	const userDropdownItems = $derived([
+		{
+			label: 'Admin',
+			href: '/admin',
+			hidden: !page.data.user?.isAdmin
+		},
+		{
+			label: 'Logga ut',
+			onclick: onLogout
+		}
+	]);
+
+	const themeIcons: Record<string, string> = {
+		system: 'ph:monitor',
+		light: 'ph:sun',
+		dark: 'ph:moon'
+	};
+
+	const themeDropdownItems = [
+		{
+			label: 'Ljust',
+			icon: themeIcons.light,
+			onclick: () => theme.setTheme('light')
+		},
+		{
+			label: 'Mörkt',
+			icon: themeIcons.dark,
+			onclick: () => theme.setTheme('dark')
+		}
+	];
 
 	async function onLogout() {
 		await logout();
@@ -41,8 +76,8 @@
 
 <nav
 	class={[
-		dark ? 'to-gray-900/30 text-gray-200' : 'to-gray-300/80 text-gray-800',
-		'fixed z-30 h-18 w-screen bg-linear-to-t px-8 pt-4  backdrop-blur-[1px]'
+		dark && 'dark',
+		'fixed z-30 h-18 w-screen bg-linear-to-t to-gray-300/80 px-8 pt-4 text-gray-800 backdrop-blur-[1px] dark:to-gray-900/30 dark:text-gray-200'
 	]}
 >
 	<div class="mx-auto flex h-full max-w-5xl items-center justify-between gap-2">
@@ -56,26 +91,15 @@
 			{/each}
 		</div>
 
-		<div class="flex items-center gap-6">
-			{#if page.data.user}
-				<DropdownMenu.Root>
-					<DropdownMenu.Trigger
-						class={[dark ? 'text-gray-200' : 'text-gray-800', 'font-display font-medium']}
-					>
-						{shownName}
-					</DropdownMenu.Trigger>
-					<DropdownMenu.Content class="floating" avoidCollisions={false}>
-						{#if page.data.user.isAdmin}
-							<DropdownMenu.Item class="floating-item">
-								<a href="/admin" class="grow"> Admin </a>
-							</DropdownMenu.Item>
-						{/if}
+		<div class="flex items-center gap-8">
+			<Dropdown items={themeDropdownItems} class="flex items-center">
+				<Icon icon="{themeIcons[theme.theme]}-fill" class="text-lg" />
+			</Dropdown>
 
-						<DropdownMenu.Item class="floating-item gap-2" onclick={onLogout}>
-							Logga ut
-						</DropdownMenu.Item>
-					</DropdownMenu.Content>
-				</DropdownMenu.Root>
+			{#if page.data.user}
+				<Dropdown items={userDropdownItems} class="font-display font-medium">
+					{shownName}
+				</Dropdown>
 			{:else}
 				<Button href="/api/login/battlenet" kind="tertiary" label="Logga in" />
 			{/if}

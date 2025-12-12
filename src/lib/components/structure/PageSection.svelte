@@ -14,14 +14,16 @@
 <main
 	class={[
 		topMargin && 'mt-20',
-		'relative z-0 grow overflow-hidden bg-white px-4 pt-12 pb-20 shadow-2xl'
+		'relative z-0 grow overflow-hidden bg-white px-4 pt-12 pb-20 text-gray-800 shadow-2xl dark:bg-gray-950 dark:text-gray-300'
 	]}
 >
 	<div class={[classProp, 'mx-auto max-w-4xl']}>
 		{@render children?.()}
 	</div>
 
-	<div class="halftone pointer-events-none absolute bottom-0 -z-10 h-[600px] w-full"></div>
+	<div
+		class="halftone pointer-events-none absolute bottom-0 -z-10 h-[600px] w-full dark:mix-blend-overlay"
+	></div>
 </main>
 
 <style>
