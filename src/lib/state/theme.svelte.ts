@@ -21,7 +21,7 @@ export class ThemeState {
 	static get = get;
 	static set = set;
 
-	theme: string = $state('light');
+	current: string = $state('light');
 
 	constructor(theme: string | null) {
 		this.setTheme(theme);
@@ -32,8 +32,8 @@ export class ThemeState {
 			theme = 'light';
 		}
 
-		this.theme = theme;
-		if (this.theme) {
+		this.current = theme;
+		if (this.current) {
 			setCookie('theme', theme);
 		}
 
@@ -47,7 +47,7 @@ export class ThemeState {
 
 			// FYI we can't *only* do this due to not being able to access the html root during SSR,
 			// and not setting the class at all during SSR would lead to much bigger inconsistencies.
-			if (this.theme === 'dark') {
+			if (this.current === 'dark') {
 				document.documentElement.classList.add('dark');
 			} else {
 				document.documentElement.classList.remove('dark');

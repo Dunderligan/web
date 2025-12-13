@@ -26,7 +26,7 @@
 <header class="relative h-200 w-full px-4 sm:h-180">
 	<video
 		src={cdnSrc('/dunderligan/trailer.mp4')}
-		class="absolute top-0 left-0 -z-10 h-full w-full bg-accent-800 object-cover brightness-50"
+		class="trailer absolute top-0 left-0 -z-10 h-full w-full object-cover brightness-50"
 		autoplay
 		muted
 		loop
@@ -63,7 +63,7 @@
 	<div class="max-w-2xl space-y-2">
 		{#await matches}
 			{#each Array.from({ length: 3 })}
-				<div class="h-[140px] animate-pulse rounded-lg bg-gray-100 sm:h-20"></div>
+				<div class="h-[140px] animate-pulse rounded-lg bg-gray-100 sm:h-20 dark:bg-gray-800"></div>
 			{/each}
 		{:then matches}
 			{#each matches as { division, group, ...match } (match.id)}
@@ -78,5 +78,9 @@
 <style>
 	h1 {
 		line-height: 110%;
+	}
+
+	.trailer {
+		background-image: url('/trailer-thumbnail.png');
 	}
 </style>

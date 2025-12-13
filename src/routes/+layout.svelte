@@ -25,7 +25,7 @@
 	<meta property="og:image" content={favicon} />
 </svelte:head>
 
-<div class={['-z-20 bg-white dark:bg-gray-900', theme.theme === 'dark' && 'dark']}>
+<div class={[theme.current === 'dark' && 'dark']}>
 	<ProgressBar class="text-accent-500" zIndex={100} />
 
 	<Navbar dark={page.url.pathname === '/'} />

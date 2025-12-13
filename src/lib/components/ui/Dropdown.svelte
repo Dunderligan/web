@@ -31,9 +31,11 @@
 				<DropdownMenu.Item class="floating-item">
 					<svelte:element
 						this={href ? 'a' : 'div'}
+						class="flex h-full w-full items-center gap-2"
+						role="menuitem"
+						tabindex={-1}
 						{onclick}
 						{href}
-						class="flex h-full w-full items-center gap-2"
 					>
 						{#if icon}
 							<Icon {icon} />

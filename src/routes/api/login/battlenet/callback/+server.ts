@@ -5,7 +5,6 @@ import { redirect } from '@sveltejs/kit';
 import { error } from '@sveltejs/kit';
 import type { OAuth2Tokens } from 'arctic';
 import auth from '$lib/server/auth';
-import type { User } from '$lib/server/db/schema';
 
 type BattlenetUserResponse = {
 	sub: string;

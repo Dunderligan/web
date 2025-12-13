@@ -92,8 +92,8 @@
 		</div>
 
 		<div class="flex items-center gap-8">
-			<Dropdown items={themeDropdownItems} class="flex items-center">
-				<Icon icon="{themeIcons[theme.theme]}-fill" class="text-lg" />
+			<Dropdown items={themeDropdownItems} class="flex items-center p-2">
+				<Icon icon="{themeIcons[theme.current]}-fill" class="text-lg" />
 			</Dropdown>
 
 			{#if page.data.user}
@@ -105,7 +105,7 @@
 			{/if}
 
 			<DropdownMenu.Root>
-				<DropdownMenu.Trigger class="sm:hidden">
+				<DropdownMenu.Trigger class="flex items-center sm:hidden">
 					<Icon icon="ph:list" class="text-2xl" />
 				</DropdownMenu.Trigger>
 				<DropdownMenu.Content
