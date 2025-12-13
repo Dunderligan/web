@@ -1,15 +1,15 @@
-import { command, form } from '$app/server';
+import { command } from '$app/server';
 import { S3_BUCKET_NAME } from '$env/static/private';
 import { db, schema } from '$lib/server/db';
 import { findOrCreatePlayer, type Transaction } from '$lib/server/db/helpers';
 import S3 from '$lib/server/s3';
 import { Rank, Role, SocialPlatform, type Member, type TeamSocial } from '$lib/types';
-import { toSlug } from '$lib/util';
+import { cdnRosterLogoPath, cdnSrc, s3RosterLogoKey, toSlug } from '$lib/util';
 import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
-import { error } from '@sveltejs/kit';
 import { and, eq, inArray, not, sql } from 'drizzle-orm';
 import z from 'zod';
 import { adminGuard } from './auth.remote';
+import sharp from 'sharp';
 
 /// Create a roster and add it to a group. If an associated teamId is not provided, a new team will be created.
 export const createRoster = command(
@@ -55,7 +55,7 @@ export const deleteRoster = command(
 
 		const command = new DeleteObjectCommand({
 			Bucket: S3_BUCKET_NAME,
-			Key: `logos/${id}.png`
+			Key: cdnRosterLogoPath(id)
 		});
 
 		await S3.send(command);
@@ -169,30 +169,29 @@ async function updateSocials(tx: Transaction, teamId: string, socials: TeamSocia
 		});
 }
 
-export const uploadRosterLogo = form(async (data) => {
-	await adminGuard();
+export const uploadRosterLogo = command(
+	z.object({
+		rosterId: z.uuid(),
+		file: z.instanceof(ArrayBuffer)
+	}),
+	async ({ rosterId, file }) => {
+		await adminGuard();
 
-	const file = data.get('file') as File;
-	if (!file) {
-		error(400, 'No file provided');
+		const converted = await sharp(file).webp({ lossless: true }).toBuffer();
+		const key = s3RosterLogoKey(rosterId);
+
+		const command = new PutObjectCommand({
+			Bucket: S3_BUCKET_NAME,
+			Key: key,
+			Body: converted,
+			ContentType: `image/webp`
+		});
+
+		await S3.send(command);
+
+		console.log('uploaded team logo at', cdnSrc(cdnRosterLogoPath(rosterId)));
 	}
-
-	const rosterId = data.get('rosterId') as string;
-	if (!rosterId) {
-		error(400, 'No rosterId provided');
-	}
-
-	const buffer = Buffer.from(await file.arrayBuffer());
-
-	const command = new PutObjectCommand({
-		Bucket: S3_BUCKET_NAME,
-		Key: `logos/${rosterId}.png`,
-		Body: buffer,
-		ContentType: `image/png`
-	});
-
-	await S3.send(command);
-});
+);
 
 export const editRosterTeam = command(
 	z.object({

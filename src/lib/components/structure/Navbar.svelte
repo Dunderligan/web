@@ -82,7 +82,7 @@
 >
 	<div class="mx-auto flex h-full max-w-5xl items-center justify-between gap-2">
 		<div class="flex items-center gap-12 font-display">
-			<a href="/" class="mr-8">
+			<a href="/" class="mr-8 shrink-0">
 				<img src="/logo.png" alt="Dunderligan" class="size-12" />
 			</a>
 

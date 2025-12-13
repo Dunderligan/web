@@ -20,14 +20,14 @@
 		background-size: cover;
 		aspect-ratio: 16 / 9;
 		background-image:
-			linear-gradient(to bottom, transparent, var(--color-gray-100) 100%), url('/striped-bg.png'),
+			linear-gradient(to bottom, transparent, var(--color-gray-100) 100%), url('/striped-bg.avif'),
 			linear-gradient(var(--color-white));
 	}
 
 	:global(.dark) #background {
 		background-blend-mode: multiply;
 		background-image:
-			linear-gradient(to bottom, transparent, var(--color-gray-800) 100%), url('/striped-bg.png'),
+			linear-gradient(to bottom, transparent, var(--color-gray-800) 100%), url('/striped-bg.avif'),
 			linear-gradient(var(--color-gray-900));
 	}
 

@@ -9,7 +9,13 @@
 	import Tabs from '$lib/components/ui/Tabs.svelte';
 	import TeamSocial from '$lib/components/ui/TeamSocial.svelte';
 	import type { ClassValue } from '$lib/types';
-	import { averageLegacyRank, averageRank, cdnImageSrc, flattenGroup } from '$lib/util';
+	import {
+		averageLegacyRank,
+		averageRank,
+		cdnImageSrc,
+		cdnRosterLogoPath,
+		flattenGroup
+	} from '$lib/util';
 	import { page } from '$app/state';
 	import Subheading from '$lib/components/ui/Subheading.svelte';
 
@@ -46,7 +52,7 @@
 	/>
 
 	<meta property="og:title" content={roster.name} />
-	<meta property="og:image" content={cdnImageSrc(`/logos/${roster.id}.png`, { width: 630 })} />
+	<meta property="og:image" content={cdnImageSrc(cdnRosterLogoPath(roster.id), { width: 630 })} />
 	<meta
 		property="og:description"
 		content="Se medlemmar och senaste matcher för {roster.name} i {season.name} av Dunderligan."

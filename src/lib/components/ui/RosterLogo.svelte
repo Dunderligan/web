@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ClassValue } from '$lib/types';
-	import { cdnImageSrc } from '$lib/util';
+	import { cdnImageSrc, cdnRosterLogoPath } from '$lib/util';
 
 	type Props = {
 		id: string;
@@ -14,14 +14,14 @@
 	let element: HTMLImageElement;
 
 	function onerror() {
-		element.src = '/placeholder-team.jpg';
+		element.src = '/placeholder-team.avif';
 		element.style.borderRadius = '100%';
 	}
 </script>
 
 <img
-	src={srcOverride ?? cdnImageSrc(`/logos/${id}.png`, { width: imgSize })}
-	class={[classProp, 'shrink-0 rounded-md']}
+	src={srcOverride ?? cdnImageSrc(cdnRosterLogoPath(id), { width: imgSize })}
+	class={[classProp, 'shrink-0 rounded-[25%] object-contain']}
 	{onerror}
 	alt=""
 	bind:this={element}

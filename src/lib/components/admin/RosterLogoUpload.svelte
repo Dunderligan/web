@@ -2,40 +2,68 @@
 	import { enhance } from '$app/forms';
 	import { uploadRosterLogo } from '$lib/remote/roster.remote';
 	import Icon from '../ui/Icon.svelte';
+	import Notice from '../ui/Notice.svelte';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 
 	type Props = {
 		rosterId: string;
+		onUpload?: () => void;
 	};
 
-	let { rosterId }: Props = $props();
+	let { rosterId, onUpload }: Props = $props();
 
 	let files: FileList | null = $state(null);
-	let form: HTMLFormElement;
+	let srcOverride: string | null = $state(null);
 
-	const srcOverride = $derived.by(() =>
-		files && files.length > 0 ? URL.createObjectURL(files[0]) : null
-	);
+	let loading = $state(false);
 
-	function onchange() {
-		form.submit();
+	async function onchange() {
+		if (!files || files.length === 0) return;
+
+		loading = true;
+		try {
+			const file = files[0];
+			const buffer = await file.arrayBuffer();
+
+			await uploadRosterLogo({ rosterId, file: buffer });
+
+			srcOverride = URL.createObjectURL(file);
+			onUpload?.();
+		} finally {
+			loading = false;
+		}
 	}
 </script>
 
-<form {...uploadRosterLogo} enctype="multipart/form-data" bind:this={form} use:enhance>
-	<label class="group relative flex size-24 cursor-pointer items-center justify-center">
-		<RosterLogo
-			id={rosterId}
-			class="absolute h-full w-full transition-all group-hover:brightness-75"
-			imgSize={128}
-			src={srcOverride}
-		/>
-		<div
-			class="z-10 hidden items-center justify-center rounded-lg bg-gray-600 p-2 text-xl text-white group-hover:flex"
-		>
+<label class="group relative flex size-24 shrink-0 cursor-pointer items-center justify-center">
+	<RosterLogo
+		id={rosterId}
+		class={[
+			loading ? 'brightness-50' : 'group-hover:brightness-75',
+			'absolute h-full w-full transition-all'
+		]}
+		imgSize={128}
+		src={srcOverride}
+	/>
+	<div
+		class={[
+			loading ? 'flex' : 'hidden group-hover:flex',
+			'z-10 items-center justify-center rounded-lg bg-gray-600 p-2 text-xl text-white'
+		]}
+	>
+		{#if loading}
+			<Icon class="animate-spin" icon="ph:spinner" />
+		{:else}
 			<Icon icon="ph:upload-simple" />
-		</div>
-		<input type="file" name="file" accept="image/png" class="hidden" {onchange} bind:files />
-	</label>
-	<input type="text" name="rosterId" value={rosterId} class="hidden" />
-</form>
+		{/if}
+	</div>
+	<input
+		type="file"
+		name="file"
+		accept="image/jpeg, image/png, image/webp, image/avif, image/gif, image/tiff"
+		class="hidden"
+		{onchange}
+		bind:files
+		disabled={loading}
+	/>
+</label>

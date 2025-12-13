@@ -13,9 +13,7 @@ import {
 } from './types';
 import { browser } from '$app/environment';
 import { getRequestEvent } from '$app/server';
-// import { PUBLIC_CDN_ENDPOINT } from '$env/static/public';
-
-const PUBLIC_CDN_ENDPOINT = 'https://cdn.dunderligan.se';
+import { PUBLIC_CDN_ENDPOINT } from '$env/static/public';
 
 const rankNums: Record<Rank, number> = {
 	bronze: 0,
@@ -138,7 +136,15 @@ export function cdnImageSrc(path: string, { width, height }: { width: number; he
 		filters += `,height=${height}`;
 	}
 
-	return `${PUBLIC_CDN_ENDPOINT}/cdn-cgi/image/${filters}${path}`;
+	return cdnSrc(`/cdn-cgi/image/${filters}${path}`);
+}
+
+export function cdnRosterLogoPath(rosterId: string) {
+	return `/dunderligan/${s3RosterLogoKey(rosterId)}`;
+}
+
+export function s3RosterLogoKey(rosterId: string) {
+	return `logos/${rosterId}.webp`;
 }
 
 export function capitalize(str: string) {

@@ -69,6 +69,7 @@
 						kind="tertiary"
 						icon="ph:backspace"
 						class="mr-2"
+						title="Rensa rank"
 						onclick={() => {
 							member.sr = null;
 							saveCtx.setDirty();

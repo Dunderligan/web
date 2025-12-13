@@ -21,20 +21,28 @@
 		{@render children?.()}
 	</div>
 
-	<div
-		class="halftone pointer-events-none absolute bottom-0 -z-10 h-[600px] w-full dark:mix-blend-overlay"
-	></div>
+	<div class="halftone pointer-events-none absolute bottom-0 -z-10 h-[600px] w-[1200px]"></div>
 </main>
 
 <style>
 	.halftone {
-		mask-image: url('/halftone.png');
+		mask-image: url('/halftone-bg.avif');
 		mask-size: cover;
+		mask-position: left;
 		mask-repeat: no-repeat;
+
 		background-image: linear-gradient(
 			to top right,
 			var(--color-gray-100) 0%,
-			var(--color-transparent) 50%
+			var(--color-white) 50%
+		);
+	}
+
+	:global(.dark) .halftone {
+		background-image: linear-gradient(
+			to top right,
+			var(--color-gray-800) 0%,
+			var(--color-gray-950) 50%
 		);
 	}
 </style>

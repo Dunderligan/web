@@ -18,7 +18,7 @@
 	class={[
 		classProp,
 		center && 'sm:justify-center',
-		'flex items-center gap-4 bg-gray-100 text-sm font-medium text-gray-600 dark:bg-gray-900 dark:text-gray-400'
+		'flex items-center gap-4 bg-gray-100 text-sm font-medium text-gray-500 dark:bg-gray-900 dark:text-gray-400'
 	]}
 >
 	{#if match.played}

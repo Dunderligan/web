@@ -12,8 +12,7 @@
 	import Subheading from '$lib/components/ui/Subheading.svelte';
 	import Match from '$lib/components/match/Match.svelte';
 	import type { FullMatch, FullMatchWithoutOrder, ResolvedMatch } from '$lib/types.js';
-
-	// const session = authClient.useSession();
+	import SeasonStateChip from '$lib/components/ui/SeasonStateChip.svelte';
 
 	let { data } = $props();
 
@@ -89,36 +88,12 @@
 		{season.name}
 	</h1>
 
-	<div class="flex items-center justify-center gap-1 sm:justify-start">
-		<div
-			class={[
-				{
-					upcoming: 'bg-yellow-200 font-semibold text-yellow-800',
-					ongoing: 'bg-green-200 font-semibold text-green-800',
-					ended: 'bg-gray-200 font-medium text-gray-600'
-				}[state],
-				'flex max-w-max items-center gap-1 rounded-full px-4 py-1.5 text-sm'
-			]}
-		>
-			<Icon
-				class="mr-1 text-lg"
-				icon={{
-					upcoming: 'ph:calendar-blank',
-					ongoing: 'ph:circle',
-					ended: 'ph:check'
-				}[state]}
-			/>
-
-			{{
-				upcoming: 'Kommande',
-				ongoing: 'Pågående',
-				ended: 'Avslutad'
-			}[state]}
-		</div>
+	<div
+		class="flex flex-row flex-wrap items-center justify-center gap-3 text-center sm:flex-row sm:items-center sm:justify-start"
+	>
+		<SeasonStateChip {state} />
 
 		<div class="font-medium text-gray-500">
-			<span class="mx-2">•</span>
-
 			{#if state === 'upcoming'}
 				Startar {formatDateWithoutYear(season.startedAt)}
 				{season.startedAt.getFullYear()}

@@ -26,7 +26,7 @@
 <header class="relative h-200 w-full px-4 sm:h-180">
 	<video
 		src={cdnSrc('/dunderligan/trailer.mp4')}
-		class="trailer absolute top-0 left-0 -z-10 h-full w-full object-cover brightness-50"
+		class="trailer absolute top-0 left-0 -z-10 h-full w-full bg-cover object-cover brightness-50"
 		autoplay
 		muted
 		loop
@@ -81,6 +81,6 @@
 	}
 
 	.trailer {
-		background-image: url('/trailer-thumbnail.png');
+		background-image: url('/trailer-thumbnail.avif'), linear-gradient(var(--color-accent-600));
 	}
 </style>

@@ -47,9 +47,7 @@
 			root: 'flex-row sm:flex-row-reverse'
 		})}
 
-		<div
-			class="hidden w-18 shrink-0 text-center text-3xl text-gray-800 sm:block dark:text-gray-400"
-		>
+		<div class="hidden w-18 shrink-0 text-center text-3xl text-gray-500 sm:block">
 			{#if match.played}
 				<span class={[winner === leftTeam && 'text-accent-600 dark:text-accent-500', 'font-bold']}
 					>{matchScoreOrZero(match, leftTeam)}
@@ -101,7 +99,12 @@
 		{/if}
 
 		{#if match.played}
-			<div class={[won && 'text-accent-600', 'ml-auto text-3xl font-extrabold sm:hidden']}>
+			<div
+				class={[
+					won ? 'text-accent-600' : 'text-gray-500',
+					'ml-auto text-3xl font-extrabold sm:hidden'
+				]}
+			>
 				{matchScoreOrZero(match, side)}
 			</div>
 		{/if}

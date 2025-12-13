@@ -19,6 +19,7 @@
 	import TeamSelect from '$lib/components/admin/TeamSelect.svelte';
 	import { deleteRoster, editRoster, editRosterTeam } from '$lib/remote/roster.remote';
 	import AdminMembersTable from '$lib/components/table/AdminMembersTable.svelte';
+	import Notice from '$lib/components/ui/Notice.svelte';
 
 	let { data } = $props();
 
@@ -33,6 +34,9 @@
 	let { group, division, season } = $derived(flattenGroup(roster.group));
 
 	SaveContext.set(new SaveContext({ save, href: `/lag/${roster.slug}/${season.slug}` }));
+
+	let confirm = ConfirmContext.get();
+	let saveCtx = SaveContext.get();
 
 	let newPlayerOpen = $state(false);
 	let newPlayerBattletag = $state('');
@@ -50,8 +54,7 @@
 	let linkTeamOpen = $state(false);
 	let linkTeamId: string | undefined = $state();
 
-	let confirm = ConfirmContext.get();
-	let saveCtx = SaveContext.get();
+	let uploadedLogo = $state(false);
 
 	async function save() {
 		const { slug } = await editRoster({
@@ -198,8 +201,14 @@
 	</Label>
 
 	<Label label="Logotyp">
-		<RosterLogoUpload rosterId={roster.id} />
+		<RosterLogoUpload rosterId={roster.id} onUpload={() => (uploadedLogo = true)} />
 	</Label>
+
+	{#if uploadedLogo}
+		<Notice kind="info">
+			Logotypen har laddats upp! Det kan dröja några minuter innan uppdateringen syns på hemsidan.
+		</Notice>
+	{/if}
 
 	<Button icon="ph:trash" label="Radera roster" kind="negative" onclick={submitDelete} />
 </AdminCard>
