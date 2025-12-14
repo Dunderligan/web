@@ -1,9 +1,8 @@
-import { db, schema } from '$lib/server/db';
-import { fullMatchColumns, groupMatchOrder } from '$lib/server/db/helpers.js';
+import { db } from '$lib/server/db';
+import { fullMatchColumns, groupMatchOrder } from '$lib/server/db/helpers';
 import { calculateStandings } from '$lib/table';
 import { aggregateGroups } from '$lib/util';
 import { error } from '@sveltejs/kit';
-import { eq } from 'drizzle-orm';
 
 export const load = async ({ params }) => {
 	const data = await db.query.season.findFirst({
