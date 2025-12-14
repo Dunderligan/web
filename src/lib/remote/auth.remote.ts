@@ -1,6 +1,5 @@
 import { command, getRequestEvent, query } from '$app/server';
-import db from '$lib/server/db';
-import schema from '$lib/server/db/schema';
+import { db, schema } from '$lib/server/db';
 import session from '$lib/server/session';
 import { error } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';

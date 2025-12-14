@@ -1,5 +1,5 @@
 import { query } from '$app/server';
-import db from '$lib/server/db';
+import { db } from '$lib/server/db';
 import { nestedGroupQuery } from '$lib/server/db/helpers';
 import type { RosterWithGroup } from '$lib/types';
 import z from 'zod';

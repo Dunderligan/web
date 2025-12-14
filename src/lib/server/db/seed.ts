@@ -1,5 +1,5 @@
 import { reset } from 'drizzle-seed';
-import schema from './schema';
+import { schema } from '.';
 import { Rank, Role } from '$lib/types';
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 

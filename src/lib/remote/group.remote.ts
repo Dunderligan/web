@@ -1,7 +1,6 @@
 import { command } from '$app/server';
 import { matchSchema } from '$lib/schemas';
-import db from '$lib/server/db';
-import schema from '$lib/server/db/schema';
+import { db, schema } from '$lib/server/db';
 import { toSlug } from '$lib/util';
 import { and, eq } from 'drizzle-orm';
 import * as z from 'zod';

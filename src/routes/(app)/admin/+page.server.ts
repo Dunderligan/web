@@ -1,4 +1,4 @@
-import db from '$lib/server/db';
+import { db, schema } from '$lib/server/db';
 
 export const load = async () => {
 	const data = await db.query.season.findMany({

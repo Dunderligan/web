@@ -1,6 +1,5 @@
 import { query } from '$app/server';
-import db from '$lib/server/db';
-import schema from '$lib/server/db/schema';
+import { db, schema } from '$lib/server/db';
 import {
 	fullMatchColumns,
 	groupMatchOrder,

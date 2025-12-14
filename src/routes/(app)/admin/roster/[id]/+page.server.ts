@@ -1,4 +1,4 @@
-import db from '$lib/server/db';
+import { db } from '$lib/server/db';
 import { nestedGroupQuery, rolesOrder } from '$lib/server/db/helpers';
 import { error } from '@sveltejs/kit';
 import { sql } from 'drizzle-orm';

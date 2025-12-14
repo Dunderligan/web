@@ -4,7 +4,7 @@ import {
 	nestedGroupQuery,
 	rolesOrder
 } from '$lib/server/db/helpers';
-import db from '$lib/server/db';
+import { db } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
 import { sql } from 'drizzle-orm';
 

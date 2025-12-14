@@ -1,7 +1,7 @@
 import { sql, eq } from 'drizzle-orm';
 import { PgTransaction } from 'drizzle-orm/pg-core';
 import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
-import schema from '$lib/server/db/schema';
+import { schema } from '$lib/server/db';
 
 export const leagueQuery = {
 	columns: {

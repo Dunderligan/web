@@ -1,6 +1,6 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { env } from '$env/dynamic/private';
-import { seed } from './db/seed';
+import { seed as seed } from './db/seed';
 import { dev } from '$app/environment';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import relations from './db/relations';
@@ -22,4 +22,4 @@ if (dev && process.argv.includes('--seed')) {
 	await seed(db);
 }
 
-export default db;
+export { db, schema };

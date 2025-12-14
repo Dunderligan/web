@@ -1,5 +1,4 @@
-import db from '$lib/server/db';
-import schema from '$lib/server/db/schema';
+import { db, schema } from '$lib/server/db';
 import { error, redirect } from '@sveltejs/kit';
 import { eq, desc } from 'drizzle-orm';
 
