@@ -76,9 +76,10 @@
 		content="Se tabellen och resultaten för {division.name} i {season.name} av Dunderligan."
 	/>
 
+	<meta property="og:title" content="{displayMode} - {division.name} - {season.name}" />
 	<meta
 		property="og:description"
-		content="Se tabellen och resultaten för {division.name} i {season.name} av Dunderligan."
+		content="Se tabellen och resultaten för {season.name} av Dunderligan."
 	/>
 </svelte:head>
 
