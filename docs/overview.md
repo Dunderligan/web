@@ -38,10 +38,8 @@ Copy the `.env.example` file to `.env` and fill in the `DATABASE_URL` field with
 DATABASE_URL="postgresql://[user]:[password]@[host]/[database]"
 ```
 
-The rest of the fields are not necessary for core functionality and can be left as default.
-
 > [!NOTE]
-> Account logins and team logos (both load and upload) will be unavailable when left empty.
+> While the rest of the fields are not necessary for core functionality, some notable features will be unavailable when the values are left as default. This includes account logins and team logos (both load and upload).
 
 Then run the following commands:
 
@@ -53,12 +51,13 @@ pnpm dev
 
 Open up http://localhost:5173/setup in a browser, where the website will ask you to create a "superadmin" user. This user is the only one who can promote other admins.
 
-> [!TIP]
+> [!NOTE]
 > Currently, only Battlenet authentication is supported. This has implications if you lose the session credentials to the superuser. In that case, you'll either have to manually edit the database, or make sure you signed up with a Battletag you have access to (and [setup Battlenet OAuth]()).
 
 ### Next steps
 
 - [Cloud services (full setup)](./cloud-services.md)
 - [Database documentation](./database.md)
+
 
 
