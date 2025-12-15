@@ -10,7 +10,7 @@ The tech stack in short:
 - [Tailwind CSS](https://tailwindcss.com/)
 - Docker (currently production only)
 
-No cloud services beyond Cloudflare are used. The server and database are hosted on a VPS provided by Linköping University's computer association [Lysator](https://www.lysator.liu.se/).
+No cloud services beyond Cloudflare are used. The server and database are as of 2025-12-15 hosted on a VPS provided by Linköping University's computer association [Lysator](https://www.lysator.liu.se/).
 
 ## Development
 
@@ -60,4 +60,5 @@ Open up http://localhost:5173/setup in a browser, where the website will ask you
 
 - [Cloud services (full setup)](./cloud-services.md)
 - [Database documentation](./database.md)
+
 
