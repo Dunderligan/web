@@ -75,9 +75,11 @@ export const load = async ({ params }) => {
 			const { rosters, matches: combinedGroupMatches } = aggregateGroups(groups);
 			let tables;
 			if (division.groupwiseStandings) {
-				tables = groups.map((group) => makeTable(group.name, group.rosters, group.matches));
+				tables = groups.map((group) =>
+					makeTable(group.name, group.id, group.rosters, group.matches, 'grupp')
+				);
 			} else {
-				tables = [makeTable(division.name, rosters, combinedGroupMatches)];
+				tables = [makeTable(division.name, division.id, rosters, combinedGroupMatches, 'division')];
 			}
 
 			const latestMatches = combinedGroupMatches.filter((match) => match.played).slice(0, 3);
@@ -94,9 +96,17 @@ export const load = async ({ params }) => {
 	};
 };
 
-function makeTable<R extends { id: string }>(title: string, rosters: R[], matches: LogicalMatch[]) {
+function makeTable<R extends { id: string }>(
+	title: string,
+	id: string,
+	rosters: R[],
+	matches: LogicalMatch[],
+	type: 'division' | 'grupp'
+) {
 	return {
 		title,
-		standings: calculateStandings(rosters, matches)
+		id,
+		standings: calculateStandings(rosters, matches),
+		type
 	};
 }

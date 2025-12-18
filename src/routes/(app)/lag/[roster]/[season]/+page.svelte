@@ -98,7 +98,7 @@
 
 		<MembersTable members={roster.members} />
 
-		<Subheading class="mt-10 mb-4">Senaste matcher</Subheading>
+		<Subheading class="mt-10 mb-4">Senaste matcherna</Subheading>
 		<MatchList matches={latestMatches} seasonSlug={season.slug} mainRosterId={roster.id} />
 
 		<Subheading class="mt-10 mb-4">Kommande matcher</Subheading>

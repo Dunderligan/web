@@ -12,6 +12,7 @@
 	import type { FullMatchWithoutOrder, ResolvedMatch, Roster } from '$lib/types';
 	import SeasonStateChip from '$lib/components/ui/SeasonStateChip.svelte';
 	import MatchList from '$lib/components/match/MatchList.svelte';
+	import { goto } from '$app/navigation';
 
 	let { data } = $props();
 
@@ -23,6 +24,34 @@
 		const param = page.url.searchParams.get('div');
 
 		return param ? (divisions.find((div) => div.slug === param) ?? divisions[0]) : divisions[0];
+	});
+
+	const hasGroupStage = $derived(division.rosters.length > 0);
+	const hasPlayoffs = $derived(division.matches.length > 0);
+
+	const tabItems = $derived([
+		{
+			icon: 'ph:table',
+			label: 'Gruppspel',
+			value: 'group',
+			href: `?div=${division.slug}&visa=gruppspel`,
+			disabled: !hasGroupStage
+		},
+		{
+			icon: 'ph:trophy',
+			label: 'Slutspel',
+			value: 'bracket',
+			href: `?div=${division.slug}&visa=slutspel`,
+			disabled: !hasPlayoffs
+		}
+	]);
+
+	$effect(() => {
+		if (mode === 'group' && !hasGroupStage) {
+			goto(`?div=${division.slug}&visa=slutspel`);
+		} else if (mode === 'bracket' && !hasPlayoffs) {
+			goto(`?div=${division.slug}&visa=gruppspel`);
+		}
 	});
 
 	type Mode = 'group' | 'bracket';
@@ -124,25 +153,7 @@
 				}))}
 			/>
 
-			<Tabs
-				fillIcons
-				selected={mode}
-				items={[
-					{
-						icon: 'ph:table',
-						label: 'Gruppspel',
-						value: 'group',
-						href: `?div=${division.slug}&visa=gruppspel`
-					},
-					{
-						icon: 'ph:trophy',
-						label: 'Slutspel',
-						value: 'bracket',
-						href: `?div=${division.slug}&visa=slutspel`,
-						disabled: division.matches.length === 0
-					}
-				]}
-			/>
+			<Tabs fillIcons selected={mode} items={tabItems} />
 		</div>
 
 		{#if mode === 'group'}
@@ -152,13 +163,25 @@
 					score
 				}))}
 
-				<Subheading class="mt-8 mb-4">{table.title}</Subheading>
+				{#if table.type === 'grupp'}
+					<Subheading class="mt-8">{table.title}</Subheading>
+				{/if}
 
 				<StandingsTable
 					standings={resolvedStandings}
 					playoffLine={division.playoffLine}
 					seasonSlug={season.slug}
 				/>
+
+				{#if page.data.user?.isAdmin}
+					<Button
+						label="Redigera {table.type}"
+						icon="ph:pencil-simple"
+						kind="secondary"
+						class="mt-4 max-w-max"
+						href="/admin/{table.type}/{table.id}"
+					/>
+				{/if}
 			{/each}
 
 			{#if division.latestMatches.length > 0}
@@ -185,16 +208,6 @@
 			<Bracket
 				seasonSlug={season.slug}
 				rounds={buildBracketRounds(division.matches.map(resolveMatch))}
-			/>
-		{/if}
-
-		{#if page.data.user?.isAdmin}
-			<Button
-				label="Redigera division"
-				icon="ph:pencil-simple"
-				kind="secondary"
-				class="mt-4 max-w-max"
-				href="/admin/division/{division.id}"
 			/>
 		{/if}
 	</section>

@@ -175,7 +175,7 @@
 </AdminCard>
 
 <AdminCard title="Inställningar">
-	<div class="space-y-1">
+	<div class="space-y-2">
 		<Label label="Namn">
 			<InputField bind:value={division.name} oninput={saveCtx.setDirty} />
 		</Label>

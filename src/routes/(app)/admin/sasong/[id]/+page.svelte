@@ -81,7 +81,7 @@
 </AdminCard>
 
 <AdminCard title="Inställningar">
-	<div class="space-y-1">
+	<div class="space-y-2">
 		<Label label="Startdatum">
 			<DateInput bind:value={season.startedAt} type="date" oninput={saveCtx.setDirty} required />
 		</Label>

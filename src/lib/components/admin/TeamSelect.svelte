@@ -78,7 +78,7 @@
 	}}
 >
 	<Combobox.Input
-		class="group flex grow items-center overflow-hidden rounded-lg border border-transparent bg-gray-100 py-2 pr-2 pl-4 font-medium text-gray-800 ring-accent-600 transition-all focus:ring-2 focus:outline-none data-disabled:cursor-not-allowed data-disabled:bg-gray-200 data-disabled:text-gray-500"
+		class="group flex grow items-center overflow-hidden rounded-lg border border-transparent bg-gray-100 py-2 pr-2 pl-4 font-medium text-gray-800 ring-accent-600 transition-all focus:ring-2 focus:outline-none data-disabled:cursor-not-allowed data-disabled:bg-gray-200 data-disabled:text-gray-500 dark:bg-gray-800 dark:text-gray-300"
 		placeholder="Sök efter lag..."
 		oninput={(evt) => (searchQuery = evt.currentTarget.value)}
 	></Combobox.Input>
@@ -90,7 +90,9 @@
 					<Icon icon="ph:spinner" class="animate-spin" />
 				</div>
 			{:else if teams.size === 0}
-				<div class="py-2 text-center font-medium text-gray-600">Inga lag hittades</div>
+				<div class="py-2 text-center font-medium text-gray-600 dark:text-gray-300">
+					Inga lag hittades
+				</div>
 			{:else}
 				{#each teams as [teamId, rosters] (teamId)}
 					<Combobox.Item value={teamId} class="floating-item my-0.5 flex-col gap-2">

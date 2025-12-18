@@ -72,7 +72,9 @@
 						>
 
 						{#if description}
-							<Dialog.Description class="mb-6 text-center font-medium text-gray-600">
+							<Dialog.Description
+								class="mb-6 text-center font-medium text-gray-600 dark:text-gray-300"
+							>
 								{#if typeof description === 'string'}
 									{description}
 								{:else}

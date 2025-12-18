@@ -55,8 +55,7 @@
 			class="hover:underline"
 		>
 			<Icon icon="ph:link" />
-			{division.name},
-			{division.season.name}
+			{division.name}
 		</a>
 	{/if}
 </div>

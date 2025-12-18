@@ -14,12 +14,13 @@
 	import Select from '$lib/components/ui/Select.svelte';
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
 	import { SaveContext } from '$lib/state/save.svelte';
-	import { Rank, Role, SocialPlatform } from '$lib/types';
+	import { Rank, Role, SocialPlatform, type NestedGroup } from '$lib/types';
 	import { formatSocialPlatform, flattenGroup } from '$lib/util';
 	import TeamSelect from '$lib/components/admin/TeamSelect.svelte';
-	import { deleteRoster, editRoster, mergeTeams } from '$lib/remote/roster.remote';
+	import { deleteRoster, editRoster, mergeTeams, moveRoster } from '$lib/remote/roster.remote';
 	import AdminMembersTable from '$lib/components/table/AdminMembersTable.svelte';
 	import Notice from '$lib/components/ui/Notice.svelte';
+	import { getGroupsBySeason } from '$lib/remote/season.remote.js';
 
 	let { data } = $props();
 
@@ -53,6 +54,9 @@
 
 	let linkTeamOpen = $state(false);
 	let linkTeamId: string | undefined = $state();
+
+	let changeGroupOpen = $state(false);
+	let changeGroupTo = $state(group.id);
 
 	let uploadedLogo = $state(false);
 
@@ -110,7 +114,7 @@
 		}
 	}
 
-	async function submitDelete() {
+	async function onDeleteClick() {
 		await confirm.confirm({
 			title: 'Radera roster',
 			description: `Är du säker på att du vill radera ${roster.name} från ${season.name}? <b>Detta går inte att ångra!</b>`,
@@ -132,6 +136,15 @@
 		await invalidateAll();
 
 		linkTeamOpen = false;
+	}
+
+	async function changeGroup() {
+		if (!changeGroupTo) return;
+
+		await moveRoster({ rosterId: roster.id, groupId: changeGroupTo });
+		await invalidateAll();
+
+		changeGroupOpen = false;
 	}
 </script>
 
@@ -213,7 +226,16 @@
 		</Notice>
 	{/if}
 
-	<Button icon="ph:trash" label="Radera roster" kind="negative" onclick={submitDelete} />
+	<div class="flex items-center gap-2">
+		<Button
+			icon="ph:swap"
+			label="Flytta"
+			kind="secondary"
+			onclick={() => (changeGroupOpen = true)}
+		/>
+
+		<Button icon="ph:trash" label="Radera roster" kind="negative" onclick={onDeleteClick} />
+	</div>
 </AdminCard>
 
 <AdminCard title="Länkade rosters">
@@ -296,6 +318,29 @@
 
 	<Label label="Lag">
 		<TeamSelect excludeSeasonId={season.id} excludeTeamId={team.id} bind:value={linkTeamId} />
+	</Label>
+</CreateDialog>
+
+<CreateDialog
+	title="Flytta roster"
+	createLabel="Flytta"
+	oncreate={changeGroup}
+	bind:open={changeGroupOpen}
+	disabled={!changeGroupTo}
+>
+	<Label label="Grupp">
+		{#await getGroupsBySeason({ seasonId: season.id }) then { groups }}
+			<Select
+				type="single"
+				class="grow"
+				items={groups.map((group) => ({
+					label: `${group.division.name}, ${group.name}`,
+					value: group.id
+				}))}
+				bind:value={changeGroupTo}
+				placeholder="Välj grupp"
+			/>
+		{/await}
 	</Label>
 </CreateDialog>
 

@@ -209,3 +209,15 @@ export const mergeTeams = command(
 			.where(eq(schema.roster.teamId, teamBId));
 	}
 );
+
+export const moveRoster = command(
+	z.object({
+		rosterId: z.uuid(),
+		groupId: z.uuid()
+	}),
+	async ({ rosterId, groupId }) => {
+		await adminGuard();
+
+		await db.update(schema.roster).set({ groupId }).where(eq(schema.roster.id, rosterId));
+	}
+);

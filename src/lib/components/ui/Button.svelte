@@ -44,7 +44,7 @@
 			: {
 					primary: 'bg-accent-600 hover:bg-accent-700 font-semibold text-white',
 					secondary:
-						'bg-gray-200 hover:bg-gray-300 font-semibold text-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-300',
+						'bg-gray-200 text-gray-700 hover:bg-gray-300 font-semibold dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-300',
 					tertiary:
 						'text-gray-600 font-medium hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-800',
 					transparent:
