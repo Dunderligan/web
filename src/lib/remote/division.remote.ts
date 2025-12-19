@@ -74,16 +74,29 @@ export const deleteDivision = command(
 export const generateBracket = command(
 	z.object({
 		divisionId: z.uuid(),
+		rosterDivisionId: z.uuid().optional(),
 		roundCount: z.number(),
-		avoidPreviousMatches: z.boolean()
+		avoidPreviousMatches: z.boolean(),
+		flipStandings: z.boolean()
 	}),
-	async ({ divisionId, roundCount, avoidPreviousMatches }) => {
+	async ({
+		divisionId,
+		roundCount,
+		avoidPreviousMatches,
+		flipStandings,
+		rosterDivisionId = divisionId
+	}) => {
 		await adminGuard();
 
-		const { rosters, groupMatches, playoffLine } = await aggregateGroupsIn(divisionId);
+		const { rosters, groupMatches, playoffLine } = await aggregateGroupsIn(rosterDivisionId);
 		sortBySeed(rosters, groupMatches);
 
 		const qualifying = rosters.slice(0, playoffLine ?? undefined);
+
+		if (flipStandings) {
+			qualifying.reverse();
+		}
+
 		const rounds = createBracket(qualifying, groupMatches, roundCount, {
 			avoidPreviousMatches
 		});

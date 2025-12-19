@@ -20,11 +20,8 @@ export function createBracket<R extends { id: string }, M extends LogicalMatch>(
 		avoidPreviousMatches: true
 	}
 ): FullMatch[][] {
-	if (roundCount < minBracketRounds(rosters.length)) {
-		throw new Error('Not enough rounds to accommodate the number of rosters');
-	}
-
-	let emptySlots = Math.pow(2, roundCount) - rosters.length;
+	const slots = Math.pow(2, roundCount);
+	let emptySlots = slots - rosters.length;
 
 	const rounds = [];
 	let order = 0;
@@ -49,6 +46,11 @@ export function createBracket<R extends { id: string }, M extends LogicalMatch>(
 
 	// don't mutate the original rosters array
 	rosters = [...rosters];
+
+	if (rosters.length > slots) {
+		// some teams don't proceed
+		rosters = rosters.slice(0, slots);
+	}
 
 	// fill the first round according to seeding
 	const matchOrder = getMatchOrder(roundCount);

@@ -20,7 +20,7 @@
 	import { deleteRoster, editRoster, mergeTeams, moveRoster } from '$lib/remote/roster.remote';
 	import AdminMembersTable from '$lib/components/table/AdminMembersTable.svelte';
 	import Notice from '$lib/components/ui/Notice.svelte';
-	import { getGroupsBySeason } from '$lib/remote/season.remote.js';
+	import { getDivisionsBySeason } from '$lib/remote/season.remote';
 
 	let { data } = $props();
 
@@ -329,14 +329,16 @@
 	disabled={!changeGroupTo}
 >
 	<Label label="Grupp">
-		{#await getGroupsBySeason({ seasonId: season.id }) then { groups }}
+		{#await getDivisionsBySeason({ seasonId: season.id }) then { divisions }}
 			<Select
 				type="single"
 				class="grow"
-				items={groups.map((group) => ({
-					label: `${group.division.name}, ${group.name}`,
-					value: group.id
-				}))}
+				items={divisions.flatMap((division) =>
+					division.groups.map((group) => ({
+						label: `${division.name}, ${group.name}`,
+						value: group.id
+					}))
+				)}
 				bind:value={changeGroupTo}
 				placeholder="Välj grupp"
 			/>

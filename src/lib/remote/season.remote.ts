@@ -55,7 +55,7 @@ export const deleteSeason = command(
 	}
 );
 
-export const getGroupsBySeason = query(
+export const getDivisionsBySeason = query(
 	z.object({
 		seasonId: z.uuid()
 	}),
@@ -66,19 +66,15 @@ export const getGroupsBySeason = query(
 			where: {
 				seasonId
 			},
+			orderBy: {
+				name: 'asc'
+			},
 			...leagueQuery,
 			with: {
 				groups: leagueQuery
 			}
 		});
 
-		const groups = divisions.flatMap(({ groups, ...division }) =>
-			groups.map((group) => ({
-				...group,
-				division
-			}))
-		);
-
-		return { groups };
+		return { divisions };
 	}
 );

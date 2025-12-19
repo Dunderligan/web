@@ -6,6 +6,7 @@
 		title: string;
 		open?: boolean;
 		disabled?: boolean;
+		wide?: boolean;
 		description?: string | Snippet;
 		createLabel?: string;
 		oncreate?: () => Promise<void>;
@@ -17,6 +18,7 @@
 		title,
 		open = $bindable(false),
 		disabled,
+		wide = false,
 		description,
 		createLabel = 'Skapa',
 		oncreate,
@@ -42,6 +44,7 @@
 </script>
 
 <Dialog
+	{wide}
 	{title}
 	{description}
 	bind:open

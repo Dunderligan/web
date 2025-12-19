@@ -47,10 +47,15 @@
 	]);
 
 	$effect(() => {
+		// prevent invalid modes
+		if (!hasGroupStage && !hasPlayoffs) {
+			return;
+		}
+
 		if (mode === 'group' && !hasGroupStage) {
-			goto(`?div=${division.slug}&visa=slutspel`);
+			goto(`?div=${division.slug}&visa=slutspel`, { replaceState: true });
 		} else if (mode === 'bracket' && !hasPlayoffs) {
-			goto(`?div=${division.slug}&visa=gruppspel`);
+			goto(`?div=${division.slug}&visa=gruppspel`, { replaceState: true });
 		}
 	});
 
@@ -149,7 +154,7 @@
 				items={divisions.map((division) => ({
 					label: division.name,
 					value: division.id,
-					href: `?div=${division.slug}&visa=${mode === 'group' ? 'grupp' : 'slutspel'}`
+					href: `?div=${division.slug}&visa=${mode === 'group' ? 'gruppspel' : 'slutspel'}`
 				}))}
 			/>
 

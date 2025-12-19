@@ -17,14 +17,10 @@
 	import { SaveContext } from '$lib/state/save.svelte';
 	import type { FullMatch } from '$lib/types';
 	import { createGroup } from '$lib/remote/group.remote';
-	import {
-		deleteBracket,
-		deleteDivision,
-		generateBracket,
-		updateDivision
-	} from '$lib/remote/division.remote';
-	import { buildBracketRounds, minBracketRounds } from '$lib/bracket.js';
+	import { deleteBracket, deleteDivision, updateDivision } from '$lib/remote/division.remote';
+	import { buildBracketRounds } from '$lib/bracket.js';
 	import Checkbox from '$lib/components/ui/Checkbox.svelte';
+	import GenerateBracketDialog from '$lib/components/admin/GenerateBracketDialog.svelte';
 
 	const { data } = $props();
 
@@ -45,13 +41,8 @@
 	let createGroupOpen = $state(false);
 	let newGroupName = $state('');
 
-	const totalTeamCount = $derived(
-		division.groups.reduce((sum, group) => sum + group.rosters.length, 0)
-	);
-	const minRoundCount = $derived(minBracketRounds(totalTeamCount));
-
 	let generateBracketOpen = $state(false);
-	let bracketRoundCount = $state(0);
+	let rounds: FullMatch[][] = $state([]);
 
 	async function submitDelete() {
 		await confirmCtx.confirm({
@@ -75,19 +66,6 @@
 		});
 
 		await goto(`/admin/grupp/${group.id}`);
-	}
-
-	let rounds: FullMatch[][] = $state([]);
-
-	async function submitGenerateBracket() {
-		const result = await generateBracket({
-			divisionId: division.id,
-			roundCount: bracketRoundCount,
-			avoidPreviousMatches: true
-		});
-
-		rounds = result.rounds;
-		generateBracketOpen = false;
 	}
 
 	async function save() {
@@ -167,7 +145,7 @@
 		<div class="flex w-full items-stretch gap-4">
 			{#each rounds as round, i}
 				<div class="flex w-full flex-col justify-around gap-4">
-					{#each round as match}
+					{#each round as match (match.id)}
 						<EditableMatch {match} canDelete={false} canEditRosters={i === 0} />
 					{/each}
 				</div>
@@ -184,10 +162,7 @@
 				icon="ph:plus"
 				label="Generera"
 				class="ml-auto"
-				onclick={() => {
-					bracketRoundCount = minRoundCount;
-					generateBracketOpen = true;
-				}}
+				onclick={() => (generateBracketOpen = true)}
 			></Button>
 		</Notice>
 	{/if}
@@ -200,7 +175,12 @@
 		</Label>
 
 		<Label label="Antal lag till slutspel">
-			<InputField type="number" bind:value={division.playoffLine} oninput={saveCtx.setDirty} />
+			<InputField
+				type="number"
+				bind:value={division.playoffLine}
+				oninput={saveCtx.setDirty}
+				placeholder="Alla lag går till slutspel"
+			/>
 		</Label>
 
 		<Label label="Tabell per grupp">
@@ -227,15 +207,11 @@
 	</Label>
 </CreateDialog>
 
-<CreateDialog
-	title="Generera bracket"
+<GenerateBracketDialog
 	bind:open={generateBracketOpen}
-	oncreate={submitGenerateBracket}
-	disabled={!bracketRoundCount}
->
-	<Label label="Antal rundor">
-		<InputField bind:value={bracketRoundCount} type="number" />
-	</Label>
-</CreateDialog>
+	seasonId={season.id}
+	divisionId={division.id}
+	onGenerated={(newRounds) => (rounds = newRounds)}
+/>
 
 <SaveToast />
