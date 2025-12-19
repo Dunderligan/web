@@ -38,10 +38,7 @@
 <label class="group relative flex size-24 shrink-0 cursor-pointer items-center justify-center">
 	<RosterLogo
 		id={rosterId}
-		class={[
-			loading ? 'brightness-50' : 'group-hover:brightness-75',
-			'absolute h-full w-full transition-all'
-		]}
+		class={[loading ? 'brightness-50' : 'group-hover:brightness-75', 'absolute h-full w-full']}
 		imgSize={128}
 		src={srcOverride}
 	/>

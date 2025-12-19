@@ -39,7 +39,9 @@
 			root: 'flex-row sm:flex-row-reverse'
 		})}
 
-		<div class="hidden w-18 shrink-0 text-center text-3xl text-gray-500 sm:block">
+		<div
+			class="hidden w-18 shrink-0 text-center text-3xl text-gray-500 sm:block dark:text-gray-400"
+		>
 			{#if match.played}
 				<span class={[winner === leftTeam && 'text-accent-600 dark:text-accent-500', 'font-bold']}
 					>{matchScoreOrZero(match, leftTeam)}

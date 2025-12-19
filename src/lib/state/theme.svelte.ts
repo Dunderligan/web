@@ -54,4 +54,8 @@ export class ThemeState {
 			}
 		}
 	}
+
+	toggle() {
+		this.setTheme(this.current === 'light' ? 'dark' : 'light');
+	}
 }

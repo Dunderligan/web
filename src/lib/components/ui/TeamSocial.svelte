@@ -14,7 +14,7 @@
 
 <a {href} class={[classProp, 'inline-flex items-center']} target="_blank" rel="noopener noreferrer"
 	><Icon
-		class=" text-accent-500 transition-colors hover:text-accent-600"
+		class="text-accent-500 hover:text-accent-600"
 		icon="ph:{platform}-logo-fill"
 		title={capitalize(platform)}
 	/></a

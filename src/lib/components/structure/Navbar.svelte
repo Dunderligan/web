@@ -49,25 +49,6 @@
 		}
 	]);
 
-	const themeIcons: Record<string, string> = {
-		system: 'ph:monitor',
-		light: 'ph:sun',
-		dark: 'ph:moon'
-	};
-
-	const themeDropdownItems = [
-		{
-			label: 'Ljust',
-			icon: themeIcons.light,
-			onclick: () => theme.setTheme('light')
-		},
-		{
-			label: 'Mörkt',
-			icon: themeIcons.dark,
-			onclick: () => theme.setTheme('dark')
-		}
-	];
-
 	async function onLogout() {
 		await logout();
 		await invalidateAll();
@@ -92,9 +73,9 @@
 		</div>
 
 		<div class="flex items-center gap-8">
-			<Dropdown items={themeDropdownItems} class="flex items-center p-2">
-				<Icon icon="{themeIcons[theme.current]}-fill" class="text-lg" />
-			</Dropdown>
+			<button onclick={() => theme.toggle()} class="p-2 text-lg">
+				<Icon icon={theme.current === 'light' ? 'ph:sun-fill' : 'ph:moon-fill'} />
+			</button>
 
 			{#if page.data.user}
 				<Dropdown items={userDropdownItems} class="font-display font-medium">

@@ -41,7 +41,7 @@
 				onitemclick?.(value);
 			}}
 			class={[
-				'flex w-full items-center justify-center gap-2 p-2.5 transition-all ease-out',
+				'flex w-full items-center justify-center gap-2 p-2.5 ease-out',
 				disabled
 					? 'bg-gray-200 font-semibold text-gray-500 dark:bg-gray-800 dark:text-gray-400'
 					: isSelected
