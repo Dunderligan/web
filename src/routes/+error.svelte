@@ -15,13 +15,12 @@
 	<div class="mb-12 h-18"></div>
 
 	<PageSection topMargin={false} class="text-center">
-		<h2 class="mt-4 text-lg font-medium text-gray-700">Något gick fel:</h2>
-		<h1 class="mt-2 text-center text-8xl font-bold text-gray-900">
+		<img src="/404.webp" class="mx-auto -mt-6 size-60" alt="Zenyatta spray" />
+
+		<h1 class="-mt-2 text-center text-8xl font-bold text-gray-900">
 			{page.status}
 		</h1>
-		<h1 class="text-center text-3xl font-semibold text-gray-800">
-			{page.error?.message}
-		</h1>
+		<h2 class="text-lg font-medium text-gray-700">Något gick fel</h2>
 
 		{#if page.status === 404}
 			<Button

@@ -24,7 +24,7 @@
 	]}
 >
 	{#if bracket}
-		<Icon icon="ph:trophy" title="Slutspelsmatch" />
+		<Icon icon="ph:trophy" title="Slutspelsmatch" class="mb-1" />
 	{/if}
 
 	{#if match.played}
@@ -57,7 +57,7 @@
 			class="hover:underline"
 		>
 			<Icon icon="ph:link" />
-			{division.name}
+			{bracket?.name ?? division.name}
 		</a>
 	{/if}
 </div>

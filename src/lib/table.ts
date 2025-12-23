@@ -39,7 +39,6 @@ export function calculateStandings<R extends { id: string }>(
 		const teamB = rosterScores.get(match.rosterBId);
 
 		if (!teamA || !teamB) {
-			console.warn('Roster not found in group', match);
 			continue;
 		}
 

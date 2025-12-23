@@ -182,7 +182,7 @@
 
 				{#if page.data.user?.isAdmin}
 					<Button
-						label="Redigera {table.type}"
+						label="Redigera"
 						icon="ph:pencil-simple"
 						kind="secondary"
 						class="mt-4 max-w-max"
@@ -221,17 +221,17 @@
 					seasonSlug={season.slug}
 					rounds={buildBracketRounds(bracket.matches.map(resolveMatch))}
 				/>
-			{/each}
 
-			{#if page.data.user?.isAdmin}
-				<Button
-					label="Redigera division"
-					icon="ph:pencil-simple"
-					kind="secondary"
-					class="mt-4 max-w-max"
-					href="/admin/division/{division.id}"
-				/>
-			{/if}
+				{#if page.data.user?.isAdmin}
+					<Button
+						label="Redigera"
+						icon="ph:pencil-simple"
+						kind="secondary"
+						class="mt-4 max-w-max"
+						href="/admin/bracket/{bracket.id}"
+					/>
+				{/if}
+			{/each}
 		{/if}
 	</section>
 </PageSection>

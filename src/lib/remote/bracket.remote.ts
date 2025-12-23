@@ -19,13 +19,47 @@ export const generateBracket = command(
 	async ({ name, divisionId, roundCount, avoidPreviousMatches, flipStandings }) => {
 		await adminGuard();
 
-		const { rosters, groupMatches, playoffLine } = await aggregateGroupsIn(divisionId);
-		sortBySeed(rosters, groupMatches);
+		const { groups, groupwiseStandings } = await fetchDivision(divisionId);
 
-		const qualifying = rosters.slice(0, playoffLine ?? undefined);
+		const rosters = groups.flatMap((group) => group.rosters);
+		const groupMatches = groups.flatMap((group) => group.matches);
 
-		if (flipStandings) {
-			qualifying.reverse();
+		let qualifying;
+		if (!groupwiseStandings) {
+			sortBySeed(rosters, groupMatches);
+			qualifying = rosters;
+
+			if (flipStandings) {
+				qualifying.reverse();
+			}
+		} else {
+			// determine how many rosters we need from each group
+			const slots = Math.pow(2, roundCount);
+			const teamsPerGroup = Math.floor(slots / groups.length);
+			let extraTeams = slots % groups.length;
+
+			for (const group of groups) {
+				// sort each group individually
+				sortBySeed(group.rosters, group.matches);
+
+				if (flipStandings) {
+					group.rosters.reverse();
+				}
+			}
+
+			qualifying = [];
+			for (const group of groups) {
+				let take = teamsPerGroup;
+				if (extraTeams > 0) {
+					// distribute remaining slots to the first n groups
+					take++;
+					extraTeams--;
+				}
+				const selected = group.rosters.slice(0, take);
+				qualifying.push(...selected);
+			}
+
+			sortBySeed(qualifying, groupMatches);
 		}
 
 		const rounds = createBracket(qualifying, groupMatches, roundCount, {
@@ -61,13 +95,14 @@ export const generateBracket = command(
 	}
 );
 
-async function aggregateGroupsIn(divisionId: string) {
+async function fetchDivision(divisionId: string) {
 	const data = await db.query.division.findFirst({
 		where: {
 			id: divisionId
 		},
 		columns: {
-			playoffLine: true
+			playoffLine: true,
+			groupwiseStandings: true
 		},
 		with: {
 			groups: {
@@ -99,14 +134,10 @@ async function aggregateGroupsIn(divisionId: string) {
 	});
 
 	if (!data) {
-		error(404);
+		return error(404);
 	}
 
-	return {
-		playoffLine: data.playoffLine,
-		rosters: data?.groups.flatMap((group) => group.rosters),
-		groupMatches: data?.groups.flatMap((group) => group.matches)
-	};
+	return data;
 }
 
 export const updateBracket = command(

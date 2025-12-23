@@ -71,7 +71,7 @@
 				{seed}
 			</div>
 
-			<div class="flex min-w-0 items-center gap-2 py-2 text-lg font-semibold">
+			<div class="flex min-w-0 items-center gap-2 py-1.5 text-lg font-semibold">
 				<RosterLogo id={roster.id} class="size-12" />
 
 				<a href="/lag/{roster.slug}/{seasonSlug}" class="truncate hover:underline">{roster.name}</a>

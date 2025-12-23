@@ -72,6 +72,11 @@
 		<h1 class="mb-1 text-center font-display text-5xl font-extrabold sm:text-left sm:text-6xl">
 			{roster.name}
 		</h1>
+		<div
+			class="mt-1 mb-3 text-center text-lg font-semibold text-gray-600 sm:text-left dark:text-gray-400"
+		>
+			{division.name}, {season.name}
+		</div>
 		<div class="flex items-center justify-center gap-3 sm:justify-start">
 			{#each team.socials as { platform, url } (platform)}
 				<TeamSocial class="text-4xl" {platform} href={url} />
@@ -82,19 +87,9 @@
 
 <PageSection class="flex flex-col-reverse gap-10 sm:flex-row">
 	<section class="shrink grow text-gray-700 dark:text-gray-300">
-		<div class="mb-6">
-			{#if rosterTabItems.length > 1}
-				<Tabs class="grow" items={rosterTabItems} selected={roster.id} />
-			{:else}
-				<span class="text-lg font-medium">
-					Spelar i <a
-						href="/stallningar/{season.slug}?div={division.slug}"
-						class="font-bold text-accent-600 hover:text-accent-700 hover:underline"
-						>{division.name}, {season.name}</a
-					>.
-				</span>
-			{/if}
-		</div>
+		{#if rosterTabItems.length > 1}
+			<Tabs class="mb-6 grow" items={rosterTabItems} selected={roster.id} />
+		{/if}
 
 		<MembersTable members={roster.members} />
 
@@ -113,8 +108,26 @@
 		/>
 	</section>
 
-	<section class="flex shrink-0 flex-col gap-5 sm:w-1/4">
-		{@render editButton()}
+	<section class="shrink-0 sm:w-1/4">
+		<div class="mb-6 space-y-2">
+			<Button
+				href="/stallningar/{season.slug}?div={division.slug}"
+				label="Ställningar"
+				icon="ph:arrow-right"
+				class="max-w-max"
+				kind="secondary"
+			/>
+
+			{#if page.data.user?.isAdmin}
+				<Button
+					href="/admin/roster/{roster.id}"
+					kind="secondary"
+					class="max-w-max"
+					label="Redigera lag"
+					icon="ph:pencil-simple"
+				/>
+			{/if}
+		</div>
 
 		{#if average}
 			<div>
@@ -126,15 +139,3 @@
 		{/if}
 	</section>
 </PageSection>
-
-{#snippet editButton()}
-	{#if page.data.user?.isAdmin}
-		<Button
-			href="/admin/roster/{roster.id}"
-			kind="secondary"
-			class="max-w-max"
-			label="Redigera lag"
-			icon="ph:pencil-simple"
-		/>
-	{/if}
-{/snippet}

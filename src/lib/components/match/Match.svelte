@@ -66,7 +66,7 @@
 	{@const roster = matchRoster(match, side)}
 	{@const won = roster && isWinner(match, side)}
 
-	<div class={[rootClass, 'flex w-full items-center gap-2 text-gray-800 dark:text-gray-100']}>
+	<div class={[rootClass, 'flex w-full items-center gap-2 text-gray-700 dark:text-gray-300']}>
 		{#if roster}
 			<RosterLogo id={roster.id} class="size-10 sm:size-12" />
 

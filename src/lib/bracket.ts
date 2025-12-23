@@ -11,6 +11,9 @@ export function minBracketRounds(teamCount: number): number {
 
 /**
  * Generates a bracket structure based on the seeds given by the order of the rosters array.
+ *
+ * If there are more rosters than slots in the bracket, the lowest seeded rosters are ignored.
+ * If there are fewer rosters than slots, some rosters will get a bye in the first round.
  */
 export function createBracket<R extends { id: string }, M extends LogicalMatch>(
 	rosters: R[],

@@ -66,7 +66,15 @@ export const queryMatches = query(
 				rosterA: matchRosterQuery,
 				rosterB: matchRosterQuery,
 				group: nestedGroupQuery,
-				division: nestedDivisionQuery
+				bracket: {
+					columns: {
+						id: true,
+						name: true
+					},
+					with: {
+						division: nestedDivisionQuery
+					}
+				}
 			}
 		});
 
