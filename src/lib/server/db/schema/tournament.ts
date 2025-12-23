@@ -135,8 +135,7 @@ export const match = pgTable(
 		id: uuid().primaryKey().defaultRandom(),
 		/** The match's group. Must be set for group-stage matches, null otherwise. */
 		groupId: uuid().references(() => group.id, { onDelete: 'cascade' }),
-		/** The match's division. Must be set for bracket matches, null otherwise. */
-		divisionId: uuid().references(() => division.id, { onDelete: 'cascade' }),
+		bracketId: uuid().references(() => bracket.id, { onDelete: 'cascade' }),
 		rosterAId: uuid().references(() => roster.id, { onDelete: 'set null' }),
 		rosterBId: uuid().references(() => roster.id, { onDelete: 'set null' }),
 		teamAScore: integer(),
@@ -158,9 +157,18 @@ export const match = pgTable(
 		check(
 			'group_xor_division',
 			and(
-				or(isNull(t.groupId), isNull(t.divisionId)),
-				or(isNotNull(t.groupId), isNotNull(t.divisionId))
+				or(isNull(t.groupId), isNull(t.bracketId)),
+				or(isNotNull(t.groupId), isNotNull(t.bracketId))
 			)!
 		)
 	]
 );
+
+export const bracket = pgTable('bracket', {
+	id: uuid().primaryKey().defaultRandom(),
+	name: text(),
+	divisionId: uuid()
+		.notNull()
+		.references(() => division.id, { onDelete: 'cascade' }),
+	...timestamps
+});

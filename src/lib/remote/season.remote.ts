@@ -2,7 +2,7 @@ import { command, query } from '$app/server';
 import { db, schema } from '$lib/server/db';
 import { toSlug } from '$lib/util';
 import { eq } from 'drizzle-orm';
-import * as z from 'zod';
+import z from 'zod';
 import { adminGuard } from './auth.remote';
 import { leagueQuery, nestedDivisionQuery } from '$lib/server/db/helpers';
 

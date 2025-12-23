@@ -29,11 +29,22 @@ export const load = async ({ params }) => {
 					groupwiseStandings: true
 				},
 				with: {
-					matches: {
-						orderBy: {
-							order: 'asc'
+					brackets: {
+						columns: {
+							id: true,
+							name: true
 						},
-						columns: fullMatchColumns
+						orderBy: {
+							name: 'asc'
+						},
+						with: {
+							matches: {
+								orderBy: {
+									order: 'asc'
+								},
+								columns: fullMatchColumns
+							}
+						}
 					},
 					groups: {
 						orderBy: {

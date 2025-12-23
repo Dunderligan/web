@@ -6,19 +6,13 @@
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
-	import EditableMatch from '$lib/components/match/EditableMatch.svelte';
-	import EditMatchDialog from '$lib/components/match/EditMatchDialog.svelte';
 	import InputField from '$lib/components/ui/InputField.svelte';
 	import Label from '$lib/components/ui/Label.svelte';
-	import Notice from '$lib/components/ui/Notice.svelte';
 	import SaveToast from '$lib/components/admin/SaveToast.svelte';
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
-	import { RosterContext } from '$lib/state/rosters.svelte';
 	import { SaveContext } from '$lib/state/save.svelte';
-	import type { FullMatch } from '$lib/types';
 	import { createGroup } from '$lib/remote/group.remote';
-	import { deleteBracket, deleteDivision, updateDivision } from '$lib/remote/division.remote';
-	import { buildBracketRounds } from '$lib/bracket.js';
+	import { deleteDivision, updateDivision } from '$lib/remote/division.remote';
 	import Checkbox from '$lib/components/ui/Checkbox.svelte';
 	import GenerateBracketDialog from '$lib/components/admin/GenerateBracketDialog.svelte';
 
@@ -27,11 +21,10 @@
 	const division = $state(data.division);
 	const season = $state(division.season);
 
-	RosterContext.set(new RosterContext(data.division.groups.flatMap((group) => group.rosters)));
 	SaveContext.set(
 		new SaveContext({
 			save,
-			href: `/stallningar/${season.slug}?div=${division.slug}&visa=slutspel`
+			href: `/stallningar/${season.slug}?div=${division.slug}&visa=gruppspel`
 		})
 	);
 
@@ -41,8 +34,7 @@
 	let createGroupOpen = $state(false);
 	let newGroupName = $state('');
 
-	let generateBracketOpen = $state(false);
-	let rounds: FullMatch[][] = $state([]);
+	let createBracketOpen = $state(false);
 
 	async function submitDelete() {
 		await confirmCtx.confirm({
@@ -73,46 +65,9 @@
 			id: division.id,
 			name: division.name,
 			playoffLine: division.playoffLine,
-			groupwiseStandings: division.groupwiseStandings,
-			bracketMatches: rounds.flatMap((round) => round)
+			groupwiseStandings: division.groupwiseStandings
 		});
 	}
-
-	async function onDeleteBracket() {
-		await deleteBracket({
-			divisionId: division.id
-		});
-
-		rounds = [];
-	}
-
-	$effect(() => {
-		rounds = buildBracketRounds(data.matches);
-	});
-
-	$effect(() => {
-		for (let i = 0; i < rounds.length - 1; i++) {
-			for (let j = 0; j < rounds[i].length; j++) {
-				const match = rounds[i][j];
-				if (!match.rosterAId || !match.rosterBId) continue;
-
-				const nextMatch = rounds[i + 1][Math.floor(j / 2)];
-				const isRosterAInNext = j % 2 == 0;
-
-				const winner = match.played
-					? (match.teamAScore ?? 0) > (match.teamBScore ?? 0)
-						? match.rosterAId
-						: match.rosterBId
-					: null;
-
-				if (isRosterAInNext) {
-					nextMatch.rosterAId = winner;
-				} else if (!isRosterAInNext) {
-					nextMatch.rosterBId = winner;
-				}
-			}
-		}
-	});
 </script>
 
 <Breadcrumbs
@@ -141,30 +96,20 @@
 </AdminCard>
 
 <AdminCard title="Slutspel">
-	{#if rounds.length > 0}
-		<div class="flex w-full items-stretch gap-4">
-			{#each rounds as round, i}
-				<div class="flex w-full flex-col justify-around gap-4">
-					{#each round as match (match.id)}
-						<EditableMatch {match} canDelete={false} canEditRosters={i === 0} />
-					{/each}
-				</div>
+	{#if division.brackets.length === 0}
+		<AdminEmptyNotice oncreateclick={() => (createBracketOpen = true)}>
+			Denna division har inga brackets.
+		</AdminEmptyNotice>
+	{:else}
+		<div class="space-y-1 overflow-hidden rounded-lg">
+			{#each division.brackets as { id, name } (id)}
+				<AdminLink href="/admin/bracket/{id}">
+					{name ?? 'Bracket'}
+				</AdminLink>
 			{/each}
 		</div>
 
-		<Button icon="ph:trash" label="Radera bracket" kind="negative" onclick={onDeleteBracket} />
-	{:else}
-		<Notice kind="info">
-			Denna division har inget bracket.
-
-			<Button
-				kind="transparent"
-				icon="ph:plus"
-				label="Generera"
-				class="ml-auto"
-				onclick={() => (generateBracketOpen = true)}
-			></Button>
-		</Notice>
+		<Button icon="ph:plus" onclick={() => (createBracketOpen = true)} />
 	{/if}
 </AdminCard>
 
@@ -191,8 +136,6 @@
 	<Button icon="ph:trash" label="Radera division" kind="negative" onclick={submitDelete} />
 </AdminCard>
 
-<EditMatchDialog />
-
 <CreateDialog
 	title="Skapa grupp"
 	bind:open={createGroupOpen}
@@ -207,11 +150,6 @@
 	</Label>
 </CreateDialog>
 
-<GenerateBracketDialog
-	bind:open={generateBracketOpen}
-	seasonId={season.id}
-	divisionId={division.id}
-	onGenerated={(newRounds) => (rounds = newRounds)}
-/>
+<GenerateBracketDialog bind:open={createBracketOpen} divisionId={division.id} />
 
 <SaveToast />

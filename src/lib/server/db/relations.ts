@@ -12,7 +12,7 @@ const relations = defineRelations(schema, (r) => ({
 			optional: false
 		}),
 		groups: r.many.group(),
-		matches: r.many.match()
+		brackets: r.many.bracket()
 	},
 	group: {
 		division: r.one.division({
@@ -57,8 +57,16 @@ const relations = defineRelations(schema, (r) => ({
 	match: {
 		rosterA: r.one.roster({ from: r.match.rosterAId, to: r.roster.id }),
 		rosterB: r.one.roster({ from: r.match.rosterBId, to: r.roster.id }),
-		division: r.one.division({ from: r.match.divisionId, to: r.division.id }),
+		bracket: r.one.bracket({ from: r.match.bracketId, to: r.bracket.id }),
 		group: r.one.group({ from: r.match.groupId, to: r.group.id })
+	},
+	bracket: {
+		division: r.one.division({
+			from: r.bracket.divisionId,
+			to: r.division.id,
+			optional: false
+		}),
+		matches: r.many.match()
 	}
 }));
 

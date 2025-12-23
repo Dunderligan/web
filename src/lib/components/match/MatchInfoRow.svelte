@@ -1,17 +1,19 @@
 <script lang="ts">
-	import type { ClassValue, FullMatchWithoutOrder, NestedDivision } from '$lib/types';
+	import type { ClassValue, FullMatchWithoutOrder, NestedBracket, NestedGroup } from '$lib/types';
 	import { formatDate, formatDateTime } from '$lib/util';
 	import Icon from '../ui/Icon.svelte';
 
 	type Props = {
 		match: FullMatchWithoutOrder;
-		division?: NestedDivision | null;
-		isBracketMatch?: boolean | null;
+		group?: NestedGroup | null;
+		bracket?: NestedBracket | null;
 		center?: boolean;
 		class?: ClassValue;
 	};
 
-	let { match, division, isBracketMatch, center = false, class: classProp }: Props = $props();
+	let { match, group, bracket, center = false, class: classProp }: Props = $props();
+
+	const division = $derived(group ? group.division : bracket ? bracket.division : null);
 </script>
 
 <div
@@ -21,7 +23,7 @@
 		'flex items-center gap-4 bg-gray-100 text-sm font-medium text-gray-500 dark:bg-gray-900 dark:text-gray-400'
 	]}
 >
-	{#if isBracketMatch}
+	{#if bracket}
 		<Icon icon="ph:trophy" title="Slutspelsmatch" />
 	{/if}
 
@@ -49,7 +51,7 @@
 
 	{#if division}
 		<a
-			href="/stallningar/{division.season.slug}?div={division.slug}&visa={isBracketMatch
+			href="/stallningar/{division.season.slug}?div={division.slug}&visa={bracket
 				? 'slutspel'
 				: 'gruppspel'}"
 			class="hover:underline"

@@ -77,6 +77,12 @@ export type FlattenedGroup<S = BaseLeague, D = S, G = S> = {
 	group: G;
 };
 
+export type NestedBracket<S = BaseLeague, D = S> = {
+	id: string;
+	name: string;
+	division: NestedDivision<S, D>;
+};
+
 export type Member = {
 	role: Role;
 	rank: Rank | null;
@@ -147,9 +153,9 @@ export type MatchRoster = {
 	slug: string;
 };
 
-export type ResolvedMatchWithContext<G = NestedGroup, D = NestedDivision> = ResolvedMatch & {
+export type ResolvedMatchWithContext<G = NestedGroup, B = NestedBracket> = ResolvedMatch & {
 	group?: G | null;
-	division?: D | null;
+	bracket?: B | null;
 };
 
 /**

@@ -27,7 +27,7 @@
 	});
 
 	const hasGroupStage = $derived(division.rosters.length > 0);
-	const hasPlayoffs = $derived(division.matches.length > 0);
+	const hasPlayoffs = $derived(division.brackets.length > 0);
 
 	const tabItems = $derived([
 		{
@@ -148,7 +148,7 @@
 
 <PageSection>
 	<section class="grow overflow-hidden">
-		<div class="mb-2 flex max-w-lg flex-col gap-1.5">
+		<div class="mb-4 flex max-w-lg flex-col gap-1.5">
 			<Tabs
 				selected={division.id}
 				items={divisions.map((division) => ({
@@ -169,7 +169,9 @@
 				}))}
 
 				{#if table.type === 'grupp'}
-					<Subheading class="mt-8">{table.title}</Subheading>
+					<Subheading class="mt-6 mb-4 flex justify-between">
+						<span>{table.title}</span>
+					</Subheading>
 				{/if}
 
 				<StandingsTable
@@ -210,10 +212,16 @@
 				<MatchList matches={division.upcomingMatches.map(resolveMatch)} seasonSlug={season.slug} />
 			{/if}
 		{:else}
-			<Bracket
-				seasonSlug={season.slug}
-				rounds={buildBracketRounds(division.matches.map(resolveMatch))}
-			/>
+			{#each division.brackets as bracket (bracket.id)}
+				{#if bracket.name}
+					<Subheading class="mt-6 mb-4">{bracket.name}</Subheading>
+				{/if}
+
+				<Bracket
+					seasonSlug={season.slug}
+					rounds={buildBracketRounds(bracket.matches.map(resolveMatch))}
+				/>
+			{/each}
 
 			{#if page.data.user?.isAdmin}
 				<Button

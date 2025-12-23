@@ -50,7 +50,7 @@
 	]}
 	{rows}
 	key={(row) => (row === 'playoffLine' ? row : row.roster.id)}
-	class="mt-4 max-w-2xl grid-cols-[40px_1fr_50px_60px_70px] sm:grid-cols-[50px_1fr_80px_60px_80px]"
+	class="max-w-2xl grid-cols-[40px_1fr_50px_60px_70px] sm:grid-cols-[50px_1fr_80px_60px_80px]"
 >
 	{#snippet row({ index, value: row })}
 		{#if row === 'playoffLine'}

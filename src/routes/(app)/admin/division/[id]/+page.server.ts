@@ -6,34 +6,16 @@ export const load = async ({ params }) => {
 		where: {
 			id: params.id
 		},
-		columns: {
-			createdAt: false
-		},
 		with: {
 			groups: {
 				orderBy: { name: 'asc' },
 				columns: {
 					createdAt: false,
 					divisionId: false
-				},
-				with: {
-					rosters: {
-						columns: {
-							id: true,
-							name: true,
-							slug: true
-						}
-					}
 				}
 			},
-			season: {
-				columns: {
-					createdAt: false
-				}
-			},
-			matches: {
-				orderBy: { order: 'asc' }
-			}
+			season: {},
+			brackets: {}
 		}
 	});
 
@@ -41,7 +23,5 @@ export const load = async ({ params }) => {
 		error(404);
 	}
 
-	const { matches, ...division } = data;
-
-	return { division, matches };
+	return { division: data };
 };

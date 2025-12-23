@@ -31,7 +31,14 @@ const getMatches = async ({ played }: { played: boolean }) => {
 		},
 		with: {
 			group: nestedGroupQuery,
-			division: nestedDivisionQuery,
+			bracket: {
+				columns: {
+					name: true
+				},
+				with: {
+					division: nestedDivisionQuery
+				}
+			},
 			rosterA: matchRosterQuery,
 			rosterB: matchRosterQuery
 		}

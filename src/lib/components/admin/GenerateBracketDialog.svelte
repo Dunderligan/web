@@ -1,53 +1,41 @@
 <script lang="ts">
-	import { generateBracket } from '$lib/remote/division.remote';
-	import { getDivisionsBySeason } from '$lib/remote/season.remote';
-	import type { FullMatch } from '$lib/types';
+	import { goto } from '$app/navigation';
+	import { generateBracket } from '$lib/remote/bracket.remote';
 	import Checkbox from '../ui/Checkbox.svelte';
+	import InputField from '../ui/InputField.svelte';
 	import Label from '../ui/Label.svelte';
 	import Select from '../ui/Select.svelte';
 	import CreateDialog from './CreateDialog.svelte';
 
 	type Props = {
 		open: boolean;
-		seasonId: string;
 		divisionId: string;
-		onGenerated?: (rounds: FullMatch[][]) => void;
 	};
 
-	let { open = $bindable(), seasonId, divisionId, onGenerated }: Props = $props();
+	let { open = $bindable(), divisionId }: Props = $props();
 
-	let rosterDivisionId = $state(divisionId);
+	let name = $state<string | null>(null);
 	let roundCount = $state(2);
 	let avoidPreviousMatches = $state(true);
 	let flipStandings = $state(false);
 
 	async function submit() {
-		const result = await generateBracket({
+		const { bracket } = await generateBracket({
+			name,
 			divisionId,
-			rosterDivisionId,
 			roundCount: roundCount,
 			avoidPreviousMatches,
 			flipStandings
 		});
 
 		open = false;
-		onGenerated?.(result.rounds);
+		await goto(`/admin/bracket/${bracket.id}`);
 	}
 </script>
 
-<CreateDialog wide title="Generera bracket" bind:open oncreate={submit} disabled={!roundCount}>
-	<Label label="Division för lag">
-		{#await getDivisionsBySeason({ seasonId }) then { divisions }}
-			<Select
-				class="grow"
-				type="single"
-				bind:value={rosterDivisionId}
-				items={divisions.map((division) => ({
-					label: division.name,
-					value: division.id
-				}))}
-			/>
-		{/await}
+<CreateDialog wide title="Skapa bracket" bind:open oncreate={submit} disabled={!roundCount}>
+	<Label label="Namn (valfritt)">
+		<InputField bind:value={name} placeholder="T.ex. Dunderligan" />
 	</Label>
 
 	<Label label="Storlek">

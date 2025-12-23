@@ -25,14 +25,12 @@
 	const leftTeam = $derived(flipped ? 'B' : 'A');
 	const rightTeam = $derived(flipSide(leftTeam));
 
-	const isBracketMatch = $derived(match.division ? true : match.group ? false : null);
-
-	const division = $derived(match.division ?? match.group?.division ?? null);
+	const division = $derived(match.group?.division ?? match.bracket?.division ?? null);
 	const seasonSlug = $derived(seasonSlugProp ?? division?.season.slug);
 </script>
 
 <div class="relative overflow-hidden rounded-lg bg-gray-100 px-6 py-3 dark:bg-gray-900">
-	<MatchInfoRow {match} {division} {isBracketMatch} class="pb-2" center />
+	<MatchInfoRow {match} group={match.group} bracket={match.bracket} class="pb-2" center />
 
 	<div class="flex flex-col items-center gap-2 sm:flex-row">
 		{@render side(leftTeam, {
