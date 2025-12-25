@@ -124,10 +124,9 @@ async function insertDivision(
 	name: string,
 	input: DivisionInput
 ) {
-	const [division] = await tx
-		.insert(schema.division)
-		.values({ name, slug: toSlug(name), seasonId })
-		.returning();
+	const slug = toSlug(name.split(' ').at(-1) ?? name);
+
+	const [division] = await tx.insert(schema.division).values({ name, slug, seasonId }).returning();
 
 	for (const [groupName, group] of Object.entries(input.groups)) {
 		await insertGroup(tx, seasonSlug, division.id, groupName, group);

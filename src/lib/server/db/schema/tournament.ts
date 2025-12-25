@@ -166,7 +166,7 @@ export const match = pgTable(
 
 export const bracket = pgTable('bracket', {
 	id: uuid().primaryKey().defaultRandom(),
-	name: text(),
+	name: text().notNull(),
 	divisionId: uuid()
 		.notNull()
 		.references(() => division.id, { onDelete: 'cascade' }),

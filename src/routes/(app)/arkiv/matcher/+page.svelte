@@ -48,13 +48,13 @@
 				href={queryParamHref('sida', data.query.page - 1)}
 			/>
 
-			<Button
-				class="ml-auto"
-				kind="secondary"
-				icon="ph:arrow-right"
-				label="Nästa sida"
-				href={queryParamHref('sida', data.query.page + 1)}
-			/>
+			{#await matchQuery}
+				<!-- While waiting for the query, we can't know whether there's a next page or not, 
+				so just disable the button. -->
+				{@render nextPageButton({ disabled: true })}
+			{:then { hasNextPage }}
+				{@render nextPageButton({ disabled: !hasNextPage })}
+			{/await}
 		</div>
 
 		<MatchList
@@ -64,3 +64,14 @@
 		/>
 	</div>
 </PageSection>
+
+{#snippet nextPageButton({ disabled }: { disabled: boolean })}
+	<Button
+		class="ml-auto"
+		kind="secondary"
+		icon="ph:arrow-right"
+		label="Nästa sida"
+		href={queryParamHref('sida', data.query.page + 1)}
+		{disabled}
+	/>
+{/snippet}

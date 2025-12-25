@@ -79,7 +79,7 @@ export type FlattenedGroup<S = BaseLeague, D = S, G = S> = {
 
 export type NestedBracket<S = BaseLeague, D = S> = {
 	id: string;
-	name: string | null;
+	name: string;
 	division: NestedDivision<S, D>;
 };
 

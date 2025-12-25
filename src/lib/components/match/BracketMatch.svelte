@@ -2,8 +2,6 @@
 	import type { ResolvedMatch } from '$lib/types';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import { matchRoster, isWinner, type MatchSide, matchScore } from '$lib/match';
-	import { formatDate, formatDateTime } from '$lib/util';
-	import Icon from '../ui/Icon.svelte';
 	import MatchInfoRow from './MatchInfoRow.svelte';
 
 	type Props = {
@@ -29,7 +27,7 @@
 	tabindex="0"
 	role="button"
 >
-	<MatchInfoRow class="h-[25px] rounded-t-lg px-4" {match} isBracketMatch />
+	<MatchInfoRow class="h-[25px] rounded-t-lg bg-gray-100 px-4 dark:bg-gray-900" {match} />
 
 	{@render side('A')}
 

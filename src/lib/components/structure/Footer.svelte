@@ -33,38 +33,34 @@
 	<div class="mx-auto flex max-w-4xl flex-col items-start gap-8 text-left md:flex-row">
 		<div class="w-full">
 			<img src="/logo.png" alt="Dunderligan" class="-mt-2 size-14" />
-			<p class="text-lg">
-				Dunderligan
-				<br />
-				Källkod under
-				<a href="https://choosealicense.com/licenses/gpl-3.0/" class="underline">GPL v3</a>.
-			</p>
-			<div class="my-2 grid w-max grid-cols-6 gap-x-4 gap-y-2 md:grid-cols-3">
+			<p class="text-lg">Dunderligan</p>
+			<div class="mt-4 grid w-max grid-cols-6 gap-x-3 gap-y-3 md:grid-cols-3">
 				{#each socials as social}
 					<TeamSocial {...social} class="text-2xl" />
 				{/each}
 			</div>
-			<p class="text-gray-400">Byggd av Bobbo med ❤️</p>
+			<p class="mt-4 text-gray-400">
+				Byggd av Bobbo med ❤️.
+				<br />
+				Dunderligan är <a class="underline" href="https://github.com/Dunderligan">öppen källkod</a>.
+			</p>
 		</div>
 
-		<div class="w-full">
+		<div class="flex w-full flex-col items-start gap-1">
 			<div class="mb-2 text-xl font-semibold text-white">Navigation</div>
 
-			<a href="/" class="block text-lg hover:text-accent-400 hover:underline">Startsida</a>
-			<a href="/stallningar" class="block text-lg hover:text-accent-400 hover:underline"
-				>Ställningar</a
-			>
-			<a href="/arkiv" class="block text-lg hover:text-accent-400 hover:underline">Arkiv</a>
-			<a href="/om" class="block text-lg hover:text-accent-400 hover:underline">Om oss</a>
+			<a href="/" class="text-lg hover:underline">Startsida</a>
+			<a href="/stallningar" class="text-lg hover:underline">Ställningar</a>
+			<a href="/arkiv" class="text-lg hover:underline">Arkiv</a>
+			<a href="/om" class="text-lg hover:underline">Om oss</a>
 		</div>
 
-		<div class="w-full">
+		<div class="flex w-full flex-col items-start">
 			<div class="mb-2 text-xl font-semibold text-white">Kontakt</div>
 
-			<a
-				href="mailto:dunderleagueow@gmail.com"
-				class="block text-lg hover:text-accent-400 hover:underline">dunderleagueow@gmail.com</a
-			>
+			<a href="mailto:dunderleagueow@gmail.com" class="text-lg hover:underline">
+				dunderleagueow@gmail.com
+			</a>
 		</div>
 
 		<div class="flex w-full items-center gap-4 text-gray-400">

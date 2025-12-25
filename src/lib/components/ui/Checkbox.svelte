@@ -12,9 +12,9 @@
 	class={[
 		classProp,
 		checked
-			? 'border-transparent bg-accent-600 hover:bg-accent-700'
-			: 'border-gray-300 bg-gray-100 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:hover:bg-gray-700',
-		'flex size-7 items-center justify-center rounded-md border text-gray-200'
+			? 'border-transparent bg-accent-600 data-disabled:bg-gray-400 data-enabled:hover:bg-accent-700 dark:data-disabled:bg-gray-600'
+			: 'border-gray-300 bg-gray-100 hover:bg-gray-50 data-disabled:bg-gray-600 dark:border-gray-600 dark:bg-gray-800 dark:hover:bg-gray-700',
+		'flex size-7 items-center justify-center rounded-md border text-gray-200 data-disabled:cursor-not-allowed'
 	]}
 	{...props}
 >

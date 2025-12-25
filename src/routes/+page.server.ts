@@ -2,6 +2,7 @@ import { db } from '$lib/server/db';
 import {
 	groupMatchOrder,
 	matchRosterQuery,
+	nestedBracketQuery,
 	nestedDivisionQuery,
 	nestedGroupQuery
 } from '$lib/server/db/helpers';
@@ -31,14 +32,7 @@ const getMatches = async ({ played }: { played: boolean }) => {
 		},
 		with: {
 			group: nestedGroupQuery,
-			bracket: {
-				columns: {
-					name: true
-				},
-				with: {
-					division: nestedDivisionQuery
-				}
-			},
+			bracket: nestedBracketQuery,
 			rosterA: matchRosterQuery,
 			rosterB: matchRosterQuery
 		}

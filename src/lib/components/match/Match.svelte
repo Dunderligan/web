@@ -15,22 +15,46 @@
 	type Props = {
 		match: ResolvedMatchWithContext;
 		seasonSlug?: string;
-		flipped?: boolean;
+		mainRosterId?: string;
+		hideDivision?: boolean;
 	};
 
-	let { match, seasonSlug: seasonSlugProp, flipped = false }: Props = $props();
+	let { match, seasonSlug: seasonSlugProp, mainRosterId, hideDivision = false }: Props = $props();
 
 	const winner = $derived(matchWinner(match));
 
+	const flipped = $derived(mainRosterId === match.rosterB?.id);
 	const leftTeam = $derived(flipped ? 'B' : 'A');
 	const rightTeam = $derived(flipSide(leftTeam));
 
 	const division = $derived(match.group?.division ?? match.bracket?.division ?? null);
 	const seasonSlug = $derived(seasonSlugProp ?? division?.season.slug);
+
+	const gradientClass = $derived.by(() => {
+		if (!mainRosterId) return null;
+
+		if (winner === leftTeam) {
+			return 'bg-linear-to-l to-green-100 dark:to-green-950';
+		} else if (winner == rightTeam) {
+			return 'bg-linear-to-r to-red-100 dark:to-red-950';
+		}
+	});
 </script>
 
-<div class="relative overflow-hidden rounded-lg bg-gray-100 px-6 py-3 dark:bg-gray-900">
-	<MatchInfoRow {match} group={match.group} bracket={match.bracket} class="pb-2" center />
+<div
+	class={[
+		// gradientClass,
+		'relative overflow-hidden rounded-lg bg-gray-100 px-6 py-3 dark:bg-gray-900'
+	]}
+>
+	<MatchInfoRow
+		{match}
+		group={match.group}
+		bracket={match.bracket}
+		{hideDivision}
+		class="pb-2"
+		center
+	/>
 
 	<div class="flex flex-col items-center gap-2 sm:flex-row">
 		{@render side(leftTeam, {

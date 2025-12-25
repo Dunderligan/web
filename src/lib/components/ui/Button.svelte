@@ -64,7 +64,7 @@
 		'inline-flex items-center justify-center gap-2 rounded-lg'
 	]}
 	{disabled}
-	{href}
+	href={disabled ? undefined : href}
 	{...props}
 >
 	{#if children}

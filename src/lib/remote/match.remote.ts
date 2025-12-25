@@ -22,12 +22,14 @@ export const queryMatches = query(
 	}),
 	async ({ rosterId, divisionId, groupId, played, page }) => {
 		const results = await db.query.match.findMany({
-			limit: PAGE_SIZE,
+			// retrieve one extra to determine if there should be a next page
+			limit: PAGE_SIZE + 1,
 			offset: page * PAGE_SIZE,
 			orderBy: groupMatchOrder,
 			where: {
 				AND: [
 					{
+						// don't include unplayed matches without both rosters assigned
 						OR: [
 							{
 								rosterAId: {
@@ -43,6 +45,7 @@ export const queryMatches = query(
 						]
 					},
 					{
+						// if rosterId is undefined, this will always be true
 						OR: [
 							{
 								rosterAId: rosterId
@@ -53,13 +56,13 @@ export const queryMatches = query(
 						]
 					}
 				],
+				played,
 				groupId,
 				...(divisionId && {
 					group: {
 						divisionId
 					}
-				}),
-				played
+				})
 			},
 			columns: fullMatchColumns,
 			with: {
@@ -78,6 +81,9 @@ export const queryMatches = query(
 			}
 		});
 
-		return { matches: results };
+		const hasNextPage = results.length > PAGE_SIZE;
+		const shownResults = results.slice(0, PAGE_SIZE);
+
+		return { matches: shownResults, hasNextPage };
 	}
 );

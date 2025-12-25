@@ -77,11 +77,6 @@
 		>
 			{division.name}, {season.name}
 		</div>
-		<div class="flex items-center justify-center gap-3 sm:justify-start">
-			{#each team.socials as { platform, url } (platform)}
-				<TeamSocial class="text-4xl" {platform} href={url} />
-			{/each}
-		</div>
 	</div>
 </PageHeader>
 
@@ -93,11 +88,22 @@
 
 		<MembersTable members={roster.members} />
 
-		<Subheading class="mt-10 mb-4">Senaste matcherna</Subheading>
-		<MatchList matches={latestMatches} seasonSlug={season.slug} mainRosterId={roster.id} />
+		<MatchList
+			title="Senaste matcherna"
+			matches={latestMatches}
+			seasonSlug={season.slug}
+			mainRosterId={roster.id}
+			hideDivision
+		/>
 
-		<Subheading class="mt-10 mb-4">Kommande matcher</Subheading>
-		<MatchList matches={upcomingMatches} seasonSlug={season.slug} mainRosterId={roster.id} />
+		<MatchList
+			title="Kommande matcher"
+			matches={upcomingMatches}
+			seasonSlug={season.slug}
+			mainRosterId={roster.id}
+			hideIfEmpty
+			hideDivision
+		/>
 
 		<Button
 			href="/arkiv/matcher?roster={roster.id}&prev={page.url.pathname}"
@@ -112,8 +118,8 @@
 		<div class="mb-6 space-y-2">
 			<Button
 				href="/stallningar/{season.slug}?div={division.slug}"
-				label="Ställningar"
-				icon="ph:arrow-right"
+				label="Se ställningar"
+				icon="ph:table"
 				class="max-w-max"
 				kind="secondary"
 			/>
@@ -135,6 +141,14 @@
 				<div class="text-xl font-semibold text-gray-800 dark:text-gray-300">
 					<Rank rank={average} />
 				</div>
+			</div>
+		{/if}
+
+		{#if team.socials}
+			<div class="">
+				{#each team.socials as { platform, url } (platform)}
+					<TeamSocial class="text-4xl" {platform} href={url} />
+				{/each}
 			</div>
 		{/if}
 	</section>

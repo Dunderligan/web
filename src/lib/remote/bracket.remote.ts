@@ -7,10 +7,12 @@ import { adminGuard } from './auth.remote';
 import { createBracket } from '$lib/bracket';
 import { error } from '@sveltejs/kit';
 import { sortBySeed } from '$lib/table';
+import type { FullMatch } from '$lib/types';
+import { fullMatchColumns, matchRosterQuery } from '$lib/server/db/helpers';
 
 export const generateBracket = command(
 	z.object({
-		name: z.string().nullable(),
+		name: z.string(),
 		divisionId: z.uuid(),
 		roundCount: z.number(),
 		avoidPreviousMatches: z.boolean(),
@@ -26,6 +28,7 @@ export const generateBracket = command(
 
 		let qualifying;
 		if (!groupwiseStandings) {
+			// combine all groups and pick the highest seeded teams
 			sortBySeed(rosters, groupMatches);
 			qualifying = rosters;
 
@@ -39,7 +42,7 @@ export const generateBracket = command(
 			let extraTeams = slots % groups.length;
 
 			for (const group of groups) {
-				// sort each group individually
+				// seed each group individually
 				sortBySeed(group.rosters, group.matches);
 
 				if (flipStandings) {
@@ -59,6 +62,7 @@ export const generateBracket = command(
 				qualifying.push(...selected);
 			}
 
+			// finally sort by overall seed by combining all groups again
 			sortBySeed(qualifying, groupMatches);
 		}
 
@@ -66,34 +70,38 @@ export const generateBracket = command(
 			avoidPreviousMatches
 		});
 
-		const bracket = await db.transaction(async (tx) => {
-			const [bracket] = await tx
-				.insert(schema.bracket)
-				.values({
-					divisionId,
-					name
-				})
-				.returning({
-					id: schema.bracket.id
-				});
-
-			const matchInserts = rounds.flatMap((round) =>
-				round.map((match) => ({
-					bracketId: bracket.id,
-					...match
-				}))
-			);
-
-			if (matchInserts.length > 0) {
-				await tx.insert(schema.match).values(matchInserts);
-			}
-
-			return bracket;
-		});
+		const bracket = await insertBracket(name, divisionId, rounds);
 
 		return { bracket };
 	}
 );
+
+async function insertBracket(name: string, divisionId: string, rounds: FullMatch[][]) {
+	return await db.transaction(async (tx) => {
+		const [bracket] = await tx
+			.insert(schema.bracket)
+			.values({
+				name,
+				divisionId
+			})
+			.returning({
+				id: schema.bracket.id
+			});
+
+		const matchInserts = rounds.flatMap((round) =>
+			round.map((match) => ({
+				bracketId: bracket.id,
+				...match
+			}))
+		);
+
+		if (matchInserts.length > 0) {
+			await tx.insert(schema.match).values(matchInserts);
+		}
+
+		return bracket;
+	});
+}
 
 async function fetchDivision(divisionId: string) {
 	const data = await db.query.division.findFirst({
@@ -108,25 +116,12 @@ async function fetchDivision(divisionId: string) {
 			groups: {
 				columns: {},
 				with: {
-					rosters: {
-						columns: {
-							id: true,
-							name: true
-						}
-					},
+					rosters: matchRosterQuery,
 					matches: {
 						where: {
 							played: true
 						},
-						columns: {
-							id: true,
-							rosterAId: true,
-							rosterBId: true,
-							teamAScore: true,
-							teamBScore: true,
-							draws: true,
-							played: true
-						}
+						columns: fullMatchColumns
 					}
 				}
 			}
@@ -143,7 +138,7 @@ async function fetchDivision(divisionId: string) {
 export const updateBracket = command(
 	z.object({
 		id: z.uuid(),
-		name: z.string().nullable(),
+		name: z.string(),
 		matches: z.array(matchSchema)
 	}),
 	async ({ id, name, matches }) => {
@@ -152,6 +147,7 @@ export const updateBracket = command(
 		await db.transaction(async (tx) => {
 			await tx.update(schema.bracket).set({ name }).where(eq(schema.bracket.id, id));
 
+			// we don't allow adding/removing matches here, just updating existing ones
 			await Promise.all(
 				matches.map((match) => {
 					return tx.update(schema.match).set(match).where(eq(schema.match.id, match.id));

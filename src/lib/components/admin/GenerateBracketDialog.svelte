@@ -14,7 +14,7 @@
 
 	let { open = $bindable(), divisionId }: Props = $props();
 
-	let name = $state<string | null>(null);
+	let name = $state('');
 	let roundCount = $state(2);
 	let avoidPreviousMatches = $state(true);
 	let flipStandings = $state(false);
@@ -34,7 +34,7 @@
 </script>
 
 <CreateDialog wide title="Skapa bracket" bind:open oncreate={submit} disabled={!roundCount}>
-	<Label label="Namn (valfritt)">
+	<Label label="Namn">
 		<InputField bind:value={name} placeholder="T.ex. Dunderligan" />
 	</Label>
 

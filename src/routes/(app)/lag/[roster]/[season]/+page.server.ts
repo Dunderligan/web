@@ -1,6 +1,8 @@
 import {
 	groupMatchOrder,
+	leagueQuery,
 	matchRosterQuery,
+	nestedDivisionQuery,
 	nestedGroupQuery,
 	rolesOrder
 } from '$lib/server/db/helpers';
@@ -67,6 +69,12 @@ export const load = async ({ params }) => {
 
 	const matches = await db.query.match.findMany({
 		where: {
+			rosterAId: {
+				isNotNull: true
+			},
+			rosterBId: {
+				isNotNull: true
+			},
 			OR: [
 				{
 					rosterAId: data.id
@@ -76,7 +84,7 @@ export const load = async ({ params }) => {
 				}
 			]
 		},
-		limit: 3,
+		limit: 10,
 		orderBy: groupMatchOrder,
 		columns: {
 			id: true,
@@ -90,7 +98,17 @@ export const load = async ({ params }) => {
 		},
 		with: {
 			rosterA: matchRosterQuery,
-			rosterB: matchRosterQuery
+			rosterB: matchRosterQuery,
+			group: nestedGroupQuery,
+			bracket: {
+				columns: {
+					id: true,
+					name: true
+				},
+				with: {
+					division: nestedDivisionQuery
+				}
+			}
 		}
 	});
 

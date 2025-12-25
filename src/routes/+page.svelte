@@ -52,12 +52,10 @@
 	</div>
 </header>
 
-<PageSection topMargin={false} class="space-y-10">
-	<Subheading class="mb-4">Senaste matcherna</Subheading>
-	<MatchList matches={data.matches.latest} />
+<PageSection topMargin={false}>
+	<MatchList title="Senaste matcherna" matches={data.matches.latest} hideIfEmpty />
 
-	<Subheading class="mb-4">Kommande matcher</Subheading>
-	<MatchList matches={data.matches.upcoming} />
+	<MatchList title="Kommande matcher" matches={data.matches.upcoming} hideIfEmpty />
 </PageSection>
 
 <style>

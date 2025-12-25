@@ -8,10 +8,18 @@
 		group?: NestedGroup | null;
 		bracket?: NestedBracket | null;
 		center?: boolean;
+		hideDivision?: boolean;
 		class?: ClassValue;
 	};
 
-	let { match, group, bracket, center = false, class: classProp }: Props = $props();
+	let {
+		match,
+		group,
+		bracket,
+		center = false,
+		class: classProp,
+		hideDivision = false
+	}: Props = $props();
 
 	const division = $derived(group ? group.division : bracket ? bracket.division : null);
 </script>
@@ -20,7 +28,7 @@
 	class={[
 		classProp,
 		center && 'sm:justify-center',
-		'flex items-center gap-4 bg-gray-100 text-sm font-medium text-gray-500 dark:bg-gray-900 dark:text-gray-400'
+		'flex items-center gap-4 text-sm font-medium text-gray-500 dark:text-gray-400'
 	]}
 >
 	{#if bracket}
@@ -49,7 +57,7 @@
 		</div>
 	{/if}
 
-	{#if division}
+	{#if division && !hideDivision}
 		<a
 			href="/stallningar/{division.season.slug}?div={division.slug}&visa={bracket
 				? 'slutspel'

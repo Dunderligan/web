@@ -36,7 +36,7 @@ When you're ready to commit your changes, generate a new SQL migration with:
 pnpm db:generate --name [name]
 ```
 
-This will create a new SQL migration file in `drizzle/migrations/` which will be ran against the production database on deploy. You can also try them locally with:
+This will create a new SQL migration file in `drizzle/migrations/` which will be ran against the production database on deploy. You can also try them out locally with:
 
 ```bash
 pnpm db:migrate

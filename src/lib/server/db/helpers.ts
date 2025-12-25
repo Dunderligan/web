@@ -30,6 +30,16 @@ export const nestedGroupQuery = {
 	}
 } as const;
 
+export const nestedBracketQuery = {
+	columns: {
+		id: true,
+		name: true
+	},
+	with: {
+		division: nestedDivisionQuery
+	}
+} as const;
+
 export const matchRosterQuery = leagueQuery;
 
 export const groupMatchOrder = {

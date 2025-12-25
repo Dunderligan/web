@@ -44,12 +44,16 @@
 			<div class="flex items-center justify-center">
 				{#if user.isSuperAdmin}
 					<Icon icon="ph:shield-check" class="text-blue-600" title="Superadmin" />
-				{:else if page.data?.user.isSuperAdmin}
-					<Checkbox bind:checked={user.isAdmin} onCheckedChange={saveCtx.setDirty} />
+				{:else}
+					<Checkbox
+						bind:checked={user.isAdmin}
+						onCheckedChange={saveCtx.setDirty}
+						disabled={!page.data.user?.isSuperAdmin}
+					/>
 				{/if}
 			</div>
 
-			<div class="flex items-center justify-center text-lg font-medium">
+			<div class="flex items-center justify-center font-medium">
 				{formatDate(user.createdAt)}
 			</div>
 		{/snippet}
