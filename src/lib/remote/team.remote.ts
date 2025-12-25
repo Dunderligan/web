@@ -14,8 +14,6 @@ export const queryTeams = query(
 	async ({ query, excludeSeasonId, excludeTeamId }) => {
 		await adminGuard();
 
-		console.log('Hello?');
-
 		// gather rosters that match the query from any team/season
 		const rosters = await db.query.roster.findMany({
 			limit: 15,

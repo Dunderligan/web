@@ -189,8 +189,6 @@ export const uploadRosterLogo = command(
 		});
 
 		await S3.send(command);
-
-		console.log('uploaded team logo at', cdnSrc(cdnRosterLogoPath(rosterId)));
 	}
 );
 

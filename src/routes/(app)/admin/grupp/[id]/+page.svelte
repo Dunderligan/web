@@ -90,8 +90,6 @@
 		});
 
 		await goto(`/admin/roster/${roster.id}`);
-
-		console.log('finished');
 	}
 
 	function addMatchAndEdit() {

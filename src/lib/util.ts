@@ -37,7 +37,6 @@ export function averageRank(ranks: NullableFullRank[]): FullRank | null {
 	for (const { rank, tier } of ranks) {
 		if (!rank || !tier) continue;
 		nonNullCount++;
-		console.log(rankToNum({ rank, tier }));
 		total += rankToNum({ rank, tier });
 	}
 
