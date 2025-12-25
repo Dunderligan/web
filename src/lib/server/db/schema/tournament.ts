@@ -155,7 +155,7 @@ export const match = pgTable(
 	},
 	(t) => [
 		check(
-			'group_xor_division',
+			'group_xor_bracket',
 			and(
 				or(isNull(t.groupId), isNull(t.bracketId)),
 				or(isNotNull(t.groupId), isNotNull(t.bracketId))

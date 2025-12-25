@@ -1,7 +1,7 @@
 {
   "version": "8",
   "dialect": "postgres",
-  "id": "7d5066dd-7de1-4136-bc9f-d0ffa2332625",
+  "id": "67415da9-c23c-4213-bf28-67a3c9d6b218",
   "prevIds": [
     "9f031aeb-4082-4048-9cce-901f5cd2c6b0"
   ],
@@ -1537,7 +1537,7 @@
     },
     {
       "value": "((\"group_id\" is null or \"bracket_id\" is null) and (\"group_id\" is not null or \"bracket_id\" is not null))",
-      "name": "group_xor_division",
+      "name": "group_xor_bracket",
       "entityType": "checks",
       "schema": "public",
       "table": "match"
@@ -1557,7 +1557,5 @@
       "table": "member"
     }
   ],
-  "renames": [
-    "public.member.notlegacy_sr_and_tier->public.member.not_both_legacy_sr_and_tier"
-  ]
+  "renames": []
 }
