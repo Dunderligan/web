@@ -42,7 +42,7 @@ Create a new API token. For permissions, pick `Object Read & Write`. The rest of
 
 Cloudflare will now show the `Access Key ID`, `Secret Access Key` and S3 endpoint for the newly created API token. Copy the three values into their respective fields of the `.env` file. **These will not be shown again!**
 
-R2 should now be working. However, team logos still won't show until you've setup Images as well. Nevertheless, you can still test it out by uploading a team logo via the admin page and, via the Cloudflare Dashboard, check that it was added to the R2 bucket.
+R2 should now be working. However, team logos still won't show until you've setup Images as well. Nevertheless, you can still test it out by uploading a team logo via the admin page and, via the Cloudflare dashboard, check that it was added to the R2 bucket.
 
 ### Images
 
