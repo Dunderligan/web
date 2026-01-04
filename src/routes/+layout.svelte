@@ -15,6 +15,10 @@
 	const theme = ThemeState.get();
 </script>
 
+<svelte:head>
+	<link rel="icon" href={favicon} />
+</svelte:head>
+
 <div class={[theme.current === 'dark' && 'dark']}>
 	<ProgressBar class="text-accent-500" zIndex={100} />
 

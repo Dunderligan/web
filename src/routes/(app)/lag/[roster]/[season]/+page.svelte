@@ -52,9 +52,12 @@
 </script>
 
 <Meta
-	title="{roster.name} - {season.name}"
-	description="Se medlemmar och senaste matcher för {roster.name} i {season.name} av Dunderligan."
+	title={roster.name}
+	description="Se medlemmar och senaste matcher för {roster.name}, {division.name} i {season.name}."
 	ogImage={cdnImageSrc(cdnRosterLogoPath(roster.id), { width: 630 })}
+	ogImageAlt="Logotyp för {roster.name}"
+	ogImageWidth={630}
+	ogImageHeight={630}
 />
 
 <PageHeader class="flex flex-col items-center gap-6 sm:flex-row">
