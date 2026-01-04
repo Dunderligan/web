@@ -14,6 +14,7 @@
 	import type { FullMatch } from '$lib/types';
 	import { buildBracketRounds } from '$lib/bracket.js';
 	import { deleteBracket, updateBracket } from '$lib/remote/bracket.remote';
+	import { getRosterId as sideToRosterId, matchWinner } from '$lib/match.js';
 
 	const { data } = $props();
 
@@ -62,23 +63,20 @@
 	});
 
 	$effect(() => {
+		// propagate winners to the next round
 		for (let i = 0; i < rounds.length - 1; i++) {
 			for (let j = 0; j < rounds[i].length; j++) {
 				const match = rounds[i][j];
 				if (!match.rosterAId || !match.rosterBId) continue;
 
 				const nextMatch = rounds[i + 1][Math.floor(j / 2)];
-				const isRosterAInNext = j % 2 == 0;
+				const isRosterSideAInNext = j % 2 == 0;
 
-				const winner = match.played
-					? (match.teamAScore ?? 0) > (match.teamBScore ?? 0)
-						? match.rosterAId
-						: match.rosterBId
-					: null;
+				const winner = sideToRosterId(match, matchWinner(match));
 
-				if (isRosterAInNext) {
+				if (isRosterSideAInNext) {
 					nextMatch.rosterAId = winner;
-				} else if (!isRosterAInNext) {
+				} else if (!isRosterSideAInNext) {
 					nextMatch.rosterBId = winner;
 				}
 			}

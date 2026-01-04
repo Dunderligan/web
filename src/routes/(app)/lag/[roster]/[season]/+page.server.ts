@@ -2,6 +2,7 @@ import {
 	groupMatchOrder,
 	leagueQuery,
 	matchRosterQuery,
+	nestedBracketQuery,
 	nestedDivisionQuery,
 	nestedGroupQuery,
 	rolesOrder
@@ -84,7 +85,6 @@ export const load = async ({ params }) => {
 				}
 			]
 		},
-		limit: 10,
 		orderBy: groupMatchOrder,
 		columns: {
 			id: true,
@@ -100,15 +100,7 @@ export const load = async ({ params }) => {
 			rosterA: matchRosterQuery,
 			rosterB: matchRosterQuery,
 			group: nestedGroupQuery,
-			bracket: {
-				columns: {
-					id: true,
-					name: true
-				},
-				with: {
-					division: nestedDivisionQuery
-				}
-			}
+			bracket: nestedBracketQuery
 		}
 	});
 

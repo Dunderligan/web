@@ -97,15 +97,15 @@
 			id: uuidv4(),
 			groupId: data.group.id,
 			played: false,
-			divisionId: null,
-			draws: null,
+			bracketId: null,
+			draws: 0,
+			teamAScore: 0,
+			teamBScore: 0,
 			nextMatchId: null,
 			playedAt: null,
 			rosterAId: null,
 			rosterBId: null,
 			scheduledAt: null,
-			teamAScore: null,
-			teamBScore: null,
 			vodUrl: null,
 			createdAt: null,
 			order: null
@@ -154,6 +154,9 @@
 	{:else}
 		<Label label="Filtrera efter lag">
 			<RosterSelect bind:selectedId={rosterFilter} class="grow" />
+			{#if rosterFilter}
+				<Button icon="ph:x" kind="secondary" class="ml-2" onclick={() => (rosterFilter = null)} />
+			{/if}
 		</Label>
 
 		<div class="grid grid-cols-1 gap-2 overflow-hidden rounded-lg md:grid-cols-2">

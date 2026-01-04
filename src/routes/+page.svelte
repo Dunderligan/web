@@ -2,7 +2,6 @@
 	import Button from '$lib/components/ui/Button.svelte';
 	import PageSection from '$lib/components/structure/PageSection.svelte';
 	import { cdnSrc } from '$lib/util';
-	import Subheading from '$lib/components/ui/Subheading.svelte';
 	import MatchList from '$lib/components/match/MatchList.svelte';
 
 	let { data } = $props();

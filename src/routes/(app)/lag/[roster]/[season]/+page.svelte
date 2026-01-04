@@ -28,7 +28,7 @@
 	);
 
 	const upcomingMatches = $derived(roster.matches.filter((match) => !match.played));
-	const latestMatches = $derived(roster.matches.filter((match) => match.played));
+	const playedMatches = $derived(roster.matches.filter((match) => match.played));
 
 	const rosterTabItems = $derived(
 		team.rosters
@@ -89,19 +89,19 @@
 		<MembersTable members={roster.members} />
 
 		<MatchList
-			title="Senaste matcherna"
-			matches={latestMatches}
-			seasonSlug={season.slug}
-			mainRosterId={roster.id}
-			hideDivision
-		/>
-
-		<MatchList
 			title="Kommande matcher"
 			matches={upcomingMatches}
 			seasonSlug={season.slug}
 			mainRosterId={roster.id}
 			hideIfEmpty
+			hideDivision
+		/>
+
+		<MatchList
+			title="Spelade matcher"
+			matches={playedMatches}
+			seasonSlug={season.slug}
+			mainRosterId={roster.id}
 			hideDivision
 		/>
 
@@ -114,8 +114,8 @@
 		/>
 	</section>
 
-	<section class="shrink-0 sm:w-1/4">
-		<div class="mb-6 space-y-2">
+	<section class="shrink-0 space-y-6 sm:w-1/4">
+		<div class="space-y-2">
 			<Button
 				href="/stallningar/{season.slug}?div={division.slug}"
 				label="Se ställningar"
@@ -144,11 +144,15 @@
 			</div>
 		{/if}
 
-		{#if team.socials}
-			<div class="">
-				{#each team.socials as { platform, url } (platform)}
-					<TeamSocial class="text-4xl" {platform} href={url} />
-				{/each}
+		{#if team.socials.length > 0}
+			<div>
+				<div class="font-medium text-gray-700 dark:text-gray-400">Sociala medier</div>
+
+				<div class="mt-1 flex items-center gap-3">
+					{#each team.socials as { platform, url } (platform)}
+						<TeamSocial class="text-3xl" {platform} href={url} />
+					{/each}
+				</div>
 			</div>
 		{/if}
 	</section>

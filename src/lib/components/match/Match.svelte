@@ -3,9 +3,9 @@
 		matchWinner,
 		matchRoster,
 		isWinner,
-		matchScoreOrZero,
 		type MatchSide,
-		flipSide
+		flipSide,
+		matchScore
 	} from '$lib/match';
 	import type { ClassValue, ResolvedMatchWithContext } from '$lib/types';
 	import Icon from '../ui/Icon.svelte';
@@ -66,13 +66,13 @@
 		>
 			{#if match.played}
 				<span class={[winner === leftTeam && 'text-accent-600 dark:text-accent-500', 'font-bold']}
-					>{matchScoreOrZero(match, leftTeam)}
+					>{matchScore(match, leftTeam)}
 				</span>
 
 				<span class="font-bold">-</span>
 
 				<span class={[winner === rightTeam && 'text-accent-600 dark:text-accent-500', 'font-bold']}
-					>{matchScoreOrZero(match, rightTeam)}</span
+					>{matchScore(match, rightTeam)}</span
 				>
 			{:else}
 				<span class="font-semibold">---</span>
@@ -102,11 +102,7 @@
 			</a>
 		{:else}
 			<div class="ml-2 font-medium text-gray-500">
-				{#if match.played}
-					W/O
-				{:else}
-					Okänt lag
-				{/if}
+				{match.played ? 'W/O' : 'Okänt lag'}
 			</div>
 		{/if}
 
@@ -121,7 +117,7 @@
 					'ml-auto text-3xl font-extrabold sm:hidden'
 				]}
 			>
-				{matchScoreOrZero(match, side)}
+				{matchScore(match, side)}
 			</div>
 		{/if}
 	</div>

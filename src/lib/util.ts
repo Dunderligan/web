@@ -45,15 +45,17 @@ export function averageRank(ranks: NullableFullRank[]): FullRank | null {
 
 function rankToNum(rank: FullRank): number {
 	// map the rank to a whole number, then a fraction based on tier
-	// instead of 5-1 where 1 is the highest, we invert it to 0-0.8 where 0.8 (tier 1) is the highest
-	return rankNums[rank.rank] + (5 - rank.tier) / 5;
+	// instead of the tier being 5-1 where 1 is the highest, we invert it to 0-4 where 4 (tier 1) is the highest
+	return rankNums[rank.rank] * 5 + (5 - rank.tier);
 }
 
 function numToRank(num: number): FullRank {
-	const rankNum = Math.floor(num);
+	const rounded = Math.round(num);
+
+	const rankNum = Math.floor(rounded / 5);
 	const rank = Object.keys(rankNums).find((key) => rankNums[key as Rank] === rankNum) as Rank;
 
-	const tier = 5 - Math.round((num - rankNum) * 5);
+	const tier = 5 - (rounded % 5);
 
 	return {
 		rank,

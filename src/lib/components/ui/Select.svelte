@@ -91,21 +91,7 @@
 				<div {...wrapperProps}>
 					{#if open}
 						<div {...props} class="floating w-(--bits-select-anchor-width)">
-							<Select.Viewport>
-								{#each items as item, i (i + item.value)}
-									<Select.Item {...item} class="floating-item">
-										{#snippet children({ selected })}
-											{@render renderedItemIcon(item.value)}
-
-											<span>{item.label}</span>
-
-											{#if selected}
-												<Icon icon="ph:check" class="ml-auto text-xs text-accent-400" />
-											{/if}
-										{/snippet}
-									</Select.Item>
-								{/each}
-							</Select.Viewport>
+							{@render viewport()}
 						</div>
 					{/if}
 				</div>
@@ -113,6 +99,24 @@
 		</Select.Content>
 	</Select.Portal>
 </Select.Root>
+
+{#snippet viewport()}
+	<Select.Viewport>
+		{#each items as item, i (i + item.value)}
+			<Select.Item {...item} class="floating-item">
+				{#snippet children({ selected })}
+					{@render renderedItemIcon(item.value)}
+
+					<span>{item.label}</span>
+
+					{#if selected}
+						<Icon icon="ph:check" class="ml-auto text-accent-400" />
+					{/if}
+				{/snippet}
+			</Select.Item>
+		{/each}
+	</Select.Viewport>
+{/snippet}
 
 {#snippet renderedItemIcon(value: string)}
 	{#if itemIcon}

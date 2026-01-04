@@ -167,7 +167,10 @@ function createMatch(order: number, nextMatchId?: string): FullMatch {
 		id: uuidv4(),
 		nextMatchId,
 		order,
-		played: false
+		played: false,
+		teamAScore: 0,
+		teamBScore: 0,
+		draws: 0
 	};
 }
 

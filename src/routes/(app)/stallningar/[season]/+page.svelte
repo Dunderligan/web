@@ -191,6 +191,12 @@
 				{/if}
 			{/each}
 
+			{#if division.upcomingMatches.length > 0}
+				<Subheading class="mt-10 mb-4">Kommande matcher</Subheading>
+
+				<MatchList matches={division.upcomingMatches.map(resolveMatch)} seasonSlug={season.slug} />
+			{/if}
+
 			{#if division.latestMatches.length > 0}
 				<div class="mt-10 mb-4 flex max-w-2xl items-center justify-between">
 					<Subheading>Senaste matcherna</Subheading>
@@ -205,15 +211,9 @@
 
 				<MatchList matches={division.latestMatches.map(resolveMatch)} seasonSlug={season.slug} />
 			{/if}
-
-			{#if division.upcomingMatches.length > 0}
-				<Subheading class="mt-10 mb-4">Kommande matcher</Subheading>
-
-				<MatchList matches={division.upcomingMatches.map(resolveMatch)} seasonSlug={season.slug} />
-			{/if}
 		{:else}
 			{#each division.brackets as bracket (bracket.id)}
-				{#if bracket.name}
+				{#if bracket.name !== division.name}
 					<Subheading class="mt-6 mb-4">{bracket.name}</Subheading>
 				{/if}
 

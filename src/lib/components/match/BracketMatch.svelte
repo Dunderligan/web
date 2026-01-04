@@ -48,11 +48,6 @@
 	{@const won = isWinner(match, side)}
 	{@const score = matchScore(match, side)}
 
-	<!-- onmouseenter={() => setHovered(roster?.id)}
-		onmouseleave={() => setHovered(null)}
-		onfocus={() => setHovered(roster?.id)}
-		onblur={() => setHovered(null)} -->
-
 	<div
 		class={[
 			classProp,
@@ -72,7 +67,7 @@
 					'flex h-full shrink-0 items-center justify-center px-4 text-center'
 				]}
 			>
-				{score ?? '?'}
+				{match.played ? score.toString() : '?'}
 			</div>
 
 			<RosterLogo id={roster.id} class="mr-2 size-8" />

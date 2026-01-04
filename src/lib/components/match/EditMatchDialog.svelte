@@ -14,6 +14,12 @@
 	const match = $derived(rosterCtx.editingMatch);
 
 	let open = $derived(match !== null);
+
+	$effect(() => {
+		if (match) {
+			match.played = match.teamAScore > 0 || match.teamBScore > 0;
+		}
+	});
 </script>
 
 <Dialog
@@ -34,12 +40,6 @@
 	}}
 >
 	{#if match}
-		<div class="space-y-1">
-			<Label label="Spelad">
-				<Checkbox bind:checked={match.played} onCheckedChange={saveCtx.setDirty} />
-			</Label>
-		</div>
-
 		<div class="flex gap-2">
 			<RosterSelect
 				class="w-full"
@@ -70,14 +70,16 @@
 				placeholder="Poäng"
 			/>
 		</div>
-		<div class="mb-6 flex gap-2">
-			<InputField
-				bind:value={match.draws}
-				onchange={saveCtx.setDirty}
-				type="number"
-				placeholder="Antal draws"
-				class="ml-auto w-1/3 min-w-0 shrink grow-0"
-			/>
+		<div class="mb-6">
+			<Label label="Draws">
+				<InputField
+					bind:value={match.draws}
+					onchange={saveCtx.setDirty}
+					type="number"
+					placeholder="Antal draws"
+					class="w-1/3"
+				/>
+			</Label>
 		</div>
 
 		<Label label="Planerad">

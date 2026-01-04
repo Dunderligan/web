@@ -121,9 +121,9 @@ export type FullMatch = {
 	createdAt?: Date;
 	rosterAId?: string | null;
 	rosterBId?: string | null;
-	teamAScore?: number | null;
-	teamBScore?: number | null;
-	draws?: number | null;
+	teamAScore: number;
+	teamBScore: number;
+	draws: number;
 	played: boolean;
 	playedAt?: Date | null;
 	scheduledAt?: Date | null;
@@ -137,9 +137,9 @@ export type FullMatchWithoutOrder = Omit<FullMatch, 'order'>;
 export type ResolvedMatch = {
 	id: string;
 	played: boolean;
-	teamAScore?: number | null;
-	teamBScore?: number | null;
-	draws?: number | null;
+	teamAScore: number;
+	teamBScore: number;
+	draws: number;
 	rosterA?: MatchRoster | null;
 	rosterB?: MatchRoster | null;
 	playedAt?: Date | null;
@@ -165,9 +165,9 @@ export type ResolvedMatchWithContext<G = NestedGroup, B = NestedBracket> = Resol
 export type LogicalMatch = {
 	rosterAId?: string | null;
 	rosterBId?: string | null;
-	teamAScore?: number | null;
-	teamBScore?: number | null;
-	draws?: number | null;
+	teamAScore: number;
+	teamBScore: number;
+	draws: number;
 	played: boolean;
 };
 

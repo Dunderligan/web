@@ -1,4 +1,4 @@
-import type { LogicalMatch, MatchRoster, ResolvedMatch } from './types';
+import type { FullMatchWithoutOrder, LogicalMatch, MatchRoster, ResolvedMatch } from './types';
 
 /** Check if a match is played between two rosters */
 export function isMatchBetween(match: LogicalMatch, aId: string, bId: string): boolean {
@@ -16,21 +16,17 @@ export function flipSide(side: MatchSide, flip: boolean = true): MatchSide {
 	return side === 'A' ? 'B' : 'A';
 }
 
-export function matchScore(match: LogicalMatch, side: MatchSide): number | null {
+export function matchScore(match: LogicalMatch, side: MatchSide): number {
 	if (side === 'A') return match.teamAScore ?? null;
 	if (side === 'B') return match.teamBScore ?? null;
-	return null;
-}
-
-export function matchScoreOrZero(match: LogicalMatch, side: MatchSide): number {
-	return matchScore(match, side) ?? 0;
+	return 0;
 }
 
 export function matchWinner(match: LogicalMatch): MatchSide | null {
 	if (!match.played) return null;
 
-	const teamA = matchScoreOrZero(match, 'A');
-	const teamB = matchScoreOrZero(match, 'B');
+	const teamA = matchScore(match, 'A');
+	const teamB = matchScore(match, 'B');
 
 	if (teamA > teamB) return 'A';
 	if (teamB > teamA) return 'B';
@@ -46,4 +42,24 @@ export function isWinner(match: LogicalMatch, side: MatchSide): boolean {
 	const winner = matchWinner(match);
 	if (!winner) return false;
 	return winner === side;
+}
+
+export function getRosterId(match: LogicalMatch, side?: MatchSide | null): string | null {
+	if (side === 'A') return match.rosterAId ?? null;
+	if (side === 'B') return match.rosterBId ?? null;
+	return null;
+}
+
+export function compareMatchDates(a: FullMatchWithoutOrder, b: FullMatchWithoutOrder): number {
+	const aDate = a.playedAt ?? a.scheduledAt;
+	const bDate = b.playedAt ?? b.scheduledAt;
+
+	if (aDate && bDate) {
+		return aDate.getTime() - bDate.getTime();
+	}
+
+	if (aDate) return -1;
+	if (bDate) return 1;
+
+	return 0;
 }

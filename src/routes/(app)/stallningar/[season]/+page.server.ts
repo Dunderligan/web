@@ -1,7 +1,8 @@
+import { compareMatchDates } from '$lib/match';
 import { db } from '$lib/server/db';
 import { fullMatchColumns, groupMatchOrder } from '$lib/server/db/helpers';
 import { calculateStandings } from '$lib/table';
-import type { LogicalMatch } from '$lib/types.js';
+import type { LogicalMatch } from '$lib/types';
 import { aggregateGroups } from '$lib/util';
 import { error } from '@sveltejs/kit';
 
@@ -84,6 +85,7 @@ export const load = async ({ params }) => {
 		season,
 		divisions: divisions.map(({ groups, ...division }) => {
 			const { rosters, matches: combinedGroupMatches } = aggregateGroups(groups);
+
 			let tables;
 			if (division.groupwiseStandings) {
 				tables = groups.map((group) =>
@@ -93,6 +95,7 @@ export const load = async ({ params }) => {
 				tables = [makeTable(division.name, division.id, rosters, combinedGroupMatches, 'division')];
 			}
 
+			combinedGroupMatches.sort((a, b) => compareMatchDates(a, b));
 			const latestMatches = combinedGroupMatches.filter((match) => match.played).slice(0, 3);
 			const upcomingMatches = combinedGroupMatches.filter((match) => !match.played).slice(0, 3);
 

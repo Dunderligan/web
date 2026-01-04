@@ -31,8 +31,8 @@
 		{/if}
 	</div>
 
-	{@render side(match.rosterAId, match.teamAScore)}
-	{@render side(match.rosterBId, match.teamBScore)}
+	{@render side(match.teamAScore, match.rosterAId)}
+	{@render side(match.teamBScore, match.rosterBId)}
 
 	<div class="absolute top-3 right-3 flex items-center">
 		<Button
@@ -48,12 +48,12 @@
 	</div>
 </div>
 
-{#snippet side(rosterId?: string | null, score?: number | null)}
+{#snippet side(score: number, rosterId?: string | null)}
 	{@const roster = rosterCtx.find(rosterId)}
 
 	<div class="flex items-center py-0.5 text-gray-700 dark:text-gray-300">
 		<div class="flex w-8 items-center justify-center text-xl font-bold">
-			{score ?? '-'}
+			{match.played ? score.toString() : '-'}
 		</div>
 
 		{#if roster}
