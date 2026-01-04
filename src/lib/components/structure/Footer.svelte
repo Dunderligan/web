@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { page } from '$app/state';
+	import Icon from '../ui/Icon.svelte';
 	import TeamSocial from '../ui/TeamSocial.svelte';
 
 	const socials = [
@@ -27,6 +29,8 @@
 			href: 'https://www.tiktok.com/@dunderligan'
 		}
 	];
+
+	const commitHash = $derived(page.data.commitHash);
 </script>
 
 <footer class="relative bg-gray-900 px-4 pt-10 pb-16 text-center font-medium text-gray-300">
@@ -40,9 +44,18 @@
 				{/each}
 			</div>
 			<p class="mt-4 text-gray-400">
-				Byggd av Bobbo med ❤️.
+				Byggd av Bobbo med ❤️
 				<br />
 				Dunderligan är <a class="underline" href="https://github.com/Dunderligan">öppen källkod</a>.
+				<br />
+				{#if commitHash}
+					<Icon icon="ph:git-commit" class="inline-block" />
+					<a href="https://github.com/Dunderligan/web/commit/{commitHash}" class="underline"
+						>{commitHash.slice(0, 7)}</a
+					>
+				{:else}
+					Okänd version
+				{/if}
 			</p>
 		</div>
 

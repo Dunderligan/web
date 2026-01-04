@@ -8,6 +8,7 @@ declare global {
 		}
 		interface PageData {
 			user: User | null;
+			commitHash: string | null;
 		}
 	}
 }

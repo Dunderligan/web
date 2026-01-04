@@ -38,9 +38,11 @@
 {#await matchPromise}
 	{@render heading()}
 
-	{#each Array.from({ length: skeletonCount })}
-		<MatchSkeleton />
-	{/each}
+	<div class="max-w-2xl space-y-2">
+		{#each Array.from({ length: skeletonCount })}
+			<MatchSkeleton />
+		{/each}
+	</div>
 {:then matches}
 	{#if !hideIfEmpty || matches.length > 0}
 		{@render heading()}
