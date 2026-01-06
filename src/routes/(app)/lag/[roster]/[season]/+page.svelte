@@ -99,14 +99,6 @@
 			mainRosterId={roster.id}
 			hideDivision
 		/>
-
-		<Button
-			href="/arkiv/matcher?roster={roster.id}&prev={page.url.pathname}"
-			label="Se alla matcher"
-			icon="ph:arrow-right"
-			kind="secondary"
-			class="mt-6"
-		/>
 	</section>
 
 	<section class="shrink-0 space-y-6 sm:w-1/4">

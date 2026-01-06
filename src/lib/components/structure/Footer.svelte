@@ -2,6 +2,8 @@
 	import { page } from '$app/state';
 	import Icon from '../ui/Icon.svelte';
 	import TeamSocial from '../ui/TeamSocial.svelte';
+	import logo from '$lib/assets/images/logo.avif';
+	import lysatorLogo from '$lib/assets/images/lysator.svg';
 
 	const socials = [
 		{
@@ -36,7 +38,7 @@
 <footer class="relative bg-gray-900 px-4 pt-10 pb-16 text-center font-medium text-gray-300">
 	<div class="mx-auto flex max-w-4xl flex-col items-start gap-8 text-left md:flex-row">
 		<div class="w-full">
-			<img src="/logo.png" alt="Dunderligan" class="-mt-2 size-14" />
+			<img src={logo} alt="Dunderligan" class="-mt-2 size-14" />
 			<p class="text-lg">Dunderligan</p>
 			<div class="mt-4 grid w-max grid-cols-6 gap-x-3 gap-y-3 md:grid-cols-3">
 				{#each socials as social}
@@ -78,7 +80,7 @@
 
 		<div class="flex w-full items-center gap-4 text-gray-400">
 			<a href="https://www.lysator.liu.se/inhysningar" class="flex shrink-0"
-				><img src="/lysator.svg" alt="Lysator" class="size-16" /></a
+				><img src={lysatorLogo} alt="Lysator" class="size-16" /></a
 			>
 
 			<div>Hemsidan driftas i samarbete med Lysator.</div>

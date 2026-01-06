@@ -2,6 +2,7 @@
 	import { page } from '$app/state';
 	import PageSection from '$lib/components/structure/PageSection.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
+	import errorImage from '$lib/assets/images/error.avif';
 </script>
 
 <div id="background" class="fixed top-0 min-h-140 w-full min-w-lg"></div>
@@ -15,7 +16,7 @@
 	<div class="mb-12 h-18"></div>
 
 	<PageSection topMargin={false} class="text-center">
-		<img src="/404.webp" class="mx-auto -mt-6 size-60" alt="Zenyatta spray" />
+		<img src={errorImage} class="mx-auto -mt-6 size-60" alt="Zenyatta spray" />
 
 		<h1 class="-mt-2 text-center text-8xl font-bold text-gray-900">
 			{page.status}

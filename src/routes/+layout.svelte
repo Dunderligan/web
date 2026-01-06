@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../app.css';
-	import favicon from '$lib/assets/favicon.png';
+	import favicon from '$lib/assets/images/favicon.png';
 	import { ProgressBar } from '@prgm/sveltekit-progress-bar';
 	import Footer from '$lib/components/structure/Footer.svelte';
 	import Navbar from '$lib/components/structure/Navbar.svelte';

@@ -40,10 +40,15 @@ const getMatches = async ({ played }: { played: boolean }) => {
 };
 
 export const load = async () => {
+	const [upcoming, latest] = await Promise.all([
+		getMatches({ played: false }),
+		getMatches({ played: true })
+	]);
+
 	return {
 		matches: {
-			upcoming: getMatches({ played: false }),
-			latest: getMatches({ played: true })
+			upcoming,
+			latest
 		}
 	};
 };

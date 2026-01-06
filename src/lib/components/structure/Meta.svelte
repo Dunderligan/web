@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import favicon from '$lib/assets/favicon.png';
+	import favicon from '$lib/assets/images/favicon.png';
 
 	type Props = {
 		title?: string;

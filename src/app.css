@@ -4,8 +4,8 @@
 	font-display: swap;
 	font-family: Inter;
 	src:
-		url('./lib/assets/fonts/Inter/Inter.woff2') format('woff2'),
-		url('./lib/assets/fonts/Inter/Inter.woff') format('woff');
+		url('$lib/assets/fonts/Inter/Inter.woff2') format('woff2'),
+		url('$lib/assets/fonts/Inter/Inter.woff') format('woff');
 }
 
 @font-face {
@@ -13,8 +13,8 @@
 	font-family: Rajdhani;
 	font-weight: 400;
 	src:
-		url('./lib/assets/fonts/Rajdhani/Rajdhani-Regular.woff2') format('woff2'),
-		url('./lib/assets/fonts/Rajdhani/Rajdhani-Regular.woff') format('woff');
+		url('$lib/assets/fonts/Rajdhani/Rajdhani-Regular.woff2') format('woff2'),
+		url('$lib/assets/fonts/Rajdhani/Rajdhani-Regular.woff') format('woff');
 }
 
 @font-face {
@@ -22,8 +22,8 @@
 	font-family: Rajdhani;
 	font-weight: 500;
 	src:
-		url('./lib/assets/fonts/Rajdhani/Rajdhani-Medium.woff2') format('woff2'),
-		url('./lib/assets/fonts/Rajdhani/Rajdhani-Medium.woff') format('woff');
+		url('$lib/assets/fonts/Rajdhani/Rajdhani-Medium.woff2') format('woff2'),
+		url('$lib/assets/fonts/Rajdhani/Rajdhani-Medium.woff') format('woff');
 }
 
 @font-face {
@@ -31,8 +31,8 @@
 	font-family: Rajdhani;
 	font-weight: 600;
 	src:
-		url('./lib/assets/fonts/Rajdhani/Rajdhani-SemiBold.woff2') format('woff2'),
-		url('./lib/assets/fonts/Rajdhani/Rajdhani-SemiBold.woff') format('woff');
+		url('$lib/assets/fonts/Rajdhani/Rajdhani-SemiBold.woff2') format('woff2'),
+		url('$lib/assets/fonts/Rajdhani/Rajdhani-SemiBold.woff') format('woff');
 }
 
 @font-face {
@@ -40,8 +40,8 @@
 	font-family: Rajdhani;
 	font-weight: 700;
 	src:
-		url('./lib/assets/fonts/Rajdhani/Rajdhani-Bold.woff2') format('woff2'),
-		url('./lib/assets/fonts/Rajdhani/Rajdhani-Bold.woff') format('woff');
+		url('$lib/assets/fonts/Rajdhani/Rajdhani-Bold.woff2') format('woff2'),
+		url('$lib/assets/fonts/Rajdhani/Rajdhani-Bold.woff') format('woff');
 }
 
 @custom-variant dark (&:where(.dark, .dark *));

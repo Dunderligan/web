@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { ClassValue } from '$lib/types';
 	import { cdnImageSrc, cdnRosterLogoPath } from '$lib/util';
+	import placeholderTeam from '$lib/assets/images/placeholder-team.avif';
 
 	type Props = {
 		id: string;
@@ -13,10 +14,10 @@
 
 	let element: HTMLImageElement;
 
-	const src = $derived(srcOverride ?? cdnImageSrc(cdnRosterLogoPath(id), { width: imgSize }));
+	let src = $derived(srcOverride ?? cdnImageSrc(cdnRosterLogoPath(id), { width: imgSize }));
 
 	function onerror() {
-		element.src = '/placeholder-team.avif';
+		src = placeholderTeam;
 	}
 </script>
 
@@ -24,6 +25,6 @@
 	{src}
 	class={[classProp, 'shrink-0 rounded-[20%] object-contain']}
 	{onerror}
-	alt=""
+	alt="Logotyp"
 	bind:this={element}
 />

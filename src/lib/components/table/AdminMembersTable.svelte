@@ -109,7 +109,7 @@
 							{#if value === 'clear'}
 								<Icon icon="ph:backspace" class="-m-1 mr-2 h-full w-8" />
 							{:else}
-								<img src="/rank/{value}.png" alt={value} class="-m-1 mr-2 size-8" />
+								<Rank rank={{ rank: value as RankEnum, tier: 1 }} class="mr-2" hideLabel />
 							{/if}
 						{/snippet}
 					</Select>
