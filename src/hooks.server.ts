@@ -38,7 +38,15 @@ const guardAdmin: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
-export const handle: Handle = sequence(handleAuth, guardAdmin);
+const preloadFonts: Handle = async ({ event, resolve }) => {
+	return resolve(event, {
+		preload: ({ type, path }) => {
+			return (type === 'font' && path.endsWith('.woff2')) || type === 'css' || type === 'js';
+		}
+	});
+};
+
+export const handle: Handle = sequence(handleAuth, guardAdmin, preloadFonts);
 
 export const init: ServerInit = async () => {
 	await initDb();
