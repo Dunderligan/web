@@ -17,7 +17,7 @@
 
 	type ItemDecoration =
 		| {
-				itemIcon?: (value: string) => string;
+				itemIcon?: (value: string) => string | false | null | undefined;
 				itemSnippet?: never;
 		  }
 		| {
@@ -30,6 +30,7 @@
 		items: { value: string; label: string; disabled?: boolean }[];
 		class?: ClassValue;
 		avoidCollisions?: boolean;
+		canClear?: boolean;
 	} & LabelDecoration &
 		ItemDecoration;
 
@@ -44,15 +45,18 @@
 		itemIcon,
 		itemSnippet,
 		disabled,
+		canClear,
 		...restProps
 	}: Props = $props();
 
+	const type = $derived(restProps.type);
+
 	const selectedItem = $derived(
-		restProps.type === 'single' ? items.find((item) => item.value === value) : null
+		type === 'single' ? items.find((item) => item.value === value) : null
 	);
 
 	const selectedLabel = $derived(
-		restProps.type === 'single'
+		type === 'single'
 			? items.find((item) => item.value === value)?.label
 			: mapEmptyToUndefined(
 					items
@@ -63,7 +67,25 @@
 	);
 </script>
 
-<Select.Root bind:value={value as never} bind:open {disabled} {...restProps}>
+<Select.Root
+	bind:value={
+		() => value as never, // TS workaround, see https://www.bits-ui.com/docs/components/select#reusable-components
+		(newValue) => {
+			if (canClear && newValue === '__clear') {
+				if (type === 'single') {
+					value = undefined;
+				} else if (Array.isArray(value)) {
+					value = [];
+				}
+			} else if (newValue !== '') {
+				value = newValue;
+			}
+		}
+	}
+	bind:open
+	{disabled}
+	{...restProps}
+>
 	<Select.Trigger
 		class={[
 			classProp,
@@ -115,13 +137,27 @@
 				{/snippet}
 			</Select.Item>
 		{/each}
+
+		{#if canClear && type === 'single' && selectedItem}
+			<Select.Item label="Rensa" value="__clear" class="floating-item">
+				{@render icon('ph:x-circle')}
+
+				<span>Rensa</span>
+			</Select.Item>
+		{/if}
 	</Select.Viewport>
 {/snippet}
 
 {#snippet renderedItemIcon(value: string)}
-	{#if itemIcon}
-		<Icon icon={itemIcon(value)} class="mr-2 shrink-0 text-lg" />
+	{@const renderedIcon = itemIcon?.(value)}
+
+	{#if renderedIcon}
+		{@render icon(renderedIcon)}
 	{:else if itemSnippet}
 		{@render itemSnippet({ value })}
 	{/if}
+{/snippet}
+
+{#snippet icon(icon: string)}
+	<Icon {icon} class="mr-2 shrink-0 text-lg" />
 {/snippet}

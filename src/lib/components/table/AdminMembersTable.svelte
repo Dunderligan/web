@@ -73,7 +73,7 @@
 
 					<Button
 						kind="tertiary"
-						icon="ph:backspace"
+						icon="ph:x-circle"
 						class="mr-2"
 						title="Rensa rank"
 						onclick={() => {
@@ -89,28 +89,22 @@
 						bind:value={
 							() => member.rank! as string,
 							(rank) => {
-								if (rank === 'clear') {
+								if (rank) {
+									member.rank = rank as RankEnum;
+								} else {
 									member.rank = null;
 									member.tier = null;
-								} else {
-									member.rank = rank as RankEnum;
 								}
 							}
 						}
-						items={[
-							...Object.values(RankEnum).map((rank) => ({
-								label: capitalize(rank),
-								value: rank
-							})),
-							{ label: 'Rensa', value: 'clear' }
-						]}
+						items={Object.values(RankEnum).map((rank) => ({
+							label: capitalize(rank),
+							value: rank
+						}))}
+						canClear
 					>
 						{#snippet itemSnippet({ value })}
-							{#if value === 'clear'}
-								<Icon icon="ph:backspace" class="-m-1 mr-2 h-full w-8" />
-							{:else}
-								<Rank rank={{ rank: value as RankEnum, tier: 1 }} class="mr-2" hideLabel />
-							{/if}
+							<Rank rank={{ rank: value as RankEnum, tier: 1 }} class="mr-2" hideLabel />
 						{/snippet}
 					</Select>
 

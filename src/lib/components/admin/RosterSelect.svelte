@@ -7,6 +7,7 @@
 		selectedId?: string | null;
 		disabled?: boolean;
 		placeholder?: string;
+		canClear?: boolean;
 		class?: ClassValue;
 		onValueChange?: () => void;
 	};
@@ -15,6 +16,7 @@
 		selectedId = $bindable(),
 		disabled,
 		placeholder = 'Välj lag...',
+		canClear = false,
 		class: classProp,
 		onValueChange
 	}: Props = $props();
@@ -24,7 +26,7 @@
 
 <Select
 	type="single"
-	bind:value={selectedId as string | undefined}
+	bind:value={() => selectedId ?? undefined, (value) => (selectedId = value)}
 	items={rosters.map
 		.values()
 		.map((roster) => ({
@@ -35,5 +37,6 @@
 	{disabled}
 	{onValueChange}
 	{placeholder}
+	{canClear}
 	class={classProp}
 />

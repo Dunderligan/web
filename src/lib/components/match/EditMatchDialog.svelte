@@ -5,7 +5,6 @@
 	import InputField from '../ui/InputField.svelte';
 	import Label from '../ui/Label.svelte';
 	import RosterSelect from '../admin/RosterSelect.svelte';
-	import Checkbox from '../ui/Checkbox.svelte';
 	import DateInput from '../ui/DateInput.svelte';
 
 	const rosterCtx = RosterContext.get();
@@ -46,6 +45,7 @@
 				bind:selectedId={match.rosterAId}
 				disabled={!rosterCtx.canEditRosters}
 				onValueChange={saveCtx.setDirty}
+				canClear
 			/>
 			<InputField
 				class="w-1/3 min-w-0"
@@ -61,6 +61,7 @@
 				bind:selectedId={match.rosterBId}
 				disabled={!rosterCtx.canEditRosters}
 				onValueChange={saveCtx.setDirty}
+				canClear
 			/>
 			<InputField
 				class="w-1/3 min-w-0"

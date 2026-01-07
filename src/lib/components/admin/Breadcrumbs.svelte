@@ -17,8 +17,11 @@
 </script>
 
 <div class="flex items-center gap-4 font-display text-lg text-gray-600 dark:text-gray-400">
-	<a href="/admin" class="flex items-center justify-center">
-		<Icon icon="ph:house" class="text-xl" />
+	<a
+		href="/admin"
+		class="flex items-center justify-center text-xl hover:text-gray-700 dark:hover:text-gray-300"
+	>
+		<Icon icon="ph:house" />
 	</a>
 
 	{#each crumbs as { label, href }, i}

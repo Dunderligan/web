@@ -153,10 +153,7 @@
 		</AdminEmptyNotice>
 	{:else}
 		<Label label="Filtrera efter lag">
-			<RosterSelect bind:selectedId={rosterFilter} class="grow" />
-			{#if rosterFilter}
-				<Button icon="ph:x" kind="secondary" class="ml-2" onclick={() => (rosterFilter = null)} />
-			{/if}
+			<RosterSelect bind:selectedId={rosterFilter} class="grow" canClear />
 		</Label>
 
 		<div class="grid grid-cols-1 gap-2 overflow-hidden rounded-lg md:grid-cols-2">
