@@ -28,7 +28,7 @@
 	class={[
 		classProp,
 		center && 'sm:justify-center',
-		'flex items-center gap-4 text-sm font-medium text-gray-600 dark:text-gray-300'
+		'flex items-center gap-4 text-sm font-medium text-gray-600 dark:text-gray-400'
 	]}
 >
 	{#if bracket}

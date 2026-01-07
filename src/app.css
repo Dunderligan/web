@@ -96,8 +96,8 @@
 	}
 
 	.dark .floating {
-		background-color: var(--color-gray-800);
-		border-color: var(--color-gray-700);
+		background-color: var(--color-gray-900);
+		border-color: var(--color-gray-800);
 	}
 
 	.floating-item {
@@ -112,7 +112,7 @@
 	}
 
 	.dark .floating-item {
-		color: var(--color-gray-300);
+		color: var(--color-gray-400);
 	}
 
 	.floating-item:hover,
@@ -123,8 +123,8 @@
 
 	.dark .floating-item:hover,
 	.dark .floating-item[data-highlighted] {
-		background-color: var(--color-gray-700);
-		color: var(--color-gray-200);
+		background-color: var(--color-gray-800);
+		color: var(--color-gray-300);
 	}
 }
 

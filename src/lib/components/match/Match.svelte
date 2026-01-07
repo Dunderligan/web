@@ -62,7 +62,7 @@
 		})}
 
 		<div
-			class="hidden w-18 shrink-0 text-center text-3xl text-gray-600 sm:block dark:text-gray-300"
+			class="hidden w-18 shrink-0 text-center text-3xl text-gray-600 sm:block dark:text-gray-400"
 		>
 			{#if match.played}
 				<span class={[winner === leftTeam && 'text-accent-600 dark:text-accent-500', 'font-bold']}
