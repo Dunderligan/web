@@ -51,8 +51,6 @@
 	}
 
 	async function save() {
-		console.log('saving bracket', bracket);
-
 		await updateBracket({
 			id: bracket.id,
 			name: bracket.name,
