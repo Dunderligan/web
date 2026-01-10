@@ -7,24 +7,31 @@
 	type Props = {
 		match: ResolvedMatch;
 		seasonSlug: string;
-		prevMatches: number;
-		isFirst: boolean;
-		isLast: boolean;
+		roundIndex: number;
+		hidden?: boolean;
+		hasNext: boolean;
+		hasPrevAbove: boolean;
+		hasPrevBelow: boolean;
 	};
 
-	let { match, seasonSlug, prevMatches, isFirst, isLast }: Props = $props();
+	let {
+		match,
+		seasonSlug,
+		roundIndex,
+		hidden = false,
+		hasNext,
+		hasPrevAbove,
+		hasPrevBelow
+	}: Props = $props();
 
 	// don't ask
-	const verticalLineHeight = $derived(32 * Math.pow(prevMatches, 2) - 34 * prevMatches + 16);
-
-	// hide the match if only one roster is known (we assume it's a bye)
-	const hidden = $derived(match.played && (!match.rosterA || !match.rosterB));
+	const verticalLineHeight = $derived(78 * roundIndex + 2);
 </script>
 
 <div
 	class={[
-		!isFirst && 'not-first-match',
-		!isLast && 'not-last-match',
+		hasNext && 'has-next-round',
+		(hasPrevAbove || hasPrevBelow) && 'has-prev-round',
 		hidden && 'invisible',
 		'relative h-[125px] w-60 rounded-lg'
 	]}
@@ -39,11 +46,12 @@
 
 	{@render side('B', 'rounded-b-lg')}
 
-	{#if !isFirst}
-		<div
-			class="vertical-line"
-			style="top: calc(-{verticalLineHeight}% + 1px); bottom: calc(-{verticalLineHeight}% + 1px);"
-		></div>
+	{#if hasPrevAbove}
+		<div class="vertical-line line-up" style="height: {verticalLineHeight}px"></div>
+	{/if}
+
+	{#if hasPrevBelow}
+		<div class="vertical-line line-down" style="height: {verticalLineHeight}px"></div>
 	{/if}
 </div>
 
@@ -94,8 +102,8 @@
 
 <style>
 	/* Horizontal lines connecting rounds */
-	.not-last-match::after,
-	.not-first-match::before {
+	.has-prev-round::before,
+	.has-next-round::after {
 		content: '';
 		position: absolute;
 		height: 2px;
@@ -103,39 +111,48 @@
 	}
 
 	/* Forwards line to next round. */
-	.not-last-match::after {
-		top: calc(50% + 25px / 2 - 1px);
+	.has-next-round::after {
 		right: -32px;
 		left: 100%;
 	}
 
 	/* Backwards line to previous round. */
-	.not-first-match::before {
-		top: calc(50% + 25px / 2 - 1px);
+	.has-prev-round::before {
 		right: 100%;
 		left: -30px;
 	}
 
-	/* Vertical line connecting to previous/next match. */
+	/* Vertical lines connecting to the above and below previous matches. */
 	.vertical-line {
 		position: absolute;
 		left: -30px;
 		width: 2px;
-		transform: translateY(calc(25px / 2));
 		z-index: -1;
+	}
+
+	/* Lines that end at the center y of a match */
+	.line-down,
+	.has-next-round::after,
+	.has-prev-round::before {
+		top: calc(50% + 25px / 2 - 1px);
+	}
+
+	/* Lines that start in the center y of a match */
+	.line-up {
+		bottom: calc(50% - 25px / 2 - 1px);
 	}
 
 	.divider,
 	.vertical-line,
-	.not-last-match::after,
-	.not-first-match::before {
+	.has-prev-round::before,
+	.has-next-round::after {
 		background-color: var(--color-gray-200);
 	}
 
 	:global(.dark) .divider,
 	:global(.dark) .vertical-line,
-	:global(.dark) .not-last-match::after,
-	:global(.dark) .not-first-match::before {
+	:global(.dark) .has-prev-round::before,
+	:global(.dark) .has-next-round::after {
 		background-color: var(--color-gray-800);
 	}
 </style>
