@@ -85,7 +85,7 @@ export const load = async ({ params }) => {
 	return {
 		season,
 		divisions: divisions.map(({ groups, ...division }) => {
-			const { rosters, matches: combinedGroupMatches } = aggregateGroups(groups);
+			const { rosters, matches: divisionMatches } = aggregateGroups(groups);
 
 			let tables;
 			if (division.groupwiseStandings) {
@@ -93,12 +93,12 @@ export const load = async ({ params }) => {
 					makeTable(group.name, group.id, group.rosters, group.matches, 'grupp')
 				);
 			} else {
-				tables = [makeTable(division.name, division.id, rosters, combinedGroupMatches, 'division')];
+				tables = [makeTable(division.name, division.id, rosters, divisionMatches, 'division')];
 			}
 
-			combinedGroupMatches.sort((a, b) => compareMatchDates(a, b));
-			const latestMatches = combinedGroupMatches.filter((match) => match.played).slice(0, 3);
-			const upcomingMatches = combinedGroupMatches.filter((match) => !match.played).slice(0, 3);
+			divisionMatches.sort((a, b) => compareMatchDates(a, b));
+			const latestMatches = divisionMatches.filter((match) => match.played).slice(0, 3);
+			const upcomingMatches = divisionMatches.filter((match) => !match.played).slice(0, 3);
 
 			return {
 				rosters,

@@ -55,7 +55,7 @@ export function compareMatchDates(a: FullMatchWithoutOrder, b: FullMatchWithoutO
 	const bDate = b.playedAt ?? b.scheduledAt;
 
 	if (aDate && bDate) {
-		return aDate.getTime() - bDate.getTime();
+		return bDate.getTime() - aDate.getTime();
 	}
 
 	if (aDate) return -1;
