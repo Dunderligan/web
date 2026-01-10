@@ -5,12 +5,14 @@
 		isWinner,
 		type MatchSide,
 		flipSide,
-		matchScore
+		matchScore,
+		matchNote
 	} from '$lib/match';
 	import type { ClassValue, ResolvedMatchWithContext } from '$lib/types';
 	import Icon from '../ui/Icon.svelte';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import MatchInfoRow from './MatchInfoRow.svelte';
+	import MatchNote from './MatchNote.svelte';
 
 	type Props = {
 		match: ResolvedMatchWithContext;
@@ -90,6 +92,7 @@
 )}
 	{@const roster = matchRoster(match, side)}
 	{@const won = roster && isWinner(match, side)}
+	{@const note = matchNote(match, side)}
 
 	<div class={[rootClass, 'flex w-full items-center gap-2 text-gray-700 dark:text-gray-300']}>
 		{#if roster}
@@ -104,8 +107,12 @@
 			<div class="ml-2 font-medium text-gray-500">Okänt lag</div>
 		{/if}
 
+		{#if note}
+			<MatchNote {note} />
+		{/if}
+
 		{#if won}
-			<Icon icon="ph:crown-simple-fill" class="text-xl text-accent-600" />
+			<Icon icon="ph:crown-simple-fill" class="text-xl text-accent-600" title="Vinnare" />
 		{/if}
 
 		{#if match.played}

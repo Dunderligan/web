@@ -14,8 +14,7 @@
 	import type { UnresolvedMatchWithOrder } from '$lib/types';
 	import { buildBracketRounds } from '$lib/bracket.js';
 	import { deleteBracket, updateBracket } from '$lib/remote/bracket.remote';
-	import { getRosterId as sideToRosterId, matchWinner } from '$lib/match.js';
-
+	import { matchRosterId, matchWinner } from '$lib/match.js';
 	const { data } = $props();
 
 	const bracket = $state(data.bracket);
@@ -72,7 +71,7 @@
 				const nextMatch = rounds[i + 1][Math.floor(j / 2)];
 				const isRosterSideAInNext = j % 2 == 0;
 
-				const winner = sideToRosterId(match, matchWinner(match));
+				const winner = matchRosterId(match, matchWinner(match));
 
 				if (isRosterSideAInNext) {
 					nextMatch.rosterAId = winner;

@@ -6,6 +6,7 @@
 	import Navbar from '$lib/components/structure/Navbar.svelte';
 	import { page } from '$app/state';
 	import { ThemeState } from '$lib/state/theme.svelte';
+	import { Tooltip } from 'bits-ui';
 
 	let { children, data } = $props();
 

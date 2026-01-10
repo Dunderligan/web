@@ -38,13 +38,17 @@ export function matchRoster(match: ResolvedMatch, side: MatchSide): MatchRoster 
 	return (side === 'A' ? match.rosterA : match.rosterB) ?? null;
 }
 
+export function matchNote(match: MatchWithoutRosters, side: MatchSide): string | null {
+	return (side === 'A' ? match.teamANote : match.teamBNote) ?? null;
+}
+
 export function isWinner(match: LogicalMatch, side: MatchSide): boolean {
 	const winner = matchWinner(match);
 	if (!winner) return false;
 	return winner === side;
 }
 
-export function getRosterId(match: LogicalMatch, side?: MatchSide | null): string | null {
+export function matchRosterId(match: LogicalMatch, side?: MatchSide | null): string | null {
 	if (side === 'A') return match.rosterAId ?? null;
 	if (side === 'B') return match.rosterBId ?? null;
 	return null;

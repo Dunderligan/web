@@ -78,6 +78,8 @@ export const fullMatchColumns = {
 	draws: true,
 	rosterAId: true,
 	rosterBId: true,
+	teamANote: true,
+	teamBNote: true,
 	nextMatchId: true,
 	played: true,
 	vodUrl: true,

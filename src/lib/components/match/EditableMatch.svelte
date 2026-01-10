@@ -31,8 +31,8 @@
 		{/if}
 	</div>
 
-	{@render side(match.teamAScore, match.rosterAId)}
-	{@render side(match.teamBScore, match.rosterBId)}
+	{@render side(match.teamAScore, match.rosterAId, match.teamANote)}
+	{@render side(match.teamBScore, match.rosterBId, match.teamBNote)}
 
 	<div class="absolute top-3 right-3 flex items-center">
 		<Button
@@ -48,7 +48,7 @@
 	</div>
 </div>
 
-{#snippet side(score: number, rosterId?: string | null)}
+{#snippet side(score: number, rosterId?: string | null, note?: string | null)}
 	{@const roster = rosterCtx.find(rosterId)}
 
 	<div class="flex items-center py-0.5 text-gray-700 dark:text-gray-300">
@@ -60,6 +60,10 @@
 			<a href="/admin/roster/{rosterId}" class="font-semibold hover:underline">{roster?.name}</a>
 		{:else}
 			---
+		{/if}
+
+		{#if note}
+			<Icon icon="ph:info" class="ml-2" />
 		{/if}
 	</div>
 {/snippet}

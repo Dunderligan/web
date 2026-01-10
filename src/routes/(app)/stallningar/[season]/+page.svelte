@@ -14,6 +14,7 @@
 	import MatchList from '$lib/components/match/MatchList.svelte';
 	import { goto } from '$app/navigation';
 	import Meta from '$lib/components/structure/Meta.svelte';
+	import { Tooltip } from 'bits-ui';
 
 	let { data } = $props();
 

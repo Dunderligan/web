@@ -96,5 +96,19 @@
 				placeholder="https://youtube.com/..."
 			/>
 		</Label>
+		<Label label="Anteckningar lag A">
+			<InputField
+				bind:value={match.teamANote}
+				onchange={saveCtx.setDirty}
+				placeholder="Anteckningar för lag A"
+			/>
+		</Label>
+		<Label label="Anteckningar lag B">
+			<InputField
+				bind:value={match.teamBNote}
+				onchange={saveCtx.setDirty}
+				placeholder="Anteckningar för lag B"
+			/>
+		</Label>
 	{/if}
 </Dialog>
