@@ -4,6 +4,7 @@
 	import { cdnSrc } from '$lib/util';
 	import MatchList from '$lib/components/match/MatchList.svelte';
 	import Meta from '$lib/components/structure/Meta.svelte';
+	import trailerThumbnail from '$lib/assets/images/trailer-thumbnail.avif';
 
 	let { data } = $props();
 </script>
@@ -18,7 +19,8 @@
 		muted
 		loop
 		playsinline
-		preload="auto"
+		preload="metadata"
+		poster={trailerThumbnail}
 	></video>
 
 	<div class="z-10 mx-auto flex h-full max-w-4xl flex-col justify-center gap-6 pt-8 text-left">
@@ -49,10 +51,5 @@
 <style>
 	h1 {
 		line-height: 110%;
-	}
-
-	.trailer {
-		background-image:
-			url('$lib/assets/images/trailer-thumbnail.avif'), linear-gradient(var(--color-accent-600));
 	}
 </style>
