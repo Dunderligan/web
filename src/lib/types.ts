@@ -115,45 +115,64 @@ export type TeamSocial = {
 	url: string;
 };
 
-export type FullMatch = {
+/**
+ * All essential match information without rosters.
+ */
+export type MatchWithoutRosters = {
 	id: string;
 	groupId?: string | null;
 	divisionId?: string | null;
 	createdAt?: Date;
-	rosterAId?: string | null;
-	rosterBId?: string | null;
 	teamAScore: number;
 	teamBScore: number;
 	draws: number;
+	teamANote?: string | null;
+	teamBNote?: string | null;
 	played: boolean;
 	playedAt?: Date | null;
 	scheduledAt?: Date | null;
 	vodUrl?: string | null;
 	nextMatchId?: string | null;
+};
+
+/**
+ * A match with roster IDs that have not been resolved to full roster objects.
+ */
+export type UnresolvedMatch = MatchWithoutRosters & {
+	rosterAId?: string | null;
+	rosterBId?: string | null;
+};
+
+/**
+ * A match with roster IDs and an order number within its bracket.
+ */
+export type UnresolvedMatchWithOrder = UnresolvedMatch & {
 	order: number;
 };
 
-export type FullMatchWithoutOrder = Omit<FullMatch, 'order'>;
-
-export type ResolvedMatch = {
-	id: string;
-	played: boolean;
-	teamAScore: number;
-	teamBScore: number;
-	draws: number;
+/**
+ * A full match with resolved roster objects.
+ */
+export type ResolvedMatch = MatchWithoutRosters & {
 	rosterA?: MatchRoster | null;
 	rosterB?: MatchRoster | null;
-	playedAt?: Date | null;
-	scheduledAt?: Date | null;
-	vodUrl?: string | null;
 };
 
+/**
+ * The minimal roster representation within a match.
+ */
 export type MatchRoster = {
 	id: string;
 	name: string;
 	slug: string;
 };
 
+/**
+ * A resolved match with its associated group and bracket context, which
+ * by default is the base nested group and brackets.
+ *
+ * Exactly one of group or bracket should be present depending on the match type.
+ */
 export type ResolvedMatchWithContext<G = NestedGroup, B = NestedBracket> = ResolvedMatch & {
 	group?: G | null;
 	bracket?: B | null;

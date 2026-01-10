@@ -1,4 +1,4 @@
-import type { FullMatchWithoutOrder, LogicalMatch, MatchRoster, ResolvedMatch } from './types';
+import type { LogicalMatch, MatchRoster, ResolvedMatch, MatchWithoutRosters } from './types';
 
 /** Check if a match is played between two rosters */
 export function isMatchBetween(match: LogicalMatch, aId: string, bId: string): boolean {
@@ -50,7 +50,7 @@ export function getRosterId(match: LogicalMatch, side?: MatchSide | null): strin
 	return null;
 }
 
-export function compareMatchDates(a: FullMatchWithoutOrder, b: FullMatchWithoutOrder): number {
+export function compareMatchDates(a: MatchWithoutRosters, b: MatchWithoutRosters): number {
 	const aDate = a.playedAt ?? a.scheduledAt;
 	const bDate = b.playedAt ?? b.scheduledAt;
 

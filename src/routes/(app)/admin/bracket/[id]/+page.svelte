@@ -11,7 +11,7 @@
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
 	import { RosterContext } from '$lib/state/rosters.svelte';
 	import { SaveContext } from '$lib/state/save.svelte';
-	import type { FullMatch } from '$lib/types';
+	import type { UnresolvedMatchWithOrder } from '$lib/types';
 	import { buildBracketRounds } from '$lib/bracket.js';
 	import { deleteBracket, updateBracket } from '$lib/remote/bracket.remote';
 	import { getRosterId as sideToRosterId, matchWinner } from '$lib/match.js';
@@ -33,7 +33,7 @@
 	const saveCtx = SaveContext.get();
 	const confirmCtx = ConfirmContext.get();
 
-	let rounds: FullMatch[][] = $state([]);
+	let rounds: UnresolvedMatchWithOrder[][] = $state([]);
 
 	async function onDeleteClicked() {
 		await confirmCtx.confirm({

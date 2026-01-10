@@ -1,4 +1,4 @@
-import type { FullMatchWithoutOrder, Roster } from '$lib/types';
+import type { UnresolvedMatch, Roster } from '$lib/types';
 import { defineContext } from './util';
 
 const { get, set } = defineContext<RosterContext>('$_roster_state');
@@ -7,7 +7,7 @@ export class RosterContext {
 	static get = get;
 	static set = set;
 
-	editingMatch: FullMatchWithoutOrder | null;
+	editingMatch: UnresolvedMatch | null;
 	canEditRosters: boolean;
 	map: Map<string, Roster>;
 
@@ -17,7 +17,7 @@ export class RosterContext {
 		this.map = $state(new Map(list.map((roster) => [roster.id, roster])));
 	}
 
-	editMatch = (match: FullMatchWithoutOrder, canEditRosters?: boolean) => {
+	editMatch = (match: UnresolvedMatch, canEditRosters?: boolean) => {
 		if (!match.id) return;
 
 		this.editingMatch = match;

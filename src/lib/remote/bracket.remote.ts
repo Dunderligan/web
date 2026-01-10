@@ -7,7 +7,7 @@ import { adminGuard } from './auth.remote';
 import { createBracket } from '$lib/bracket';
 import { error } from '@sveltejs/kit';
 import { sortBySeed } from '$lib/table';
-import type { FullMatch } from '$lib/types';
+import type { UnresolvedMatchWithOrder } from '$lib/types';
 import { fullMatchColumns, matchRosterQuery } from '$lib/server/db/helpers';
 
 export const generateBracket = command(
@@ -76,7 +76,11 @@ export const generateBracket = command(
 	}
 );
 
-async function insertBracket(name: string, divisionId: string, rounds: FullMatch[][]) {
+async function insertBracket(
+	name: string,
+	divisionId: string,
+	rounds: UnresolvedMatchWithOrder[][]
+) {
 	return await db.transaction(async (tx) => {
 		const [bracket] = await tx
 			.insert(schema.bracket)
