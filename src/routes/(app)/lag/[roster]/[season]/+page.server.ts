@@ -1,6 +1,6 @@
 import {
 	groupMatchOrder,
-	leagueQuery,
+	entityQuery,
 	matchRosterQuery,
 	nestedBracketQuery,
 	nestedDivisionQuery,

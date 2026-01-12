@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db';
-import { leagueQuery } from '$lib/server/db/helpers.js';
+import { entityQuery } from '$lib/server/db/helpers.js';
 import { error } from '@sveltejs/kit';
 
 export const load = async ({ params }) => {
@@ -9,9 +9,9 @@ export const load = async ({ params }) => {
 		},
 		with: {
 			division: {
-				...leagueQuery,
+				...entityQuery,
 				with: {
-					season: leagueQuery,
+					season: entityQuery,
 					groups: {
 						columns: {},
 						with: {

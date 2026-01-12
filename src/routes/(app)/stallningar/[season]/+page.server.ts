@@ -1,6 +1,6 @@
 import { compareMatchDates } from '$lib/match';
 import { db } from '$lib/server/db';
-import { fullMatchColumns, groupMatchOrder } from '$lib/server/db/helpers';
+import { fullMatchColumns, groupMatchOrder, divisionOrder } from '$lib/server/db/helpers';
 import { calculateStandings } from '$lib/table';
 import type { LogicalMatch } from '$lib/types';
 import { aggregateGroups } from '$lib/util';
@@ -19,9 +19,7 @@ export const load = async ({ params }) => {
 		},
 		with: {
 			divisions: {
-				orderBy: {
-					name: 'asc'
-				},
+				orderBy: (t) => divisionOrder(t.name),
 				columns: {
 					id: true,
 					name: true,
@@ -35,9 +33,7 @@ export const load = async ({ params }) => {
 							id: true,
 							name: true
 						},
-						orderBy: {
-							name: 'asc'
-						},
+						orderBy: (t) => divisionOrder(t.name),
 						with: {
 							matches: {
 								orderBy: {

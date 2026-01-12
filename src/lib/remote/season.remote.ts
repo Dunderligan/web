@@ -4,7 +4,7 @@ import { toSlug } from '$lib/util';
 import { eq } from 'drizzle-orm';
 import z from 'zod';
 import { adminGuard } from './auth.remote';
-import { leagueQuery, nestedDivisionQuery } from '$lib/server/db/helpers';
+import { entityQuery, nestedDivisionQuery } from '$lib/server/db/helpers';
 
 export const createSeason = command(
 	z.object({
@@ -69,9 +69,9 @@ export const getDivisionsBySeason = query(
 			orderBy: {
 				name: 'asc'
 			},
-			...leagueQuery,
+			...entityQuery,
 			with: {
-				groups: leagueQuery
+				groups: entityQuery
 			}
 		});
 

@@ -1,4 +1,5 @@
 import { db } from '$lib/server/db';
+import { divisionOrder } from '$lib/server/db/helpers';
 import { error } from '@sveltejs/kit';
 
 export const load = async ({ params }) => {
@@ -15,7 +16,9 @@ export const load = async ({ params }) => {
 				}
 			},
 			season: {},
-			brackets: {}
+			brackets: {
+				orderBy: (t) => divisionOrder(t.name)
+			}
 		}
 	});
 

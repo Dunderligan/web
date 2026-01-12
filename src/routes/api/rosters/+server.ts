@@ -1,11 +1,11 @@
 import { db } from '$lib/server/db';
-import { leagueQuery } from '$lib/server/db/helpers';
+import { entityQuery } from '$lib/server/db/helpers';
 import { json } from '@sveltejs/kit';
 
 export const GET = async () => {
 	const rosters = await db.query.season.findMany({
 		columns: {
-			...leagueQuery.columns,
+			...entityQuery.columns,
 			legacyRanks: true
 		},
 		orderBy: {
@@ -13,12 +13,12 @@ export const GET = async () => {
 		},
 		with: {
 			divisions: {
-				...leagueQuery,
+				...entityQuery,
 				with: {
 					groups: {
-						...leagueQuery,
+						...entityQuery,
 						with: {
-							rosters: leagueQuery
+							rosters: entityQuery
 						}
 					}
 				}

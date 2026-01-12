@@ -8,10 +8,10 @@ import { schema } from '$lib/server/db';
 /**
  * Query with the id, name and slug columns.
  * Commonly used for fetching for rosters, groups, brackets, divisions and seasons
- * (collectively "leagues") in nested queries.
+ * (collectively "entities") in nested queries.
  */
 // TODO: find a better name for this
-export const leagueQuery = {
+export const entityQuery = {
 	columns: {
 		id: true,
 		name: true,
@@ -23,12 +23,12 @@ export const leagueQuery = {
  * Query for a division with the parent season nested.
  */
 export const nestedDivisionQuery = {
-	...leagueQuery,
+	...entityQuery,
 	with: {
 		season: {
 			columns: {
 				legacyRanks: true,
-				...leagueQuery.columns
+				...entityQuery.columns
 			}
 		}
 	}
@@ -38,7 +38,7 @@ export const nestedDivisionQuery = {
  * Query for a group with the parent division (and the division's season) nested.
  */
 export const nestedGroupQuery = {
-	...leagueQuery,
+	...entityQuery,
 	with: {
 		division: nestedDivisionQuery
 	}
@@ -60,7 +60,7 @@ export const nestedBracketQuery = {
 /**
  * Query for the base information about a roster participating in matches.
  */
-export const matchRosterQuery = leagueQuery;
+export const matchRosterQuery = entityQuery;
 
 /**
  * Default ordering for matches within a group.
@@ -97,7 +97,22 @@ export function rolesOrder(column: any) {
 			WHEN 'support' THEN 3
 			WHEN 'flex' THEN 4
 			WHEN 'coach' THEN 5
-			ELSE 6 END
+			ELSE 6 
+		END
+	) ASC`;
+}
+
+/**
+ * An sql ordering that puts "Dunderligan" first, then alphabetically by the provided column.
+ *
+ * Used for sorting divisions and brackets.
+ */
+export function divisionOrder(column: any) {
+	return sql`(
+		CASE ${column}
+			WHEN 'Dunderligan' THEN '0'
+			ELSE ${column}
+		END
 	) ASC`;
 }
 
