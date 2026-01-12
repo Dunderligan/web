@@ -15,8 +15,6 @@
 		// hide the match if only one roster is known (we assume it's a bye)
 		return match.played && (!match.rosterA || !match.rosterB);
 	}
-
-	$inspect(rounds);
 </script>
 
 <div class="w-full overflow-x-auto rounded-lg p-1">
