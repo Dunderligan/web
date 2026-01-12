@@ -9,11 +9,12 @@
 	import Bracket from '$lib/components/match/Bracket.svelte';
 	import { buildBracketRounds } from '$lib/bracket';
 	import Subheading from '$lib/components/ui/Subheading.svelte';
-	import type { FullMatchWithoutOrder, ResolvedMatch, Roster } from '$lib/types';
+	import type { UnresolvedMatch, ResolvedMatch, Roster } from '$lib/types';
 	import SeasonStateChip from '$lib/components/ui/SeasonStateChip.svelte';
 	import MatchList from '$lib/components/match/MatchList.svelte';
 	import { goto } from '$app/navigation';
 	import Meta from '$lib/components/structure/Meta.svelte';
+	import { Tooltip } from 'bits-ui';
 
 	let { data } = $props();
 
@@ -95,7 +96,7 @@
 		return division.rosters.find((roster) => roster.id === id) ?? null;
 	}
 
-	function resolveMatch(match: FullMatchWithoutOrder): ResolvedMatch {
+	function resolveMatch(match: UnresolvedMatch): ResolvedMatch {
 		return {
 			rosterA: resolveRoster(match.rosterAId),
 			rosterB: resolveRoster(match.rosterBId),

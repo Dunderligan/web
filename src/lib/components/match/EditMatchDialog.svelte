@@ -6,6 +6,8 @@
 	import Label from '../ui/Label.svelte';
 	import RosterSelect from '../admin/RosterSelect.svelte';
 	import DateInput from '../ui/DateInput.svelte';
+	import { Accordion } from 'bits-ui';
+	import Icon from '../ui/Icon.svelte';
 
 	const rosterCtx = RosterContext.get();
 	const saveCtx = SaveContext.get();
@@ -55,6 +57,7 @@
 				placeholder="Poäng"
 			/>
 		</div>
+
 		<div class="flex gap-2">
 			<RosterSelect
 				class="w-full"
@@ -71,17 +74,6 @@
 				placeholder="Poäng"
 			/>
 		</div>
-		<div class="mb-6">
-			<Label label="Draws">
-				<InputField
-					bind:value={match.draws}
-					onchange={saveCtx.setDirty}
-					type="number"
-					placeholder="Antal draws"
-					class="w-1/3"
-				/>
-			</Label>
-		</div>
 
 		<Label label="Planerad">
 			<DateInput bind:value={match.scheduledAt} oninput={saveCtx.setDirty} />
@@ -89,12 +81,57 @@
 		<Label label="Spelad">
 			<DateInput bind:value={match.playedAt} oninput={saveCtx.setDirty} disabled={!match.played} />
 		</Label>
-		<Label label="VOD">
-			<InputField
-				bind:value={match.vodUrl}
-				onchange={saveCtx.setDirty}
-				placeholder="https://youtube.com/..."
-			/>
-		</Label>
+
+		<Accordion.Root type="single">
+			<Accordion.Item class="w-full">
+				<Accordion.Trigger
+					class="flex w-full items-center gap-2 rounded-md bg-gray-100 px-4 py-2 text-left font-medium text-gray-800 hover:bg-gray-200 data-[state=open]:rounded-b-none dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+				>
+					<Icon icon="ph:gear-six" class="inline-block" />
+					Fler inställningar
+
+					{#if match.teamANote || match.teamBNote || match.draws > 0 || match.vodUrl}
+						<Icon icon="ph:circle-fill" class="ml-auto text-accent-600" />
+					{/if}
+				</Accordion.Trigger>
+				<Accordion.Content
+					class="space-y-2 rounded-b-md border-x-2 border-b-2 border-gray-100 px-6 py-4 dark:border-gray-800"
+				>
+					<Label label="Draws">
+						<InputField
+							bind:value={match.draws}
+							onchange={saveCtx.setDirty}
+							type="number"
+							placeholder="Antal draws"
+							class="w-1/3"
+						/>
+					</Label>
+
+					<Label label="VOD">
+						<InputField
+							bind:value={match.vodUrl}
+							onchange={saveCtx.setDirty}
+							placeholder="https://youtube.com/..."
+						/>
+					</Label>
+
+					<Label label="Anteckningar lag A">
+						<InputField
+							bind:value={match.teamANote}
+							onchange={saveCtx.setDirty}
+							placeholder="..."
+						/>
+					</Label>
+
+					<Label label="Anteckningar lag B">
+						<InputField
+							bind:value={match.teamBNote}
+							onchange={saveCtx.setDirty}
+							placeholder="..."
+						/>
+					</Label>
+				</Accordion.Content>
+			</Accordion.Item>
+		</Accordion.Root>
 	{/if}
 </Dialog>

@@ -93,6 +93,7 @@
 	}
 
 	function addMatchAndEdit() {
+		// TODO: find a way to do this without _this_, while keeping TS happy
 		const match = {
 			id: uuidv4(),
 			groupId: data.group.id,
@@ -108,7 +109,9 @@
 			scheduledAt: null,
 			vodUrl: null,
 			createdAt: null,
-			order: null
+			order: null,
+			teamANote: null,
+			teamBNote: null
 		};
 
 		group.matches.unshift(match);

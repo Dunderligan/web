@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { ClassValue, FullMatchWithoutOrder, NestedBracket, NestedGroup } from '$lib/types';
+	import type { ClassValue, NestedBracket, NestedGroup, MatchWithoutRosters } from '$lib/types';
 	import { formatDate, formatDateTime } from '$lib/util';
 	import Icon from '../ui/Icon.svelte';
 
 	type Props = {
-		match: FullMatchWithoutOrder;
+		match: MatchWithoutRosters;
 		group?: NestedGroup | null;
 		bracket?: NestedBracket | null;
 		center?: boolean;

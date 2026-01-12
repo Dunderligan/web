@@ -91,6 +91,8 @@ export const load = async ({ params }) => {
 			teamAScore: true,
 			teamBScore: true,
 			draws: true,
+			teamANote: true,
+			teamBNote: true,
 			playedAt: true,
 			scheduledAt: true,
 			played: true,

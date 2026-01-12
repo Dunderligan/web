@@ -1,8 +1,11 @@
 <script lang="ts">
 	import type { ResolvedMatch } from '$lib/types';
 	import RosterLogo from '../ui/RosterLogo.svelte';
-	import { matchRoster, isWinner, type MatchSide, matchScore } from '$lib/match';
+	import { matchRoster, isWinner, type MatchSide, matchScore, matchNote } from '$lib/match';
 	import MatchInfoRow from './MatchInfoRow.svelte';
+	import Icon from '../ui/Icon.svelte';
+	import Tooltip from '../ui/Tooltip.svelte';
+	import MatchNote from './MatchNote.svelte';
 
 	type Props = {
 		match: ResolvedMatch;
@@ -59,6 +62,7 @@
 	{@const roster = matchRoster(match, side)}
 	{@const won = isWinner(match, side)}
 	{@const score = matchScore(match, side)}
+	{@const note = matchNote(match, side)}
 
 	{@const href = `/lag/${roster?.slug}/${seasonSlug}`}
 
@@ -94,6 +98,10 @@
 			>
 				{roster?.name}
 			</a>
+
+			{#if note}
+				<MatchNote {note} class="ml-auto" />
+			{/if}
 		{:else}
 			<div class="grow text-center font-medium">
 				{match.played ? '---' : '???'}

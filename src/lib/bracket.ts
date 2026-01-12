@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import type { FullMatch, LogicalMatch } from './types';
+import type { UnresolvedMatchWithOrder, LogicalMatch } from './types';
 import { isMatchBetween } from './match';
 
 export function minBracketRounds(teamCount: number): number {
@@ -22,7 +22,7 @@ export function createBracket<R extends { id: string }, M extends LogicalMatch>(
 	options: { avoidPreviousMatches?: boolean } = {
 		avoidPreviousMatches: true
 	}
-): FullMatch[][] {
+): UnresolvedMatchWithOrder[][] {
 	const slots = Math.pow(2, roundCount);
 	let emptySlots = slots - rosters.length;
 
@@ -162,7 +162,7 @@ function getMatchOrder(rounds: number): number[] {
 	}
 }
 
-function createMatch(order: number, nextMatchId?: string): FullMatch {
+function createMatch(order: number, nextMatchId?: string): UnresolvedMatchWithOrder {
 	return {
 		id: uuidv4(),
 		nextMatchId,

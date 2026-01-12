@@ -11,11 +11,10 @@
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
 	import { RosterContext } from '$lib/state/rosters.svelte';
 	import { SaveContext } from '$lib/state/save.svelte';
-	import type { FullMatch } from '$lib/types';
+	import type { UnresolvedMatchWithOrder } from '$lib/types';
 	import { buildBracketRounds } from '$lib/bracket.js';
 	import { deleteBracket, updateBracket } from '$lib/remote/bracket.remote';
-	import { getRosterId as sideToRosterId, matchWinner } from '$lib/match.js';
-
+	import { matchRosterId, matchWinner } from '$lib/match.js';
 	const { data } = $props();
 
 	const bracket = $state(data.bracket);
@@ -33,7 +32,7 @@
 	const saveCtx = SaveContext.get();
 	const confirmCtx = ConfirmContext.get();
 
-	let rounds: FullMatch[][] = $state([]);
+	let rounds: UnresolvedMatchWithOrder[][] = $state([]);
 
 	async function onDeleteClicked() {
 		await confirmCtx.confirm({
@@ -51,8 +50,6 @@
 	}
 
 	async function save() {
-		console.log('saving bracket', bracket);
-
 		await updateBracket({
 			id: bracket.id,
 			name: bracket.name,
@@ -74,7 +71,7 @@
 				const nextMatch = rounds[i + 1][Math.floor(j / 2)];
 				const isRosterSideAInNext = j % 2 == 0;
 
-				const winner = sideToRosterId(match, matchWinner(match));
+				const winner = matchRosterId(match, matchWinner(match));
 
 				if (isRosterSideAInNext) {
 					nextMatch.rosterAId = winner;

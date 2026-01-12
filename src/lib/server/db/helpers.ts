@@ -3,6 +3,14 @@ import { PgTransaction } from 'drizzle-orm/pg-core';
 import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 import { schema } from '$lib/server/db';
 
+// Helper queries and functions for database operations.
+
+/**
+ * Query with the id, name and slug columns.
+ * Commonly used for fetching for rosters, groups, brackets, divisions and seasons
+ * (collectively "leagues") in nested queries.
+ */
+// TODO: find a better name for this
 export const leagueQuery = {
 	columns: {
 		id: true,
@@ -11,6 +19,9 @@ export const leagueQuery = {
 	}
 } as const;
 
+/**
+ * Query for a division with the parent season nested.
+ */
 export const nestedDivisionQuery = {
 	...leagueQuery,
 	with: {
@@ -23,6 +34,9 @@ export const nestedDivisionQuery = {
 	}
 } as const;
 
+/**
+ * Query for a group with the parent division (and the division's season) nested.
+ */
 export const nestedGroupQuery = {
 	...leagueQuery,
 	with: {
@@ -30,6 +44,9 @@ export const nestedGroupQuery = {
 	}
 } as const;
 
+/**
+ * Query for a bracket with the parent division (and the division's season) nested.
+ */
 export const nestedBracketQuery = {
 	columns: {
 		id: true,
@@ -40,8 +57,14 @@ export const nestedBracketQuery = {
 	}
 } as const;
 
+/**
+ * Query for the base information about a roster participating in matches.
+ */
 export const matchRosterQuery = leagueQuery;
 
+/**
+ * Default ordering for matches within a group.
+ */
 export const groupMatchOrder = {
 	played: 'asc', // planned matches first
 	playedAt: 'desc', // played matches by most recent first
@@ -55,6 +78,8 @@ export const fullMatchColumns = {
 	draws: true,
 	rosterAId: true,
 	rosterBId: true,
+	teamANote: true,
+	teamBNote: true,
 	nextMatchId: true,
 	played: true,
 	vodUrl: true,

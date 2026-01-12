@@ -142,6 +142,8 @@ export const match = pgTable(
 		teamAScore: integer().notNull().default(0),
 		teamBScore: integer().notNull().default(0),
 		draws: integer().notNull().default(0),
+		teamANote: text(),
+		teamBNote: text(),
 		played: boolean().notNull().default(false),
 		playedAt: timestamp(),
 		scheduledAt: timestamp(),
