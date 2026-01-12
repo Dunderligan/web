@@ -78,7 +78,7 @@
 	}}
 >
 	<Combobox.Input
-		class="group flex grow items-center overflow-hidden rounded-lg border border-transparent bg-gray-100 py-2 pr-2 pl-4 font-medium text-gray-800 ring-accent-600 focus:ring-2 focus:outline-none data-disabled:cursor-not-allowed data-disabled:bg-gray-200 data-disabled:text-gray-500 dark:bg-gray-800 dark:text-gray-300"
+		class="group flex grow items-center overflow-hidden rounded-lg border border-transparent bg-gray-100 py-2 pr-2 pl-4 font-medium text-gray-800 ring-accent-600 focus:ring-2 focus:outline-none data-disabled:cursor-not-allowed data-disabled:bg-gray-200 data-disabled:text-gray-500 dark:bg-gray-800 dark:text-gray-300 dark:data-disabled:bg-gray-700 dark:data-disabled:text-gray-500"
 		placeholder="Sök efter lag..."
 		oninput={(evt) => (searchQuery = evt.currentTarget.value)}
 	></Combobox.Input>
