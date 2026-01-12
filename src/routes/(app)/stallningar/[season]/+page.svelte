@@ -183,11 +183,12 @@
 				{/if}
 			{/each}
 
-			{#if division.upcomingMatches.length > 0}
-				<Subheading class="mt-10 mb-4">Kommande matcher</Subheading>
-
-				<MatchList matches={division.upcomingMatches.map(resolveMatch)} seasonSlug={season.slug} />
-			{/if}
+			<MatchList
+				title="Kommande matcher"
+				matches={division.upcomingMatches.map(resolveMatch)}
+				seasonSlug={season.slug}
+				hideIfEmpty
+			/>
 
 			{#if division.latestMatches.length > 0}
 				<div class="mt-10 mb-4 flex max-w-2xl items-center justify-between">
