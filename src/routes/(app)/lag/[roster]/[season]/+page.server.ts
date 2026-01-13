@@ -25,7 +25,7 @@ export const load = async ({ params }) => {
 		},
 		with: {
 			members: {
-				orderBy: (t) => sql`${rolesOrder(t.role)}, ${schema.player.battletag} ASC`,
+				orderBy: (t) => sql`${rolesOrder(t.role)}, ${t.playerId} ASC`,
 				columns: {
 					isCaptain: true,
 					tier: true,
