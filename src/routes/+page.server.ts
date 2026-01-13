@@ -10,7 +10,7 @@ import { MatchState } from '$lib/types';
 
 const getMatches = async ({ state }: { state: MatchState }) => {
 	return await db.query.match.findMany({
-		limit: 3,
+		limit: 4,
 		orderBy: groupMatchOrder,
 		where: {
 			state,
