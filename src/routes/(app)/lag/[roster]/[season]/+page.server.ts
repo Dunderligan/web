@@ -7,7 +7,7 @@ import {
 	nestedGroupQuery,
 	rolesOrder
 } from '$lib/server/db/helpers';
-import { db } from '$lib/server/db';
+import { db, schema } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
 import { sql } from 'drizzle-orm';
 
@@ -25,7 +25,7 @@ export const load = async ({ params }) => {
 		},
 		with: {
 			members: {
-				orderBy: (t) => sql`${rolesOrder(t.role)}, ${t.playerId} ASC`,
+				orderBy: (t) => sql`${rolesOrder(t.role)}, ${schema.player.battletag} ASC`,
 				columns: {
 					isCaptain: true,
 					tier: true,
