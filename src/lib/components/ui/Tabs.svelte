@@ -1,7 +1,7 @@
 <script lang="ts" generics="T">
-	import { Button } from 'bits-ui';
 	import type { ClassValue } from 'svelte/elements';
 	import Icon from './Icon.svelte';
+	import { Button } from 'bits-ui';
 
 	type Item = {
 		label: string;
@@ -29,12 +29,16 @@
 </script>
 
 <div class={[classProp, 'flex items-stretch gap-1 overflow-x-auto overflow-y-hidden rounded-lg']}>
-	{#each items as { label, value, icon, href, disabled } (value)}
+	{#each items as { label, value, icon, href, disabled }, i (value)}
 		{@const isSelected = selected === value}
+		{@const renderedIcon = icon && isSelected && fillIcons ? `${icon}-fill` : icon}
 
 		<Button.Root
 			{href}
 			{disabled}
+			data-sveltekit-noscroll
+			role="tab"
+			tabindex={isSelected ? 0 : -1}
 			onclick={() => {
 				if (disabled) return;
 				selected = value;
@@ -49,8 +53,6 @@
 						: 'bg-accent-200 font-semibold text-accent-800 hover:bg-accent-300 hover:text-accent-900 dark:bg-accent-900 dark:text-accent-300 dark:hover:bg-accent-800 dark:hover:text-accent-200'
 			]}
 		>
-			{@const renderedIcon = icon && isSelected && fillIcons ? `${icon}-fill` : icon}
-
 			{#if renderedIcon}
 				<Icon icon={renderedIcon} class="text-xl" />
 			{/if}
