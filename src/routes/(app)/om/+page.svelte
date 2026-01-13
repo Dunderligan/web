@@ -2,23 +2,63 @@
 	import Meta from '$lib/components/structure/Meta.svelte';
 	import PageHeader from '$lib/components/structure/PageHeader.svelte';
 	import PageSection from '$lib/components/structure/PageSection.svelte';
+	import screenshot1 from '$lib/assets/images/screenshot1.avif';
+	import screenshot2 from '$lib/assets/images/screenshot2.avif';
 </script>
 
 <Meta title="Om oss" />
 
-<PageHeader title="Om oss"></PageHeader>
+<PageHeader title="Om oss">
+	<div
+		class="mt-2 mb-1 text-center text-xl font-semibold text-gray-800 sm:text-left dark:text-gray-300"
+	>
+		Lite om turneringen och våran vision
+	</div>
+</PageHeader>
 
-<PageSection class="text-lg font-medium">
-	<p class="mb-8">
-		Dunderligan är Sveriges största återkommande Overwatchturnering som årligen samlar 32 lag från
-		alla ranker för att göra upp om vem som är bäst. Turneringen delas upp i olika divisioner enligt
-		rankerna på lagens spelare, så alla har en chans att ha kul och visa upp sig själva.
-	</p>
+<PageSection class="gap-2 text-lg font-medium">
+	{@render card(
+		'Koncept',
+		screenshot1,
+		'Screenshot från en Dunderligan-match',
+		'Dunderligan grundades 2019, och är idag Sveriges största Overwatch-liga. Årligen samlas närmare 40 svenska lag med spelare från spelets alla olika ranker, som gör upp i skicklighetsanpassade divisioner.'
+	)}
 
-	<p class="mb-8">
-		Turneringen startar under våren, och pågår under några månader. Alla lag delas in i divisioner
-		där de först spelar 3 gruppspelsmatcher för att bestämma seeding, och sedan ger sig in i ett
-		slutspel för att avgöra säsongens vinnare. Under säsongens gång kommenteras matcher
-		kontinuerligt, både live och i efterhand, för att ge spelare en chans att visa upp sig själv.
+	<div class="mx-auto mb-18 flex max-w-2xl items-center gap-8">
+		De rankanpassade divisionerna gör att till exempel Champion-spelare inte ska behöva möta
+		Platinum-spelare, utan snarare möta lag och spelare så nära deras egna skicklighetsnivå som
+		möjligt. Detta bäddar för många jämna och roliga ligamatcher!
+	</div>
+
+	{@render card(
+		'Format',
+		screenshot2,
+		'Screenshot från en Dunderligan-match',
+		'Turneringen spelas en gång om året, den startar under våren och pågår under några månader. Varje lag spelar en handfull grundseriematcher innan slutspel väntar, för samtliga lag.',
+		true
+	)}
+
+	<p class="mx-auto mb-18 max-w-2xl space-y-4">
+		Under säsongens gång lägger vi även ner stor ansträngning på att matches ska kommenteras, båda
+		live och i efterhand, för att sedan publiceras i vårt matcharkiv på YouTube.
 	</p>
 </PageSection>
+
+{#snippet card(title: string, image: string, alt: string, text: string, reverse: boolean = false)}
+	<div
+		class={[
+			reverse ? 'lg:flex-row-reverse' : 'lg:flex-row',
+			'mb-18 flex flex-col overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-900'
+		]}
+	>
+		<img src={image} {alt} class="lg:w-110" />
+
+		<div class="px-10 py-8">
+			<h3 class="mb-2 text-xl font-semibold">{title}</h3>
+
+			<p>
+				{@html text}
+			</p>
+		</div>
+	</div>
+{/snippet}
