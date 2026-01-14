@@ -10,10 +10,7 @@
 
 <input
 	type="text"
-	class={[
-		classProp,
-		'min-w-0 grow rounded-md bg-gray-100 px-4 py-2 font-medium text-gray-800 placeholder-gray-400 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500'
-	]}
+	class={[classProp, 'field min-w-0 grow']}
 	onkeydown={(evt) => {
 		if (onenter && evt.key === 'Enter') {
 			onenter();

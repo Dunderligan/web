@@ -16,15 +16,15 @@
 	</div>
 </PageHeader>
 
-<PageSection class="gap-2 text-lg font-medium">
+<PageSection class="gap-2 space-y-18 text-lg font-medium">
 	{@render card(
-		'Koncept',
+		'Historia',
 		screenshot1,
 		'Screenshot från en Dunderligan-match',
 		'Dunderligan grundades 2019, och är idag Sveriges största Overwatch-liga. Årligen samlas närmare 40 svenska lag med spelare från spelets alla olika ranker, som gör upp i skicklighetsanpassade divisioner.'
 	)}
 
-	<div class="mx-auto mb-18 flex max-w-2xl items-center gap-8">
+	<div class="mx-auto max-w-2xl">
 		De rankanpassade divisionerna gör att till exempel Champion-spelare inte ska behöva möta
 		Platinum-spelare, utan snarare möta lag och spelare så nära deras egna skicklighetsnivå som
 		möjligt. Detta bäddar för många jämna och roliga ligamatcher!
@@ -38,7 +38,7 @@
 		true
 	)}
 
-	<p class="mx-auto mb-18 max-w-2xl space-y-4">
+	<p class="mx-auto max-w-2xl">
 		Under säsongens gång lägger vi även ner stor ansträngning på att matches ska kommenteras, båda
 		live och i efterhand, för att sedan publiceras i vårt matcharkiv på YouTube.
 	</p>
@@ -48,7 +48,7 @@
 	<div
 		class={[
 			reverse ? 'lg:flex-row-reverse' : 'lg:flex-row',
-			'mb-18 flex flex-col overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-900'
+			'flex flex-col overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-900'
 		]}
 	>
 		<img src={image} {alt} class="lg:w-110" />

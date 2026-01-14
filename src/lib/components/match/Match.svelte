@@ -6,7 +6,8 @@
 		type MatchSide,
 		flipSide,
 		matchScore,
-		matchNote
+		matchNote,
+		hasMatchScore
 	} from '$lib/match';
 	import { MatchState, type ClassValue, type ResolvedMatchWithContext } from '$lib/types';
 	import Icon from '../ui/Icon.svelte';
@@ -33,23 +34,10 @@
 	const division = $derived(match.group?.division ?? match.bracket?.division ?? null);
 	const seasonSlug = $derived(seasonSlugProp ?? division?.season.slug);
 
-	const gradientClass = $derived.by(() => {
-		if (!mainRosterId) return null;
-
-		if (winner === leftTeam) {
-			return 'bg-linear-to-l to-green-100 dark:to-green-950';
-		} else if (winner == rightTeam) {
-			return 'bg-linear-to-r to-red-100 dark:to-red-950';
-		}
-	});
+	const showScore = $derived(hasMatchScore(match));
 </script>
 
-<div
-	class={[
-		// gradientClass,
-		'relative overflow-hidden rounded-lg bg-gray-100 px-6 py-3 dark:bg-gray-900'
-	]}
->
+<div class={['relative overflow-hidden rounded-lg bg-gray-100 px-6 py-3 dark:bg-gray-900']}>
 	<MatchInfoRow
 		{match}
 		group={match.group}
@@ -67,7 +55,7 @@
 		<div
 			class="hidden w-18 shrink-0 text-center text-3xl text-gray-600 sm:block dark:text-gray-400"
 		>
-			{#if match.state === MatchState.PLAYED || match.state === MatchState.WALKOVER}
+			{#if showScore}
 				<span class={[winner === leftTeam && 'text-accent-600 dark:text-accent-500', 'font-bold']}
 					>{matchScore(match, leftTeam)}
 				</span>

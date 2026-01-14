@@ -4,6 +4,7 @@
 	import { formatDate } from '$lib/util';
 	import Button from '../ui/Button.svelte';
 	import Icon from '../ui/Icon.svelte';
+	import MatchInfoRow from './MatchInfoRow.svelte';
 
 	type Props = {
 		match: UnresolvedMatch;
@@ -15,26 +16,10 @@
 	let { match, canEditRosters = true, canDelete = true, ondelete }: Props = $props();
 
 	const rosterCtx = RosterContext.get();
-
-	const { icon, label, date } = $derived(
-		{
-			played: { icon: 'ph:check-circle', label: 'Spelad', date: match.playedAt },
-			scheduled: { icon: 'ph:calendar-blank', label: 'Planerad', date: match.scheduledAt },
-			walkover: { icon: 'ph:warning', label: 'Walkover' },
-			cancelled: { icon: 'ph:x-circle', label: 'Inställd' }
-		}[match.state]
-	);
 </script>
 
 <div class="relative rounded-lg bg-gray-100 px-1 py-1 dark:bg-gray-900">
-	<div class="px-4 py-1 text-sm font-medium text-gray-600 dark:text-gray-400">
-		<Icon {icon} />
-		<span>{label}</span>
-
-		{#if date}
-			{formatDate(date)}
-		{/if}
-	</div>
+	<MatchInfoRow {match} class="mb-0.5 px-4 py-0.5" />
 
 	{@render side(match.teamAScore, match.rosterAId, match.teamANote)}
 	{@render side(match.teamBScore, match.rosterBId, match.teamBNote)}

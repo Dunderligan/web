@@ -86,26 +86,19 @@
 	{disabled}
 	{...restProps}
 >
-	<Select.Trigger
-		class={[
-			classProp,
-			'group flex items-center overflow-hidden rounded-lg bg-gray-100 px-4 py-2 font-medium text-gray-700 data-disabled:cursor-not-allowed data-disabled:bg-gray-200 data-disabled:text-gray-500 dark:bg-gray-800 dark:text-gray-300 dark:data-disabled:bg-gray-700 dark:data-disabled:text-gray-500'
-		]}
-	>
+	<Select.Trigger class={[classProp, 'group field flex items-center overflow-hidden']}>
 		{#if selectedItem}
 			{@render renderedItemIcon(selectedItem.value)}
 		{/if}
 
-		<div
-			class={[
-				label || selectedLabel ? 'text-primary-300' : 'text-primary-600',
-				'group-disabled:text-primary-400 shrink grow truncate text-left'
-			]}
-		>
+		<div class={[!label && !selectedLabel && 'opacity-80', 'shrink grow truncate text-left']}>
 			{label ?? selectedLabel ?? placeholder}
 		</div>
 
-		<Icon icon="ph:caret-down" class={[open && 'rotate-180', 'ml-auto transform text-gray-600']} />
+		<Icon
+			icon="ph:caret-down"
+			class={[open && 'rotate-180', 'ml-auto transform text-gray-600 dark:text-gray-500']}
+		/>
 	</Select.Trigger>
 	<Select.Portal>
 		<Select.Content forceMount {avoidCollisions}>

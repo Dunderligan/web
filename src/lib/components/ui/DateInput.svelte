@@ -37,10 +37,7 @@
 		() => (date ? toInputString(date) : null),
 		(newValue) => (date = newValue ? new Date(newValue) : null)
 	}
-	class={[
-		classProp,
-		'min-w-0 grow rounded-md bg-gray-100 px-4 py-2 font-medium text-gray-800 placeholder-gray-400 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-500 dark:bg-gray-800 dark:text-gray-300 dark:disabled:bg-gray-700 dark:disabled:text-gray-400'
-	]}
+	class={[classProp, 'field min-w-0 grow rounded-md']}
 	{oninput}
 	{disabled}
 	{required}

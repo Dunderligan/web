@@ -9,7 +9,6 @@
 	import { Accordion } from 'bits-ui';
 	import Icon from '../ui/Icon.svelte';
 	import { MatchState } from '$lib/types';
-	import Match from './Match.svelte';
 	import Select from '../ui/Select.svelte';
 
 	const rosterCtx = RosterContext.get();
@@ -29,12 +28,14 @@
 		match && (match.teamANote || match.teamBNote || match.draws > 0 || match.vodUrl || specialState)
 	);
 
-	$effect(() => {
-		if (match && !specialState) {
-			const played = match.teamAScore > 0 || match.teamBScore > 0 || match.draws > 0;
-			match.state = played ? MatchState.PLAYED : MatchState.SCHEDULED;
-		}
-	});
+	const canEditScores = $derived(match?.state !== MatchState.CANCELLED);
+
+	function getDefaultState() {
+		if (!match) return MatchState.SCHEDULED;
+
+		const played = match.teamAScore > 0 || match.teamBScore > 0 || match.draws > 0;
+		return played ? MatchState.PLAYED : MatchState.SCHEDULED;
+	}
 </script>
 
 <Dialog
@@ -69,6 +70,7 @@
 				onchange={saveCtx.setDirty}
 				type="number"
 				placeholder="Poäng"
+				disabled={!canEditScores}
 			/>
 		</div>
 
@@ -86,6 +88,7 @@
 				onchange={saveCtx.setDirty}
 				type="number"
 				placeholder="Poäng"
+				disabled={!canEditScores}
 			/>
 		</div>
 
@@ -128,7 +131,10 @@
 								{ label: 'Inställd', value: MatchState.CANCELLED }
 							]}
 							placeholder="Ingen"
-							bind:value={() => specialState?.toString(), (v) => (match.state = v as MatchState)}
+							bind:value={
+								() => specialState?.toString(),
+								(v) => (match.state = (v as MatchState) ?? getDefaultState())
+							}
 							onValueChange={saveCtx.setDirty}
 							canClear
 						/>
@@ -157,6 +163,7 @@
 							bind:value={match.teamANote}
 							onchange={saveCtx.setDirty}
 							placeholder="..."
+							class="mt-2"
 						/>
 					</Label>
 

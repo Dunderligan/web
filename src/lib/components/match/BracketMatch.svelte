@@ -1,7 +1,14 @@
 <script lang="ts">
 	import { MatchState, type ResolvedMatch } from '$lib/types';
 	import RosterLogo from '../ui/RosterLogo.svelte';
-	import { matchRoster, isWinner, type MatchSide, matchScore, matchNote } from '$lib/match';
+	import {
+		matchRoster,
+		isWinner,
+		type MatchSide,
+		matchScore,
+		matchNote,
+		hasMatchScore
+	} from '$lib/match';
 	import MatchInfoRow from './MatchInfoRow.svelte';
 	import Icon from '../ui/Icon.svelte';
 	import Tooltip from '../ui/Tooltip.svelte';
@@ -29,6 +36,8 @@
 
 	// don't ask
 	const verticalLineHeight = $derived(78 * roundIndex + 2);
+
+	const showScore = $derived(hasMatchScore(match));
 </script>
 
 <div
@@ -70,7 +79,7 @@
 		class={[
 			classProp,
 			'flex h-[49px] items-center pr-4 font-medium text-gray-700 dark:text-gray-300',
-			match.state === MatchState.PLAYED
+			showScore
 				? won
 					? 'bg-gray-200 dark:bg-gray-800'
 					: 'bg-gray-50 dark:bg-gray-900'
@@ -80,12 +89,12 @@
 		{#if roster}
 			<div
 				class={[
-					match.state === MatchState.PLAYED ? 'text-2xl font-extrabold' : 'text-lg',
+					showScore ? 'text-2xl font-extrabold' : 'text-lg',
 					won ? 'text-accent-600 dark:text-accent-500' : 'text-gray-500 dark:text-gray-400',
 					'flex h-full shrink-0 items-center justify-center px-4 text-center'
 				]}
 			>
-				{match.state === MatchState.PLAYED || match.state === MatchState.WALKOVER ? score.toString() : '?'}
+				{showScore ? score.toString() : '?'}
 			</div>
 
 			<RosterLogo id={roster.id} {href} class="mr-2 size-8" />

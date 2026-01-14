@@ -39,8 +39,8 @@
 				label: 'Planerad',
 				date: match.scheduledAt ? formatDateTime(match.scheduledAt) : null
 			},
-			walkover: { icon: 'ph:warning', label: 'Walkover' },
-			cancelled: { icon: 'ph:x-circle', label: 'Inställd' }
+			walkover: { icon: 'ph:flag', label: 'Walkover' },
+			cancelled: { icon: 'ph:x', label: 'Inställd' }
 		}[match.state]
 	);
 </script>
