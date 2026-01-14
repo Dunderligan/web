@@ -85,7 +85,7 @@
 					'flex h-full shrink-0 items-center justify-center px-4 text-center'
 				]}
 			>
-				{match.state === MatchState.PLAYED ? score.toString() : '?'}
+				{match.state === MatchState.PLAYED || match.state === MatchState.WALKOVER ? score.toString() : '?'}
 			</div>
 
 			<RosterLogo id={roster.id} {href} class="mr-2 size-8" />
