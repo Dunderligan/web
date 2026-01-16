@@ -33,7 +33,7 @@
 	}}
 	disabled={!name.trim() || (hasExistingTeam && !teamId)}
 >
-	<Label label="Tillhör ett existerande lag">
+	<Label label="Tillhör existerande lag">
 		<Checkbox bind:checked={hasExistingTeam} />
 	</Label>
 
