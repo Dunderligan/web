@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { type AnyRank, type ClassValue } from '$lib/types';
-	import { capitalize, getRank, getTierLabel, isLegacyRank } from '$lib/util';
+	import { capitalize } from '$lib/util';
+	import { getRank, getTierLabel, isLegacyRank } from '$lib/rank';
 	import bronze from '$lib/assets/images/ranks/bronze.png';
 	import silver from '$lib/assets/images/ranks/silver.png';
 	import gold from '$lib/assets/images/ranks/gold.png';

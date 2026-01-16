@@ -7,18 +7,12 @@
 	import RosterLogo from '$lib/components/ui/RosterLogo.svelte';
 	import Tabs from '$lib/components/ui/Tabs.svelte';
 	import TeamSocial from '$lib/components/ui/TeamSocial.svelte';
-	import {
-		averageLegacyRank,
-		averageRank,
-		cdnImageSrc,
-		cdnRosterLogoPath,
-		flattenGroup
-	} from '$lib/util';
+	import { cdnImageSrc, cdnRosterLogoPath, flattenGroup } from '$lib/util';
 	import { page } from '$app/state';
-	import Subheading from '$lib/components/ui/Subheading.svelte';
 	import MatchList from '$lib/components/match/MatchList.svelte';
 	import Meta from '$lib/components/structure/Meta.svelte';
-	import { MatchState } from '$lib/types.js';
+	import { MatchState } from '$lib/types';
+	import { averageLegacyRank, averageRank } from '$lib/rank';
 
 	let { data } = $props();
 
