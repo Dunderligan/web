@@ -1,15 +1,17 @@
-# Dunderligan Website
 
-Dunderligan's official website, [dunderligan.se](https://dunderligan.se). *Work in progress!*
+<img src="https://raw.githubusercontent.com/Dunderligan/web/refs/heads/master/src/lib/assets/images/logo.webp" width="100%" />
+
+# web
+
+Dunderligan's official website, [dunderligan.se](https://dunderligan.se). The site houses information about the tournament, teams and their players, as well as current and historial standings, match records and brackets, with more to come!
+
+It's a full-stack app built using SvelteKit and TailwindCSS. For more technical documentation, see [./docs/](./docs/overview.md). 
 
 You can find the staging version at [dev.dunderligan.se](https://dev.dunderligan.se).
 
-See [./docs/](./docs/overview.md) for technical documentation.
-
 ## Contact
 
-The website is mainly developed by Bobbo, who you can find on Discord (username
-`kesomannen`). For bug reports and suggestions, you can also create an Issue here on the Github page.
+The website is mainly developed by [Kesomannen](https://github.com/Kesomannen), who you can find on Discord (display name `Bobbo`). For bug reports and suggestions, you can also create an Issue here on the Github page.
 
 # License
 
