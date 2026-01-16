@@ -43,9 +43,9 @@
 </header>
 
 <PageSection topMargin={false}>
-	<MatchList title="Senaste matcherna" matches={data.matches.latest} hideIfEmpty />
-
 	<MatchList title="Kommande matcher" matches={data.matches.upcoming} hideIfEmpty />
+
+	<MatchList title="Senaste matcherna" matches={data.matches.latest} hideIfEmpty />
 </PageSection>
 
 <style>
