@@ -4,6 +4,7 @@ import {
 	fullMatchColumns,
 	groupMatchOrder,
 	matchRosterQuery,
+	nestedBracketQuery,
 	nestedDivisionQuery,
 	nestedGroupQuery
 } from '$lib/server/db/helpers';
@@ -33,7 +34,7 @@ export const queryMatches = query(
 			where: {
 				AND: [
 					{
-						// don't include unplayed matches without both rosters assigned
+						// don't include matches without both of the rosters assigned
 						OR: [
 							{
 								rosterAId: {
@@ -42,13 +43,11 @@ export const queryMatches = query(
 								rosterBId: {
 									isNotNull: true
 								}
-							},
-							{
-								state: MatchState.PLAYED
 							}
 						]
 					},
 					{
+						// check if our target roster is involved in the match
 						// if rosterId is undefined, this will always be true
 						OR: [
 							{
@@ -73,15 +72,7 @@ export const queryMatches = query(
 				rosterA: matchRosterQuery,
 				rosterB: matchRosterQuery,
 				group: nestedGroupQuery,
-				bracket: {
-					columns: {
-						id: true,
-						name: true
-					},
-					with: {
-						division: nestedDivisionQuery
-					}
-				}
+				bracket: nestedBracketQuery
 			}
 		});
 
