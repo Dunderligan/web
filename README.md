@@ -5,7 +5,7 @@
 
 Dunderligan's official website, [dunderligan.se](https://dunderligan.se). The site houses information about the tournament, teams and their players, as well as current and historial standings, match records and brackets, with more to come!
 
-It's a full-stack app built using SvelteKit and TailwindCSS. For more technical documentation, see [./docs/](./docs/overview.md). 
+It's a full-stack app built using SvelteKit and Tailwind. For technical documentation, see [./docs/](./docs/overview.md). 
 
 You can find the staging version at [dev.dunderligan.se](https://dev.dunderligan.se).
 
