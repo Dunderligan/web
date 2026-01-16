@@ -41,6 +41,7 @@
 				icon="ph:arrow-left"
 				label="Föregående sida"
 				href={queryParamHref('sida', data.query.page - 1)}
+				data-sveltekit-noscroll
 			/>
 
 			{#await matchQuery}
@@ -68,5 +69,6 @@
 		label="Nästa sida"
 		href={queryParamHref('sida', data.query.page + 1)}
 		{disabled}
+		data-sveltekit-noscroll
 	/>
 {/snippet}
