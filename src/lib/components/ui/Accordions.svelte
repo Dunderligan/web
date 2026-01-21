@@ -26,7 +26,7 @@
  (an unfortunate consequence of having to destructure bindable values)
   -->
 <Accordion.Root bind:value bind:ref {...restProps as any} class={'text-gray-700 dark:text-gray-300 w-full sm:max-w-[70%]'}>
-  <div class="flex flex-col space-y-3 overflow-hidden rounded-lg">
+  <div class="flex flex-col space-y-2 overflow-hidden rounded-lg">
     {#each items as item, i (item.title + i)}
       <span><AccordionItem {...item} /></span>
     {/each}
