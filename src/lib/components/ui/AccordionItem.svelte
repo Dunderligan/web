@@ -17,7 +17,7 @@
   <Accordion.Header>
     <Accordion.Trigger class={'flex flex-1 w-full min-h-12 items-center justify-between font-display text-2xl font-semibold hover:underline transition-all [&[data-state=open]>span]:rotate-180'}>
       <h1>{title}</h1>
-      <span class="px-2 inline-flex justify-center size-8 bg-dark-10 rounded-[7px] bg-transparent transition-all"><Icon icon='ph:caret-down' class="transition-all"/></span>
+      <span class="items-center"><Icon icon='ph:caret-down' class="transition-all"/></span>
     </Accordion.Trigger>
   </Accordion.Header>
   <Accordion.Content forceMount={true} class='overflow-hidden text-sm tracking-[-0.01em]'>
