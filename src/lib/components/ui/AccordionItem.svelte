@@ -1,35 +1,42 @@
 <script lang="ts">
-  import { Accordion, type WithoutChildrenOrChild } from "bits-ui";
-  import { slide } from 'svelte/transition';
-  import Icon from './Icon.svelte';
- 
-  let is_open = $state(false);
+	import { Accordion, type WithoutChildrenOrChild } from 'bits-ui';
+	import { slide } from 'svelte/transition';
+	import Icon from './Icon.svelte';
 
-  type Props = WithoutChildrenOrChild<Accordion.ItemProps> & {
-    title: string;
-    content: string;
-  };
- 
-  let { title, content, ...restProps }: Props = $props();
+	let is_open = $state(false);
+
+	type Props = WithoutChildrenOrChild<Accordion.ItemProps> & {
+		title: string;
+		content: string;
+	};
+
+	let { title, content, ...restProps }: Props = $props();
 </script>
- 
-<Accordion.Item {...restProps} class={'px-8 py-3  bg-gray-100 hover:bg-gray-200 dark:bg-gray-900 dark:hover:bg-gray-800'}>
-  <Accordion.Header>
-    <Accordion.Trigger class={'flex flex-1 w-full min-h-12 items-center justify-between font-display text-2xl font-semibold hover:underline transition-all [&[data-state=open]>span]:rotate-180'}>
-      <h1>{title}</h1>
-      <span class="items-center"><Icon icon='ph:caret-down' class="transition-all"/></span>
-    </Accordion.Trigger>
-  </Accordion.Header>
-  <Accordion.Content forceMount={true} class='overflow-hidden text-sm tracking-[-0.01em]'>
-    {#snippet child({props, open})}  
-    <script>is_open = open;</script>
-    {#if open}
-        <div {...props} transition:slide={{duration: 400}} class={'text-xl pt-1 pb-2'}>
-          {content}
-        </div>
-      {/if}
-    {/snippet}
-  </Accordion.Content>
+
+<Accordion.Item
+	{...restProps}
+	class="bg-gray-100 px-8  py-3 hover:bg-gray-200 dark:bg-gray-900 dark:hover:bg-gray-800"
+>
+	<Accordion.Header>
+		<Accordion.Trigger
+			class={'flex min-h-12 w-full flex-1 items-center justify-between font-display text-2xl font-semibold transition-all hover:underline [&[data-state=open]>span]:rotate-180'}
+		>
+			<h1>{title}</h1>
+			<span class="items-center"><Icon icon="ph:caret-down" class="transition-all" /></span>
+		</Accordion.Trigger>
+	</Accordion.Header>
+	<Accordion.Content forceMount={true} class="overflow-hidden text-sm tracking-[-0.01em]">
+		{#snippet child({ props, open })}
+			<script>
+				is_open = open;
+			</script>
+			{#if open}
+				<div {...props} transition:slide={{ duration: 400 }} class={'pt-1 pb-2 text-xl'}>
+					{content}
+				</div>
+			{/if}
+		{/snippet}
+	</Accordion.Content>
 </Accordion.Item>
 
 <!--
