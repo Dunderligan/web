@@ -47,8 +47,6 @@
 		hidden && 'invisible',
 		'relative h-[125px] w-60 rounded-lg'
 	]}
-	tabindex="0"
-	role="button"
 >
 	<MatchInfoRow class="h-[25px] rounded-t-lg bg-gray-100 px-4 dark:bg-gray-900" {match} />
 
