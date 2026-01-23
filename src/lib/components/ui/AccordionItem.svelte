@@ -3,8 +3,6 @@
 	import { slide } from 'svelte/transition';
 	import Icon from './Icon.svelte';
 
-	let is_open = $state(false);
-
 	type Props = WithoutChildrenOrChild<Accordion.ItemProps> & {
 		title: string;
 		content: string;
@@ -19,26 +17,19 @@
 >
 	<Accordion.Header>
 		<Accordion.Trigger
-			class={'flex min-h-12 w-full flex-1 items-center justify-between font-display text-2xl font-semibold transition-all hover:underline [&[data-state=open]>span]:rotate-180'}
+			class="flex min-h-12 w-full flex-1 items-center justify-between text-left font-display text-xl font-semibold hover:underline [&[data-state=open]>span]:rotate-180"
 		>
-			<h1>{title}</h1>
-			<span class="items-center"><Icon icon="ph:caret-down" class="transition-all" /></span>
+			<div>{title}</div>
+			<span><Icon icon="ph:caret-down" /></span>
 		</Accordion.Trigger>
 	</Accordion.Header>
 	<Accordion.Content forceMount={true} class="overflow-hidden text-sm tracking-[-0.01em]">
 		{#snippet child({ props, open })}
-			<script>
-				is_open = open;
-			</script>
 			{#if open}
-				<div {...props} transition:slide={{ duration: 400 }} class={'pt-1 pb-2 text-xl'}>
+				<div {...props} transition:slide={{ duration: 400 }} class="pt-1 pb-2 text-lg">
 					{content}
 				</div>
 			{/if}
 		{/snippet}
 	</Accordion.Content>
 </Accordion.Item>
-
-<!--
-bg-gray-100 px-6 py-2.5  hover:bg-gray-200 hover:underline
--->

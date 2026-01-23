@@ -46,7 +46,7 @@
 	];
 </script>
 
-<Meta title="FAQ" />
+<Meta title="FAQ" description="Se svar på några av de vanligaste frågorna." />
 
 <PageHeader title="FAQ">
 	<div
@@ -57,8 +57,8 @@
 </PageHeader>
 
 <PageSection class="gap-2 text-lg font-medium">
-	<Subheading class="mb-4">Vanliga Frågor</Subheading>
+	<Subheading class="mb-4">Vanliga frågor</Subheading>
 	<Accordion type="multiple" {items}></Accordion>
 	<Subheading class="mt-8">Undrar du fortfarande något?</Subheading>
-	Gå med i vår discordserver!
+	<div>Gå med i vår discordserver!</div>
 </PageSection>
