@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ClassValue } from '$lib/types';
-	import Icon from '../ui/Icon.svelte';
-	import Tooltip from '../ui/Tooltip.svelte';
+	import Icon from './Icon.svelte';
+	import Tooltip from './Tooltip.svelte';
 
 	type Props = {
 		note: string;

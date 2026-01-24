@@ -27,6 +27,7 @@
 	let newSeasonStartedAt = $state(new Date());
 
 	let legacyRanks = $state(false);
+	let hidden = $state(false);
 
 	let dataFiles = $state<FileList | null>(null);
 	let uploading = $state(false);
@@ -35,7 +36,8 @@
 		const { season } = await createSeason({
 			name: newSeasonName,
 			startedAt: newSeasonStartedAt,
-			legacyRanks
+			legacyRanks,
+			hidden
 		});
 
 		await goto(`/admin/sasong/${season.id}`);
@@ -118,5 +120,9 @@
 
 	<Label label="Använd SR-poäng">
 		<Checkbox bind:checked={legacyRanks} />
+	</Label>
+
+	<Label label="Gömd">
+		<Checkbox bind:checked={hidden} />
 	</Label>
 </CreateDialog>

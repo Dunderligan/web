@@ -22,6 +22,7 @@ export const season = pgTable('season', {
 	startedAt: timestamp().notNull(),
 	endedAt: timestamp(),
 	legacyRanks: boolean().notNull().default(false),
+	hidden: boolean().notNull().default(false),
 	...timestamps
 });
 

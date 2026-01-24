@@ -1,4 +1,4 @@
-import type { Session, User } from '$lib/server/db/schema';
+import type { Session, User } from '$lib/server/db/schema/auth';
 
 declare global {
 	namespace App {

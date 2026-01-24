@@ -4,15 +4,16 @@ import { toSlug } from '$lib/util';
 import { eq } from 'drizzle-orm';
 import z from 'zod';
 import { adminGuard } from './auth.remote';
-import { entityQuery, nestedDivisionQuery } from '$lib/server/db/helpers';
+import { entityQuery } from '$lib/server/db/helpers';
 
 export const createSeason = command(
 	z.object({
 		name: z.string(),
 		startedAt: z.date(),
-		legacyRanks: z.boolean()
+		legacyRanks: z.boolean(),
+		hidden: z.boolean()
 	}),
-	async ({ name, startedAt, legacyRanks }) => {
+	async ({ name, startedAt, legacyRanks, hidden }) => {
 		await adminGuard();
 
 		const slug = toSlug(name);
@@ -23,7 +24,8 @@ export const createSeason = command(
 				name,
 				slug,
 				startedAt,
-				legacyRanks
+				legacyRanks,
+				hidden
 			})
 			.returning();
 
@@ -35,12 +37,16 @@ export const updateSeason = command(
 	z.object({
 		id: z.uuid(),
 		startedAt: z.date(),
-		endedAt: z.date().nullish()
+		endedAt: z.date().nullish(),
+		hidden: z.boolean()
 	}),
-	async ({ id, startedAt, endedAt }) => {
+	async ({ id, startedAt, endedAt, hidden }) => {
 		await adminGuard();
 
-		await db.update(schema.season).set({ startedAt, endedAt }).where(eq(schema.season.id, id));
+		await db
+			.update(schema.season)
+			.set({ startedAt, endedAt, hidden })
+			.where(eq(schema.season.id, id));
 	}
 );
 

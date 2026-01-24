@@ -10,9 +10,7 @@
 		hasMatchScore
 	} from '$lib/match';
 	import MatchInfoRow from './MatchInfoRow.svelte';
-	import Icon from '../ui/Icon.svelte';
-	import Tooltip from '../ui/Tooltip.svelte';
-	import MatchNote from './MatchNote.svelte';
+	import Note from '../ui/Note.svelte';
 
 	type Props = {
 		match: ResolvedMatch;
@@ -107,7 +105,7 @@
 			</a>
 
 			{#if note}
-				<MatchNote {note} class="ml-auto" />
+				<Note {note} class="ml-auto" />
 			{/if}
 		{:else}
 			<div class="grow text-center font-medium">

@@ -5,13 +5,14 @@ import {
 	nestedBracketQuery,
 	nestedDivisionQuery,
 	nestedGroupQuery,
-	rolesOrder
+	rolesOrder,
+	hiddenSeasonFilter
 } from '$lib/server/db/helpers';
 import { db, schema } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
 import { sql } from 'drizzle-orm';
 
-export const load = async ({ params }) => {
+export const load = async ({ params, locals }) => {
 	const data = await db.query.roster.findFirst({
 		where: {
 			seasonSlug: params.season,
@@ -54,6 +55,15 @@ export const load = async ({ params }) => {
 						columns: {
 							id: true,
 							slug: true
+						},
+						where: {
+							group: {
+								division: {
+									season: {
+										hidden: hiddenSeasonFilter(locals.user)
+									}
+								}
+							}
 						},
 						with: {
 							group: nestedGroupQuery
@@ -107,6 +117,12 @@ export const load = async ({ params }) => {
 	});
 
 	const currentRosterInfo = data.team.rosters.find((r) => r.id === data.id)!;
+
+	if (!currentRosterInfo) {
+		// our current roster is in a hidden season we can't access
+		error(404);
+	}
+
 	const roster = { ...data, team: undefined, ...currentRosterInfo, matches };
 
 	return { roster, team: data.team };
