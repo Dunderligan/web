@@ -24,7 +24,7 @@
 			<Icon icon="ph:caret-down" />
 		</Accordion.Trigger>
 	</Accordion.Header>
-	<Accordion.Content forceMount class="overflow-hidden tracking-[-0.01em]">
+	<Accordion.Content forceMount class="overflow-hidden">
 		{#snippet child({ props, open })}
 			{#if open}
 				<div
