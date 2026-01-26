@@ -128,6 +128,8 @@
 				{#if season.endedAt}
 					<span>och avslutas {formatDateWithoutYear(season.endedAt)}</span>
 				{/if}
+			{:else if season.startedAt.getDate() === season.endedAt!.getDate()}
+				Pågick under {formatDateWithoutYear(season.startedAt)}
 			{:else}
 				Pågick mellan {formatDateWithoutYear(season.startedAt)}
 				{#if season.endedAt!.getFullYear() !== season.startedAt!.getFullYear()}
