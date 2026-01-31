@@ -9,6 +9,11 @@ It's a full-stack app built using SvelteKit and Tailwind. For technical document
 
 You can find the staging version at [dev.dunderligan.se](https://dev.dunderligan.se).
 
+## Screenshots
+
+<img height="100%" alt="Skärmbild 2026-01-31 122728" src="https://github.com/user-attachments/assets/77ae462d-7afc-4d70-8b5a-5d6e830292bb" />
+<img height="100%" alt="Skärmbild 2026-01-31 122748" src="https://github.com/user-attachments/assets/4b7484bb-edbd-4a06-b0c3-1e907192cc37" />
+
 ## Contact
 
 The website is mainly developed by [Kesomannen](https://github.com/Kesomannen), who you can find on Discord (display name `Bobbo`). For bug reports and suggestions, you can also create an Issue here on the Github page.
