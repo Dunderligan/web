@@ -87,6 +87,34 @@ export const fullMatchColumns = {
 	scheduledAt: true
 } as const;
 
+export const fullMatchQuery = {
+	columns: fullMatchColumns,
+	orderBy: groupMatchOrder,
+	with: {
+		rosterA: matchRosterQuery,
+		rosterB: matchRosterQuery
+	}
+} as const;
+
+export const fullMatchQueryWithContext = {
+	columns: fullMatchColumns,
+	orderBy: groupMatchOrder,
+	with: {
+		...fullMatchQuery.with,
+		group: nestedGroupQuery,
+		bracket: nestedBracketQuery
+	}
+} as const;
+
+export const finalMatchQuery = {
+	...fullMatchQuery,
+	where: {
+		nextMatchId: {
+			isNull: true
+		}
+	}
+} as const;
+
 export type Transaction = PgTransaction<PostgresJsQueryResultHKT, typeof schema>;
 
 export function rolesOrder(column: any) {

@@ -1,17 +1,17 @@
+import { getRequestEvent } from '$app/server';
+import { matchRoster, matchWinner } from '$lib/match';
 import { db } from '$lib/server/db';
 import {
-	groupMatchOrder,
-	matchRosterQuery,
-	nestedBracketQuery,
-	nestedDivisionQuery,
-	nestedGroupQuery
+	entityQuery,
+	finalMatchQuery,
+	fullMatchQueryWithContext,
+	hiddenSeasonFilter
 } from '$lib/server/db/helpers';
-import { MatchState } from '$lib/types';
+import { MatchState, type TournamentState, type Winner } from '$lib/types';
 
-const getMatches = async ({ state }: { state: MatchState }) => {
+async function fetchMatches(state: MatchState) {
 	return await db.query.match.findMany({
 		limit: 4,
-		orderBy: groupMatchOrder,
 		where: {
 			state,
 			rosterAId: {
@@ -21,32 +21,129 @@ const getMatches = async ({ state }: { state: MatchState }) => {
 				isNotNull: true
 			}
 		},
+		...fullMatchQueryWithContext
+	});
+}
+
+async function fetchTournamentState(): Promise<TournamentState | null> {
+	const { locals } = getRequestEvent();
+
+	const data = await db.query.season.findFirst({
+		where: {
+			hidden: hiddenSeasonFilter(locals.user)
+		},
+		orderBy: {
+			startedAt: 'desc'
+		},
 		columns: {
-			id: true,
-			teamAScore: true,
-			teamBScore: true,
-			draws: true,
-			state: true,
-			playedAt: true,
-			scheduledAt: true,
-			vodUrl: true
+			startedAt: true,
+			endedAt: true,
+			...entityQuery.columns
 		},
 		with: {
-			group: nestedGroupQuery,
-			bracket: nestedBracketQuery,
-			rosterA: matchRosterQuery,
-			rosterB: matchRosterQuery
+			registration: {
+				columns: {
+					openDate: true,
+					closeDate: true,
+					url: true
+				}
+			},
+			divisions: {
+				...entityQuery,
+				with: {
+					brackets: {
+						columns: {
+							name: true
+						},
+						with: {
+							matches: finalMatchQuery
+						}
+					}
+				}
+			}
 		}
 	});
-};
+
+	if (!data) {
+		return null;
+	}
+
+	const { divisions, registration, ...season } = data;
+
+	const now = new Date();
+
+	const seasonEnded = season.endedAt && season.endedAt <= now;
+	const seasonStarted = season.startedAt && season.startedAt <= now;
+
+	if (seasonEnded || (!seasonStarted && !data.registration)) {
+		// offseason if season is over, or there is no registration for upcoming season
+
+		const winners = divisions
+			.flatMap((div) =>
+				div.brackets.flatMap(({ matches, ...bracket }) =>
+					matches.map((final) => {
+						const winner = matchWinner(final);
+
+						return winner
+							? {
+									roster: matchRoster(final, winner),
+									bracket
+								}
+							: null;
+					})
+				)
+			)
+			.filter((match) => match != null);
+
+		return {
+			season,
+			status: 'offseason',
+			winners: winners as Winner[]
+		};
+	}
+
+	if (seasonStarted) {
+		// ongoing season
+		return {
+			season,
+			status: 'ongoing'
+		};
+	}
+
+	const registrationOpen = registration?.openDate && registration.openDate <= now;
+	const registrationClosed = registration?.closeDate && registration.closeDate <= now;
+
+	if (registrationOpen && !registrationClosed) {
+		return {
+			season,
+			status: 'registration',
+			registrationClosesAt: registration.closeDate
+		};
+	}
+
+	if (registrationClosed || !registration) {
+		return {
+			season,
+			status: 'starting'
+		};
+	}
+
+	return {
+		season,
+		status: 'upcoming',
+		registrationOpensAt: registration!.openDate
+	};
+}
 
 export const load = async () => {
-	const [upcoming, latest] = await Promise.all([
-		getMatches({ state: MatchState.SCHEDULED }),
-		getMatches({ state: MatchState.PLAYED })
+	const [upcoming, latest, tournamentState] = await Promise.all([
+		fetchMatches(MatchState.SCHEDULED),
+		fetchMatches(MatchState.PLAYED),
+		fetchTournamentState()
 	]);
 
 	return {
+		tournamentState,
 		matches: {
 			upcoming,
 			latest

@@ -185,3 +185,5 @@ export async function deleteCookie(name: string) {
 		cookies.delete(name, { path: '/', httpOnly: false });
 	}
 }
+
+export const discordUrl = 'https://discord.gg/74Y9B7dTNN';
