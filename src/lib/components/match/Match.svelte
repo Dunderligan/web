@@ -13,7 +13,7 @@
 	import Icon from '../ui/Icon.svelte';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import MatchInfoRow from './MatchInfoRow.svelte';
-	import MatchNote from './MatchNote.svelte';
+	import MatchNote from '../ui/Note.svelte';
 
 	type Props = {
 		match: ResolvedMatchWithContext;

@@ -3,7 +3,7 @@ import { nestedGroupQuery, rolesOrder } from '$lib/server/db/helpers';
 import { error } from '@sveltejs/kit';
 import { sql } from 'drizzle-orm';
 
-export const load = async ({ params }) => {
+export const load = async ({ params, locals }) => {
 	const data = await db.query.roster.findFirst({
 		where: {
 			id: params.id

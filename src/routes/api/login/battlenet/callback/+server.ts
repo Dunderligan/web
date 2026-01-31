@@ -55,5 +55,11 @@ export const GET: RequestHandler = async ({ url, fetch, cookies }) => {
 	const userSession = await session.create(sessionToken, userId);
 	session.setTokenCookie(cookies, sessionToken, userSession.expiresAt);
 
-	redirect(303, '/');
+	let next = cookies.get('oauth_next');
+	if (!next || !next.startsWith('/')) {
+		next = '/';
+	}
+	cookies.delete('oauth_next', { path: '/' });
+
+	redirect(303, next);
 };

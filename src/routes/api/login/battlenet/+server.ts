@@ -3,9 +3,16 @@ import { battlenet } from '$lib/server/oauth';
 
 import { redirect } from '@sveltejs/kit';
 
-export const GET = async ({ cookies }) => {
+export const GET = async ({ cookies, url }) => {
 	const state = generateState();
-	const url = battlenet.createAuthorizationURL(state, []);
+	const redirectUrl = battlenet.createAuthorizationURL(state, []);
+
+	const next = url.searchParams.get('next');
+	if (next) {
+		cookies.set('oauth_next', next, {
+			path: '/'
+		});
+	}
 
 	cookies.set('battlenet_oauth_state', state, {
 		path: '/',
@@ -14,5 +21,5 @@ export const GET = async ({ cookies }) => {
 		sameSite: 'lax'
 	});
 
-	redirect(303, url);
+	redirect(303, redirectUrl);
 };

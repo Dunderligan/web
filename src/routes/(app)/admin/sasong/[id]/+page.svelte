@@ -14,6 +14,8 @@
 	import DateInput from '$lib/components/ui/DateInput.svelte';
 	import { createDivision } from '$lib/remote/division.remote';
 	import { deleteSeason, updateSeason } from '$lib/remote/season.remote';
+	import Checkbox from '$lib/components/ui/Checkbox.svelte';
+	import Note from '$lib/components/ui/Note.svelte';
 
 	const { data } = $props();
 
@@ -40,7 +42,8 @@
 		await updateSeason({
 			id: season.id,
 			startedAt: season.startedAt,
-			endedAt: season.endedAt
+			endedAt: season.endedAt,
+			hidden: season.hidden
 		});
 	}
 
@@ -88,6 +91,11 @@
 
 		<Label label="Slutdatum">
 			<DateInput bind:value={season.endedAt} type="date" oninput={saveCtx.setDirty} />
+		</Label>
+
+		<Label label="Gömd">
+			<Note note="Gömda säsonger kan bara visas av admins." class="mr-2" />
+			<Checkbox bind:checked={season.hidden} onCheckedChange={saveCtx.setDirty} />
 		</Label>
 	</div>
 

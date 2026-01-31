@@ -1,11 +1,10 @@
 import { query } from '$app/server';
-import { db, schema } from '$lib/server/db';
+import { db } from '$lib/server/db';
 import {
 	fullMatchColumns,
 	groupMatchOrder,
 	matchRosterQuery,
 	nestedBracketQuery,
-	nestedDivisionQuery,
 	nestedGroupQuery
 } from '$lib/server/db/helpers';
 import { MatchState } from '$lib/types';

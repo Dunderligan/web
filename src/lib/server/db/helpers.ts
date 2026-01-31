@@ -2,6 +2,7 @@ import { sql, eq } from 'drizzle-orm';
 import { PgTransaction } from 'drizzle-orm/pg-core';
 import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 import { schema } from '$lib/server/db';
+import type { User } from './schema/auth';
 
 // Helper queries and functions for database operations.
 
@@ -138,4 +139,16 @@ export async function findOrCreatePlayer(tx: Transaction, battletag: string) {
 
 		return newPlayer.id;
 	}
+}
+
+export function canSeeHiddenSeasons(user?: User | null) {
+	return user?.isAdmin ?? false;
+}
+
+export function hiddenSeasonFilter(user?: User | null) {
+	return canSeeHiddenSeasons(user) ? undefined : false;
+}
+
+export function canSeeSeason(season: { hidden: boolean }, user?: User | null) {
+	return !season.hidden || canSeeHiddenSeasons(user);
 }

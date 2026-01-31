@@ -1,15 +1,21 @@
 import { compareMatchDates } from '$lib/match';
 import { db } from '$lib/server/db';
-import { fullMatchColumns, groupMatchOrder, divisionOrder } from '$lib/server/db/helpers';
+import {
+	fullMatchColumns,
+	groupMatchOrder,
+	divisionOrder,
+	hiddenSeasonFilter
+} from '$lib/server/db/helpers';
 import { calculateStandings } from '$lib/table';
 import { MatchState, type LogicalMatch } from '$lib/types';
 import { aggregateGroups } from '$lib/util';
 import { error } from '@sveltejs/kit';
 
-export const load = async ({ params }) => {
+export const load = async ({ params, locals }) => {
 	const data = await db.query.season.findFirst({
 		where: {
-			slug: params.season
+			slug: params.season,
+			hidden: hiddenSeasonFilter(locals.user)
 		},
 		columns: {
 			name: true,
