@@ -72,7 +72,7 @@ async function fetchTournamentState(): Promise<TournamentState | null> {
 	const seasonEnded = season.endedAt && season.endedAt <= now;
 	const seasonStarted = season.startedAt && season.startedAt <= now;
 
-	if (seasonEnded || (!seasonStarted && !data.registration)) {
+	if (seasonEnded || (!seasonStarted && !registration)) {
 		// offseason if season is over, or there is no registration for upcoming season
 
 		const winners = divisions
