@@ -1,12 +1,7 @@
 import { getRequestEvent } from '$app/server';
 import { matchRoster, matchWinner } from '$lib/match';
 import { db } from '$lib/server/db';
-import {
-	entityQuery,
-	finalMatchQuery,
-	fullMatchQueryWithContext,
-	hiddenSeasonFilter
-} from '$lib/server/db/helpers';
+import { entityQuery, finalMatchQuery, fullMatchQueryWithContext } from '$lib/server/db/helpers';
 import { MatchState, type TournamentState, type Winner } from '$lib/types';
 
 async function fetchMatches(state: MatchState) {
@@ -26,8 +21,6 @@ async function fetchMatches(state: MatchState) {
 }
 
 async function fetchTournamentState(): Promise<TournamentState | null> {
-	const { locals } = getRequestEvent();
-
 	const data = await db.query.season.findFirst({
 		orderBy: {
 			startedAt: 'desc'

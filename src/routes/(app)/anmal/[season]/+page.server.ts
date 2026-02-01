@@ -1,7 +1,7 @@
 import { db } from '$lib/server/db.js';
 import { error } from '@sveltejs/kit';
 
-export const load = async ({ locals, params }) => {
+export const load = async ({ params }) => {
 	const registration = await db.query.registration.findFirst({
 		where: {
 			season: {

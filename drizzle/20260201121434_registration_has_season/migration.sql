@@ -1,0 +1,1 @@
+ALTER TABLE "registration" ALTER COLUMN "season_id" SET NOT NULL;
