@@ -4,6 +4,7 @@
 	import TeamSocial from '../ui/TeamSocial.svelte';
 	import logo from '$lib/assets/images/logo.webp';
 	import lysatorLogo from '$lib/assets/images/lysator.svg';
+	import { discordUrl } from '$lib/util';
 
 	const socials = [
 		{
@@ -16,7 +17,7 @@
 		},
 		{
 			platform: 'discord',
-			href: 'https://discord.gg/74Y9B7dTNN'
+			href: discordUrl
 		},
 		{
 			platform: 'twitch',

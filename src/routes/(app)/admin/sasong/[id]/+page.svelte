@@ -13,13 +13,19 @@
 	import { SaveContext } from '$lib/state/save.svelte';
 	import DateInput from '$lib/components/ui/DateInput.svelte';
 	import { createDivision } from '$lib/remote/division.remote';
-	import { deleteSeason, updateSeason } from '$lib/remote/season.remote';
+	import {
+		createRegistration,
+		deleteRegistration,
+		deleteSeason,
+		updateSeason
+	} from '$lib/remote/season.remote';
 	import Checkbox from '$lib/components/ui/Checkbox.svelte';
 	import Note from '$lib/components/ui/Note.svelte';
 
 	const { data } = $props();
 
 	const season = $state(data.season);
+	let registration = $state(season.registration);
 
 	SaveContext.set(new SaveContext({ save, href: `/stallningar/${season.slug}` }));
 
@@ -28,6 +34,11 @@
 
 	let createDivisionOpen = $state(false);
 	let newDivisionName = $state('');
+
+	let createRegistrationOpen = $state(false);
+	let newRegistrationUrl = $state('');
+	let newRegistrationStart = $state(new Date());
+	let newRegistrationEnd = $state(new Date());
 
 	async function submitNewDivision() {
 		const { division } = await createDivision({
@@ -43,7 +54,8 @@
 			id: season.id,
 			startedAt: season.startedAt,
 			endedAt: season.endedAt,
-			hidden: season.hidden
+			hidden: season.hidden,
+			registration
 		});
 	}
 
@@ -58,6 +70,35 @@
 				});
 
 				await goto('/admin');
+			}
+		});
+	}
+
+	async function submitCreateRegistation() {
+		const result = await createRegistration({
+			seasonId: season.id,
+			url: newRegistrationUrl,
+			openDate: newRegistrationStart,
+			closeDate: newRegistrationEnd
+		});
+
+		registration = result.registration;
+		createRegistrationOpen = false;
+	}
+
+	async function submitDeleteRegistration() {
+		await confirmCtx.confirm({
+			title: 'Radera anmälningsformulär',
+			description: `Är du säker på att du vill radera anmälan för ${season.name}?`,
+			negative: true,
+			action: async () => {
+				if (!registration) return;
+
+				await deleteRegistration({
+					id: registration.id
+				});
+
+				registration = null;
 			}
 		});
 	}
@@ -80,6 +121,48 @@
 		</div>
 
 		<Button icon="ph:plus" onclick={() => (createDivisionOpen = true)} />
+	{/if}
+</AdminCard>
+
+<AdminCard title="Anmälan">
+	{#if registration}
+		<div class="space-y-2">
+			<Label label="Länk">
+				<InputField
+					bind:value={registration.url}
+					placeholder="https://docs.google.com/forms..."
+					onchange={saveCtx.setDirty}
+				/>
+			</Label>
+
+			<Label label="Startdatum">
+				<DateInput
+					bind:value={registration.openDate}
+					type="datetime-local"
+					oninput={saveCtx.setDirty}
+					required
+				/>
+			</Label>
+
+			<Label label="Slutdatum">
+				<DateInput
+					bind:value={registration.closeDate}
+					type="datetime-local"
+					oninput={saveCtx.setDirty}
+				/>
+			</Label>
+		</div>
+
+		<Button
+			icon="ph:trash"
+			label="Radera anmälan"
+			kind="negative"
+			onclick={submitDeleteRegistration}
+		/>
+	{:else}
+		<AdminEmptyNotice oncreateclick={() => (createRegistrationOpen = true)}
+			>Säsongen har inget anmälningsformulär.</AdminEmptyNotice
+		>
 	{/if}
 </AdminCard>
 
@@ -110,6 +193,24 @@
 >
 	<Label label="Namn">
 		<InputField bind:value={newDivisionName} placeholder="T.ex. Division 1..." />
+	</Label>
+</CreateDialog>
+
+<CreateDialog
+	title="Skapa anmälning"
+	bind:open={createRegistrationOpen}
+	oncreate={submitCreateRegistation}
+>
+	<Label label="Länk">
+		<InputField bind:value={newRegistrationUrl} placeholder="https://docs.google.com/forms..." />
+	</Label>
+
+	<Label label="Startdatum">
+		<DateInput bind:value={newRegistrationStart} type="datetime-local" required />
+	</Label>
+
+	<Label label="Slutdatum">
+		<DateInput bind:value={newRegistrationEnd} type="datetime-local" required />
 	</Label>
 </CreateDialog>
 

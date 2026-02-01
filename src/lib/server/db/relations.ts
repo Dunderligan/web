@@ -3,7 +3,8 @@ import schema from './schema.js';
 
 const relations = defineRelations(schema, (r) => ({
 	season: {
-		divisions: r.many.division()
+		divisions: r.many.division(),
+		registration: r.one.registration()
 	},
 	division: {
 		season: r.one.season({
@@ -67,6 +68,13 @@ const relations = defineRelations(schema, (r) => ({
 			optional: false
 		}),
 		matches: r.many.match()
+	},
+	registration: {
+		season: r.one.season({
+			from: r.registration.seasonId,
+			to: r.season.id,
+			optional: false
+		})
 	}
 }));
 

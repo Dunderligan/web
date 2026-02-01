@@ -178,3 +178,15 @@ export const bracket = pgTable('bracket', {
 		.references(() => division.id, { onDelete: 'cascade' }),
 	...timestamps
 });
+
+export const registration = pgTable('registration', {
+	id: uuid().primaryKey().defaultRandom(),
+	seasonId: uuid()
+		.unique()
+		.references(() => season.id, { onDelete: 'cascade' })
+		.notNull(),
+	url: text().notNull(),
+	openDate: timestamp().notNull(),
+	closeDate: timestamp().notNull(),
+	...timestamps
+});
