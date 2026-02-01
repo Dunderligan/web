@@ -29,9 +29,6 @@ async function fetchTournamentState(): Promise<TournamentState | null> {
 	const { locals } = getRequestEvent();
 
 	const data = await db.query.season.findFirst({
-		where: {
-			hidden: hiddenSeasonFilter(locals.user)
-		},
 		orderBy: {
 			startedAt: 'desc'
 		},

@@ -20,7 +20,7 @@
 				return 'bg-gray-600 text-white dark:bg-gray-900 dark:text-gray-200';
 
 			case 'registration':
-				return 'bg-accent-700 text-accent-100';
+				return 'bg-accent-700 text-accent-100 dark:bg-accent-900 dark:text-accent-200';
 
 			case 'starting':
 			case 'upcoming':
