@@ -20,8 +20,6 @@
 			width="100%"
 			height="4100"
 			frameborder="0"
-			marginheight="0"
-			marginwidth="0"
 			title="Anmälningsformulär"
 			class="mx-auto"
 		>
