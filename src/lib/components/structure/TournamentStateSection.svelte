@@ -133,6 +133,6 @@
 		background-size: cover;
 		background-image:
 			radial-gradient(circle, rgba(255, 255, 255, 0.9) 20%, rgba(255, 255, 255, 0.3) 80%),
-			url('$lib/assets/images/topo-bg.jpg');
+			url('$lib/assets/images/topo-bg.avif');
 	}
 </style>
