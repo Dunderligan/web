@@ -7,10 +7,8 @@ export const load = async ({ params }) => {
 		where: {
 			id: params.id
 		},
-		columns: {
-			createdAt: false
-		},
 		with: {
+			registration: true,
 			divisions: {
 				orderBy: (t) => divisionOrder(t.name),
 				columns: {

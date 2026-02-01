@@ -29,12 +29,12 @@
 	<Table
 		rows={users}
 		key={(user) => user.id}
+		class="grid-cols-[1fr_100px_200px]"
 		columns={[
 			{ label: 'Battletag' },
 			{ label: 'Admin', center: true },
 			{ label: 'Första inloggning', center: true }
 		]}
-		class="grid-cols-[1fr_100px_200px]"
 	>
 		{#snippet row({ value: user })}
 			<div class="flex items-center py-4 pl-6 text-lg font-semibold">
