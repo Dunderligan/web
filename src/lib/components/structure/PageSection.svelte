@@ -21,7 +21,7 @@
 		{@render children?.()}
 	</div>
 
-	<div class="halftone pointer-events-none absolute bottom-0 -z-10 h-[600px] w-[1200px]"></div>
+	<div class="halftone pointer-events-none absolute bottom-0 -z-10 h-150 w-300"></div>
 </main>
 
 <style>

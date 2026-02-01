@@ -5,13 +5,14 @@
 	import MatchList from '$lib/components/match/MatchList.svelte';
 	import Meta from '$lib/components/structure/Meta.svelte';
 	import trailerThumbnail from '$lib/assets/images/trailer-thumbnail.avif';
+	import TournamentStateSection from '$lib/components/structure/TournamentStateSection.svelte';
 
 	let { data } = $props();
 </script>
 
 <Meta />
 
-<header class="relative h-200 w-full px-4 sm:h-180">
+<header class="relative h-200 w-full px-4">
 	<video
 		src={cdnSrc('/dunderligan/trailer.mp4')}
 		class="trailer absolute top-0 left-0 -z-10 h-full w-full bg-cover object-cover brightness-50"
@@ -41,6 +42,10 @@
 		/>
 	</div>
 </header>
+
+{#if data.tournamentState}
+	<TournamentStateSection state={data.tournamentState} />
+{/if}
 
 <PageSection topMargin={false}>
 	<MatchList title="Kommande matcher" matches={data.matches.upcoming} hideIfEmpty />
