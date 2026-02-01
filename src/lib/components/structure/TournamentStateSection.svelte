@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { TournamentState } from '$lib/types';
+	import type { BaseEntity, MatchRoster, TournamentState } from '$lib/types';
 	import { onMount } from 'svelte';
 	import Icon from '../ui/Icon.svelte';
 	import RosterLogo from '../ui/RosterLogo.svelte';
@@ -48,17 +48,7 @@
 
 			<div class="mt-10 grid grid-cols-1 justify-center gap-4 sm:grid-cols-2">
 				{#each tournamentState.winners as { bracket, roster } (roster.id)}
-					{@const href = `/lag/${roster.slug}/${tournamentState.season.slug}`}
-
-					<div class="flex items-center gap-3 rounded-lg bg-gray-700 px-6 py-4 dark:bg-gray-800">
-						<RosterLogo id={roster.id} class="size-14" {href} />
-						<div class="text-left">
-							<div class="font-medium text-gray-300">Vinnare {bracket.name}</div>
-							<a {href} class="-mt-1 block text-xl font-semibold hover:underline">{roster.name}</a>
-						</div>
-
-						<Icon icon="ph:crown-simple-fill" class="mr-2 ml-auto text-2xl" />
-					</div>
+					{@render winner(bracket, roster)}
 				{/each}
 			</div>
 		{:else if tournamentState.status === 'ongoing'}
@@ -124,6 +114,20 @@
 	<div class="grow basis-0">
 		<div class="font-display">{count.toString().padStart(2, '0')}</div>
 		<div class="mt-3 text-lg font-medium">{label}</div>
+	</div>
+{/snippet}
+
+{#snippet winner(bracket: BaseEntity, roster: MatchRoster)}
+	{@const href = `/lag/${roster.slug}/${tournamentState.season.slug}`}
+
+	<div class="flex items-center gap-3 rounded-lg bg-gray-700 px-6 py-4 dark:bg-gray-800">
+		<RosterLogo id={roster.id} class="size-14" {href} />
+		<div class="text-left">
+			<div class="font-medium text-gray-300">Vinnare {bracket.name}</div>
+			<a {href} class="-mt-1 block text-xl font-semibold hover:underline">{roster.name}</a>
+		</div>
+
+		<Icon icon="ph:crown-simple-fill" class="mr-2 ml-auto text-2xl" />
 	</div>
 {/snippet}
 

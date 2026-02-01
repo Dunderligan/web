@@ -33,20 +33,62 @@ export const createSeason = command(
 	}
 );
 
+export const createRegistration = command(
+	z.object({
+		url: z.url(),
+		openDate: z.date(),
+		closeDate: z.date(),
+		seasonId: z.uuid()
+	}),
+	async ({ url, openDate, closeDate, seasonId }) => {
+		await adminGuard();
+
+		const [registration] = await db
+			.insert(schema.registration)
+			.values({
+				url,
+				openDate,
+				closeDate,
+				seasonId
+			})
+			.returning();
+
+		return { registration };
+	}
+);
+
 export const updateSeason = command(
 	z.object({
 		id: z.uuid(),
 		startedAt: z.date(),
 		endedAt: z.date().nullish(),
-		hidden: z.boolean()
+		hidden: z.boolean(),
+		registration: z
+			.object({
+				url: z.url(),
+				openDate: z.date(),
+				closeDate: z.date()
+			})
+			.nullish()
 	}),
-	async ({ id, startedAt, endedAt, hidden }) => {
+	async ({ id, startedAt, endedAt, hidden, registration }) => {
 		await adminGuard();
 
-		await db
-			.update(schema.season)
-			.set({ startedAt, endedAt, hidden })
-			.where(eq(schema.season.id, id));
+		await db.transaction(async (tx) => {
+			await tx
+				.update(schema.season)
+				.set({ startedAt, endedAt, hidden })
+				.where(eq(schema.season.id, id));
+
+			if (registration) {
+				console.log(registration);
+
+				await tx
+					.update(schema.registration)
+					.set(registration)
+					.where(eq(schema.registration.seasonId, id));
+			}
+		});
 	}
 );
 
@@ -58,6 +100,17 @@ export const deleteSeason = command(
 		await adminGuard();
 
 		await db.delete(schema.season).where(eq(schema.season.id, id));
+	}
+);
+
+export const deleteRegistration = command(
+	z.object({
+		id: z.uuidv4()
+	}),
+	async ({ id }) => {
+		await adminGuard();
+
+		await db.delete(schema.registration).where(eq(schema.registration.id, id));
 	}
 );
 
