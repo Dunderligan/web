@@ -166,7 +166,7 @@
 
 				{#if table.type === 'grupp'}
 					<Subheading class="mt-6 mb-4 flex justify-between">
-						<span>{table.title}</span>
+						{table.title}
 					</Subheading>
 				{/if}
 
