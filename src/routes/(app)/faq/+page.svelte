@@ -5,6 +5,8 @@
 
 	import Subheading from '$lib/components/ui/Subheading.svelte';
 	import Accordion from '$lib/components/ui/Accordion.svelte';
+	import { discordUrl } from '$lib/util';
+	import Icon from '$lib/components/ui/Icon.svelte';
 
 	const items = [
 		{
@@ -48,17 +50,15 @@
 
 <Meta title="FAQ" description="Se svar på några av de vanligaste frågorna." />
 
-<PageHeader title="FAQ">
-	<div
-		class="mt-2 mb-1 text-center text-xl font-semibold text-gray-800 sm:text-left dark:text-gray-300"
-	>
-		Svar på några av de vanligast förekommande frågorna
-	</div>
-</PageHeader>
+<PageHeader title="FAQ" subtitle="Svar på några av de vanligast förekommande frågorna"></PageHeader>
 
 <PageSection class="gap-2 text-lg font-medium">
 	<Subheading class="mb-4">Vanliga frågor</Subheading>
 	<Accordion type="multiple" {items}></Accordion>
+
 	<Subheading class="mt-8">Undrar du fortfarande något?</Subheading>
-	<div>Gå med i vår discordserver!</div>
+	<a class="font-medium hover:underline" href={discordUrl}>
+		<Icon icon="ph:arrow-square-out" />
+		Gå med i vår discordserver!</a
+	>
 </PageSection>

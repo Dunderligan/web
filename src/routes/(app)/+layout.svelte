@@ -9,7 +9,7 @@
 <Tooltip.Provider delayDuration={300}>
 	<div class="relative flex min-h-screen flex-col overflow-hidden">
 		<div
-			class="pointer-events-none fixed top-32 -left-200 size-400 rounded-full bg-accent-400/20 dark:bg-accent-600/10"
+			class="pointer-events-none fixed top-32 -left-140 size-400 rounded-full bg-accent-400/20 dark:mix-blend-hard-light"
 			id="splotch"
 		></div>
 
@@ -25,11 +25,14 @@
 		aspect-ratio: 16 / 9;
 		background-image:
 			linear-gradient(to bottom, transparent, var(--color-gray-100) 100%),
-			url('$lib/assets/images/striped-bg.avif'), linear-gradient(var(--color-white));
+			url('$lib/assets/images/striped-bg.avif');
 	}
 
 	:global(.dark) #background {
-		background-image: linear-gradient(to bottom, var(--color-gray-900), var(--color-gray-950));
+		background-blend-mode: multiply, overlay, normal;
+		background-image:
+			linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)),
+			url('$lib/assets/images/striped-bg.avif'), linear-gradient(var(--color-gray-900));
 	}
 
 	#splotch {
