@@ -32,7 +32,7 @@
 		</div>
 
 		<div class="flex items-center text-lg font-semibold">
-			{player.battletag}
+			<a href="/spelare/{player.battletag.replace('#', '-')}" class="hover:underline">{player.battletag}</a>
 
 			{#if isCaptain}
 				<Icon icon="ph:crown-simple" class="mb-0.5 ml-2" title="Lagkapten" />

@@ -82,8 +82,8 @@ export const roster = pgTable(
 
 export const socialPlatformEnum = pgEnum('social_platform', enumToPgEnum(SocialPlatform));
 
-export const social = pgTable(
-	'social',
+export const teamSocial = pgTable(
+	'team_social',
 	{
 		id: uuid().primaryKey().defaultRandom(),
 		platform: socialPlatformEnum().notNull(),
@@ -94,6 +94,20 @@ export const social = pgTable(
 		...timestamps
 	},
 	(t) => [unique().on(t.teamId, t.platform)]
+);
+
+export const playerSocial = pgTable(
+	'player_social',
+	{
+		id: uuid().primaryKey().defaultRandom(),
+		platform: socialPlatformEnum().notNull(),
+		url: text().notNull(),
+		playerId: uuid()
+			.notNull()
+			.references(() => player.id, { onDelete: 'cascade' }),
+		...timestamps
+	},
+	(t) => [unique().on(t.playerId, t.platform)]
 );
 
 export const player = pgTable('player', {

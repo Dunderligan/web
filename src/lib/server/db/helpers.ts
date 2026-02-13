@@ -29,6 +29,7 @@ export const nestedDivisionQuery = {
 		season: {
 			columns: {
 				legacyRanks: true,
+				startedAt: true,
 				...entityQuery.columns
 			}
 		}
