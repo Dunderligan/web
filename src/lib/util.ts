@@ -98,6 +98,8 @@ export function roleIcon(role: Role): string {
 		case 'flex':
 			return 'ph:star';
 		case 'coach':
+			return 'ph:clipboard';
+		case 'manager':
 			return 'ph:suitcase';
 	}
 
