@@ -58,7 +58,8 @@ export enum Role {
 	TANK = 'tank',
 	SUPPORT = 'support',
 	FLEX = 'flex',
-	COACH = 'coach'
+	COACH = 'coach',
+	MANAGER = 'manager'
 }
 
 export enum MatchType {
