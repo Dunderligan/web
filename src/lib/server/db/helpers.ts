@@ -1,4 +1,4 @@
-import { sql, eq } from 'drizzle-orm';
+import { sql, eq, isNull } from 'drizzle-orm';
 import { PgTransaction } from 'drizzle-orm/pg-core';
 import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 import { schema } from '$lib/server/db';
@@ -176,6 +176,57 @@ export function canSeeHiddenSeasons(user?: User | null) {
 
 export function hiddenSeasonFilter(user?: User | null) {
 	return canSeeHiddenSeasons(user) ? undefined : false;
+}
+
+export function hiddenDivisionFilter(user?: User | null) {
+	return {
+		season: {
+			hidden: hiddenSeasonFilter(user)
+		}
+	}
+}
+
+export function hiddenGroupFilter(user?: User | null) {
+	return {
+		division: hiddenDivisionFilter(user)
+	}
+}
+
+export function hiddenBracketFilter(user?: User | null) {
+	return {
+		division: hiddenDivisionFilter(user)
+	}
+}
+
+export function hiddenMatchFilter(user?: User | null) {
+	return {
+		AND: [
+			{
+				OR: [
+					{
+						groupId: {
+							isNull: true as true
+						}
+					},
+					{
+						group: hiddenGroupFilter(user)
+					}
+				]
+			},
+			{
+				OR: [
+					{
+						bracketId: {
+							isNull: true as true
+						}
+					},
+					{
+						bracket: hiddenBracketFilter(user)
+					}
+				]
+			}
+		]
+	}
 }
 
 export function canSeeSeason(season: { hidden: boolean }, user?: User | null) {

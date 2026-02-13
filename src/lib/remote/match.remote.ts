@@ -1,8 +1,9 @@
-import { query } from '$app/server';
+import { getRequestEvent, query } from '$app/server';
 import { db } from '$lib/server/db';
 import {
 	fullMatchColumns,
 	groupMatchOrder,
+	hiddenMatchFilter,
 	matchRosterQuery,
 	nestedBracketQuery,
 	nestedGroupQuery
@@ -22,6 +23,8 @@ export const queryMatches = query(
 		page: z.number().min(0).default(0)
 	}),
 	async ({ rosterId, divisionId, groupId, played, page }) => {
+		const { locals } = getRequestEvent();
+
 		const state =
 			played === undefined ? undefined : played ? MatchState.PLAYED : MatchState.SCHEDULED;
 
@@ -56,15 +59,18 @@ export const queryMatches = query(
 								rosterBId: rosterId
 							}
 						]
-					}
+					},
+					hiddenMatchFilter(locals.user)
 				],
 				state,
 				groupId,
+				// if divisionId is not provided, don't include the group filter at all, 
+				// otherwise bracket matches would always be excluded (since they don'th have a group)
 				...(divisionId && {
 					group: {
 						divisionId
 					}
-				})
+				}),
 			},
 			columns: fullMatchColumns,
 			with: {

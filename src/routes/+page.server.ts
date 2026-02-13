@@ -1,10 +1,10 @@
-import { getRequestEvent } from '$app/server';
 import { matchRoster, matchWinner } from '$lib/match';
 import { db } from '$lib/server/db';
-import { entityQuery, finalMatchQuery, fullMatchQueryWithContext } from '$lib/server/db/helpers';
+import { entityQuery, finalMatchQuery, fullMatchQueryWithContext, hiddenMatchFilter } from '$lib/server/db/helpers';
+import type { User } from '$lib/server/db/schema/auth';
 import { MatchState, type TournamentState, type Winner } from '$lib/types';
 
-async function fetchMatches(state: MatchState) {
+async function fetchMatches(state: MatchState, user: User | null) {
 	return await db.query.match.findMany({
 		limit: 4,
 		where: {
@@ -14,7 +14,8 @@ async function fetchMatches(state: MatchState) {
 			},
 			rosterBId: {
 				isNotNull: true
-			}
+			},
+			...hiddenMatchFilter(user)
 		},
 		...fullMatchQueryWithContext
 	});
@@ -125,10 +126,10 @@ async function fetchTournamentState(): Promise<TournamentState | null> {
 	};
 }
 
-export const load = async () => {
+export const load = async ({ locals }) => {
 	const [upcoming, latest, tournamentState] = await Promise.all([
-		fetchMatches(MatchState.SCHEDULED),
-		fetchMatches(MatchState.PLAYED),
+		fetchMatches(MatchState.SCHEDULED, locals.user),
+		fetchMatches(MatchState.PLAYED, locals.user),
 		fetchTournamentState()
 	]);
 
