@@ -125,7 +125,8 @@ export function rolesOrder(column: any) {
 			WHEN 'support' THEN 3
 			WHEN 'flex' THEN 4
 			WHEN 'coach' THEN 5
-			ELSE 6 
+			WHEN 'manager' THEN 6
+			ELSE 7
 		END
 	) ASC`;
 }
