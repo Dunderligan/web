@@ -74,8 +74,11 @@
 		</AdminEmptyNotice>
 	{:else}
 		<div class="space-y-1 overflow-hidden rounded-lg">
-			{#each seasons as { id, name, startedAt } (id)}
-				<AdminLink href="/admin/sasong/{id}">
+			{#each seasons as { id, name, startedAt, endedAt } (id)}
+				<AdminLink
+					href="/admin/sasong/{id}"
+					highlighted={endedAt !== null && Date.now() < new Date(endedAt).getTime()}
+				>
 					<span>{name}</span>
 					<span class="ml-2 text-base font-medium">{startedAt.getFullYear()}</span>
 				</AdminLink>
