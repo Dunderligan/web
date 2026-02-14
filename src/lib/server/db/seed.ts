@@ -160,7 +160,6 @@ export async function seed(db: PostgresJsDatabase<typeof schema>) {
 				.values({
 					name,
 					slug,
-					seasonSlug: season.slug,
 					teamId: team[0].id,
 					groupId: groups[groupIndex].id
 				})

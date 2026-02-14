@@ -18,7 +18,7 @@
 </script>
 
 <div class="w-full overflow-x-auto rounded-lg p-1">
-	<div class="flex gap-[60px]">
+	<div class="flex gap-15">
 		{#each rounds as round, i (i)}
 			{@const prevRound = i > 0 ? rounds[i - 1] : null}
 

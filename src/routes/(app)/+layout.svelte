@@ -9,7 +9,7 @@
 <Tooltip.Provider delayDuration={300}>
 	<div class="relative flex min-h-screen flex-col overflow-hidden">
 		<div
-			class="pointer-events-none fixed top-32 -left-140 size-400 rounded-full bg-accent-400/20 dark:mix-blend-hard-light"
+			class="pointer-events-none fixed top-50 -left-80 size-300 rounded-full bg-accent-400/20 dark:mix-blend-hard-light"
 			id="splotch"
 		></div>
 
@@ -36,6 +36,6 @@
 	}
 
 	#splotch {
-		filter: blur(1000px);
+		filter: blur(50px);
 	}
 </style>

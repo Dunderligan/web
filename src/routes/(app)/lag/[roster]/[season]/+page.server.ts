@@ -1,28 +1,31 @@
 import {
 	groupMatchOrder,
-	entityQuery,
 	matchRosterQuery,
 	nestedBracketQuery,
-	nestedDivisionQuery,
 	nestedGroupQuery,
 	rolesOrder,
 	hiddenSeasonFilter
 } from '$lib/server/db/helpers';
-import { db, schema } from '$lib/server/db';
+import { db } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
 import { sql } from 'drizzle-orm';
 
 export const load = async ({ params, locals }) => {
 	const data = await db.query.roster.findFirst({
 		where: {
-			seasonSlug: params.season,
-			slug: params.roster
+			slug: params.roster,
+			group: {
+				division: {
+					season: {
+						slug: params.season
+					}
+				}
+			}
 		},
 		columns: {
 			id: true,
 			name: true,
 			slug: true,
-			seasonSlug: true
 		},
 		with: {
 			members: {
