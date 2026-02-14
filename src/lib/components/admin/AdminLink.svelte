@@ -4,17 +4,23 @@
 
 	type Props = {
 		href: string;
+		highlighted?: boolean;
 		children?: Snippet;
 	};
 
-	let { href, children }: Props = $props();
+	let { href, highlighted = false, children }: Props = $props();
 </script>
 
 <a
 	{href}
-	class="flex min-h-14 items-center justify-between bg-gray-100 px-6 py-2.5 text-gray-700 hover:bg-gray-200 hover:underline dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800"
+	class={[
+		highlighted
+			? 'bg-accent-600 py-5 pl-8 font-bold text-white hover:bg-accent-700'
+			: 'bg-gray-100 py-2.5 pl-6 font-semibold text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700',
+		'flex min-h-14 items-center justify-between pr-6 text-lg hover:underline'
+	]}
 >
-	<span class="text-lg font-semibold">{@render children?.()}</span>
+	<span>{@render children?.()}</span>
 
 	<Icon icon="ph:arrow-right" class="text-xl" />
 </a>
