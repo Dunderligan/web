@@ -63,10 +63,10 @@
 <nav
 	class={[
 		dark && 'dark',
-		'fixed z-30 h-18 w-screen bg-linear-to-t to-gray-300/80 px-8 pt-4 text-gray-800 backdrop-blur-[1px] dark:to-gray-900/30 dark:text-gray-200'
+		'fixed z-30 h-18 w-screen bg-linear-to-t to-gray-300/80 px-12 pt-4 text-gray-800 backdrop-blur-[1px] dark:to-gray-900/30 dark:text-gray-200'
 	]}
 >
-	<div class="mx-auto flex h-full max-w-5xl items-center justify-between gap-2">
+	<div class="mx-auto flex h-full max-w-4xl items-center justify-between gap-2">
 		<div class="flex items-center gap-12 font-display">
 			<a href="/" class="mr-8 shrink-0">
 				<img src={logo} alt="Dunderligan logotyp" class="size-12" />

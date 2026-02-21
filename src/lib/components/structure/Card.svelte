@@ -20,8 +20,8 @@
 >
 	<img src={image} {alt} class="lg:w-110" />
 
-	<div class="px-10 py-8">
-		<h3 class="mb-2 text-xl font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
+	<div class="px-14 py-12">
+		<h3 class="mb-3 text-xl font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
 
 		<div>
 			{@render children?.()}

@@ -4,7 +4,7 @@
 	import Icon from '../ui/Icon.svelte';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import Button from '../ui/Button.svelte';
-	import { discordUrl } from '$lib/util';
+	import SectionShell from './PageSectionAlternate.svelte';
 
 	type Props = {
 		state: TournamentState;
@@ -14,18 +14,18 @@
 
 	const season = $derived(tournamentState.season);
 
-	const statusClass = $derived.by(() => {
+	const style = $derived.by(() => {
 		switch (tournamentState.status) {
 			case 'offseason':
-				return 'bg-gray-600 text-white dark:bg-gray-900 dark:text-gray-200';
+				return 'muted';
 
 			case 'registration':
-				return 'bg-accent-700 text-accent-100 dark:bg-accent-900 dark:text-accent-200';
+				return 'accent';
 
 			case 'starting':
 			case 'upcoming':
 			case 'ongoing':
-				return 'bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
+				return 'neutral';
 		}
 	});
 
@@ -40,57 +40,51 @@
 	});
 </script>
 
-<section class={['relative z-0 grow overflow-hidden px-4 py-20', statusClass]}>
-	<div class="mx-auto max-w-3xl text-center">
-		{#if tournamentState.status === 'offseason'}
-			<h2 class="font-display text-4xl font-bold">Off-season</h2>
-			<h4 class="mt-1 text-lg font-medium">Tack för denna säsong! Ses igen nästa år!</h4>
+<SectionShell {style}>
+	{#if tournamentState.status === 'offseason'}
+		<h2 class="font-display text-4xl font-bold">Off-season</h2>
+		<h4 class="mt-1 text-lg font-medium">Tack för denna säsong! Ses igen nästa år!</h4>
 
-			<div class="mt-10 grid grid-cols-1 justify-center gap-4 sm:grid-cols-2">
-				{#each tournamentState.winners as { bracket, roster } (roster.id)}
-					{@render winner(bracket, roster)}
-				{/each}
-			</div>
-		{:else if tournamentState.status === 'ongoing'}
-			<h2 class="font-display text-4xl font-bold">{season.name} är igång!</h2>
-		{:else if tournamentState.status === 'registration'}
-			<h4 class="text-xl font-semibold">
-				Anmälningar till {season.name} är öppna!
-			</h4>
+		<div class="mt-10 grid grid-cols-1 justify-center gap-4 sm:grid-cols-2">
+			{#each tournamentState.winners as { bracket, roster } (roster.id)}
+				{@render winner(bracket, roster)}
+			{/each}
+		</div>
+	{:else if tournamentState.status === 'ongoing'}
+		<h2 class="font-display text-4xl font-bold">{season.name} är igång!</h2>
+	{:else if tournamentState.status === 'registration'}
+		<h4 class="text-xl font-semibold">
+			Anmälningar till {season.name} är öppna!
+		</h4>
 
-			{#if tournamentState.registrationClosesAt}
-				{@render countdown(tournamentState.registrationClosesAt)}
-			{/if}
-
-			<Button
-				icon="ph:arrow-right"
-				label="Anmäl ditt lag"
-				kind="secondary"
-				class="mt-12 text-lg"
-				href="/anmal/{season.slug}"
-			/>
-		{:else if tournamentState.status === 'upcoming'}
-			<h4 class="text-xl font-semibold">
-				Anmälningar till {season.name} öppnar snart!
-			</h4>
-
-			{#if tournamentState.registrationOpensAt}
-				{@render countdown(tournamentState.registrationOpensAt)}
-			{/if}
-		{:else if tournamentState.status === 'starting'}
-			<h2 class="font-display text-4xl font-bold">{season.name} startar snart!</h2>
+		{#if tournamentState.registrationClosesAt}
+			{@render countdown(tournamentState.registrationClosesAt)}
 		{/if}
-	</div>
 
-	<div
-		class="topo-bg absolute inset-0 -z-10 opacity-60 mix-blend-multiply saturate-0 dark:opacity-100"
-	></div>
-</section>
+		<Button
+			icon="ph:arrow-right"
+			label="Anmäl ditt lag"
+			kind="secondary"
+			class="mt-12 text-lg"
+			href="/anmal/{season.slug}"
+		/>
+	{:else if tournamentState.status === 'upcoming'}
+		<h4 class="text-xl font-semibold">
+			Anmälningar till {season.name} öppnar snart!
+		</h4>
+
+		{#if tournamentState.registrationOpensAt}
+			{@render countdown(tournamentState.registrationOpensAt)}
+		{/if}
+	{:else if tournamentState.status === 'starting'}
+		<h2 class="font-display text-4xl font-bold">{season.name} startar snart!</h2>
+	{/if}
+</SectionShell>
 
 {#snippet countdown(endDate: Date)}
 	{@const diff = new Date(endDate.getTime() - now)}
 
-	<div class="mt-10 flex text-5xl font-bold sm:text-6xl md:text-7xl">
+	<div class="mx-auto mt-10 flex max-w-3xl text-5xl font-bold sm:text-6xl md:text-7xl">
 		{@render digit(diff.getUTCDate() - 1, 'Dagar', true)}
 		{@render digit(diff.getUTCHours(), 'Timmar')}
 		{@render digit(diff.getUTCMinutes(), 'Minuter')}
@@ -122,13 +116,3 @@
 		<Icon icon="ph:crown-simple-fill" class="mr-2 ml-auto text-2xl" />
 	</div>
 {/snippet}
-
-<style>
-	.topo-bg {
-		background-position: center;
-		background-size: cover;
-		background-image:
-			radial-gradient(circle, rgba(255, 255, 255, 0.9) 20%, rgba(255, 255, 255, 0.3) 80%),
-			url('$lib/assets/images/topo-bg.avif');
-	}
-</style>

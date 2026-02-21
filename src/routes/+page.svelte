@@ -50,29 +50,29 @@
 {/if}
 
 <PageSection topMargin={false}>
-	<div class="mb-20 space-y-12">
-		<Card title="Gå med i vår Discord!" image={screenshot1} alt="">
+	<div class="mb-24 space-y-18">
+		<Card title="Häng med på Discord!" reverse image={screenshot1} alt="">
 			<p>
-				Dunderligans server är den centrala platsen för turneringen. Här bokas och spelas matcher,
-				spelare hittar lag och de hetaste läckorna sker.
+				Dunderligans Discordserver är turneringens bultande hjärta. Här skickas uppdateringar,
+				matcher bokas och de hetaste leaksen släpps.
 			</p>
 
-			<div class="mt-4 flex items-center justify-center">
-				<Button kind="primary" icon="ph:discord-logo" label="Anslut" href="/discord" />
+			<div class="mt-6 flex items-center">
+				<Button kind="primary" icon="ph:discord-logo" label="Discord" href="/discord" />
 			</div>
 		</Card>
 
-		<Card title="Twitch" reverse image={screenshot1} alt="">
+		<Card title="Följ oss på Twitch!" image={screenshot1} alt="">
 			<p>
-				Dunderligans server är den centrala platsen för turneringen. Här bokas och spelas matcher,
-				spelare hittar lag och de hetaste läckorna sker.
+				Dunderligans Discordserver är turneringens bultande hjärta. Här skickas uppdateringar,
+				matcher bokas och de hetaste leaksen släpps.
 			</p>
 
-			<div class="mt-4 flex items-center justify-center">
+			<div class="mt-6 flex items-center justify-end">
 				<Button
 					kind="primary"
 					icon="ph:twitch-logo"
-					label="Följ oss!"
+					label="Twitch"
 					href="https://twitch.tv/Dunderligan"
 				/>
 			</div>
