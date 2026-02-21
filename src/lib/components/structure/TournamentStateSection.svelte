@@ -4,7 +4,7 @@
 	import Icon from '../ui/Icon.svelte';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import Button from '../ui/Button.svelte';
-	import SectionShell from './PageSectionAlternate.svelte';
+	import PageSectionAlternate from './PageSectionAlternate.svelte';
 
 	type Props = {
 		state: TournamentState;
@@ -29,6 +29,17 @@
 		}
 	});
 
+	const hasCountdown = $derived.by(() => {
+		switch (tournamentState.status) {
+			case 'registration':
+				return tournamentState.registrationClosesAt !== null;
+			case 'upcoming':
+				return tournamentState.registrationOpensAt !== null;
+			default:
+				return false;
+		}
+	});
+
 	let now = $state(Date.now());
 
 	onMount(() => {
@@ -40,7 +51,7 @@
 	});
 </script>
 
-<SectionShell {style}>
+<PageSectionAlternate {style} class={[hasCountdown && 'text-center']}>
 	{#if tournamentState.status === 'offseason'}
 		<h2 class="font-display text-4xl font-bold">Off-season</h2>
 		<h4 class="mt-1 text-lg font-medium">Tack för denna säsong! Ses igen nästa år!</h4>
@@ -79,7 +90,7 @@
 	{:else if tournamentState.status === 'starting'}
 		<h2 class="font-display text-4xl font-bold">{season.name} startar snart!</h2>
 	{/if}
-</SectionShell>
+</PageSectionAlternate>
 
 {#snippet countdown(endDate: Date)}
 	{@const diff = new Date(endDate.getTime() - now)}

@@ -1,10 +1,11 @@
 <script lang="ts">
+	import type { ClassValue } from '$lib/types';
 	import type { Snippet } from 'svelte';
 
 	type Style = 'muted' | 'accent' | 'neutral';
 
 	type Props = {
-		class?: string;
+		class?: ClassValue;
 		style?: Style;
 		children?: Snippet;
 	};
@@ -24,10 +25,8 @@
 	});
 </script>
 
-<section
-	class={['relative z-0 grow overflow-hidden px-4 py-20 text-center', styleClass, classProp]}
->
-	<div class="mx-auto max-w-4xl px-4">
+<section class={['relative z-10 grow overflow-hidden py-20', styleClass, classProp]}>
+	<div class="mx-auto max-w-4xl px-4 lg:px-0">
 		{@render children?.()}
 	</div>
 
@@ -43,10 +42,10 @@
 		background-image:
 			linear-gradient(
 				to right,
-				rgba(255, 255, 255, 0.2) 15%,
-				rgba(255, 255, 255, 0.85) 30%,
-				rgba(255, 255, 255, 0.85) 70%,
-				rgba(255, 255, 255, 0.2) 85%
+				rgba(255, 255, 255, 0.3) 5%,
+				rgba(255, 255, 255, 0.85) 25%,
+				rgba(255, 255, 255, 0.85) 75%,
+				rgba(255, 255, 255, 0.3) 95%
 			),
 			url('$lib/assets/images/topo-bg.avif');
 	}

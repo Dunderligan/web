@@ -8,6 +8,7 @@
 	import TournamentStateSection from '$lib/components/structure/TournamentStateSection.svelte';
 	import Card from '$lib/components/structure/Card.svelte';
 	import screenshot1 from '$lib/assets/images/screenshot1.avif';
+	import PageSectionAlternate from '$lib/components/structure/PageSectionAlternate.svelte';
 
 	let { data } = $props();
 </script>
@@ -50,38 +51,42 @@
 {/if}
 
 <PageSection topMargin={false}>
-	<div class="mb-24 space-y-18">
-		<Card title="Häng med på Discord!" reverse image={screenshot1} alt="">
-			<p>
-				Dunderligans Discordserver är turneringens bultande hjärta. Här skickas uppdateringar,
-				matcher bokas och de hetaste leaksen släpps.
-			</p>
+	{#if data.tournamentState?.status === 'ongoing'}
+		<MatchList title="Kommande matcher" matches={data.matches.upcoming} />
+	{/if}
 
-			<div class="mt-6 flex items-center">
-				<Button kind="primary" icon="ph:discord-logo" label="Discord" href="/discord" />
-			</div>
-		</Card>
+	<MatchList class="mt-10" title="Senaste matcherna" matches={data.matches.latest} hideIfEmpty />
+</PageSection>
 
-		<Card title="Följ oss på Twitch!" image={screenshot1} alt="">
-			<p>
-				Dunderligans Discordserver är turneringens bultande hjärta. Här skickas uppdateringar,
-				matcher bokas och de hetaste leaksen släpps.
-			</p>
+<PageSectionAlternate style="neutral"></PageSectionAlternate>
 
-			<div class="mt-6 flex items-center justify-end">
-				<Button
-					kind="primary"
-					icon="ph:twitch-logo"
-					label="Twitch"
-					href="https://twitch.tv/Dunderligan"
-				/>
-			</div>
-		</Card>
-	</div>
+<PageSection class="space-y-14" topMargin={false}>
+	<Card title="Häng med på Discord!" reverse image={screenshot1} alt="">
+		<p>
+			Dunderligans Discordserver är turneringens bultande hjärta. Här skickas uppdateringar, matcher
+			bokas och de hetaste leaksen släpps.
+		</p>
 
-	<MatchList title="Kommande matcher" matches={data.matches.upcoming} hideIfEmpty />
+		<div class="mt-6 flex items-center">
+			<Button kind="primary" icon="ph:discord-logo" label="Discord" href="/discord" />
+		</div>
+	</Card>
 
-	<MatchList title="Senaste matcherna" matches={data.matches.latest} hideIfEmpty />
+	<Card title="Följ oss på Twitch!" image={screenshot1} alt="">
+		<p>
+			Dunderligans Discordserver är turneringens bultande hjärta. Här skickas uppdateringar, matcher
+			bokas och de hetaste leaksen släpps.
+		</p>
+
+		<div class="mt-6 flex items-center justify-end">
+			<Button
+				kind="primary"
+				icon="ph:twitch-logo"
+				label="Twitch"
+				href="https://twitch.tv/Dunderligan"
+			/>
+		</div>
+	</Card>
 </PageSection>
 
 <style>

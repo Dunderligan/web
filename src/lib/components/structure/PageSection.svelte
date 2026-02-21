@@ -14,7 +14,7 @@
 <main
 	class={[
 		topMargin && 'mt-20',
-		'relative z-0 grow overflow-hidden bg-white px-4 pt-20 pb-28 text-gray-800 shadow-2xl dark:bg-gray-950 dark:text-gray-300'
+		'relative z-0 grow overflow-hidden bg-white px-4 pt-20 pb-28 text-gray-800 dark:bg-gray-950 dark:text-gray-300'
 	]}
 >
 	<div class={[classProp, 'mx-auto max-w-4xl']}>
