@@ -77,14 +77,6 @@
 			{#if tournamentState.registrationOpensAt}
 				{@render countdown(tournamentState.registrationOpensAt)}
 			{/if}
-
-			<Button
-				icon="ph:discord-logo"
-				label="Gå med i våran Discord"
-				kind="secondary"
-				class="mt-12"
-				href={discordUrl}
-			/>
 		{:else if tournamentState.status === 'starting'}
 			<h2 class="font-display text-4xl font-bold">{season.name} startar snart!</h2>
 		{/if}

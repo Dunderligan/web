@@ -6,6 +6,8 @@
 	import Meta from '$lib/components/structure/Meta.svelte';
 	import trailerThumbnail from '$lib/assets/images/trailer-thumbnail.avif';
 	import TournamentStateSection from '$lib/components/structure/TournamentStateSection.svelte';
+	import Card from '$lib/components/structure/Card.svelte';
+	import screenshot1 from '$lib/assets/images/screenshot1.avif';
 
 	let { data } = $props();
 </script>
@@ -48,6 +50,35 @@
 {/if}
 
 <PageSection topMargin={false}>
+	<div class="mb-20 space-y-12">
+		<Card title="Gå med i vår Discord!" image={screenshot1} alt="">
+			<p>
+				Dunderligans server är den centrala platsen för turneringen. Här bokas och spelas matcher,
+				spelare hittar lag och de hetaste läckorna sker.
+			</p>
+
+			<div class="mt-4 flex items-center justify-center">
+				<Button kind="primary" icon="ph:discord-logo" label="Anslut" href="/discord" />
+			</div>
+		</Card>
+
+		<Card title="Twitch" reverse image={screenshot1} alt="">
+			<p>
+				Dunderligans server är den centrala platsen för turneringen. Här bokas och spelas matcher,
+				spelare hittar lag och de hetaste läckorna sker.
+			</p>
+
+			<div class="mt-4 flex items-center justify-center">
+				<Button
+					kind="primary"
+					icon="ph:twitch-logo"
+					label="Följ oss!"
+					href="https://twitch.tv/Dunderligan"
+				/>
+			</div>
+		</Card>
+	</div>
+
 	<MatchList title="Kommande matcher" matches={data.matches.upcoming} hideIfEmpty />
 
 	<MatchList title="Senaste matcherna" matches={data.matches.latest} hideIfEmpty />
