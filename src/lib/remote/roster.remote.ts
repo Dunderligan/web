@@ -36,7 +36,6 @@ export const createRoster = command(
 				name,
 				slug,
 				groupId,
-				seasonSlug,
 				teamId
 			})
 			.returning({ id: schema.roster.id });

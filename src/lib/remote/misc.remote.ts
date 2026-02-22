@@ -147,7 +147,7 @@ async function insertGroup(
 
 	let rosterMap: Record<string, string> = {};
 	for (const [teamName, teamInput] of Object.entries(input.teams)) {
-		const { roster } = await insertRoster(tx, seasonSlug, group.id, teamName, teamInput);
+		const { roster } = await insertRoster(tx, group.id, teamName, teamInput);
 		rosterMap[teamName] = roster.id;
 	}
 
@@ -168,7 +168,6 @@ async function insertGroup(
 
 async function insertRoster(
 	tx: Transaction,
-	seasonSlug: string,
 	groupId: string,
 	name: string,
 	input: RosterInput
@@ -178,7 +177,6 @@ async function insertRoster(
 		.insert(schema.roster)
 		.values({
 			name,
-			seasonSlug,
 			slug: toSlug(name),
 			teamId: team.id,
 			groupId

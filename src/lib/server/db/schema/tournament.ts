@@ -67,7 +67,6 @@ export const roster = pgTable(
 		id: uuid().primaryKey().defaultRandom(),
 		name: text().notNull(),
 		slug: text().notNull(),
-		seasonSlug: text().notNull(),
 		teamId: uuid()
 			.notNull()
 			.references(() => team.id, { onDelete: 'cascade' }),
@@ -77,7 +76,6 @@ export const roster = pgTable(
 		resigned: boolean().notNull().default(false),
 		...timestamps
 	},
-	(t) => [unique().on(t.slug, t.seasonSlug), unique().on(t.teamId, t.seasonSlug)]
 );
 
 export const socialPlatformEnum = pgEnum('social_platform', enumToPgEnum(SocialPlatform));
