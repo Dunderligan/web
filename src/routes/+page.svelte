@@ -58,13 +58,25 @@
 	<MatchList class="mt-10" title="Senaste matcherna" matches={data.matches.latest} hideIfEmpty />
 </PageSection>
 
-<PageSectionAlternate style="neutral"></PageSectionAlternate>
+<PageSectionAlternate style="accent">
+	<h2 class="font-display text-4xl font-bold">Kolla in vår senaste video!</h2>
+
+	<iframe
+		class="mx-auto mt-8 aspect-video w-full max-w-2xl rounded-lg"
+		src="https://www.youtube-nocookie.com/embed/lbycWN9xFrA?si=CG5endgKT6q4yUcI"
+		title="YouTube video player"
+		frameborder="0"
+		allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+		referrerpolicy="strict-origin-when-cross-origin"
+		allowfullscreen
+	></iframe>
+</PageSectionAlternate>
 
 <PageSection class="space-y-14" topMargin={false}>
 	<Card title="Häng med på Discord!" reverse image={screenshot1} alt="">
 		<p>
 			Dunderligans Discordserver är turneringens bultande hjärta. Här skickas uppdateringar, matcher
-			bokas och de hetaste leaksen släpps.
+			bokas och de hetaste leaksen sker.
 		</p>
 
 		<div class="mt-6 flex items-center">

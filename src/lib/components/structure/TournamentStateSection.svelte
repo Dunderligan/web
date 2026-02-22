@@ -22,9 +22,9 @@
 			case 'registration':
 				return 'accent';
 
+			case 'ongoing':
 			case 'starting':
 			case 'upcoming':
-			case 'ongoing':
 				return 'neutral';
 		}
 	});

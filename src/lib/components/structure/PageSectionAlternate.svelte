@@ -25,7 +25,7 @@
 	});
 </script>
 
-<section class={['relative z-10 grow overflow-hidden py-20', styleClass, classProp]}>
+<section class={['relative z-10 grow overflow-hidden py-20 text-center', styleClass, classProp]}>
 	<div class="mx-auto max-w-4xl px-4 lg:px-0">
 		{@render children?.()}
 	</div>

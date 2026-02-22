@@ -1,6 +1,6 @@
 import { matchRoster, matchWinner } from '$lib/match';
 import { db } from '$lib/server/db';
-import { entityQuery, finalMatchQuery, fullMatchQueryWithContext, hiddenMatchFilter } from '$lib/server/db/helpers';
+import { divisionOrder, entityQuery, finalMatchQuery, fullMatchQueryWithContext, hiddenMatchFilter } from '$lib/server/db/helpers';
 import type { User } from '$lib/server/db/schema/auth';
 import { MatchState, type TournamentState, type Winner } from '$lib/types';
 
@@ -41,6 +41,7 @@ async function fetchTournamentState(): Promise<TournamentState | null> {
 			},
 			divisions: {
 				...entityQuery,
+				orderBy: (t) => divisionOrder(t.name),
 				with: {
 					brackets: {
 						columns: {
