@@ -16,6 +16,7 @@
 		center?: boolean;
 		hideDivision?: boolean;
 		class?: ClassValue;
+		short?: boolean;
 	};
 
 	let {
@@ -24,7 +25,8 @@
 		bracket,
 		center = false,
 		class: classProp,
-		hideDivision = false
+		hideDivision = false,
+		short = false
 	}: Props = $props();
 
 	const division = $derived(group ? group.division : bracket ? bracket.division : null);
@@ -61,7 +63,7 @@
 			<Icon {icon} />
 		{/if}
 
-		{#if label}
+		{#if label && !short}
 			{label}
 		{/if}
 

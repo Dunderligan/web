@@ -14,11 +14,11 @@
 
 <div
 	class={[
-		reverse ? 'lg:flex-row-reverse' : 'lg:flex-row',
+		reverse ? 'md:flex-row-reverse' : 'md:flex-row',
 		'flex flex-col overflow-hidden rounded-xl bg-gray-100 text-lg font-medium dark:bg-gray-900'
 	]}
 >
-	<img src={image} {alt} class="lg:w-110" />
+	<img src={image} {alt} class="object-cover md:h-80 md:w-110" />
 
 	<div class="px-14 py-12">
 		<h3 class="mb-3 text-xl font-semibold text-gray-900 dark:text-gray-100">{title}</h3>

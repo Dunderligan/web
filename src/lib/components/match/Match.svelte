@@ -20,9 +20,16 @@
 		seasonSlug?: string;
 		mainRosterId?: string;
 		hideDivision?: boolean;
+		short?: boolean;
 	};
 
-	let { match, seasonSlug: seasonSlugProp, mainRosterId, hideDivision = false }: Props = $props();
+	let {
+		match,
+		seasonSlug: seasonSlugProp,
+		mainRosterId,
+		hideDivision = false,
+		short = false
+	}: Props = $props();
 
 	const winner = $derived(matchWinner(match));
 
@@ -37,12 +44,13 @@
 	const showScore = $derived(hasMatchScore(match));
 </script>
 
-<div class={['relative overflow-hidden rounded-lg bg-gray-100 px-6 py-3 dark:bg-gray-900']}>
+<div class={['relative overflow-hidden rounded-lg bg-gray-100 px-8 py-3 dark:bg-gray-900']}>
 	<MatchInfoRow
 		{match}
+		{short}
+		{hideDivision}
 		group={match.group}
 		bracket={match.bracket}
-		{hideDivision}
 		class="pb-2"
 		center
 	/>
@@ -67,6 +75,8 @@
 				>
 			{:else if match.state === MatchState.CANCELLED}
 				<span class="text-3xl font-semibold">x - x</span>
+			{:else if match.state === MatchState.SCHEDULED}
+				<span class="text-3xl font-semibold">vs</span>
 			{:else}
 				<span class="font-semibold">---</span>
 			{/if}
@@ -90,14 +100,17 @@
 
 			<RosterLogo id={roster.id} {href} class="size-10 sm:size-12" />
 
-			<a {href} class={[nameClass, 'truncate text-lg font-semibold hover:underline']}>
+			<a
+				{href}
+				class={[nameClass, short && 'sm:hidden', 'truncate text-lg font-semibold hover:underline']}
+			>
 				{roster.name}
 			</a>
 		{:else}
 			<div class="ml-2 font-medium text-gray-500">Okänt lag</div>
 		{/if}
 
-		{#if note}
+		{#if note && !short}
 			<MatchNote {note} />
 		{/if}
 
@@ -105,7 +118,7 @@
 			<Icon icon="ph:crown-simple-fill" class="text-xl text-accent-600" title="Vinnare" />
 		{/if}
 
-		{#if match.state === MatchState.PLAYED || match.state === MatchState.WALKOVER}
+		{#if showScore}
 			<div
 				class={[
 					won ? 'text-accent-600' : 'text-gray-500',

@@ -51,15 +51,13 @@
 {/if}
 
 <PageSection topMargin={false}>
-	<div class="flex gap-4">
+	<div class="flex flex-col gap-2 md:flex-row">
 		<div>
 			<MatchList title="Senaste matcherna" matches={data.matches.latest} hideIfEmpty />
 		</div>
 
-		<div class="grow rounded-lg">
-			{#if data.tournamentState?.status === 'ongoing'}
-				<MatchList title="Kommande matcher" matches={data.matches.upcoming} />
-			{/if}
+		<div class="shrink-0 grow px-2">
+			<MatchList title="Kommande matcher" matches={data.matches.upcoming} short />
 		</div>
 	</div>
 </PageSection>

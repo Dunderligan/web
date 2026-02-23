@@ -12,6 +12,7 @@
 		hideDivision?: boolean;
 		title?: string;
 		class?: ClassValue;
+		short?: boolean;
 	} & (
 		| {
 				matches: ResolvedMatchWithContext[];
@@ -31,7 +32,8 @@
 		hideIfEmpty = false,
 		hideDivision = false,
 		title,
-		class: classProp
+		class: classProp,
+		short = false
 	}: Props = $props();
 
 	const matchPromise = $derived(Array.isArray(matches) ? Promise.resolve(matches) : matches);
@@ -51,10 +53,10 @@
 
 		<div class={[!title && classProp, 'max-w-2xl space-y-2']}>
 			{#each matches as match (match.id)}
-				<Match {match} {seasonSlug} {hideDivision} {mainRosterId} />
+				<Match {match} {seasonSlug} {hideDivision} {mainRosterId} {short} />
 			{:else}
 				<div
-					class="text-center py-10 text-gray-700 space-y-2 bg-gray-100 rounded-lg dark:text-gray-300 dark:bg-gray-900"
+					class="text-center p-10 text-gray-700 space-y-2 bg-gray-100 rounded-lg dark:text-gray-300 dark:bg-gray-900"
 				>
 					<Icon icon="ph:detective" class="text-5xl block mx-auto" />
 					<span class="text-xl font-semibold">Nils Numbani spanar fortfarande</span>

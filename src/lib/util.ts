@@ -137,13 +137,18 @@ export function seasonState({
 	return 'ongoing';
 }
 
+function isWithinWeek(a: Date, b: Date) {
+	const diff = Math.abs(a.getTime() - b.getTime());
+	return diff <= 7 * 24 * 60 * 60 * 1000; // 7 days
+}
+
 /** Formats a date in a readable way, without time. */
 export function formatDate(date: Date, extra?: any): string {
+	const isThisWeek = isWithinWeek(date, new Date());
 	const isCurrentYear = date.getFullYear() === new Date().getFullYear();
 
 	return date.toLocaleDateString('sv-SE', {
-		month: 'long',
-		day: 'numeric',
+		...(isThisWeek ? { weekday: 'long' } : { day: 'numeric', month: 'short' }),
 		// only show year if not current year
 		...(isCurrentYear ? {} : { year: 'numeric' }),
 		...extra
