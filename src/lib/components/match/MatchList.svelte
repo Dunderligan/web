@@ -56,8 +56,8 @@
 				<div
 					class="text-center py-10 text-gray-700 space-y-2 bg-gray-100 rounded-lg dark:text-gray-300 dark:bg-gray-900"
 				>
-					<Icon icon="ph:ghost" class="text-5xl block mx-auto" />
-					<span class="text-xl font-semibold">Inga matcher hittades</span>
+					<Icon icon="ph:detective" class="text-5xl block mx-auto" />
+					<span class="text-xl font-semibold">Nils Numbani spanar fortfarande</span>
 				</div>
 			{/each}
 		</div>

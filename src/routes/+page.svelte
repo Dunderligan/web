@@ -51,11 +51,17 @@
 {/if}
 
 <PageSection topMargin={false}>
-	{#if data.tournamentState?.status === 'ongoing'}
-		<MatchList title="Kommande matcher" matches={data.matches.upcoming} />
-	{/if}
+	<div class="flex gap-4">
+		<div>
+			<MatchList title="Senaste matcherna" matches={data.matches.latest} hideIfEmpty />
+		</div>
 
-	<MatchList class="mt-10" title="Senaste matcherna" matches={data.matches.latest} hideIfEmpty />
+		<div class="grow rounded-lg">
+			{#if data.tournamentState?.status === 'ongoing'}
+				<MatchList title="Kommande matcher" matches={data.matches.upcoming} />
+			{/if}
+		</div>
+	</div>
 </PageSection>
 
 <PageSectionAlternate style="accent">
@@ -63,7 +69,7 @@
 
 	<iframe
 		class="mx-auto mt-8 aspect-video w-full max-w-2xl rounded-lg"
-		src="https://www.youtube-nocookie.com/embed/lbycWN9xFrA?si=CG5endgKT6q4yUcI"
+		src="https://www.youtube-nocookie.com/embed/lbycWN9xFrA"
 		title="YouTube video player"
 		frameborder="0"
 		allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

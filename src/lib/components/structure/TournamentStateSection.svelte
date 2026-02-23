@@ -29,17 +29,6 @@
 		}
 	});
 
-	const hasCountdown = $derived.by(() => {
-		switch (tournamentState.status) {
-			case 'registration':
-				return tournamentState.registrationClosesAt !== null;
-			case 'upcoming':
-				return tournamentState.registrationOpensAt !== null;
-			default:
-				return false;
-		}
-	});
-
 	let now = $state(Date.now());
 
 	onMount(() => {
@@ -51,7 +40,7 @@
 	});
 </script>
 
-<PageSectionAlternate {style} class={[hasCountdown && 'text-center']}>
+<PageSectionAlternate {style}>
 	{#if tournamentState.status === 'offseason'}
 		<h2 class="font-display text-4xl font-bold">Off-season</h2>
 		<h4 class="mt-1 text-lg font-medium">Tack för denna säsong! Ses igen nästa år!</h4>
