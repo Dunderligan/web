@@ -60,6 +60,7 @@ export const createRegistration = command(
 export const updateSeason = command(
 	z.object({
 		id: z.uuid(),
+		name: z.string(),
 		startedAt: z.date(),
 		endedAt: z.date().nullish(),
 		hidden: z.boolean(),
@@ -71,13 +72,15 @@ export const updateSeason = command(
 			})
 			.nullish()
 	}),
-	async ({ id, startedAt, endedAt, hidden, registration }) => {
+	async ({ id, name, startedAt, endedAt, hidden, registration }) => {
 		await adminGuard();
+
+		const slug = toSlug(name);
 
 		await db.transaction(async (tx) => {
 			await tx
 				.update(schema.season)
-				.set({ startedAt, endedAt, hidden })
+				.set({ name, slug, startedAt, endedAt, hidden })
 				.where(eq(schema.season.id, id));
 
 			if (registration) {

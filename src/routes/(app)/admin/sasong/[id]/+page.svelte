@@ -52,6 +52,7 @@
 	async function save() {
 		await updateSeason({
 			id: season.id,
+			name: season.name,
 			startedAt: season.startedAt,
 			endedAt: season.endedAt,
 			hidden: season.hidden,
@@ -168,6 +169,15 @@
 
 <AdminCard title="Inställningar">
 	<div class="space-y-2">
+		<Label label="Namn">
+			<InputField
+				bind:value={season.name}
+				placeholder="T.ex. Säsong 1..."
+				oninput={saveCtx.setDirty}
+				required
+			/>
+		</Label>
+
 		<Label label="Startdatum">
 			<DateInput bind:value={season.startedAt} type="date" oninput={saveCtx.setDirty} required />
 		</Label>
