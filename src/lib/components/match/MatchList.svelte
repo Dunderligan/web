@@ -4,6 +4,7 @@
 	import MatchSkeleton from './MatchSkeleton.svelte';
 	import Icon from '../ui/Icon.svelte';
 	import Subheading from '../ui/Subheading.svelte';
+	import MatchListPlaceholder from './MatchListPlaceholder.svelte';
 
 	type Props = {
 		seasonSlug?: string;
@@ -55,12 +56,7 @@
 			{#each matches as match (match.id)}
 				<Match {match} {seasonSlug} {hideDivision} {mainRosterId} {short} />
 			{:else}
-				<div
-					class="text-center p-10 text-gray-700 space-y-2 bg-gray-100 rounded-lg dark:text-gray-300 dark:bg-gray-900"
-				>
-					<Icon icon="ph:detective" class="text-5xl block mx-auto" />
-					<span class="text-xl font-semibold">Nils Numbani spanar fortfarande</span>
-				</div>
+				<MatchListPlaceholder />
 			{/each}
 		</div>
 	{/if}
