@@ -84,7 +84,7 @@
 			<Tabs class="mb-6 grow" items={rosterTabItems} selected={roster.id} />
 		{/if}
 
-		<MembersTable members={roster.members} />
+		<MembersTable members={roster.members} class="mb-12" />
 
 		<MatchList
 			title="Kommande matcher"
@@ -101,6 +101,7 @@
 			seasonSlug={season.slug}
 			mainRosterId={roster.id}
 			hideDivision
+			class="mt-6"
 		/>
 	</section>
 

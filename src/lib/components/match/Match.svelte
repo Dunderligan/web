@@ -63,7 +63,7 @@
 
 		<div
 			class={[
-				short ? 'w-14' : 'w-18',
+				short ? 'w-12' : 'w-18',
 				'hidden shrink-0 text-center text-3xl text-gray-600 sm:block dark:text-gray-400'
 			]}
 		>
@@ -98,7 +98,7 @@
 	{@const won = roster && isWinner(match, side)}
 	{@const note = matchNote(match, side)}
 
-	<div class={[rootClass, 'flex w-full items-center gap-2 text-gray-700 dark:text-gray-300']}>
+	<div class={[rootClass, 'flex w-full items-center gap-3 text-gray-700 dark:text-gray-300']}>
 		{#if roster}
 			{@const href = `/lag/${roster.slug}/${seasonSlug}`}
 
