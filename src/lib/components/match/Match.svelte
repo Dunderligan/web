@@ -14,6 +14,7 @@
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import MatchInfoRow from './MatchInfoRow.svelte';
 	import MatchNote from '../ui/Note.svelte';
+	import { shortenTeamName } from '$lib/util';
 
 	type Props = {
 		match: ResolvedMatchWithContext;
@@ -42,16 +43,6 @@
 	const seasonSlug = $derived(seasonSlugProp ?? division?.season.slug);
 
 	const showScore = $derived(hasMatchScore(match));
-
-	function shortenTeamName(name: string) {
-		const words = name.replace(/[():]/g, '').toUpperCase().split(' ');
-		if (words.length === 1) return words[0].slice(0, 3);
-		if (words.length === 2) return words[0].slice(0, 2) + words[1][0];
-		return words
-			.slice(0, 3)
-			.map((word) => word[0])
-			.join('');
-	}
 </script>
 
 <div class={['relative overflow-hidden rounded-lg bg-gray-100 px-6 py-3 dark:bg-gray-900']}>

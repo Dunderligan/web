@@ -77,8 +77,8 @@
 <nav
 	class={[
 		dark && 'dark',
-		scrolled && 'bg-gray-white/50 backdrop-blur-xs dark:bg-gray-950/50 dark:shadow-md',
-		'fixed z-30 h-22 w-screen px-12 text-gray-800 transition-all duration-300 ease-out dark:text-gray-200'
+		scrolled && 'to-white/50 backdrop-blur-[2px] dark:to-gray-950/70',
+		'fixed z-30 h-26 w-screen bg-linear-to-t from-transparent to-transparent px-12 pb-4 text-gray-800 transition-all duration-300 ease-out dark:text-gray-200'
 	]}
 >
 	<div class="mx-auto flex h-full max-w-4xl items-center justify-between gap-2">

@@ -77,7 +77,13 @@
 			{@render countdown(tournamentState.registrationOpensAt)}
 		{/if}
 	{:else if tournamentState.status === 'starting'}
-		<h2 class="font-display text-4xl font-bold">{season.name} startar snart!</h2>
+		<h4 class="text-xl font-semibold">
+			{season.name} börjar snart!
+		</h4>
+
+		{#if tournamentState.startsAt}
+			{@render countdown(tournamentState.startsAt)}
+		{/if}
 	{/if}
 </PageSectionAlternate>
 

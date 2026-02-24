@@ -1,20 +1,34 @@
 import { matchRoster, matchWinner } from '$lib/match';
 import { db } from '$lib/server/db';
-import { divisionOrder, entityQuery, finalMatchQuery, fullMatchQueryWithContext, hiddenMatchFilter } from '$lib/server/db/helpers';
+import {
+	divisionOrder,
+	entityQuery,
+	finalMatchQuery,
+	fullMatchQueryWithContext,
+	hiddenMatchFilter
+} from '$lib/server/db/helpers';
 import type { User } from '$lib/server/db/schema/auth';
 import { MatchState, type TournamentState, type Winner } from '$lib/types';
 
-async function fetchMatches(state: MatchState, user: User | null) {
+async function fetchMatches({
+	filter,
+	user,
+	limit
+}: {
+	filter: any;
+	user: User | null;
+	limit?: number;
+}) {
 	return await db.query.match.findMany({
-		limit: 4,
+		limit,
 		where: {
-			state,
 			rosterAId: {
 				isNotNull: true
 			},
 			rosterBId: {
 				isNotNull: true
 			},
+			...filter,
 			...hiddenMatchFilter(user)
 		},
 		...fullMatchQueryWithContext
@@ -116,7 +130,8 @@ async function fetchTournamentState(): Promise<TournamentState | null> {
 	if (registrationClosed || !registration) {
 		return {
 			season,
-			status: 'starting'
+			status: 'starting',
+			startsAt: season.startedAt
 		};
 	}
 
@@ -129,8 +144,15 @@ async function fetchTournamentState(): Promise<TournamentState | null> {
 
 export const load = async ({ locals }) => {
 	const [upcoming, latest, tournamentState] = await Promise.all([
-		fetchMatches(MatchState.SCHEDULED, locals.user),
-		fetchMatches(MatchState.PLAYED, locals.user),
+		fetchMatches({
+			user: locals.user,
+			filter: { state: MatchState.SCHEDULED, scheduledAt: { isNotNull: true } }
+		}),
+		fetchMatches({
+			limit: 5,
+			user: locals.user,
+			filter: { state: MatchState.PLAYED }
+		}),
 		fetchTournamentState()
 	]);
 

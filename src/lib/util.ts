@@ -163,6 +163,17 @@ export function formatDateTime(date: Date): string {
 	});
 }
 
+/** Shortens a team name to a string of 3 characters. */
+export function shortenTeamName(name: string) {
+	const words = name.replace(/[():]/g, '').toUpperCase().split(' ');
+	if (words.length === 1) return words[0].slice(0, 3);
+	if (words.length === 2) return words[0].slice(0, 2) + words[1][0];
+	return words
+		.slice(0, 3)
+		.map((word) => word[0])
+		.join('');
+}
+
 /** Client/server agnostic cookie functions */
 
 export async function getCookie(name: string): Promise<string | null> {

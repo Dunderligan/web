@@ -7,7 +7,7 @@
 	import RosterLogo from '$lib/components/ui/RosterLogo.svelte';
 	import Tabs from '$lib/components/ui/Tabs.svelte';
 	import TeamSocial from '$lib/components/ui/TeamSocial.svelte';
-	import { cdnImageSrc, cdnRosterLogoPath, flattenGroup } from '$lib/util';
+	import { cdnImageSrc, cdnRosterLogoPath, flattenGroup, shortenTeamName } from '$lib/util';
 	import { page } from '$app/state';
 	import MatchList from '$lib/components/match/MatchList.svelte';
 	import Meta from '$lib/components/structure/Meta.svelte';
