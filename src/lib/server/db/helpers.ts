@@ -140,6 +140,7 @@ export function divisionOrder(column: any) {
 	return sql`(
 		CASE ${column}
 			WHEN 'Dunderligan' THEN '0'
+			WHEN 'Dunderserien' THEN '0'
 			ELSE ${column}
 		END
 	) ASC`;
