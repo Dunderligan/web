@@ -42,9 +42,19 @@
 	const seasonSlug = $derived(seasonSlugProp ?? division?.season.slug);
 
 	const showScore = $derived(hasMatchScore(match));
+
+	function shortenTeamName(name: string) {
+		const words = name.replace(/[():]/g, '').toUpperCase().split(' ');
+		if (words.length === 1) return words[0].slice(0, 3);
+		if (words.length === 2) return words[0].slice(0, 2) + words[1][0];
+		return words
+			.slice(0, 3)
+			.map((word) => word[0])
+			.join('');
+	}
 </script>
 
-<div class={['relative overflow-hidden rounded-lg bg-gray-100 px-8 py-3 dark:bg-gray-900']}>
+<div class={['relative overflow-hidden rounded-lg bg-gray-100 px-6 py-3 dark:bg-gray-900']}>
 	<MatchInfoRow
 		{match}
 		{short}
@@ -61,7 +71,10 @@
 		})}
 
 		<div
-			class="hidden w-18 shrink-0 text-center text-3xl text-gray-600 sm:block dark:text-gray-400"
+			class={[
+				short ? 'w-14' : 'w-18',
+				'hidden shrink-0 text-center text-3xl text-gray-600 sm:block dark:text-gray-400'
+			]}
 		>
 			{#if showScore}
 				<span class={[winner === leftTeam && 'text-accent-600 dark:text-accent-500', 'font-bold']}
@@ -102,9 +115,9 @@
 
 			<a
 				{href}
-				class={[nameClass, short && 'sm:hidden', 'truncate text-lg font-semibold hover:underline']}
+				class={[nameClass, short && 'shrink-0', 'truncate text-lg font-semibold hover:underline']}
 			>
-				{roster.name}
+				{short ? shortenTeamName(roster.name) : roster.name}
 			</a>
 		{:else}
 			<div class="ml-2 font-medium text-gray-500">Okänt lag</div>
