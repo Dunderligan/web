@@ -137,13 +137,18 @@ export function seasonState({
 	return 'ongoing';
 }
 
+function isWithinWeek(a: Date, b: Date) {
+	const diff = Math.abs(a.getTime() - b.getTime());
+	return diff <= 7 * 24 * 60 * 60 * 1000; // 7 days
+}
+
 /** Formats a date in a readable way, without time. */
 export function formatDate(date: Date, extra?: any): string {
+	const isThisWeek = isWithinWeek(date, new Date());
 	const isCurrentYear = date.getFullYear() === new Date().getFullYear();
 
 	return date.toLocaleDateString('sv-SE', {
-		month: 'long',
-		day: 'numeric',
+		...(isThisWeek ? { weekday: 'long' } : { day: 'numeric', month: 'short' }),
 		// only show year if not current year
 		...(isCurrentYear ? {} : { year: 'numeric' }),
 		...extra
@@ -156,6 +161,17 @@ export function formatDateTime(date: Date): string {
 		hour: '2-digit',
 		minute: '2-digit'
 	});
+}
+
+/** Shortens a team name to a string of 3 characters. */
+export function shortenTeamName(name: string) {
+	const words = name.replace(/[():]/g, '').toUpperCase().split(' ');
+	if (words.length === 1) return words[0].slice(0, 3);
+	if (words.length === 2) return words[0].slice(0, 2) + words[1][0];
+	return words
+		.slice(0, 3)
+		.map((word) => word[0])
+		.join('');
 }
 
 /** Client/server agnostic cookie functions */

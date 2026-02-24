@@ -191,11 +191,12 @@
 				title="Kommande matcher"
 				matches={division.upcomingMatches.map(resolveMatch)}
 				seasonSlug={season.slug}
+				class="mt-12"
 				hideIfEmpty
 			/>
 
 			{#if division.latestMatches.length > 0}
-				<div class="mt-10 mb-4 flex max-w-2xl items-center justify-between">
+				<div class="mt-8 mb-4 flex max-w-2xl items-center justify-between">
 					<Subheading>Senaste matcherna</Subheading>
 
 					<Button

@@ -15,7 +15,7 @@
 <header
 	class={[
 		classProp,
-		'mx-auto mt-2 w-full max-w-4xl px-4 font-display text-gray-950 dark:text-gray-50'
+		'mx-auto mt-2 w-full max-w-4xl px-4 font-display text-gray-950 md:px-0 dark:text-gray-50'
 	]}
 >
 	{#if title}

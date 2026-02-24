@@ -234,5 +234,5 @@ export type TournamentState = { season: BaseEntity & { startedAt: Date | null } 
 	| { status: 'offseason'; winners: Winner[] } // season has ended before next registration is published
 	| { status: 'upcoming'; registrationOpensAt: Date | null } // before registration opens
 	| { status: 'registration'; registrationClosesAt: Date | null } // during registration
-	| { status: 'starting' } // after registration closed but before season start
+	| { status: 'starting'; startsAt: Date | null } // after registration closed but before season start
 );
