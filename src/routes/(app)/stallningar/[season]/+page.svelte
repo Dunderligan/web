@@ -145,14 +145,16 @@
 <PageSection>
 	<section class="grow overflow-hidden">
 		<div class="mb-4 flex max-w-lg flex-col gap-1.5">
-			<Tabs
-				selected={division.id}
-				items={divisions.map((division) => ({
-					label: division.name,
-					value: division.id,
-					href: `?div=${division.slug}&visa=${mode === 'group' ? 'gruppspel' : 'slutspel'}`
-				}))}
-			/>
+			{#if divisions.length > 1}
+				<Tabs
+					selected={division.id}
+					items={divisions.map((division) => ({
+						label: division.name,
+						value: division.id,
+						href: `?div=${division.slug}&visa=${mode === 'group' ? 'gruppspel' : 'slutspel'}`
+					}))}
+				/>
+			{/if}
 
 			<Tabs fillIcons selected={mode} items={tabItems} />
 		</div>
