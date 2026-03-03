@@ -34,6 +34,8 @@
 	const { icon, label, date } = $derived(
 		{
 			played: {
+				icon: 'ph:check',
+				label: 'Spelad',
 				date: match.playedAt ? formatDate(match.playedAt) : 'Okänt datum'
 			},
 			scheduled: {
