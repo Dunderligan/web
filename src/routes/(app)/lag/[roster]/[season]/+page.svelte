@@ -81,7 +81,7 @@
 <PageSection class="flex flex-col-reverse gap-10 sm:flex-row">
 	<section class="shrink grow text-gray-700 dark:text-gray-300">
 		{#if rosterTabItems.length > 1}
-			<Tabs class="mb-6 max-w-xl grow" items={rosterTabItems} selected={roster.id} />
+			<Tabs class="mb-6 grow" items={rosterTabItems} selected={roster.id} />
 		{/if}
 
 		<MembersTable members={roster.members} class="mb-12" />
@@ -105,7 +105,7 @@
 		/>
 	</section>
 
-	<section class="shrink-0 space-y-6 sm:w-1/3">
+	<section class="shrink-0 space-y-6 sm:w-56">
 		<div class="flex flex-col items-start gap-2">
 			<Button
 				href="/stallningar/{season.slug}?div={division.slug}"
