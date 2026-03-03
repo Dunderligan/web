@@ -61,9 +61,11 @@
 		await invalidateAll();
 	}
 
+	const SCROLL_THRESHOLD = 40;
+
 	onMount(() => {
 		const onScroll = () => {
-			scrolled = window.scrollY > 0;
+			scrolled = window.scrollY > SCROLL_THRESHOLD;
 		};
 
 		window.addEventListener('scroll', onScroll);
