@@ -5,8 +5,8 @@
 
 	import Subheading from '$lib/components/ui/Subheading.svelte';
 	import Accordion from '$lib/components/ui/Accordion.svelte';
-	import { discordUrl } from '$lib/util';
 	import Icon from '$lib/components/ui/Icon.svelte';
+	import { socials } from '$lib/socials';
 
 	const items = [
 		{
@@ -57,7 +57,7 @@
 	<Accordion type="multiple" {items}></Accordion>
 
 	<Subheading class="mt-8">Undrar du fortfarande något?</Subheading>
-	<a class="font-medium hover:underline" href={discordUrl}>
+	<a class="font-medium hover:underline" href={socials.discord}>
 		<Icon icon="ph:arrow-square-out" />
 		Gå med i vår discordserver!</a
 	>

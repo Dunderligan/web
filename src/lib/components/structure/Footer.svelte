@@ -4,34 +4,7 @@
 	import TeamSocial from '../ui/TeamSocial.svelte';
 	import logo from '$lib/assets/images/logo.webp';
 	import lysatorLogo from '$lib/assets/images/lysator.svg';
-	import { discordUrl } from '$lib/util';
-
-	const socials = [
-		{
-			platform: 'youtube',
-			href: 'https://www.youtube.com/@dunderligan_ow'
-		},
-		{
-			platform: 'twitter',
-			href: 'https://x.com/dunderligan_ow'
-		},
-		{
-			platform: 'discord',
-			href: discordUrl
-		},
-		{
-			platform: 'twitch',
-			href: 'https://www.twitch.tv/dunderligan_ow'
-		},
-		{
-			platform: 'github',
-			href: 'https://github.com/Dunderligan'
-		},
-		{
-			platform: 'tiktok',
-			href: 'https://www.tiktok.com/@dunderligan'
-		}
-	];
+	import { socials } from '$lib/socials';
 
 	const commitHash = $derived(page.data.commitHash);
 </script>
@@ -42,14 +15,14 @@
 			<img src={logo} alt="Dunderligan" class="-mt-2 size-14" />
 			<p class="text-lg">Dunderligan</p>
 			<div class="mt-4 grid w-max grid-cols-6 gap-x-3 gap-y-3 md:grid-cols-3">
-				{#each socials as social}
-					<TeamSocial {...social} class="text-2xl" />
+				{#each Object.entries(socials) as [platform, href]}
+					<TeamSocial {platform} {href} class="text-2xl" />
 				{/each}
 			</div>
 			<p class="mt-4 text-gray-400">
 				Byggd av Bobbo med ❤️
 				<br />
-				Dunderligan är <a class="underline" href="https://github.com/Dunderligan">öppen källkod</a>.
+				Dunderligan är <a class="underline" href={socials.github}>öppen källkod</a>.
 				<br />
 				{#if commitHash}
 					<Icon icon="ph:git-commit" class="inline-block" />
