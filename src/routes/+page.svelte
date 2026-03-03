@@ -9,7 +9,7 @@
 	import Card from '$lib/components/structure/Card.svelte';
 	import PageSectionAlternate from '$lib/components/structure/PageSectionAlternate.svelte';
 	import discordImage from '$lib/assets/images/discord.png';
-	import twitchImage from '$lib/assets/images/twitch.png';
+	import twitchImage from '$lib/assets/images/twitch.jpg';
 
 	let { data } = $props();
 </script>

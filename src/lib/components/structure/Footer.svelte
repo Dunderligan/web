@@ -13,7 +13,7 @@
 		},
 		{
 			platform: 'twitter',
-			href: 'https://x.com/dunderligan'
+			href: 'https://x.com/dunderligan_ow'
 		},
 		{
 			platform: 'discord',

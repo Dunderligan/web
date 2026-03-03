@@ -144,7 +144,7 @@
 
 <PageSection>
 	<section class="grow overflow-hidden">
-		<div class="mb-4 flex max-w-lg flex-col gap-1.5">
+		<div class="mb-4 max-w-xl space-y-1.5">
 			{#if divisions.length > 1}
 				<Tabs
 					selected={division.id}
