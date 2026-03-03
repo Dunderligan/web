@@ -72,7 +72,7 @@
 </script>
 
 <button
-	class="w-full max-w-2xs space-y-2 rounded-lg bg-gray-100 p-10 text-center text-gray-700 dark:bg-gray-900 dark:text-gray-300"
+	class="w-full space-y-2 rounded-lg bg-gray-100 p-10 text-center text-gray-700 dark:bg-gray-900 dark:text-gray-300"
 	onclick={() => (option = pickOption(true))}
 >
 	<Icon icon={option.icon} class="mx-auto block text-4xl" />

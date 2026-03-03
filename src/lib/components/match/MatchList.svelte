@@ -2,7 +2,6 @@
 	import type { ClassValue, ResolvedMatchWithContext } from '$lib/types';
 	import Match from './Match.svelte';
 	import MatchSkeleton from './MatchSkeleton.svelte';
-	import Icon from '../ui/Icon.svelte';
 	import Subheading from '../ui/Subheading.svelte';
 	import MatchListPlaceholder from './MatchListPlaceholder.svelte';
 

@@ -138,7 +138,8 @@ export function seasonState({
 }
 
 function isWithinWeek(a: Date, b: Date) {
-	const diff = Math.abs(a.getTime() - b.getTime());
+	const diff = a.getTime() - b.getTime();
+	if (diff < 0) return false; // a is before b
 	return diff <= 7 * 24 * 60 * 60 * 1000; // 7 days
 }
 

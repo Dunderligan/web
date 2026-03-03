@@ -55,7 +55,7 @@
 	]}
 >
 	{#if bracket}
-		<Icon icon="ph:trophy" title="Slutspelsmatch" class="mb-1" />
+		<Icon icon="ph:trophy" title="Slutspelsmatch" class="mb-0.5" />
 	{/if}
 
 	<div>

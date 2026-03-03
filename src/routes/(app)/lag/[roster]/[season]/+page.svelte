@@ -81,7 +81,7 @@
 <PageSection class="flex flex-col-reverse gap-10 sm:flex-row">
 	<section class="shrink grow text-gray-700 dark:text-gray-300">
 		{#if rosterTabItems.length > 1}
-			<Tabs class="mb-6 grow" items={rosterTabItems} selected={roster.id} />
+			<Tabs class="mb-6 max-w-lg grow" items={rosterTabItems} selected={roster.id} />
 		{/if}
 
 		<MembersTable members={roster.members} class="mb-12" />
