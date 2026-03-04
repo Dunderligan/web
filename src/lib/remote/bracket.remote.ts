@@ -150,7 +150,7 @@ export const updateBracket = command(
 		matches: z.array(matchSchema)
 	}),
 	async ({ id, name, matches }) => {
-		await roleGuard(AuthRole.ADMIN);
+		await roleGuard(AuthRole.MODERATOR);
 
 		await db.transaction(async (tx) => {
 			await tx.update(schema.bracket).set({ name }).where(eq(schema.bracket.id, id));

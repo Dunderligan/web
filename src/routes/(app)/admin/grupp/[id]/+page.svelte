@@ -20,6 +20,7 @@
 	import { createGroupMatch, isInMatch } from '$lib/match.js';
 	import RosterSelect from '$lib/components/admin/RosterSelect.svelte';
 	import { MatchState } from '$lib/types.js';
+	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
 
 	const { data } = $props();
 
@@ -112,22 +113,17 @@
 />
 
 <AdminCard title="Lag">
-	{#if group.rosters.length === 0}
-		<AdminEmptyNotice oncreateclick={() => (addRosterOpen = true)}>
-			Denna grupp har inga lag.
-		</AdminEmptyNotice>
-	{:else}
-		<div class="space-y-1 overflow-hidden rounded-lg">
-			{#each group.rosters as { id, name } (id)}
-				<AdminLink href="/admin/roster/{id}">
-					<RosterLogo {id} class="mr-2 inline size-12" />
-					{name}</AdminLink
-				>
-			{/each}
-		</div>
-
-		<Button icon="ph:plus" class="mt-2" onclick={() => (addRosterOpen = true)} />
-	{/if}
+	<AdminLinkList
+		items={group.rosters}
+		linkHref={(roster) => `/admin/roster/${roster.id}`}
+		emptyText="Denna grupp har inga lag!"
+		oncreateclick={() => (addRosterOpen = true)}
+	>
+		{#snippet linkContent({ item: roster })}
+			<RosterLogo id={roster.id} class="mr-2 inline size-12" />
+			<span>{roster.name}</span>
+		{/snippet}
+	</AdminLinkList>
 </AdminCard>
 
 <AdminCard title="Gruppspel">

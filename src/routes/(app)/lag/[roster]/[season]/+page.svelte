@@ -13,7 +13,7 @@
 	import Meta from '$lib/components/structure/Meta.svelte';
 	import { MatchState } from '$lib/types';
 	import { averageLegacyRank, averageRank } from '$lib/rank';
-	import { AuthRole, hasPermission } from '$lib/authRole';
+	import { AuthRole, checkPermission } from '$lib/authRole';
 
 	let { data } = $props();
 
@@ -115,7 +115,7 @@
 				kind="secondary"
 			/>
 
-			{#if hasPermission(page.data.user?.role, AuthRole.ADMIN)}
+			{#if checkPermission(page.data.user?.role, AuthRole.ADMIN)}
 				<Button
 					href="/admin/roster/{roster.id}"
 					kind="secondary"

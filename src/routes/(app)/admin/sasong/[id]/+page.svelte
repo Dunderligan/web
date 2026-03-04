@@ -21,6 +21,7 @@
 	} from '$lib/remote/season.remote';
 	import Checkbox from '$lib/components/ui/Checkbox.svelte';
 	import Note from '$lib/components/ui/Note.svelte';
+	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
 
 	const { data } = $props();
 
@@ -108,21 +109,13 @@
 <Breadcrumbs crumbs={[{ label: season.name, href: `/admin/sasong/${season.id}` }]} />
 
 <AdminCard title="Divisioner">
-	{#if season.divisions.length === 0}
-		<AdminEmptyNotice oncreateclick={() => (createDivisionOpen = true)}>
-			Denna säsong har inga divisioner.
-		</AdminEmptyNotice>
-	{:else}
-		<div class="space-y-1 overflow-hidden rounded-lg">
-			{#each season.divisions as { id, name } (id)}
-				<AdminLink href="/admin/division/{id}">
-					{name}
-				</AdminLink>
-			{/each}
-		</div>
-
-		<Button icon="ph:plus" onclick={() => (createDivisionOpen = true)} />
-	{/if}
+	<AdminLinkList
+		items={season.divisions}
+		linkHref={(division) => `/admin/division/${division.id}`}
+		linkLabel={(division) => division.name}
+		emptyText="Denna säsong har inga divisioner."
+		oncreateclick={() => (createDivisionOpen = true)}
+	/>
 </AdminCard>
 
 <AdminCard title="Anmälan">

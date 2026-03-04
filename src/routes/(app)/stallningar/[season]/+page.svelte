@@ -14,7 +14,7 @@
 	import MatchList from '$lib/components/match/MatchList.svelte';
 	import { goto } from '$app/navigation';
 	import Meta from '$lib/components/structure/Meta.svelte';
-	import { AuthRole, hasPermission } from '$lib/authRole';
+	import { AuthRole, checkPermission } from '$lib/authRole';
 
 	let { data } = $props();
 
@@ -179,7 +179,7 @@
 					seasonSlug={season.slug}
 				/>
 
-				{#if hasPermission(page.data.user?.role, AuthRole.ADMIN)}
+				{#if checkPermission(page.data.user?.role, AuthRole.ADMIN)}
 					<Button
 						label="Redigera"
 						icon="ph:pencil-simple"
@@ -223,7 +223,7 @@
 					rounds={buildBracketRounds(bracket.matches.map(resolveMatch))}
 				/>
 
-				{#if hasPermission(page.data.user?.role, AuthRole.ADMIN)}
+				{#if checkPermission(page.data.user?.role, AuthRole.ADMIN)}
 					<Button
 						label="Redigera"
 						icon="ph:pencil-simple"

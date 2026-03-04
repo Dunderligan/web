@@ -1,5 +1,5 @@
 import { command, getRequestEvent, query } from '$app/server';
-import { AuthRole, hasPermission } from '$lib/authRole';
+import { AuthRole, canPromoteTo, checkPermission } from '$lib/authRole';
 import { db, schema } from '$lib/server/db';
 import session from '$lib/server/session';
 import { error } from '@sveltejs/kit';
@@ -11,7 +11,7 @@ export const roleGuard = query(z.enum(AuthRole), (required) => {
 
 	const role = locals.user?.role;
 
-	if (!hasPermission(role, required)) {
+	if (!checkPermission(role, required)) {
 		error(403);
 	}
 });
@@ -71,8 +71,14 @@ export const updateUsers = command(
 		// if we get a lot of people who log in, this might need to be split up to
 		// update individual users instead of everyone at once
 
+		const { locals } = getRequestEvent();
+
 		await db.transaction(async (tx) => {
 			for (const user of users) {
+				if (!canPromoteTo(locals.user?.role, user.role)) {
+					throw error(403);
+				}
+
 				await tx.update(schema.user).set({ role: user.role }).where(eq(schema.user.id, user.id));
 			}
 		});

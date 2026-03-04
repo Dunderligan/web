@@ -1,3 +1,8 @@
+import { browser } from '$app/environment';
+import { getRequestEvent } from '$app/server';
+import { page } from '$app/state';
+import type { User } from './server/db/schema/auth';
+
 export enum AuthRole {
 	SUPER_ADMIN = 'super_admin',
 	ADMIN = 'admin',
@@ -13,7 +18,7 @@ export function compareRoles(roleA: AuthRole, roleB: AuthRole): number {
 	return indexA - indexB;
 }
 
-export function hasPermission(
+export function checkPermission(
 	userRole: AuthRole | undefined | null,
 	requiredRole: AuthRole
 ): boolean {
@@ -24,10 +29,24 @@ export function hasPermission(
 	return compareRoles(userRole, requiredRole) >= 0;
 }
 
+/** Like checkPermission but checks the currently logged in user. */
+export function checkUserPermission(requiredRole: AuthRole): boolean {
+	let user: User | null;
+	if (browser) {
+		user = page.data.user;
+	} else {
+		const { locals } = getRequestEvent();
+		user = locals.user;
+	}
+	return checkPermission(user?.role, requiredRole);
+}
+
 export function canPromoteTo(userRole: AuthRole | undefined | null, targetRole: AuthRole): boolean {
 	if (!userRole) {
 		return false;
 	}
+
+	// can only promote to one level below the user's current role
 	return compareRoles(userRole, targetRole) > 0;
 }
 

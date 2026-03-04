@@ -15,6 +15,7 @@
 	import { deleteDivision, updateDivision } from '$lib/remote/division.remote';
 	import Checkbox from '$lib/components/ui/Checkbox.svelte';
 	import GenerateBracketDialog from '$lib/components/admin/GenerateBracketDialog.svelte';
+	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
 
 	const { data } = $props();
 
@@ -78,39 +79,23 @@
 />
 
 <AdminCard title="Grupper">
-	{#if division.groups.length === 0}
-		<AdminEmptyNotice oncreateclick={() => (createGroupOpen = true)}>
-			Denna division har inga grupper.
-		</AdminEmptyNotice>
-	{:else}
-		<div class="space-y-1 overflow-hidden rounded-lg">
-			{#each division.groups as { id, name } (id)}
-				<AdminLink href="/admin/grupp/{id}">
-					{name}
-				</AdminLink>
-			{/each}
-		</div>
-
-		<Button icon="ph:plus" onclick={() => (createGroupOpen = true)} />
-	{/if}
+	<AdminLinkList
+		items={division.groups}
+		linkLabel={(group) => group.name}
+		linkHref={(group) => `/admin/grupp/${group.id}`}
+		emptyText="Denna division har inga grupper."
+		oncreateclick={() => (createGroupOpen = true)}
+	/>
 </AdminCard>
 
 <AdminCard title="Slutspel">
-	{#if division.brackets.length === 0}
-		<AdminEmptyNotice oncreateclick={() => (createBracketOpen = true)}>
-			Denna division har inga brackets.
-		</AdminEmptyNotice>
-	{:else}
-		<div class="space-y-1 overflow-hidden rounded-lg">
-			{#each division.brackets as { id, name } (id)}
-				<AdminLink href="/admin/bracket/{id}">
-					{name ?? 'Bracket'}
-				</AdminLink>
-			{/each}
-		</div>
-
-		<Button icon="ph:plus" onclick={() => (createBracketOpen = true)} />
-	{/if}
+	<AdminLinkList
+		items={division.brackets}
+		linkLabel={(bracket) => bracket.name ?? 'Bracket'}
+		linkHref={(bracket) => `/admin/bracket/${bracket.id}`}
+		emptyText="Denna division har inga brackets."
+		oncreateclick={() => (createBracketOpen = true)}
+	/>
 </AdminCard>
 
 <AdminCard title="Inställningar">

@@ -12,8 +12,9 @@
 	import DateInput from '$lib/components/ui/DateInput.svelte';
 	import { createSeason } from '$lib/remote/season.remote';
 	import Checkbox from '$lib/components/ui/Checkbox.svelte';
-	import { page } from '$app/state';
 	import { uploadSeasonData } from '$lib/remote/misc.remote';
+	import { AuthRole, checkUserPermission } from '$lib/authRole.js';
+	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
 
 	let { data } = $props();
 
@@ -68,30 +69,24 @@
 <Breadcrumbs crumbs={[]} />
 
 <AdminCard title="Säsonger">
-	{#if seasons.length === 0}
-		<AdminEmptyNotice oncreateclick={() => (createSeasonOpen = true)}>
-			Det finns inga säsonger!
-		</AdminEmptyNotice>
-	{:else}
-		<div class="space-y-1 overflow-hidden rounded-lg">
-			{#each seasons as { id, name, startedAt, endedAt } (id)}
-				<AdminLink
-					href="/admin/sasong/{id}"
-					highlighted={endedAt !== null && Date.now() < new Date(endedAt).getTime()}
-				>
-					<span>{name}</span>
-					<span class="ml-2 text-base font-medium">{startedAt.getFullYear()}</span>
-				</AdminLink>
-			{/each}
-		</div>
-
-		<Button icon="ph:plus" onclick={() => (createSeasonOpen = true)} />
-	{/if}
+	<AdminLinkList
+		items={seasons}
+		linkHref={(season) => `/admin/sasong/${season.id}`}
+		emptyText="Det finns inga säsonger!"
+		oncreateclick={() => (createSeasonOpen = true)}
+	>
+		{#snippet linkContent({ item: season })}
+			<span>{season.name}</span>
+			<span class="ml-2 text-base font-medium">{season.startedAt.getFullYear()}</span>
+		{/snippet}
+	</AdminLinkList>
 </AdminCard>
 
 <AdminCard title="Användare">
 	<div class="overflow-hidden rounded-lg">
-		<AdminLink href="/admin/anvandare">Hantera användare</AdminLink>
+		<AdminLink href="/admin/anvandare" disabled={!checkUserPermission(AuthRole.ADMIN)}
+			>Hantera användare</AdminLink
+		>
 	</div>
 </AdminCard>
 

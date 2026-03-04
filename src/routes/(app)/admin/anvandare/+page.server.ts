@@ -1,9 +1,10 @@
-import { AuthRole, hasPermission } from '$lib/authRole.js';
+import { AuthRole, checkPermission } from '$lib/authRole.js';
 import { db } from '$lib/server/db';
-import { error } from 'console';
+import { error } from '@sveltejs/kit';
 
 export const load = async ({ locals }) => {
-	if (!hasPermission(locals.user?.role, AuthRole.ADMIN)) {
+	// only admins should be able to see the user list
+	if (!checkPermission(locals.user?.role, AuthRole.ADMIN)) {
 		throw error(403);
 	}
 

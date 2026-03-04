@@ -9,7 +9,7 @@
 	import Dropdown from '../ui/Dropdown.svelte';
 	import logo from '$lib/assets/images/logo.webp';
 	import { onMount } from 'svelte';
-	import { AuthRole, hasPermission } from '$lib/authRole';
+	import { AuthRole, checkPermission } from '$lib/authRole';
 
 	type Props = {
 		dark?: boolean;
@@ -49,7 +49,7 @@
 		{
 			label: 'Admin',
 			href: '/admin',
-			hidden: !hasPermission(page.data.user?.role, AuthRole.ADMIN)
+			hidden: !checkPermission(page.data.user?.role, AuthRole.MODERATOR)
 		},
 		{
 			label: 'Logga ut',

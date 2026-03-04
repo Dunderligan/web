@@ -37,7 +37,7 @@ export const updateGroup = command(
 		matches: z.array(matchSchema)
 	}),
 	async ({ id, name, matches }) => {
-		await roleGuard(AuthRole.ADMIN);
+		await roleGuard(AuthRole.MODERATOR);
 
 		await db.transaction(async (tx) => {
 			const slug = toSlug(name.split(' ').at(-1) ?? name);
