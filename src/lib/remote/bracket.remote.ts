@@ -3,12 +3,13 @@ import { db, schema } from '$lib/server/db';
 import { eq } from 'drizzle-orm';
 import z from 'zod';
 import { matchSchema } from '$lib/schemas';
-import { adminGuard } from './auth.remote';
+import { roleGuard } from './auth.remote';
 import { createBracket } from '$lib/bracket';
 import { error } from '@sveltejs/kit';
 import { sortBySeed } from '$lib/table';
 import { MatchState, type UnresolvedMatchWithOrder } from '$lib/types';
 import { fullMatchColumns, matchRosterQuery } from '$lib/server/db/helpers';
+import { AuthRole } from '$lib/authRole';
 
 export const generateBracket = command(
 	z.object({
@@ -19,7 +20,7 @@ export const generateBracket = command(
 		flipStandings: z.boolean()
 	}),
 	async ({ name, divisionId, roundCount, avoidPreviousMatches, flipStandings }) => {
-		await adminGuard();
+		await roleGuard(AuthRole.ADMIN);
 
 		const { groups, groupwiseStandings } = await fetchDivision(divisionId);
 
@@ -149,7 +150,7 @@ export const updateBracket = command(
 		matches: z.array(matchSchema)
 	}),
 	async ({ id, name, matches }) => {
-		await adminGuard();
+		await roleGuard(AuthRole.ADMIN);
 
 		await db.transaction(async (tx) => {
 			await tx.update(schema.bracket).set({ name }).where(eq(schema.bracket.id, id));
@@ -169,7 +170,7 @@ export const deleteBracket = command(
 		id: z.uuid()
 	}),
 	async ({ id }) => {
-		await adminGuard();
+		await roleGuard(AuthRole.ADMIN);
 
 		await db.delete(schema.bracket).where(eq(schema.bracket.id, id));
 	}

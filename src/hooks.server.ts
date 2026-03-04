@@ -2,6 +2,7 @@ import { error, type Handle, type ServerInit } from '@sveltejs/kit';
 import session from '$lib/server/session';
 import { sequence } from '@sveltejs/kit/hooks';
 import { initDb } from '$lib/server/db';
+import { AuthRole, hasPermission } from '$lib/authRole';
 
 const handleAuth: Handle = async ({ event, resolve }) => {
 	const sessionToken = event.cookies.get(session.TOKEN_COOKIE_NAME);
@@ -31,8 +32,8 @@ const guardAdmin: Handle = async ({ event, resolve }) => {
 		return resolve(event);
 	}
 
-	if (!event.locals.user?.isAdmin) {
-		error(403);
+	if (!hasPermission(event.locals.user?.role, AuthRole.MODERATOR)) {
+		throw error(403);
 	}
 
 	return resolve(event);

@@ -2,7 +2,8 @@ import { command } from '$app/server';
 import { db, schema } from '$lib/server/db';
 import { MatchState, Rank, Role } from '$lib/types';
 import z from 'zod';
-import { adminGuard } from './auth.remote';
+import { roleGuard } from './auth.remote';
+import { AuthRole } from '$lib/authRole';
 import { toSlug } from '$lib/util';
 import { findOrCreatePlayer, type Transaction } from '$lib/server/db/helpers';
 import type { DrizzleError } from 'drizzle-orm';
@@ -87,7 +88,7 @@ export const uploadSeasonData = command(
 		)
 	}),
 	async (input) => {
-		await adminGuard();
+		await roleGuard(AuthRole.ADMIN);
 
 		const { season } = await db.transaction(async (tx) => {
 			return await insertSeason(tx, input);
@@ -166,12 +167,7 @@ async function insertGroup(
 	}
 }
 
-async function insertRoster(
-	tx: Transaction,
-	groupId: string,
-	name: string,
-	input: RosterInput
-) {
+async function insertRoster(tx: Transaction, groupId: string, name: string, input: RosterInput) {
 	const [team] = await tx.insert(schema.team).values({}).returning();
 	const [roster] = await tx
 		.insert(schema.roster)

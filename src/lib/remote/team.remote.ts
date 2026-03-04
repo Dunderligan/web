@@ -3,7 +3,8 @@ import { db } from '$lib/server/db';
 import { nestedGroupQuery } from '$lib/server/db/helpers';
 import type { RosterWithGroup } from '$lib/types';
 import z from 'zod';
-import { adminGuard } from './auth.remote';
+import { roleGuard } from './auth.remote';
+import { AuthRole } from '$lib/authRole';
 
 export const queryTeams = query(
 	z.object({
@@ -12,7 +13,7 @@ export const queryTeams = query(
 		excludeTeamId: z.uuid().optional()
 	}),
 	async ({ query, excludeSeasonId, excludeTeamId }) => {
-		await adminGuard();
+		await roleGuard(AuthRole.ADMIN);
 
 		// gather rosters that match the query from any team/season
 		const rosters = await db.query.roster.findMany({

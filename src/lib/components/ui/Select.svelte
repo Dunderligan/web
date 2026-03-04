@@ -1,4 +1,4 @@
-<script lang="ts" generics="T">
+<script lang="ts">
 	import { mapEmptyToUndefined } from '$lib/util';
 	import { Select, type WithoutChildren } from 'bits-ui';
 

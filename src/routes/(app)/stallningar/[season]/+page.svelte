@@ -14,6 +14,7 @@
 	import MatchList from '$lib/components/match/MatchList.svelte';
 	import { goto } from '$app/navigation';
 	import Meta from '$lib/components/structure/Meta.svelte';
+	import { AuthRole, hasPermission } from '$lib/authRole';
 
 	let { data } = $props();
 
@@ -171,9 +172,42 @@
 				</Subheading>
 			{/if}
 
-			<StandingsTable
-				standings={resolvedStandings}
-				playoffLine={division.playoffLine}
+			<Tabs fillIcons selected={mode} items={tabItems} />
+		</div>
+
+		{#if mode === 'group'}
+			{#each division.tables as table}
+				{@const resolvedStandings = table.standings.map(({ rosterId, score }) => ({
+					roster: resolveRoster(rosterId)!,
+					score
+				}))}
+
+				{#if table.type === 'grupp'}
+					<Subheading class="mt-6 mb-4 flex justify-between">
+						{table.title}
+					</Subheading>
+				{/if}
+
+				<StandingsTable
+					standings={resolvedStandings}
+					playoffLine={division.playoffLine}
+					seasonSlug={season.slug}
+				/>
+
+				{#if hasPermission(page.data.user?.role, AuthRole.ADMIN)}
+					<Button
+						label="Redigera"
+						icon="ph:pencil-simple"
+						kind="secondary"
+						class="mt-4 max-w-max"
+						href="/admin/{table.type}/{table.id}"
+					/>
+				{/if}
+			{/each}
+
+			<MatchList
+				title="Kommande matcher"
+				matches={division.upcomingMatches.map(resolveMatch)}
 				seasonSlug={season.slug}
 			/>
 
@@ -188,27 +222,16 @@
 			{/if}
 		{/each}
 
-		<MatchList
-			title="Kommande matcher"
-			matches={division.upcomingMatches.map(resolveMatch)}
-			seasonSlug={season.slug}
-			class="mt-12"
-			hideIfEmpty
-		/>
-
-		{#if division.latestMatches.length > 0}
-			<div class="mt-8 mb-4 flex max-w-2xl items-center justify-between">
-				<Subheading>Senaste matcherna</Subheading>
-
-				<Button
-					href="/arkiv/matcher?division={division.id}&spelad=true&prev={page.url.pathname}"
-					label="Se alla"
-					icon="ph:arrow-right"
-					kind="secondary"
-				/>
-			</div>
-
-			<MatchList matches={division.latestMatches.map(resolveMatch)} seasonSlug={season.slug} />
+				{#if hasPermission(page.data.user?.role, AuthRole.ADMIN)}
+					<Button
+						label="Redigera"
+						icon="ph:pencil-simple"
+						kind="secondary"
+						class="mt-4 max-w-max"
+						href="/admin/bracket/{bracket.id}"
+					/>
+				{/if}
+			{/each}
 		{/if}
 	{:else}
 		{#each division.brackets as bracket (bracket.id)}
