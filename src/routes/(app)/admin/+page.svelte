@@ -12,7 +12,7 @@
 	import { createSeason } from '$lib/remote/season.remote';
 	import Checkbox from '$lib/components/ui/Checkbox.svelte';
 	import { uploadSeasonData } from '$lib/remote/misc.remote';
-	import { AuthRole, checkPermission, isAdmin } from '$lib/authRole.js';
+	import { isAdmin } from '$lib/authRole.js';
 	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
 
 	let { data } = $props();

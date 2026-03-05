@@ -2,7 +2,6 @@
 	import { goto } from '$app/navigation';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
-	import AdminLink from '$lib/components/admin/AdminLink.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import EditableMatch from '$lib/components/match/EditableMatch.svelte';
@@ -20,7 +19,7 @@
 	import { createGroupMatch, isInMatch } from '$lib/match.js';
 	import RosterSelect from '$lib/components/admin/RosterSelect.svelte';
 	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
-	import { AuthRole, checkPermission, isAdmin } from '$lib/authRole.js';
+	import { isAdmin } from '$lib/authRole.js';
 
 	const { data } = $props();
 

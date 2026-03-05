@@ -2,7 +2,6 @@
 	import { goto } from '$app/navigation';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
-	import AdminLink from '$lib/components/admin/AdminLink.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
@@ -22,7 +21,7 @@
 	import Checkbox from '$lib/components/ui/Checkbox.svelte';
 	import Note from '$lib/components/ui/Note.svelte';
 	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
-	import { AuthRole, checkPermission, isAdmin } from '$lib/authRole.js';
+	import { isAdmin } from '$lib/authRole.js';
 
 	const { data } = $props();
 
