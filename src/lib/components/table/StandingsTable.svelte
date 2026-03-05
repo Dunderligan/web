@@ -39,19 +39,18 @@
 	columns={[
 		{
 			label: '#',
-			center: true,
-			title: 'Seed'
+			center: true
 		},
 		{
 			label: 'Lag'
 		},
-		{ label: 'Poäng', center: true, title: 'Antal vunna maps' },
-		{ label: 'W/L/D', center: true, title: 'Wins/Losses/Draws' },
-		{ label: 'Matcher', center: true, title: 'Spelade matcher' }
+		{ label: 'Poäng', center: true, note: 'Antal vunna maps' },
+		{ label: 'W/L/D', center: true, note: 'Map record: Wins/Losses/Draws' },
+		{ label: 'Matcher', center: true }
 	]}
 	{rows}
 	key={(row) => (row === 'playoffLine' ? row : row.roster.id)}
-	class="max-w-2xl grid-cols-[40px_1fr_50px_60px_70px] sm:grid-cols-[50px_1fr_80px_60px_80px]"
+	class="max-w-2xl grid-cols-[40px_1fr_50px_60px_70px] sm:grid-cols-[50px_1fr_100px_110px_80px]"
 >
 	{#snippet row({ index, value: row })}
 		{#if row === 'playoffLine'}

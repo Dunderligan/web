@@ -2,7 +2,6 @@
 	import { goto } from '$app/navigation';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
-	import AdminLink from '$lib/components/admin/AdminLink.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
@@ -21,6 +20,8 @@
 	} from '$lib/remote/season.remote';
 	import Checkbox from '$lib/components/ui/Checkbox.svelte';
 	import Note from '$lib/components/ui/Note.svelte';
+	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
+	import { isAdmin } from '$lib/authRole.js';
 
 	const { data } = $props();
 
@@ -108,92 +109,86 @@
 <Breadcrumbs crumbs={[{ label: season.name, href: `/admin/sasong/${season.id}` }]} />
 
 <AdminCard title="Divisioner">
-	{#if season.divisions.length === 0}
-		<AdminEmptyNotice oncreateclick={() => (createDivisionOpen = true)}>
-			Denna säsong har inga divisioner.
-		</AdminEmptyNotice>
-	{:else}
-		<div class="space-y-1 overflow-hidden rounded-lg">
-			{#each season.divisions as { id, name } (id)}
-				<AdminLink href="/admin/division/{id}">
-					{name}
-				</AdminLink>
-			{/each}
-		</div>
-
-		<Button icon="ph:plus" onclick={() => (createDivisionOpen = true)} />
-	{/if}
+	<AdminLinkList
+		items={season.divisions}
+		linkHref={(division) => `/admin/division/${division.id}`}
+		linkLabel={(division) => division.name}
+		emptyText="Denna säsong har inga divisioner."
+		oncreateclick={() => (createDivisionOpen = true)}
+	/>
 </AdminCard>
 
-<AdminCard title="Anmälan">
-	{#if registration}
-		<div class="space-y-2">
-			<Label label="Länk">
-				<InputField
-					bind:value={registration.url}
-					placeholder="https://docs.google.com/forms..."
-					onchange={saveCtx.setDirty}
-				/>
-			</Label>
+{#if isAdmin(data.user?.role)}
+	<AdminCard title="Anmälan">
+		{#if registration}
+			<div class="space-y-2">
+				<Label label="Länk">
+					<InputField
+						bind:value={registration.url}
+						placeholder="https://docs.google.com/forms..."
+						onchange={saveCtx.setDirty}
+					/>
+				</Label>
 
-			<Label label="Startdatum">
-				<DateInput
-					bind:value={registration.openDate}
-					type="datetime-local"
+				<Label label="Startdatum">
+					<DateInput
+						bind:value={registration.openDate}
+						type="datetime-local"
+						oninput={saveCtx.setDirty}
+						required
+					/>
+				</Label>
+
+				<Label label="Slutdatum">
+					<DateInput
+						bind:value={registration.closeDate}
+						type="datetime-local"
+						oninput={saveCtx.setDirty}
+					/>
+				</Label>
+			</div>
+
+			<Button
+				icon="ph:trash"
+				label="Radera anmälan"
+				kind="negative"
+				onclick={submitDeleteRegistration}
+			/>
+		{:else}
+			<AdminEmptyNotice oncreateclick={() => (createRegistrationOpen = true)}
+				>Säsongen har inget anmälningsformulär.</AdminEmptyNotice
+			>
+		{/if}
+	</AdminCard>
+
+	<AdminCard title="Inställningar">
+		<div class="space-y-2">
+			<Label label="Namn">
+				<InputField
+					bind:value={season.name}
+					placeholder="T.ex. Säsong 1..."
 					oninput={saveCtx.setDirty}
 					required
 				/>
 			</Label>
 
+			<Label label="Startdatum">
+				<DateInput bind:value={season.startedAt} type="date" oninput={saveCtx.setDirty} required />
+			</Label>
+
 			<Label label="Slutdatum">
-				<DateInput
-					bind:value={registration.closeDate}
-					type="datetime-local"
-					oninput={saveCtx.setDirty}
-				/>
+				<DateInput bind:value={season.endedAt} type="date" oninput={saveCtx.setDirty} />
+			</Label>
+
+			<Label label="Gömd">
+				<Note content="Gömda säsonger kan bara visas av admins." class="mr-2" />
+				<Checkbox bind:checked={season.hidden} onCheckedChange={saveCtx.setDirty} />
 			</Label>
 		</div>
 
-		<Button
-			icon="ph:trash"
-			label="Radera anmälan"
-			kind="negative"
-			onclick={submitDeleteRegistration}
-		/>
-	{:else}
-		<AdminEmptyNotice oncreateclick={() => (createRegistrationOpen = true)}
-			>Säsongen har inget anmälningsformulär.</AdminEmptyNotice
-		>
-	{/if}
-</AdminCard>
-
-<AdminCard title="Inställningar">
-	<div class="space-y-2">
-		<Label label="Namn">
-			<InputField
-				bind:value={season.name}
-				placeholder="T.ex. Säsong 1..."
-				oninput={saveCtx.setDirty}
-				required
-			/>
-		</Label>
-
-		<Label label="Startdatum">
-			<DateInput bind:value={season.startedAt} type="date" oninput={saveCtx.setDirty} required />
-		</Label>
-
-		<Label label="Slutdatum">
-			<DateInput bind:value={season.endedAt} type="date" oninput={saveCtx.setDirty} />
-		</Label>
-
-		<Label label="Gömd">
-			<Note note="Gömda säsonger kan bara visas av admins." class="mr-2" />
-			<Checkbox bind:checked={season.hidden} onCheckedChange={saveCtx.setDirty} />
-		</Label>
-	</div>
-
-	<Button icon="ph:trash" label="Radera säsong" kind="negative" onclick={submitDelete} />
-</AdminCard>
+		<Button icon="ph:trash" label="Radera säsong" kind="negative" onclick={submitDelete} />
+	</AdminCard>
+{/if}
 
 <CreateDialog
 	title="Skapa division"

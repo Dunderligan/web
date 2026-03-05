@@ -7,12 +7,12 @@
 	import RosterLogo from '$lib/components/ui/RosterLogo.svelte';
 	import Tabs from '$lib/components/ui/Tabs.svelte';
 	import TeamSocial from '$lib/components/ui/TeamSocial.svelte';
-	import { cdnImageSrc, cdnRosterLogoPath, flattenGroup, shortenTeamName } from '$lib/util';
-	import { page } from '$app/state';
+	import { cdnImageSrc, cdnRosterLogoPath, flattenGroup } from '$lib/util';
 	import MatchList from '$lib/components/match/MatchList.svelte';
 	import Meta from '$lib/components/structure/Meta.svelte';
 	import { MatchState } from '$lib/types';
 	import { averageLegacyRank, averageRank } from '$lib/rank';
+	import { isModerator } from '$lib/authRole';
 
 	let { data } = $props();
 
@@ -114,7 +114,7 @@
 				kind="secondary"
 			/>
 
-			{#if page.data.user?.isAdmin}
+			{#if isModerator(data.user?.role)}
 				<Button
 					href="/admin/roster/{roster.id}"
 					kind="secondary"

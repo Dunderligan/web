@@ -3,7 +3,8 @@ import { db, schema } from '$lib/server/db';
 import { toSlug } from '$lib/util';
 import { eq } from 'drizzle-orm';
 import z from 'zod';
-import { adminGuard } from './auth.remote';
+import { roleGuard } from './auth.remote';
+import { AuthRole } from '$lib/authRole';
 import { entityQuery } from '$lib/server/db/helpers';
 
 export const createSeason = command(
@@ -14,7 +15,7 @@ export const createSeason = command(
 		hidden: z.boolean()
 	}),
 	async ({ name, startedAt, legacyRanks, hidden }) => {
-		await adminGuard();
+		await roleGuard(AuthRole.ADMIN);
 
 		const slug = toSlug(name);
 
@@ -41,7 +42,7 @@ export const createRegistration = command(
 		seasonId: z.uuid()
 	}),
 	async ({ url, openDate, closeDate, seasonId }) => {
-		await adminGuard();
+		await roleGuard(AuthRole.ADMIN);
 
 		const [registration] = await db
 			.insert(schema.registration)
@@ -73,7 +74,7 @@ export const updateSeason = command(
 			.nullish()
 	}),
 	async ({ id, name, startedAt, endedAt, hidden, registration }) => {
-		await adminGuard();
+		await roleGuard(AuthRole.ADMIN);
 
 		const slug = toSlug(name);
 
@@ -100,7 +101,7 @@ export const deleteSeason = command(
 		id: z.uuidv4()
 	}),
 	async ({ id }) => {
-		await adminGuard();
+		await roleGuard(AuthRole.ADMIN);
 
 		await db.delete(schema.season).where(eq(schema.season.id, id));
 	}
@@ -111,7 +112,7 @@ export const deleteRegistration = command(
 		id: z.uuidv4()
 	}),
 	async ({ id }) => {
-		await adminGuard();
+		await roleGuard(AuthRole.ADMIN);
 
 		await db.delete(schema.registration).where(eq(schema.registration.id, id));
 	}
@@ -122,7 +123,7 @@ export const getDivisionsBySeason = query(
 		seasonId: z.uuid()
 	}),
 	async ({ seasonId }) => {
-		await adminGuard();
+		await roleGuard(AuthRole.ADMIN);
 
 		const divisions = await db.query.division.findMany({
 			where: {

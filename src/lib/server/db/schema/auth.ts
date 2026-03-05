@@ -1,12 +1,14 @@
-import { boolean, integer, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
-import { timestamps } from './util';
+import { integer, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { enumToPgEnum, timestamps } from './util';
+import { AuthRole } from '../../../authRole';
+
+export const authRole = pgEnum('auth_role', enumToPgEnum(AuthRole));
 
 export const user = pgTable('user', {
 	id: uuid().defaultRandom().primaryKey(),
 	battletag: text().notNull().unique(),
 	battlenetId: integer().notNull().unique(),
-	isAdmin: boolean().notNull().default(false),
-	isSuperAdmin: boolean().notNull().default(false),
+	role: authRole().notNull().default(AuthRole.USER),
 	...timestamps
 });
 

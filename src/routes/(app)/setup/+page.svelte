@@ -6,7 +6,7 @@
 	import Button from '$lib/components/ui/Button.svelte';
 	import InputField from '$lib/components/ui/InputField.svelte';
 	import Label from '$lib/components/ui/Label.svelte';
-	import { createSuperUser } from '$lib/remote/auth.remote';
+	import { createSuperAdmin } from '$lib/remote/auth.remote';
 
 	let battletag = $state('');
 	let loading = $state(false);
@@ -14,7 +14,7 @@
 	async function submit() {
 		loading = true;
 		try {
-			await createSuperUser({ battletag });
+			await createSuperAdmin({ battletag });
 			await invalidateAll();
 			await goto('/admin');
 		} finally {
