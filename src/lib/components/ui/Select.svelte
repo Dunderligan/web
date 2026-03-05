@@ -97,7 +97,7 @@
 
 		<Icon
 			icon="ph:caret-down"
-			class={[open && 'rotate-180', 'ml-auto transform text-gray-600 dark:text-gray-500']}
+			class={[open && 'rotate-180', 'ml-auto transform text-gray-600 dark:text-gray-400']}
 		/>
 	</Select.Trigger>
 	<Select.Portal>

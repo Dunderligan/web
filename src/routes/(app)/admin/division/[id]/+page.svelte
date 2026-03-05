@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
-	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
-	import AdminLink from '$lib/components/admin/AdminLink.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
@@ -16,6 +14,7 @@
 	import Checkbox from '$lib/components/ui/Checkbox.svelte';
 	import GenerateBracketDialog from '$lib/components/admin/GenerateBracketDialog.svelte';
 	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
+	import { AuthRole, checkPermission, isAdmin } from '$lib/authRole';
 
 	const { data } = $props();
 
@@ -98,28 +97,30 @@
 	/>
 </AdminCard>
 
-<AdminCard title="Inställningar">
-	<div class="space-y-2">
-		<Label label="Namn">
-			<InputField bind:value={division.name} oninput={saveCtx.setDirty} />
-		</Label>
+{#if isAdmin(data.user?.role)}
+	<AdminCard title="Inställningar">
+		<div class="space-y-2">
+			<Label label="Namn">
+				<InputField bind:value={division.name} oninput={saveCtx.setDirty} />
+			</Label>
 
-		<Label label="Antal lag till slutspel">
-			<InputField
-				type="number"
-				bind:value={division.playoffLine}
-				oninput={saveCtx.setDirty}
-				placeholder="Alla lag går till slutspel"
-			/>
-		</Label>
+			<Label label="Antal lag till slutspel">
+				<InputField
+					type="number"
+					bind:value={division.playoffLine}
+					oninput={saveCtx.setDirty}
+					placeholder="Alla lag går till slutspel"
+				/>
+			</Label>
 
-		<Label label="Tabell per grupp">
-			<Checkbox bind:checked={division.groupwiseStandings} onCheckedChange={saveCtx.setDirty} />
-		</Label>
-	</div>
+			<Label label="Tabell per grupp">
+				<Checkbox bind:checked={division.groupwiseStandings} onCheckedChange={saveCtx.setDirty} />
+			</Label>
+		</div>
 
-	<Button icon="ph:trash" label="Radera division" kind="negative" onclick={submitDelete} />
-</AdminCard>
+		<Button icon="ph:trash" label="Radera division" kind="negative" onclick={submitDelete} />
+	</AdminCard>
+{/if}
 
 <CreateDialog
 	title="Skapa grupp"

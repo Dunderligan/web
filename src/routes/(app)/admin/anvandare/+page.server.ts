@@ -1,6 +1,7 @@
 import { AuthRole, checkPermission } from '$lib/authRole.js';
 import { db } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
+import { sql } from 'drizzle-orm';
 
 export const load = async ({ locals }) => {
 	// only admins should be able to see the user list
@@ -9,9 +10,7 @@ export const load = async ({ locals }) => {
 	}
 
 	const users = await db.query.user.findMany({
-		orderBy: {
-			battletag: 'asc'
-		}
+		orderBy: (table) => sql`lower(${table.battletag}) ASC`
 	});
 
 	return { users };

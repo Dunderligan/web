@@ -3,7 +3,7 @@ import { PgTransaction } from 'drizzle-orm/pg-core';
 import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 import { schema } from '$lib/server/db';
 import type { User } from './schema/auth';
-import { AuthRole, checkPermission } from '$lib/authRole';
+import { AuthRole, checkPermission, isAdmin } from '$lib/authRole';
 
 // Helper queries and functions for database operations.
 
@@ -173,7 +173,7 @@ export async function findOrCreatePlayer(tx: Transaction, battletag: string) {
 }
 
 export function canSeeHiddenSeasons(user?: User | null) {
-	return checkPermission(user?.role, AuthRole.ADMIN);
+	return isAdmin(user?.role);
 }
 
 export function hiddenSeasonFilter(user?: User | null) {

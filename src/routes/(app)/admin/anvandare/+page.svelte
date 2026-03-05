@@ -21,7 +21,9 @@
 	const currentUser = $derived(page.data.user);
 
 	async function save() {
-		await updateUsers({ users });
+		const otherUsers = users.filter((user) => user.id !== currentUser?.id);
+
+		await updateUsers({ users: otherUsers });
 	}
 </script>
 
@@ -51,8 +53,8 @@
 					onValueChange={saveCtx.setDirty}
 					items={Object.values(AuthRole).map((role) => ({
 						label: formatAuthRole(role),
-						value: role,
-						disabled: !canPromoteTo(currentUser?.role, role)
+						disabled: !canPromoteTo(currentUser?.role, role),
+						value: role
 					}))}
 					disabled={!canPromoteTo(currentUser?.role, user.role)}
 				/>

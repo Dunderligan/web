@@ -3,7 +3,8 @@
 	import AdminEmptyNotice from './AdminEmptyNotice.svelte';
 	import AdminLink from './AdminLink.svelte';
 	import Button from '../ui/Button.svelte';
-	import { AuthRole, checkUserPermission } from '$lib/authRole';
+	import { AuthRole, checkPermission, isAdmin } from '$lib/authRole';
+	import { page } from '$app/state';
 
 	type Props<T> = {
 		items: T[];
@@ -26,7 +27,7 @@
 		...emptyNoticeProps
 	}: Props<T> = $props();
 
-	const hideCreateButton = !checkUserPermission(AuthRole.ADMIN);
+	const hideCreateButton = !isAdmin(page.data.user?.role);
 </script>
 
 {#if items.length === 0}

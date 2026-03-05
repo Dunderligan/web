@@ -9,7 +9,7 @@
 	import Dropdown from '../ui/Dropdown.svelte';
 	import logo from '$lib/assets/images/logo.webp';
 	import { onMount } from 'svelte';
-	import { AuthRole, checkPermission } from '$lib/authRole';
+	import { AuthRole, checkPermission, isModerator } from '$lib/authRole';
 
 	type Props = {
 		dark?: boolean;
@@ -39,8 +39,10 @@
 	const theme = ThemeState.get();
 	let scrolled = $state(false);
 
+	const user = $derived(page.data.user);
+
 	const shownName = $derived.by(() => {
-		const battletag = page.data.user?.battletag;
+		const battletag = user?.battletag;
 		if (!battletag) return null;
 		return battletag.split('#')[0];
 	});
@@ -49,7 +51,7 @@
 		{
 			label: 'Admin',
 			href: '/admin',
-			hidden: !checkPermission(page.data.user?.role, AuthRole.MODERATOR)
+			hidden: !isModerator(user?.role)
 		},
 		{
 			label: 'Logga ut',
@@ -100,7 +102,7 @@
 				<Icon icon={theme.current === 'light' ? 'ph:sun-fill' : 'ph:moon-fill'} />
 			</button>
 
-			{#if page.data.user}
+			{#if user}
 				<Dropdown items={userDropdownItems} class="font-display font-medium">
 					{shownName}
 				</Dropdown>

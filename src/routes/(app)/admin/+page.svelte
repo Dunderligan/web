@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
-	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
 	import AdminLink from '$lib/components/admin/AdminLink.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
@@ -13,7 +12,7 @@
 	import { createSeason } from '$lib/remote/season.remote';
 	import Checkbox from '$lib/components/ui/Checkbox.svelte';
 	import { uploadSeasonData } from '$lib/remote/misc.remote';
-	import { AuthRole, checkUserPermission } from '$lib/authRole.js';
+	import { AuthRole, checkPermission, isAdmin } from '$lib/authRole.js';
 	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
 
 	let { data } = $props();
@@ -66,7 +65,7 @@
 	}
 </script>
 
-<Breadcrumbs crumbs={[]} />
+<Breadcrumbs />
 
 <AdminCard title="Säsonger">
 	<AdminLinkList
@@ -82,24 +81,24 @@
 	</AdminLinkList>
 </AdminCard>
 
-<AdminCard title="Användare">
-	<div class="overflow-hidden rounded-lg">
-		<AdminLink href="/admin/anvandare" disabled={!checkUserPermission(AuthRole.ADMIN)}
-			>Hantera användare</AdminLink
-		>
-	</div>
-</AdminCard>
+{#if isAdmin(data.user?.role)}
+	<AdminCard title="Användare">
+		<div class="overflow-hidden rounded-lg">
+			<AdminLink href="/admin/anvandare">Hantera användare</AdminLink>
+		</div>
+	</AdminCard>
 
-<AdminCard title="Ladda upp data">
-	<div>
-		<input bind:files={dataFiles} type="file" accept="application/json" />
-		<Button
-			onclick={() => uploadData(uploadSeasonData)}
-			disabled={!dataFiles?.length}
-			loading={uploading}>Ladda upp</Button
-		>
-	</div>
-</AdminCard>
+	<AdminCard title="Ladda upp data">
+		<div>
+			<input bind:files={dataFiles} type="file" accept="application/json" />
+			<Button
+				onclick={() => uploadData(uploadSeasonData)}
+				disabled={!dataFiles?.length}
+				loading={uploading}>Ladda upp</Button
+			>
+		</div>
+	</AdminCard>
+{/if}
 
 <CreateDialog
 	title="Skapa säsong"

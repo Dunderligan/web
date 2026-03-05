@@ -19,8 +19,8 @@
 	import { createRoster } from '$lib/remote/roster.remote';
 	import { createGroupMatch, isInMatch } from '$lib/match.js';
 	import RosterSelect from '$lib/components/admin/RosterSelect.svelte';
-	import { MatchState } from '$lib/types.js';
 	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
+	import { AuthRole, checkPermission, isAdmin } from '$lib/authRole.js';
 
 	const { data } = $props();
 
@@ -128,7 +128,7 @@
 
 <AdminCard title="Gruppspel">
 	{#if group.matches.length === 0}
-		<AdminEmptyNotice oncreateclick={addMatchAndEdit}>
+		<AdminEmptyNotice oncreateclick={addMatchAndEdit} hideCreateButton={!isAdmin}>
 			Denna grupp har inga matcher.
 		</AdminEmptyNotice>
 	{:else}
@@ -150,17 +150,21 @@
 			{/each}
 		</div>
 
-		<Button icon="ph:plus" class="mt-2" onclick={addMatchAndEdit} />
+		{#if isAdmin(data.user?.role)}
+			<Button icon="ph:plus" class="mt-2" onclick={addMatchAndEdit} />
+		{/if}
 	{/if}
 </AdminCard>
 
-<AdminCard title="Inställningar">
-	<Label label="Namn">
-		<InputField bind:value={group.name} oninput={saveCtx.setDirty} />
-	</Label>
+{#if isAdmin(data.user?.role)}
+	<AdminCard title="Inställningar">
+		<Label label="Namn">
+			<InputField bind:value={group.name} oninput={saveCtx.setDirty} />
+		</Label>
 
-	<Button icon="ph:trash" label="Radera grupp" kind="negative" onclick={submitDelete} />
-</AdminCard>
+		<Button icon="ph:trash" label="Radera grupp" kind="negative" onclick={submitDelete} />
+	</AdminCard>
+{/if}
 
 <CreateRosterDialog
 	bind:open={addRosterOpen}
