@@ -84,10 +84,10 @@
 {#snippet roleNote()}
 	<ul class="list-inside list-disc text-left font-medium">
 		<li class="mb-1">
-			<b>Superadmin:</b> Högsta rollen, med exklusiv rätt att kan befodra andra till admin.
+			<b>Superadmin:</b> Högsta rollen, med exklusiv rätt befordra andra till admin.
 		</li>
 		<li class="mb-1">
-			<b>Admin:</b> Kan göra allt, inklusive se, ändra och ta bort all data, samt befodra användare till
+			<b>Admin:</b> Kan göra allt, inklusive se, ändra och ta bort all data, samt befordra användare till
 			moderatorer.
 		</li>
 		<li>

@@ -3,7 +3,7 @@ import { AuthRole, canPromoteTo, checkPermission } from '$lib/authRole';
 import { db, schema } from '$lib/server/db';
 import session from '$lib/server/session';
 import { error } from '@sveltejs/kit';
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import z from 'zod';
 
 export const roleGuard = query(z.enum(AuthRole), (required) => {
@@ -73,9 +73,25 @@ export const updateUsers = command(
 
 		const { locals } = getRequestEvent();
 
+		// Fetch current roles to prevent privilege escalation attacks
+		const ids = users.map((u) => u.id);
+		const existingUsers = await db
+			.select({ id: schema.user.id, role: schema.user.role })
+			.from(schema.user)
+			.where(inArray(schema.user.id, ids));
+
+		const currentRoles = new Map(existingUsers.map((u) => [u.id, u.role]));
+
 		await db.transaction(async (tx) => {
 			for (const user of users) {
 				if (!canPromoteTo(locals.user?.role, user.role)) {
+					throw error(403);
+				}
+
+				// Also check permission over the user's current role to prevent demoting
+				// users whose role is equal to or higher than the requester's role
+				const currentRole = currentRoles.get(user.id);
+				if (!currentRole || !canPromoteTo(locals.user?.role, currentRole)) {
 					throw error(403);
 				}
 
