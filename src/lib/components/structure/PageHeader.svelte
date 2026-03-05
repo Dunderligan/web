@@ -13,10 +13,7 @@
 </script>
 
 <header
-	class={[
-		classProp,
-		'mx-auto mt-2 w-full max-w-4xl px-4 font-display text-gray-950 dark:text-gray-50'
-	]}
+	class={[classProp, 'mx-auto mt-2 w-full max-w-4xl font-display text-gray-950 dark:text-gray-50']}
 >
 	{#if title}
 		<h1 class="text-center font-display text-6xl font-extrabold sm:text-left sm:text-7xl">

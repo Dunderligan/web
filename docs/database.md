@@ -41,3 +41,17 @@ This will create a new SQL migration file in `drizzle/migrations/` which will be
 ```bash
 pnpm db:migrate
 ```
+
+## Drizzle Studio
+
+Drizzle offers a nice-looking browser interface to the database in [Drizzle Studio](https://orm.drizzle.team/drizzle-studio/overview):
+
+![Screenshot of Drizzle Studio](../assets/drizzle-studio.png)
+
+In here, you can browse tables, edit data, run SQL queries and more. You can get it running by executing the following command:
+
+```bash
+pnpm db:studio
+```
+
+Then navigating to [local.drizzle.studio](https://local.drizzle.studio/) in a browser (this URL will also be printed by the command).

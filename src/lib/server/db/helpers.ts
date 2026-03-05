@@ -184,19 +184,19 @@ export function hiddenDivisionFilter(user?: User | null) {
 		season: {
 			hidden: hiddenSeasonFilter(user)
 		}
-	}
+	};
 }
 
 export function hiddenGroupFilter(user?: User | null) {
 	return {
 		division: hiddenDivisionFilter(user)
-	}
+	};
 }
 
 export function hiddenBracketFilter(user?: User | null) {
 	return {
 		division: hiddenDivisionFilter(user)
-	}
+	};
 }
 
 export function hiddenMatchFilter(user?: User | null) {
@@ -227,7 +227,7 @@ export function hiddenMatchFilter(user?: User | null) {
 				]
 			}
 		]
-	}
+	};
 }
 
 export function canSeeSeason(season: { hidden: boolean }, user?: User | null) {

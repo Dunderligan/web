@@ -1,6 +1,6 @@
-import { discordUrl } from '$lib/util';
+import { socials } from '$lib/socials';
 import { redirect } from '@sveltejs/kit';
 
 export const GET = async () => {
-	redirect(303, discordUrl);
+	redirect(303, socials.discord);
 };

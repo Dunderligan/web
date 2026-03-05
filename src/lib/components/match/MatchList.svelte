@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { ResolvedMatchWithContext } from '$lib/types';
+	import type { ClassValue, ResolvedMatchWithContext } from '$lib/types';
 	import Match from './Match.svelte';
 	import MatchSkeleton from './MatchSkeleton.svelte';
-	import Icon from '../ui/Icon.svelte';
 	import Subheading from '../ui/Subheading.svelte';
+	import MatchListPlaceholder from './MatchListPlaceholder.svelte';
 
 	type Props = {
 		seasonSlug?: string;
@@ -11,6 +11,8 @@
 		hideIfEmpty?: boolean;
 		hideDivision?: boolean;
 		title?: string;
+		class?: ClassValue;
+		short?: boolean;
 	} & (
 		| {
 				matches: ResolvedMatchWithContext[];
@@ -29,7 +31,9 @@
 		skeletonCount = 3,
 		hideIfEmpty = false,
 		hideDivision = false,
-		title
+		title,
+		class: classProp,
+		short = false
 	}: Props = $props();
 
 	const matchPromise = $derived(Array.isArray(matches) ? Promise.resolve(matches) : matches);
@@ -38,7 +42,7 @@
 {#await matchPromise}
 	{@render heading()}
 
-	<div class="max-w-2xl space-y-2">
+	<div class={[!title && classProp, 'max-w-2xl space-y-2']}>
 		{#each Array.from({ length: skeletonCount })}
 			<MatchSkeleton />
 		{/each}
@@ -47,16 +51,11 @@
 	{#if !hideIfEmpty || matches.length > 0}
 		{@render heading()}
 
-		<div class="max-w-2xl space-y-2">
+		<div class={[!title && classProp, 'max-w-2xl space-y-2']}>
 			{#each matches as match (match.id)}
-				<Match {match} {seasonSlug} {hideDivision} {mainRosterId} />
+				<Match {match} {seasonSlug} {hideDivision} {mainRosterId} {short} />
 			{:else}
-				<div
-					class="text-center py-10 text-gray-700 space-y-2 bg-gray-100 rounded-lg dark:text-gray-300 dark:bg-gray-900"
-				>
-					<Icon icon="ph:ghost" class="text-5xl block mx-auto" />
-					<span class="text-xl font-semibold">Inga matcher hittades</span>
-				</div>
+				<MatchListPlaceholder />
 			{/each}
 		</div>
 	{/if}
@@ -64,6 +63,6 @@
 
 {#snippet heading()}
 	{#if title}
-		<Subheading class="mt-10 mb-4">{title}</Subheading>
+		<Subheading class={[classProp, 'mb-4']}>{title}</Subheading>
 	{/if}
 {/snippet}

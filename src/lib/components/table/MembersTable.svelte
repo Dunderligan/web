@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Member } from '$lib/types';
+	import type { ClassValue, Member } from '$lib/types';
 	import { capitalize, roleIcon } from '$lib/util';
 	import Icon from '../ui/Icon.svelte';
 	import Rank from '../ui/Rank.svelte';
@@ -7,9 +7,10 @@
 
 	type Props = {
 		members: Member[];
+		class?: ClassValue;
 	};
 
-	let { members }: Props = $props();
+	let { members, class: classProp }: Props = $props();
 </script>
 
 <Table
@@ -24,7 +25,7 @@
 	]}
 	rows={members}
 	key={(member) => member.player.battletag}
-	class="grid-cols-[60px_1fr_100px] sm:grid-cols-[70px_1fr_220px]"
+	class={[classProp, 'grid-cols-[60px_1fr_100px] sm:grid-cols-[70px_1fr_220px]']}
 >
 	{#snippet row({ value: { player, role, rank, sr, tier, isCaptain } })}
 		<div class="py-3.5 text-center text-xl">
