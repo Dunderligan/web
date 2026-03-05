@@ -43,6 +43,8 @@
 
 	let rosterFilter: string | null = $state(null);
 
+	const userIsAdmin = $derived(isAdmin(data.user?.role));
+
 	const shownMatchIndicies = $derived(
 		group.matches
 			.map((match, index) => ({ match, index }))
@@ -127,7 +129,7 @@
 
 <AdminCard title="Gruppspel">
 	{#if group.matches.length === 0}
-		<AdminEmptyNotice oncreateclick={addMatchAndEdit} hideCreateButton={!isAdmin}>
+		<AdminEmptyNotice oncreateclick={addMatchAndEdit} hideCreateButton={!userIsAdmin}>
 			Denna grupp har inga matcher.
 		</AdminEmptyNotice>
 	{:else}
@@ -149,13 +151,13 @@
 			{/each}
 		</div>
 
-		{#if isAdmin(data.user?.role)}
+		{#if userIsAdmin}
 			<Button icon="ph:plus" class="mt-2" onclick={addMatchAndEdit} />
 		{/if}
 	{/if}
 </AdminCard>
 
-{#if isAdmin(data.user?.role)}
+{#if userIsAdmin}
 	<AdminCard title="Inställningar">
 		<Label label="Namn">
 			<InputField bind:value={group.name} oninput={saveCtx.setDirty} />
