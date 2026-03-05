@@ -178,7 +178,7 @@
 	}
 
 	.dark .field::placeholder {
-		color: var(--color-gray-500);
+		color: var(--color-gray-400);
 	}
 }
 

@@ -115,7 +115,7 @@
 		{/if}
 
 		{#if note && !short}
-			<MatchNote {note} />
+			<MatchNote content={note} />
 		{/if}
 
 		{#if won}

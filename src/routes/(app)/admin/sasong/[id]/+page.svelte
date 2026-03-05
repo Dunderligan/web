@@ -181,7 +181,7 @@
 			</Label>
 
 			<Label label="Gömd">
-				<Note note="Gömda säsonger kan bara visas av admins." class="mr-2" />
+				<Note content="Gömda säsonger kan bara visas av admins." class="mr-2" />
 				<Checkbox bind:checked={season.hidden} onCheckedChange={saveCtx.setDirty} />
 			</Label>
 		</div>

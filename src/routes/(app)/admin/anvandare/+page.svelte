@@ -9,6 +9,9 @@
 	import { SaveContext } from '$lib/state/save.svelte';
 	import { formatDate } from '$lib/util';
 	import { page } from '$app/state';
+	import InputField from '$lib/components/ui/InputField.svelte';
+	import Label from '$lib/components/ui/Label.svelte';
+	import Note from '$lib/components/ui/Note.svelte';
 
 	let { data } = $props();
 
@@ -20,6 +23,11 @@
 
 	const currentUser = $derived(page.data.user);
 
+	let search = $state('');
+	const shownUsers = $derived(
+		users.filter((user) => user.battletag.toLowerCase().includes(search.toLowerCase()))
+	);
+
 	async function save() {
 		const otherUsers = users.filter((user) => user.id !== currentUser?.id);
 
@@ -30,13 +38,17 @@
 <Breadcrumbs crumbs={[{ label: 'Användare', href: '/admin/anvandare' }]} />
 
 <AdminCard title="Hantera användare">
+	<Label label="Filtrera användare">
+		<InputField bind:value={search} placeholder="Skriv battletag..." />
+	</Label>
+
 	<Table
-		rows={users}
+		rows={shownUsers}
 		key={(user) => user.id}
 		class="grid-cols-[1fr_150px_200px]"
 		columns={[
 			{ label: 'Battletag' },
-			{ label: 'Roll', center: true },
+			{ label: 'Roll', center: true, note: roleNote },
 			{ label: 'Första inloggning', center: true }
 		]}
 	>
@@ -68,3 +80,19 @@
 </AdminCard>
 
 <SaveToast />
+
+{#snippet roleNote()}
+	<ul class="list-inside list-disc text-left font-medium">
+		<li class="mb-1">
+			<b>Superadmin:</b> Högsta rollen, med exklusiv rätt att kan befodra andra till admin.
+		</li>
+		<li class="mb-1">
+			<b>Admin:</b> Kan göra allt, inklusive se, ändra och ta bort all data, samt befodra användare till
+			moderatorer.
+		</li>
+		<li>
+			<b>Moderator:</b> Kan endast skapa, ändra och ta bort matchresultat. Har heller inte tillgång till
+			gömda säsonger.
+		</li>
+	</ul>
+{/snippet}

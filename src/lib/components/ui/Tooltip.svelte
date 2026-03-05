@@ -16,7 +16,7 @@
 	<Tooltip.Trigger class={classProp}>
 		{@render children()}
 	</Tooltip.Trigger>
-	<Tooltip.Content class="floating max-w-sm px-6 py-4">
+	<Tooltip.Content class="floating max-w-md px-6 py-4 text-gray-800 dark:text-gray-300">
 		{@render content()}
 	</Tooltip.Content>
 </Tooltip.Root>
