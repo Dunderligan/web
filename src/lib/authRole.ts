@@ -60,7 +60,5 @@ export function formatRole(role: AuthRole): string {
 			return 'Moderator';
 		case AuthRole.USER:
 			return 'Användare';
-		default:
-			return role;
 	}
 }
