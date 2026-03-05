@@ -187,12 +187,15 @@ export async function getCookie(name: string): Promise<string | null> {
 	}
 }
 
+const COOKIE_EXPIRATION_MS = 365 * 24 * 60 * 60 * 1000; // 1 year
+
 export function setCookie(name: string, value: string) {
+	const expires = new Date(Date.now() + COOKIE_EXPIRATION_MS);
 	if (browser) {
-		document.cookie = `${name}=${value}; path=/;`;
+		document.cookie = `${name}=${value}; path=/; expires=${expires.toUTCString()}`;
 	} else {
 		const { cookies } = getRequestEvent();
-		cookies.set(name, value, { path: '/', httpOnly: false });
+		cookies.set(name, value, { path: '/', httpOnly: false, expires });
 	}
 }
 
