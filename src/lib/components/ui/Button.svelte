@@ -59,7 +59,7 @@
 		typeClass,
 		icon && !label ? 'p-2' : 'px-4 py-2',
 		disabled && 'cursor-not-allowed opacity-50',
-		'inline-flex items-center justify-center gap-2 rounded-lg'
+		'inline-flex items-center justify-center gap-2 rounded-lg text-base'
 	]}
 	{disabled}
 	href={disabled ? undefined : href}

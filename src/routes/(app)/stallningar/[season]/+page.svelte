@@ -197,18 +197,21 @@
 		/>
 
 		{#if division.latestMatches.length > 0}
-			<div class="mt-8 mb-4 flex max-w-2xl items-center justify-between">
-				<Subheading>Senaste matcherna</Subheading>
-
-				<Button
-					href="/arkiv/matcher?division={division.id}&spelad=true&prev={page.url.pathname}"
-					label="Se alla"
-					icon="ph:arrow-right"
-					kind="secondary"
-				/>
-			</div>
-
-			<MatchList matches={division.latestMatches.map(resolveMatch)} seasonSlug={season.slug} />
+			<MatchList
+				class="mt-8"
+				title="Senaste matcherna"
+				matches={division.latestMatches.map(resolveMatch)}
+				seasonSlug={season.slug}
+			>
+				{#snippet button()}
+					<Button
+						href="/arkiv/matcher?division={division.id}&prev={page.url.pathname}"
+						label="Se alla"
+						icon="ph:arrow-right"
+						kind="secondary"
+					/>
+				{/snippet}
+			</MatchList>
 		{/if}
 	{:else}
 		{#each division.brackets as bracket (bracket.id)}
