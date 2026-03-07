@@ -28,8 +28,8 @@
 	}: Props = $props();
 </script>
 
-<div class={[classProp, 'flex items-stretch gap-1 overflow-x-scroll rounded-lg']}>
-	{#each items as { label, value, icon, href, disabled }, i (value)}
+<div class={[classProp, 'flex items-stretch gap-1 overflow-x-auto rounded-lg']}>
+	{#each items as { label, value, icon, href, disabled } (value)}
 		{@const isSelected = selected === value}
 		{@const renderedIcon = icon && isSelected && fillIcons ? `${icon}-fill` : icon}
 
