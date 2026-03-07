@@ -70,7 +70,7 @@
 
 	<iframe
 		class="mx-auto mt-8 aspect-video w-full max-w-2xl rounded-lg"
-		src="https://www.youtube-nocookie.com/embed/lbycWN9xFrA"
+		src="https://www.youtube-nocookie.com/embed/3bD2l3F6UNc"
 		title="YouTube video player"
 		frameborder="0"
 		allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
