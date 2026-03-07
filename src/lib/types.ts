@@ -224,14 +224,14 @@ export type ButtonKind = 'primary' | 'secondary' | 'tertiary' | 'transparent' | 
 
 export type SeasonState = 'upcoming' | 'ongoing' | 'ended';
 
-export type Winner = {
+export type BracketWinner = {
 	roster: MatchRoster;
 	bracket: BaseEntity;
 };
 
 export type TournamentState = { season: BaseEntity & { startedAt: Date | null } } & (
 	| { status: 'ongoing' } // active season
-	| { status: 'offseason'; winners: Winner[] } // season has ended before next registration is published
+	| { status: 'offseason'; winners: BracketWinner[] } // season has ended before next registration is published
 	| { status: 'upcoming'; registrationOpensAt: Date | null } // before registration opens
 	| { status: 'registration'; registrationClosesAt: Date | null } // during registration
 	| { status: 'starting'; startsAt: Date | null } // after registration closed but before season start
