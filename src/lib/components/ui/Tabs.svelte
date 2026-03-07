@@ -28,7 +28,12 @@
 	}: Props = $props();
 </script>
 
-<div class={[classProp, 'flex items-stretch gap-1 overflow-x-auto overflow-y-hidden rounded-lg']}>
+<div
+	class={[
+		classProp,
+		'flex w-full items-stretch gap-1 overflow-x-scroll rounded-lg sm:max-w-max sm:min-w-xl'
+	]}
+>
 	{#each items as { label, value, icon, href, disabled }, i (value)}
 		{@const isSelected = selected === value}
 		{@const renderedIcon = icon && isSelected && fillIcons ? `${icon}-fill` : icon}
@@ -45,7 +50,7 @@
 				onitemclick?.(value);
 			}}
 			class={[
-				'flex w-full items-center justify-center gap-2 px-4 py-2.5 whitespace-nowrap',
+				'flex grow basis-0 items-center justify-center gap-2 px-4 py-2.5 whitespace-nowrap',
 				disabled
 					? 'bg-gray-200 font-semibold text-gray-500 dark:bg-gray-800 dark:text-gray-400'
 					: isSelected
