@@ -8,24 +8,28 @@
 		oncreateclick?: () => void;
 		createButtonLabel?: string;
 		createButtonIcon?: string;
+		hideCreateButton?: boolean;
 	};
 
 	let {
 		children,
 		oncreateclick,
 		createButtonLabel = 'Lägg till',
-		createButtonIcon = 'ph:plus'
+		createButtonIcon = 'ph:plus',
+		hideCreateButton = false
 	}: Props = $props();
 </script>
 
 <Notice kind="info">
 	{@render children?.()}
 
-	<Button
-		icon={createButtonIcon}
-		label={createButtonLabel}
-		kind="transparent"
-		class="ml-auto shrink-0"
-		onclick={oncreateclick}
-	/>
+	{#if !hideCreateButton}
+		<Button
+			icon={createButtonIcon}
+			label={createButtonLabel}
+			kind="transparent"
+			class="ml-auto shrink-0"
+			onclick={oncreateclick}
+		/>
+	{/if}
 </Notice>

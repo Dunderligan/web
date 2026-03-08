@@ -137,16 +137,21 @@
 		color: var(--color-gray-400);
 	}
 
-	.floating-item:hover,
+	.floating-item:hover:not([data-disabled]),
 	.floating-item[data-highlighted] {
 		background-color: var(--color-gray-100);
 		color: var(--color-gray-700);
 	}
 
-	.dark .floating-item:hover,
+	.dark .floating-item:hover:not([data-disabled]),
 	.dark .floating-item[data-highlighted] {
 		background-color: var(--color-gray-800);
 		color: var(--color-gray-300);
+	}
+
+	.floating-item[data-disabled] {
+		cursor: not-allowed;
+		opacity: 0.6;
 	}
 
 	/* Style for input fields such as text inputs and date pickers. */
@@ -173,7 +178,7 @@
 	}
 
 	.dark .field::placeholder {
-		color: var(--color-gray-500);
+		color: var(--color-gray-400);
 	}
 }
 

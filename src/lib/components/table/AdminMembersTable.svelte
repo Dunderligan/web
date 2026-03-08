@@ -4,7 +4,6 @@
 	import { capitalize, roleIcon } from '$lib/util';
 	import Button from '../ui/Button.svelte';
 	import Checkbox from '../ui/Checkbox.svelte';
-	import Icon from '../ui/Icon.svelte';
 	import InputField from '../ui/InputField.svelte';
 	import Select from '../ui/Select.svelte';
 	import Table from './Table.svelte';
@@ -14,9 +13,10 @@
 		legacyRanks: boolean;
 		members: Member[];
 		ondelete: (index: number) => void;
+		disabled?: boolean;
 	};
 
-	let { legacyRanks, members = $bindable(), ondelete }: Props = $props();
+	let { legacyRanks, members = $bindable(), ondelete, disabled = false }: Props = $props();
 
 	const saveCtx = SaveContext.get();
 </script>
@@ -40,7 +40,7 @@
 		</div>
 
 		<div class="flex items-center justify-center gap-2 bg-gray-200 pr-2">
-			<Checkbox bind:checked={member.isCaptain} onCheckedChange={saveCtx.setDirty} />
+			<Checkbox bind:checked={member.isCaptain} onCheckedChange={saveCtx.setDirty} {disabled} />
 		</div>
 
 		<div class="flex items-center bg-gray-200 pr-4">
@@ -54,6 +54,7 @@
 					label: capitalize(role),
 					value: role
 				}))}
+				{disabled}
 			/>
 		</div>
 
@@ -69,6 +70,7 @@
 						bind:value={
 							() => (member.sr === 0 ? null : member.sr), (value) => (member.sr = value ?? 0)
 						}
+						{disabled}
 					/>
 
 					<Button
@@ -102,6 +104,7 @@
 							value: rank
 						}))}
 						canClear
+						{disabled}
 					>
 						{#snippet itemSnippet({ value })}
 							<Rank rank={{ rank: value as RankEnum, tier: 1 }} class="mr-2" hideLabel />
@@ -117,6 +120,7 @@
 							label: tier.toString(),
 							value: tier.toString()
 						}))}
+						{disabled}
 					/>
 				{/if}
 			{:else}
@@ -134,6 +138,7 @@
 						}
 						saveCtx.setDirty();
 					}}
+					{disabled}
 				/>
 			{/if}
 		</div>
@@ -147,6 +152,7 @@
 					ondelete(index);
 					saveCtx.setDirty();
 				}}
+				{disabled}
 			/>
 		</div>
 	{/snippet}

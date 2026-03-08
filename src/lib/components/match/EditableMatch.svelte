@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { RosterContext } from '$lib/state/rosters.svelte';
 	import { MatchState, type UnresolvedMatch } from '$lib/types';
-	import { formatDate } from '$lib/util';
 	import Button from '../ui/Button.svelte';
 	import Icon from '../ui/Icon.svelte';
 	import MatchInfoRow from './MatchInfoRow.svelte';

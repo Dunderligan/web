@@ -15,6 +15,7 @@
 	import { buildBracketRounds } from '$lib/bracket.js';
 	import { deleteBracket, updateBracket } from '$lib/remote/bracket.remote';
 	import { matchRosterId, matchWinner } from '$lib/match.js';
+	import { isAdmin } from '$lib/authRole.js';
 	const { data } = $props();
 
 	const bracket = $state(data.bracket);
@@ -102,15 +103,17 @@
 	</div>
 </AdminCard>
 
-<AdminCard title="Inställningar">
-	<div class="space-y-2">
-		<Label label="Namn">
-			<InputField bind:value={bracket.name} oninput={saveCtx.setDirty} />
-		</Label>
-	</div>
+{#if isAdmin(data.user?.role)}
+	<AdminCard title="Inställningar">
+		<div class="space-y-2">
+			<Label label="Namn">
+				<InputField bind:value={bracket.name} oninput={saveCtx.setDirty} />
+			</Label>
+		</div>
 
-	<Button icon="ph:trash" label="Radera bracket" kind="negative" onclick={onDeleteClicked} />
-</AdminCard>
+		<Button icon="ph:trash" label="Radera bracket" kind="negative" onclick={onDeleteClicked} />
+	</AdminCard>
+{/if}
 
 <EditMatchDialog />
 

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
-	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
 	import AdminLink from '$lib/components/admin/AdminLink.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
@@ -12,8 +11,9 @@
 	import DateInput from '$lib/components/ui/DateInput.svelte';
 	import { createSeason } from '$lib/remote/season.remote';
 	import Checkbox from '$lib/components/ui/Checkbox.svelte';
-	import { page } from '$app/state';
 	import { uploadSeasonData } from '$lib/remote/misc.remote';
+	import { isAdmin } from '$lib/authRole.js';
+	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
 
 	let { data } = $props();
 
@@ -65,46 +65,40 @@
 	}
 </script>
 
-<Breadcrumbs crumbs={[]} />
+<Breadcrumbs />
 
 <AdminCard title="Säsonger">
-	{#if seasons.length === 0}
-		<AdminEmptyNotice oncreateclick={() => (createSeasonOpen = true)}>
-			Det finns inga säsonger!
-		</AdminEmptyNotice>
-	{:else}
-		<div class="space-y-1 overflow-hidden rounded-lg">
-			{#each seasons as { id, name, startedAt, endedAt } (id)}
-				<AdminLink
-					href="/admin/sasong/{id}"
-					highlighted={endedAt !== null && Date.now() < new Date(endedAt).getTime()}
-				>
-					<span>{name}</span>
-					<span class="ml-2 text-base font-medium">{startedAt.getFullYear()}</span>
-				</AdminLink>
-			{/each}
+	<AdminLinkList
+		items={seasons}
+		linkHref={(season) => `/admin/sasong/${season.id}`}
+		emptyText="Det finns inga säsonger!"
+		oncreateclick={() => (createSeasonOpen = true)}
+	>
+		{#snippet linkContent({ item: season })}
+			<span>{season.name}</span>
+			<span class="ml-2 text-base font-medium">{season.startedAt.getFullYear()}</span>
+		{/snippet}
+	</AdminLinkList>
+</AdminCard>
+
+{#if isAdmin(data.user?.role)}
+	<AdminCard title="Användare">
+		<div class="overflow-hidden rounded-lg">
+			<AdminLink href="/admin/anvandare">Hantera användare</AdminLink>
 		</div>
+	</AdminCard>
 
-		<Button icon="ph:plus" onclick={() => (createSeasonOpen = true)} />
-	{/if}
-</AdminCard>
-
-<AdminCard title="Användare">
-	<div class="overflow-hidden rounded-lg">
-		<AdminLink href="/admin/anvandare">Hantera användare</AdminLink>
-	</div>
-</AdminCard>
-
-<AdminCard title="Ladda upp data">
-	<div>
-		<input bind:files={dataFiles} type="file" accept="application/json" />
-		<Button
-			onclick={() => uploadData(uploadSeasonData)}
-			disabled={!dataFiles?.length}
-			loading={uploading}>Ladda upp</Button
-		>
-	</div>
-</AdminCard>
+	<AdminCard title="Ladda upp data">
+		<div>
+			<input bind:files={dataFiles} type="file" accept="application/json" />
+			<Button
+				onclick={() => uploadData(uploadSeasonData)}
+				disabled={!dataFiles?.length}
+				loading={uploading}>Ladda upp</Button
+			>
+		</div>
+	</AdminCard>
+{/if}
 
 <CreateDialog
 	title="Skapa säsong"

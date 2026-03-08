@@ -8,7 +8,8 @@ import { cdnRosterLogoPath, cdnSrc, s3RosterLogoKey, toSlug } from '$lib/util';
 import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import { and, eq, inArray, not, sql } from 'drizzle-orm';
 import z from 'zod';
-import { adminGuard } from './auth.remote';
+import { roleGuard } from './auth.remote';
+import { AuthRole } from '$lib/authRole';
 import sharp from 'sharp';
 import { error } from '@sveltejs/kit';
 
@@ -21,7 +22,7 @@ export const createRoster = command(
 		teamId: z.uuidv4().nullish()
 	}),
 	async ({ groupId, seasonSlug, name, teamId }) => {
-		await adminGuard();
+		await roleGuard(AuthRole.ADMIN);
 
 		if (!teamId) {
 			const [team] = await db.insert(schema.team).values({}).returning();
@@ -49,7 +50,7 @@ export const deleteRoster = command(
 		id: z.uuid()
 	}),
 	async ({ id }) => {
-		await adminGuard();
+		await roleGuard(AuthRole.ADMIN);
 
 		await db.delete(schema.roster).where(eq(schema.roster.id, id));
 
@@ -90,7 +91,7 @@ export const editRoster = command(
 		)
 	}),
 	async ({ id, teamId, name, resigned, members, socials }) => {
-		await adminGuard();
+		await roleGuard(AuthRole.ADMIN);
 
 		const newSlug = toSlug(name);
 
@@ -184,7 +185,7 @@ export const uploadRosterLogo = command(
 		file: z.instanceof(ArrayBuffer)
 	}),
 	async ({ rosterId, file }) => {
-		await adminGuard();
+		await roleGuard(AuthRole.ADMIN);
 
 		const converted = await sharp(file).webp({ lossless: true }).toBuffer();
 		const key = s3RosterLogoKey(rosterId);
@@ -206,7 +207,7 @@ export const mergeTeams = command(
 		teamBId: z.uuid()
 	}),
 	async ({ teamAId, teamBId }) => {
-		await adminGuard();
+		await roleGuard(AuthRole.ADMIN);
 
 		// set all rosters in teamB to teamA
 		await db
@@ -222,7 +223,7 @@ export const moveRoster = command(
 		groupId: z.uuid()
 	}),
 	async ({ rosterId, groupId }) => {
-		await adminGuard();
+		await roleGuard(AuthRole.ADMIN);
 
 		await db.update(schema.roster).set({ groupId }).where(eq(schema.roster.id, rosterId));
 	}

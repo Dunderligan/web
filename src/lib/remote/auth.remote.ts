@@ -1,22 +1,17 @@
 import { command, getRequestEvent, query } from '$app/server';
+import { AuthRole, canPromoteTo, checkPermission } from '$lib/authRole';
 import { db, schema } from '$lib/server/db';
 import session from '$lib/server/session';
 import { error } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import z from 'zod';
 
-export const adminGuard = query(() => {
+export const roleGuard = query(z.enum(AuthRole), (required) => {
 	const { locals } = getRequestEvent();
 
-	if (!locals.user?.isAdmin) {
-		error(403);
-	}
-});
+	const role = locals.user?.role;
 
-export const superAdminGuard = query(() => {
-	const { locals } = getRequestEvent();
-
-	if (!locals.user?.isSuperAdmin) {
+	if (!checkPermission(role, required)) {
 		error(403);
 	}
 });
@@ -32,7 +27,7 @@ export const logout = command(async () => {
 	session.deleteTokenCookie(cookies);
 });
 
-export const createSuperUser = command(
+export const createSuperAdmin = command(
 	z.object({
 		battletag: z.string().nonempty()
 	}),
@@ -47,8 +42,7 @@ export const createSuperUser = command(
 		const [user] = await db
 			.insert(schema.user)
 			.values({
-				isAdmin: true,
-				isSuperAdmin: true,
+				role: AuthRole.SUPER_ADMIN,
 				battlenetId: 0,
 				battletag
 			})
@@ -69,21 +63,28 @@ export const updateUsers = command(
 		users: z.array(
 			z.object({
 				id: z.uuid(),
-				isAdmin: z.boolean()
+				role: z.enum(AuthRole)
 			})
 		)
 	}),
 	async ({ users }) => {
 		// if we get a lot of people who log in, this might need to be split up to
 		// update individual users instead of everyone at once
-		await superAdminGuard();
+		await roleGuard(AuthRole.ADMIN);
+
+		const { locals } = getRequestEvent();
 
 		await db.transaction(async (tx) => {
 			for (const user of users) {
-				await tx
-					.update(schema.user)
-					.set({ isAdmin: user.isAdmin })
-					.where(eq(schema.user.id, user.id));
+				// this logic technically permits admins to demote super admins to lower roles,
+				// if someone were to call this endpoint directly with a crafted request
+
+				// however we deem this unlikely enough to be a problem in practice, and it keeps the logic simpler
+				if (!canPromoteTo(locals.user?.role, user.role)) {
+					throw error(403);
+				}
+
+				await tx.update(schema.user).set({ role: user.role }).where(eq(schema.user.id, user.id));
 			}
 		});
 	}

@@ -4,7 +4,8 @@ import { db, schema } from '$lib/server/db';
 import { toSlug } from '$lib/util';
 import { and, eq } from 'drizzle-orm';
 import z from 'zod';
-import { adminGuard } from './auth.remote';
+import { roleGuard } from './auth.remote';
+import { AuthRole } from '$lib/authRole';
 
 export const createGroup = command(
 	z.object({
@@ -12,7 +13,7 @@ export const createGroup = command(
 		divisionId: z.uuidv4()
 	}),
 	async ({ name, divisionId }) => {
-		await adminGuard();
+		await roleGuard(AuthRole.ADMIN);
 
 		const slug = toSlug(name.split(' ').at(-1) ?? name);
 
@@ -36,7 +37,7 @@ export const updateGroup = command(
 		matches: z.array(matchSchema)
 	}),
 	async ({ id, name, matches }) => {
-		await adminGuard();
+		await roleGuard(AuthRole.MODERATOR);
 
 		await db.transaction(async (tx) => {
 			const slug = toSlug(name.split(' ').at(-1) ?? name);
@@ -66,7 +67,7 @@ export const deleteGroup = command(
 		id: z.uuidv4()
 	}),
 	async ({ id }) => {
-		await adminGuard();
+		await roleGuard(AuthRole.ADMIN);
 
 		await db.delete(schema.group).where(eq(schema.group.id, id));
 	}

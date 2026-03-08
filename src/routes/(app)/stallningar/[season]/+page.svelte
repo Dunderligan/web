@@ -14,6 +14,7 @@
 	import MatchList from '$lib/components/match/MatchList.svelte';
 	import { goto } from '$app/navigation';
 	import Meta from '$lib/components/structure/Meta.svelte';
+	import { AuthRole, checkPermission, isModerator } from '$lib/authRole';
 
 	let { data } = $props();
 
@@ -177,7 +178,7 @@
 				seasonSlug={season.slug}
 			/>
 
-			{#if page.data.user?.isAdmin}
+			{#if isModerator(data.user?.role)}
 				<Button
 					label="Redigera"
 					icon="ph:pencil-simple"
@@ -224,7 +225,7 @@
 				rounds={buildBracketRounds(bracket.matches.map(resolveMatch))}
 			/>
 
-			{#if page.data.user?.isAdmin}
+			{#if isModerator(data.user?.role)}
 				<Button
 					label="Redigera"
 					icon="ph:pencil-simple"

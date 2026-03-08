@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto, invalidate, invalidateAll } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
 	import AdminLink from '$lib/components/admin/AdminLink.svelte';
@@ -14,7 +14,7 @@
 	import Select from '$lib/components/ui/Select.svelte';
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
 	import { SaveContext } from '$lib/state/save.svelte';
-	import { Rank, Role, SocialPlatform, type NestedGroup } from '$lib/types';
+	import { Rank, Role, SocialPlatform } from '$lib/types';
 	import { formatSocialPlatform, flattenGroup } from '$lib/util';
 	import TeamSelect from '$lib/components/admin/TeamSelect.svelte';
 	import { deleteRoster, editRoster, mergeTeams, moveRoster } from '$lib/remote/roster.remote';
@@ -22,6 +22,7 @@
 	import Notice from '$lib/components/ui/Notice.svelte';
 	import { getDivisionsBySeason } from '$lib/remote/season.remote';
 	import Checkbox from '$lib/components/ui/Checkbox.svelte';
+	import { AuthRole, checkPermission } from '$lib/authRole';
 
 	let { data } = $props();
 
@@ -60,6 +61,8 @@
 	let changeGroupTo = $state(group.id);
 
 	let uploadedLogo = $state(false);
+
+	const isAdmin = $derived(checkPermission(data.user?.role, AuthRole.ADMIN));
 
 	async function save() {
 		const { slug } = await editRoster({
@@ -161,116 +164,121 @@
 
 <AdminCard title="Spelare">
 	{#if roster.members.length === 0}
-		<AdminEmptyNotice oncreateclick={() => (newPlayerOpen = true)}>
+		<AdminEmptyNotice oncreateclick={() => (newPlayerOpen = true)} hideCreateButton={!isAdmin}>
 			Detta roster har inga medlemmar.
 		</AdminEmptyNotice>
 	{:else}
 		<AdminMembersTable
 			bind:members={roster.members}
 			legacyRanks={season.legacyRanks}
+			disabled={!isAdmin}
 			ondelete={(index) => {
 				roster.members.splice(index, 1);
 			}}
 		/>
 
-		<Button kind="primary" icon="ph:plus" onclick={() => (newPlayerOpen = true)} />
-	{/if}
-</AdminCard>
-
-<AdminCard title="Sociala medier">
-	{#if team.socials.length === 0}
-		<AdminEmptyNotice oncreateclick={() => (newSocialOpen = true)}>
-			Detta lag har inga länkade sociala medier.
-		</AdminEmptyNotice>
-	{:else}
-		<div class="space-y-1.5 py-1">
-			{#each team.socials as social, i (social.platform)}
-				<Label>
-					{#snippet label()}
-						<Icon class="text-2xl" icon="ph:{social.platform}-logo-fill" />
-						{formatSocialPlatform(social.platform)}
-					{/snippet}
-
-					<InputField bind:value={social.url} placeholder="URL" />
-
-					<Button
-						icon="ph:trash"
-						class="ml-2"
-						kind="tertiary"
-						title="Radera"
-						onclick={() => {
-							team.socials.splice(i, 1);
-							saveCtx.setDirty();
-						}}
-					/>
-				</Label>
-			{/each}
-		</div>
-
-		{#if remainingPlatforms.length > 0}
-			<Button icon="ph:plus" onclick={() => (newSocialOpen = true)} />
+		{#if isAdmin}
+			<Button kind="primary" icon="ph:plus" onclick={() => (newPlayerOpen = true)} />
 		{/if}
 	{/if}
 </AdminCard>
 
-<AdminCard title="Inställningar">
-	<Label label="Namn">
-		<InputField bind:value={roster.name} oninput={saveCtx.setDirty} />
-	</Label>
+{#if isAdmin}
+	<AdminCard title="Sociala medier">
+		{#if team.socials.length === 0}
+			<AdminEmptyNotice oncreateclick={() => (newSocialOpen = true)}>
+				Detta lag har inga länkade sociala medier.
+			</AdminEmptyNotice>
+		{:else}
+			<div class="space-y-1.5 py-1">
+				{#each team.socials as social, i (social.platform)}
+					<Label>
+						{#snippet label()}
+							<Icon class="text-2xl" icon="ph:{social.platform}-logo-fill" />
+							{formatSocialPlatform(social.platform)}
+						{/snippet}
 
-	<Label label="Resignerad">
-		<Checkbox bind:checked={roster.resigned} onCheckedChange={saveCtx.setDirty} />
-	</Label>
+						<InputField bind:value={social.url} placeholder="URL" />
 
-	<Label label="Logotyp">
-		<RosterLogoUpload rosterId={roster.id} onUpload={() => (uploadedLogo = true)} />
-	</Label>
+						<Button
+							icon="ph:trash"
+							class="ml-2"
+							kind="tertiary"
+							title="Radera"
+							onclick={() => {
+								team.socials.splice(i, 1);
+								saveCtx.setDirty();
+							}}
+						/>
+					</Label>
+				{/each}
+			</div>
 
-	{#if uploadedLogo}
-		<Notice kind="info">
-			Logotypen har laddats upp! Det kan dröja några minuter innan uppdateringen syns på hemsidan.
-		</Notice>
-	{/if}
+			{#if remainingPlatforms.length > 0}
+				<Button icon="ph:plus" onclick={() => (newSocialOpen = true)} />
+			{/if}
+		{/if}
+	</AdminCard>
 
-	<div class="flex items-center gap-2">
-		<Button
-			icon="ph:swap"
-			label="Flytta"
-			kind="secondary"
-			onclick={() => (changeGroupOpen = true)}
-		/>
+	<AdminCard title="Inställningar">
+		<Label label="Namn">
+			<InputField bind:value={roster.name} oninput={saveCtx.setDirty} />
+		</Label>
 
-		<Button icon="ph:trash" label="Radera roster" kind="negative" onclick={onDeleteClick} />
-	</div>
-</AdminCard>
+		<Label label="Resignerad">
+			<Checkbox bind:checked={roster.resigned} onCheckedChange={saveCtx.setDirty} />
+		</Label>
 
-<AdminCard title="Länkade rosters">
-	{#if team.rosters.length > 1}
-		<div class="space-y-1 overflow-hidden rounded-lg">
-			{#each team.rosters as otherRoster (otherRoster.id)}
-				{@const { division, season } = flattenGroup(otherRoster.group)}
+		<Label label="Logotyp">
+			<RosterLogoUpload rosterId={roster.id} onUpload={() => (uploadedLogo = true)} />
+		</Label>
 
-				{#if otherRoster.id != roster.id}
-					<AdminLink href="/admin/roster/{otherRoster.id}">
-						{season.name}, {division.name}
-						{#if otherRoster.name != roster.name}
-							({otherRoster.name})
-						{/if}
-					</AdminLink>
-				{/if}
-			{/each}
+		{#if uploadedLogo}
+			<Notice kind="info">
+				Logotypen har laddats upp! Det kan dröja några minuter innan uppdateringen syns på hemsidan.
+			</Notice>
+		{/if}
 
-			<Button icon="ph:link" class="mt-2" onclick={() => (linkTeamOpen = true)} />
+		<div class="flex items-center gap-2">
+			<Button
+				icon="ph:swap"
+				label="Flytta"
+				kind="secondary"
+				onclick={() => (changeGroupOpen = true)}
+			/>
+
+			<Button icon="ph:trash" label="Radera roster" kind="negative" onclick={onDeleteClick} />
 		</div>
-	{:else}
-		<AdminEmptyNotice
-			createButtonLabel="Länka"
-			createButtonIcon="ph:link"
-			oncreateclick={() => (linkTeamOpen = true)}
-			>{roster.name} är inte länkat till något annat roster.
-		</AdminEmptyNotice>
-	{/if}
-</AdminCard>
+	</AdminCard>
+
+	<AdminCard title="Länkade rosters">
+		{#if team.rosters.length > 1}
+			<div class="space-y-1 overflow-hidden rounded-lg">
+				{#each team.rosters as otherRoster (otherRoster.id)}
+					{@const { division, season } = flattenGroup(otherRoster.group)}
+
+					{#if otherRoster.id != roster.id}
+						<AdminLink href="/admin/roster/{otherRoster.id}">
+							{season.name}, {division.name}
+							{#if otherRoster.name != roster.name}
+								({otherRoster.name})
+							{/if}
+						</AdminLink>
+					{/if}
+				{/each}
+
+				<Button icon="ph:link" class="mt-2" onclick={() => (linkTeamOpen = true)} />
+			</div>
+		{:else}
+			<AdminEmptyNotice
+				createButtonLabel="Länka"
+				createButtonIcon="ph:link"
+				oncreateclick={() => (linkTeamOpen = true)}
+				>{roster.name} är inte länkat till något annat roster.
+			</AdminEmptyNotice>
+		{/if}
+	</AdminCard>
+{/if}
 
 <CreateDialog
 	title="Lägg till social media"
