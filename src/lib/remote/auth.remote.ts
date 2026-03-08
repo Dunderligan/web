@@ -70,11 +70,16 @@ export const updateUsers = command(
 	async ({ users }) => {
 		// if we get a lot of people who log in, this might need to be split up to
 		// update individual users instead of everyone at once
+		await roleGuard(AuthRole.ADMIN);
 
 		const { locals } = getRequestEvent();
 
 		await db.transaction(async (tx) => {
 			for (const user of users) {
+				// this logic technically permits admins to demote super admins to lower roles,
+				// if someone were to call this endpoint directly with a crafted request
+
+				// however we deem this unlikely enough to be a problem in practice, and it keeps the logic simpler
 				if (!canPromoteTo(locals.user?.role, user.role)) {
 					throw error(403);
 				}

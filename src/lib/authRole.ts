@@ -37,7 +37,7 @@ export function canPromoteTo(userRole: AuthRole | undefined | null, targetRole: 
 		return false;
 	}
 
-	// can only promote to one level below the user's current role
+	// can only promote to any level below the user's current role
 	return compareRoles(userRole, targetRole) > 0;
 }
 
