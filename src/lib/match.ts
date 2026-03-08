@@ -82,18 +82,22 @@ export function matchRosterId(match: LogicalMatch, side?: MatchSide | null): str
 /**
  * Compares two matches by their played or scheduled dates, most recent first.
  * This should mimic the SQL ordering function in $lib/server/db/helpers.ts, and is used
- * whenever matches nee to be sorted outside of database queries.
+ * whenever matches need to be sorted outside of database queries.
  */
 export function compareMatchDates(a: MatchWithoutRosters, b: MatchWithoutRosters): number {
-	const aDate = a.playedAt ?? a.scheduledAt;
-	const bDate = b.playedAt ?? b.scheduledAt;
-
-	if (aDate && bDate) {
-		return bDate.getTime() - aDate.getTime();
+	if (a.playedAt && b.playedAt) {
+		return b.playedAt.getTime() - a.playedAt.getTime();
 	}
 
-	if (aDate) return -1;
-	if (bDate) return 1;
+	if (a.playedAt) return -1;
+	if (b.playedAt) return 1;
+
+	if (a.scheduledAt && b.scheduledAt) {
+		return a.scheduledAt.getTime() - b.scheduledAt.getTime();
+	}
+
+	if (a.scheduledAt) return -1;
+	if (b.scheduledAt) return 1;
 
 	return 0;
 }

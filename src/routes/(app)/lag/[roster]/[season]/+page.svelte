@@ -100,6 +100,7 @@
 			matches={playedMatches}
 			seasonSlug={season.slug}
 			mainRosterId={roster.id}
+			hideIfEmpty
 			hideDivision
 			class="mt-6"
 		/>

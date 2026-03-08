@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import AsyncMatchList from '$lib/components/match/AsyncMatchList.svelte';
 	import MatchList from '$lib/components/match/MatchList.svelte';
 	import Meta from '$lib/components/structure/Meta.svelte';
 	import PageHeader from '$lib/components/structure/PageHeader.svelte';
@@ -61,7 +62,7 @@
 			{/await}
 		</div>
 
-		<MatchList
+		<AsyncMatchList
 			matches={data.query.then((res) => res.results)}
 			skeletonCount={data.pageSize}
 			mainRosterId={data.params.rosterId}
