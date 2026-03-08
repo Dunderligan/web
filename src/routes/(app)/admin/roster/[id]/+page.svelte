@@ -164,7 +164,7 @@
 
 <AdminCard title="Spelare">
 	{#if roster.members.length === 0}
-		<AdminEmptyNotice oncreateclick={() => (newPlayerOpen = true)} hideCreateButton={isAdmin}>
+		<AdminEmptyNotice oncreateclick={() => (newPlayerOpen = true)} hideCreateButton={!isAdmin}>
 			Detta roster har inga medlemmar.
 		</AdminEmptyNotice>
 	{:else}
