@@ -144,95 +144,96 @@
 </PageHeader>
 
 <PageSection>
-	<section class="grow overflow-hidden">
-		<div class="mb-4 max-w-xl space-y-1.5">
-			{#if divisions.length > 1}
-				<Tabs
-					selected={division.id}
-					items={divisions.map((division) => ({
-						label: division.name,
-						value: division.id,
-						href: `?div=${division.slug}&visa=${mode === 'group' ? 'gruppspel' : 'slutspel'}`
-					}))}
-				/>
+	<div class="mb-4 max-w-2xl space-y-1.5">
+		{#if divisions.length > 1}
+			<Tabs
+				selected={division.id}
+				items={divisions.map((division) => ({
+					label: division.name,
+					value: division.id,
+					href: `?div=${division.slug}&visa=${mode === 'group' ? 'gruppspel' : 'slutspel'}`
+				}))}
+			/>
+		{/if}
+
+		<Tabs fillIcons selected={mode} items={tabItems} />
+	</div>
+
+	{#if mode === 'group'}
+		{#each division.tables as table}
+			{@const resolvedStandings = table.standings.map(({ rosterId, score }) => ({
+				roster: resolveRoster(rosterId)!,
+				score
+			}))}
+
+			{#if table.type === 'grupp'}
+				<Subheading class="mt-6 mb-4 flex justify-between">
+					{table.title}
+				</Subheading>
 			{/if}
 
-			<Tabs fillIcons selected={mode} items={tabItems} />
-		</div>
-
-		{#if mode === 'group'}
-			{#each division.tables as table}
-				{@const resolvedStandings = table.standings.map(({ rosterId, score }) => ({
-					roster: resolveRoster(rosterId)!,
-					score
-				}))}
-
-				{#if table.type === 'grupp'}
-					<Subheading class="mt-6 mb-4 flex justify-between">
-						{table.title}
-					</Subheading>
-				{/if}
-
-				<StandingsTable
-					standings={resolvedStandings}
-					playoffLine={division.playoffLine}
-					seasonSlug={season.slug}
-				/>
-
-				{#if isModerator(data.user?.role)}
-					<Button
-						label="Redigera"
-						icon="ph:pencil-simple"
-						kind="secondary"
-						class="mt-4 max-w-max"
-						href="/admin/{table.type}/{table.id}"
-					/>
-				{/if}
-			{/each}
-
-			<MatchList
-				title="Kommande matcher"
-				matches={division.upcomingMatches.map(resolveMatch)}
+			<StandingsTable
+				standings={resolvedStandings}
+				playoffLine={division.playoffLine}
 				seasonSlug={season.slug}
-				class="mt-12"
-				hideIfEmpty
 			/>
 
-			{#if division.latestMatches.length > 0}
-				<div class="mt-8 mb-4 flex max-w-2xl items-center justify-between">
-					<Subheading>Senaste matcherna</Subheading>
+			{#if isModerator(data.user?.role)}
+				<Button
+					label="Redigera"
+					icon="ph:pencil-simple"
+					kind="secondary"
+					class="mt-4 max-w-max"
+					href="/admin/{table.type}/{table.id}"
+				/>
+			{/if}
+		{/each}
 
+		<MatchList
+			title="Kommande matcher"
+			matches={division.upcomingMatches.map(resolveMatch)}
+			seasonSlug={season.slug}
+			class="mt-12"
+			hideIfEmpty
+		/>
+
+		{#if division.latestMatches.length > 0}
+			<MatchList
+				class="mt-8"
+				title="Senaste matcherna"
+				matches={division.latestMatches.map(resolveMatch)}
+				seasonSlug={season.slug}
+			>
+				{#snippet button()}
 					<Button
-						href="/arkiv/matcher?division={division.id}&spelad=true&prev={page.url.pathname}"
+						href="/arkiv/matcher?division={division.id}&prev={page.url.pathname}"
 						label="Se alla"
 						icon="ph:arrow-right"
 						kind="secondary"
 					/>
-				</div>
-
-				<MatchList matches={division.latestMatches.map(resolveMatch)} seasonSlug={season.slug} />
-			{/if}
-		{:else}
-			{#each division.brackets as bracket (bracket.id)}
-				{#if division.brackets.length > 1 || bracket.name !== division.name}
-					<Subheading class="mt-6 mb-4">{bracket.name}</Subheading>
-				{/if}
-
-				<Bracket
-					seasonSlug={season.slug}
-					rounds={buildBracketRounds(bracket.matches.map(resolveMatch))}
-				/>
-
-				{#if isModerator(data.user?.role)}
-					<Button
-						label="Redigera"
-						icon="ph:pencil-simple"
-						kind="secondary"
-						class="mt-4 max-w-max"
-						href="/admin/bracket/{bracket.id}"
-					/>
-				{/if}
-			{/each}
+				{/snippet}
+			</MatchList>
 		{/if}
-	</section>
+	{:else}
+		{#each division.brackets as bracket (bracket.id)}
+			{#if division.brackets.length > 1 || bracket.name !== division.name}
+				<Subheading class="mt-6 mb-4">{bracket.name}</Subheading>
+			{/if}
+
+			<Bracket
+				seasonSlug={season.slug}
+				rounds={buildBracketRounds(bracket.matches.map(resolveMatch))}
+			/>
+
+			{#if isModerator(data.user?.role)}
+				<Button
+					label="Redigera"
+					icon="ph:pencil-simple"
+					kind="secondary"
+					class="mt-4 max-w-max"
+					href="/admin/bracket/{bracket.id}"
+				/>
+			{/if}
+		{/each}
+	{/if}
 </PageSection>

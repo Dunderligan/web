@@ -1,6 +1,7 @@
 import { getRequestEvent, query } from '$app/server';
 import { db } from '$lib/server/db';
 import {
+	entityQuery,
 	fullMatchColumns,
 	groupMatchOrder,
 	hiddenMatchFilter,
@@ -16,17 +17,12 @@ const PAGE_SIZE = 10;
 export const queryMatches = query(
 	z.object({
 		rosterId: z.uuid().optional(),
-		seasonId: z.uuid().optional(),
 		divisionId: z.uuid().optional(),
-		groupId: z.uuid().optional(),
-		played: z.boolean().optional(),
-		page: z.number().min(0).default(0)
+		page: z.number().min(0).default(0),
+		state: z.array(z.enum(MatchState)).optional()
 	}),
-	async ({ rosterId, divisionId, groupId, played, page }) => {
+	async ({ rosterId, divisionId, state, page }) => {
 		const { locals } = getRequestEvent();
-
-		const state =
-			played === undefined ? undefined : played ? MatchState.PLAYED : MatchState.SCHEDULED;
 
 		const results = await db.query.match.findMany({
 			// retrieve one extra to determine if there should be a next page
@@ -62,15 +58,18 @@ export const queryMatches = query(
 					},
 					hiddenMatchFilter(locals.user)
 				],
-				state,
-				groupId,
-				// if divisionId is not provided, don't include the group filter at all, 
-				// otherwise bracket matches would always be excluded (since they don'th have a group)
+				// if divisionId is not provided, don't include the "group" filter property at all,
+				// otherwise bracket matches would always be excluded (since they don't have a group)
 				...(divisionId && {
 					group: {
 						divisionId
 					}
 				}),
+				...(state && {
+					state: {
+						in: state
+					}
+				})
 			},
 			columns: fullMatchColumns,
 			with: {
@@ -84,6 +83,6 @@ export const queryMatches = query(
 		const hasNextPage = results.length > PAGE_SIZE;
 		const shownResults = results.slice(0, PAGE_SIZE);
 
-		return { matches: shownResults, hasNextPage };
+		return { results: shownResults, hasNextPage };
 	}
 );
