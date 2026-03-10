@@ -37,7 +37,7 @@
 			{label}
 
 			{#if note}
-				<Note content={note} />
+				<Note content={note} class="hidden sm:block" />
 			{/if}
 		</div>
 	{/each}
