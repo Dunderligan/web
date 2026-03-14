@@ -3,30 +3,26 @@ import { entityQuery } from '$lib/server/db/helpers';
 import { json } from '@sveltejs/kit';
 
 export const GET = async () => {
-	const rosters = await db.query.season.findMany({
+	const seasons = await db.query.season.findMany({
 		columns: {
 			...entityQuery.columns,
-			legacyRanks: true
+			legacyRanks: true,
+			hidden: true
 		},
 		orderBy: {
-			createdAt: 'desc'
+			startedAt: 'desc'
 		},
 		with: {
 			divisions: {
 				...entityQuery,
 				with: {
-					groups: {
-						...entityQuery,
-						with: {
-							rosters: entityQuery
-						}
-					}
+					groups: entityQuery
 				}
 			}
 		}
 	});
 
 	return json({
-		results: rosters
+		seasons
 	});
 };

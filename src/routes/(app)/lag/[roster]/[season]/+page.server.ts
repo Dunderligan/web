@@ -4,7 +4,8 @@ import {
 	nestedBracketQuery,
 	nestedGroupQuery,
 	rolesOrder,
-	hiddenSeasonFilter
+	hiddenSeasonFilter,
+	memberQuery
 } from '$lib/server/db/helpers';
 import { db } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
@@ -25,26 +26,10 @@ export const load = async ({ params, locals }) => {
 		columns: {
 			id: true,
 			name: true,
-			slug: true,
+			slug: true
 		},
 		with: {
-			members: {
-				orderBy: (t) => sql`${rolesOrder(t.role)}, ${t.playerId} ASC`,
-				columns: {
-					isCaptain: true,
-					tier: true,
-					rank: true,
-					sr: true,
-					role: true
-				},
-				with: {
-					player: {
-						columns: {
-							battletag: true
-						}
-					}
-				}
-			},
+			members: memberQuery,
 			team: {
 				columns: {},
 				with: {
