@@ -3,6 +3,7 @@ import { PgTransaction } from 'drizzle-orm/pg-core';
 import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 import { schema } from '$lib/server/db';
 import type { User } from './schema/auth';
+import { AuthRole, checkPermission, isAdmin } from '$lib/authRole';
 
 // Helper queries and functions for database operations.
 
@@ -141,6 +142,7 @@ export function divisionOrder(column: any) {
 	return sql`(
 		CASE ${column}
 			WHEN 'Dunderligan' THEN '0'
+			WHEN 'Dunderserien' THEN '0'
 			ELSE ${column}
 		END
 	) ASC`;
@@ -172,7 +174,7 @@ export async function findOrCreatePlayer(tx: Transaction, battletag: string) {
 }
 
 export function canSeeHiddenSeasons(user?: User | null) {
-	return user?.isAdmin ?? false;
+	return isAdmin(user?.role);
 }
 
 export function hiddenSeasonFilter(user?: User | null) {
@@ -184,19 +186,19 @@ export function hiddenDivisionFilter(user?: User | null) {
 		season: {
 			hidden: hiddenSeasonFilter(user)
 		}
-	}
+	};
 }
 
 export function hiddenGroupFilter(user?: User | null) {
 	return {
 		division: hiddenDivisionFilter(user)
-	}
+	};
 }
 
 export function hiddenBracketFilter(user?: User | null) {
 	return {
 		division: hiddenDivisionFilter(user)
-	}
+	};
 }
 
 export function hiddenMatchFilter(user?: User | null) {
@@ -227,7 +229,7 @@ export function hiddenMatchFilter(user?: User | null) {
 				]
 			}
 		]
-	}
+	};
 }
 
 export function canSeeSeason(season: { hidden: boolean }, user?: User | null) {

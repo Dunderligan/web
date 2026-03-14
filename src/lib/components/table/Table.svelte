@@ -1,11 +1,12 @@
 <script lang="ts" generics="T">
 	import type { ClassValue } from 'svelte/elements';
 	import type { Snippet } from 'svelte';
+	import Note from '../ui/Note.svelte';
 
 	type Column = {
 		label: string;
 		center?: boolean;
-		title?: string;
+		note?: string | Snippet;
 	};
 
 	type Props = {
@@ -25,16 +26,19 @@
 		'__table grid w-full gap-y-1 overflow-hidden overflow-x-auto rounded-lg text-gray-700 dark:text-gray-300'
 	]}
 >
-	{#each columns as { label, center = false, title }, i}
+	{#each columns as { label, center = false, note }, i}
 		<div
 			class={[
-				center ? 'text-center ' : 'text-left',
 				i === 0 && !center && 'pl-6',
-				'__table-header mb-0.5 bg-gray-50 py-2 font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-400'
+				center && 'justify-center',
+				'__table-header flex items-center gap-1 bg-gray-50 py-2 font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-400'
 			]}
-			{...title ? { title, tabindex: 0, role: 'tooltip' } : {}}
 		>
 			{label}
+
+			{#if note}
+				<Note content={note} class="hidden sm:block" />
+			{/if}
 		</div>
 	{/each}
 

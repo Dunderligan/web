@@ -1,16 +1,25 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import AsyncMatchList from '$lib/components/match/AsyncMatchList.svelte';
 	import MatchList from '$lib/components/match/MatchList.svelte';
 	import Meta from '$lib/components/structure/Meta.svelte';
 	import PageHeader from '$lib/components/structure/PageHeader.svelte';
 	import PageSection from '$lib/components/structure/PageSection.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
-	import { queryMatches } from '$lib/remote/match.remote.js';
 
 	let { data } = $props();
 
-	const matchQuery = $derived(queryMatches(data.query));
 	const prev = $derived(page.url.searchParams.get('prev'));
+
+	const subtitle = $derived.by(() => {
+		if (data.roster) {
+			return `Visar matcher för ${data.roster.name}`;
+		} else if (data.division) {
+			return `Visar matcher i ${data.division.name}, ${data.division.season.name}`;
+		} else {
+			return 'Visar samtliga matcher';
+		}
+	});
 
 	function queryParamHref(param: string, value: any) {
 		const url = new URL(page.url);
@@ -25,26 +34,26 @@
 
 <Meta title="Matcharkiv" description="Bläddra genom Dunderligans matcharkiv." />
 
-<PageHeader title="Matcharkiv"></PageHeader>
+<PageHeader title="Matcharkiv" {subtitle} />
 
 <PageSection>
 	{#if prev}
 		<Button kind="secondary" href={prev} icon="ph:arrow-left" label="Tillbaka" />
 	{/if}
 
-	<div class="max-w-2xl grow space-y-2">
-		<div class="mt-6 mb-4 flex items-center">
+	<div class="max-w-2xl">
+		<div class="mt-6 mb-4 flex items-center justify-between">
 			<Button
-				disabled={data.query.page === 0}
+				disabled={data.params.page === 0}
 				class="mr-auto"
 				kind="secondary"
 				icon="ph:arrow-left"
 				label="Föregående sida"
-				href={queryParamHref('sida', data.query.page - 1)}
+				href={queryParamHref('sida', data.params.page - 1)}
 				data-sveltekit-noscroll
 			/>
 
-			{#await matchQuery}
+			{#await data.query}
 				<!-- While waiting for the query, we can't know whether there's a next page or not, 
 				so just disable the button. -->
 				{@render nextPageButton({ disabled: true })}
@@ -53,21 +62,20 @@
 			{/await}
 		</div>
 
-		<MatchList
-			matches={matchQuery.then((res) => res.matches)}
+		<AsyncMatchList
+			matches={data.query.then((res) => res.results)}
 			skeletonCount={data.pageSize}
-			mainRosterId={data.query.rosterId}
+			mainRosterId={data.params.rosterId}
 		/>
 	</div>
 </PageSection>
 
 {#snippet nextPageButton({ disabled }: { disabled: boolean })}
 	<Button
-		class="ml-auto"
 		kind="secondary"
 		icon="ph:arrow-right"
 		label="Nästa sida"
-		href={queryParamHref('sida', data.query.page + 1)}
+		href={queryParamHref('sida', data.params.page + 1)}
 		{disabled}
 		data-sveltekit-noscroll
 	/>

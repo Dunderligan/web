@@ -1,4 +1,4 @@
-<script lang="ts" generics="T">
+<script lang="ts">
 	import { mapEmptyToUndefined } from '$lib/util';
 	import { Select, type WithoutChildren } from 'bits-ui';
 
@@ -97,7 +97,7 @@
 
 		<Icon
 			icon="ph:caret-down"
-			class={[open && 'rotate-180', 'ml-auto transform text-gray-600 dark:text-gray-500']}
+			class={[open && 'rotate-180', 'ml-auto transform text-gray-600 dark:text-gray-400']}
 		/>
 	</Select.Trigger>
 	<Select.Portal>

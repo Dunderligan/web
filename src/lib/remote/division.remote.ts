@@ -3,7 +3,8 @@ import { db, schema } from '$lib/server/db';
 import { toSlug } from '$lib/util';
 import { eq } from 'drizzle-orm';
 import z from 'zod';
-import { adminGuard } from './auth.remote';
+import { roleGuard } from './auth.remote';
+import { AuthRole } from '$lib/authRole';
 
 export const createDivision = command(
 	z.object({
@@ -11,7 +12,7 @@ export const createDivision = command(
 		seasonId: z.uuidv4()
 	}),
 	async ({ name, seasonId }) => {
-		await adminGuard();
+		await roleGuard(AuthRole.ADMIN);
 
 		const slug = toSlug(name.split(' ').at(-1) ?? name);
 
@@ -36,7 +37,7 @@ export const updateDivision = command(
 		groupwiseStandings: z.boolean()
 	}),
 	async ({ id, name, playoffLine, groupwiseStandings }) => {
-		await adminGuard();
+		await roleGuard(AuthRole.ADMIN);
 
 		const slug = toSlug(name.split(' ').at(-1) ?? name);
 
@@ -52,7 +53,7 @@ export const deleteDivision = command(
 		id: z.uuidv4()
 	}),
 	async ({ id }) => {
-		await adminGuard();
+		await roleGuard(AuthRole.ADMIN);
 
 		await db.delete(schema.division).where(eq(schema.division.id, id));
 	}

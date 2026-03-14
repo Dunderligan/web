@@ -14,8 +14,12 @@ function generateToken() {
 	return token;
 }
 
+function tokenToSessionId(token: string) {
+	return encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
+}
+
 async function create(token: string, userId: string) {
-	const id = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
+	const id = tokenToSessionId(token);
 
 	const session = {
 		id,
@@ -28,7 +32,7 @@ async function create(token: string, userId: string) {
 }
 
 async function validateToken(token: string) {
-	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
+	const sessionId = tokenToSessionId(token);
 
 	// query for the user and session data
 	const [result] = await db

@@ -2,7 +2,6 @@
 	import { goto } from '$app/navigation';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
-	import AdminLink from '$lib/components/admin/AdminLink.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import EditableMatch from '$lib/components/match/EditableMatch.svelte';
@@ -19,7 +18,8 @@
 	import { createRoster } from '$lib/remote/roster.remote';
 	import { createGroupMatch, isInMatch } from '$lib/match.js';
 	import RosterSelect from '$lib/components/admin/RosterSelect.svelte';
-	import { MatchState } from '$lib/types.js';
+	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
+	import { isAdmin } from '$lib/authRole.js';
 
 	const { data } = $props();
 
@@ -42,6 +42,8 @@
 	let addRosterOpen = $state(false);
 
 	let rosterFilter: string | null = $state(null);
+
+	const userIsAdmin = $derived(isAdmin(data.user?.role));
 
 	const shownMatchIndicies = $derived(
 		group.matches
@@ -112,27 +114,22 @@
 />
 
 <AdminCard title="Lag">
-	{#if group.rosters.length === 0}
-		<AdminEmptyNotice oncreateclick={() => (addRosterOpen = true)}>
-			Denna grupp har inga lag.
-		</AdminEmptyNotice>
-	{:else}
-		<div class="space-y-1 overflow-hidden rounded-lg">
-			{#each group.rosters as { id, name } (id)}
-				<AdminLink href="/admin/roster/{id}">
-					<RosterLogo {id} class="mr-2 inline size-12" />
-					{name}</AdminLink
-				>
-			{/each}
-		</div>
-
-		<Button icon="ph:plus" class="mt-2" onclick={() => (addRosterOpen = true)} />
-	{/if}
+	<AdminLinkList
+		items={group.rosters}
+		linkHref={(roster) => `/admin/roster/${roster.id}`}
+		emptyText="Denna grupp har inga lag!"
+		oncreateclick={() => (addRosterOpen = true)}
+	>
+		{#snippet linkContent({ item: roster })}
+			<RosterLogo id={roster.id} class="mr-2 inline size-12" />
+			<span>{roster.name}</span>
+		{/snippet}
+	</AdminLinkList>
 </AdminCard>
 
 <AdminCard title="Gruppspel">
 	{#if group.matches.length === 0}
-		<AdminEmptyNotice oncreateclick={addMatchAndEdit}>
+		<AdminEmptyNotice oncreateclick={addMatchAndEdit} hideCreateButton={!userIsAdmin}>
 			Denna grupp har inga matcher.
 		</AdminEmptyNotice>
 	{:else}
@@ -154,17 +151,21 @@
 			{/each}
 		</div>
 
-		<Button icon="ph:plus" class="mt-2" onclick={addMatchAndEdit} />
+		{#if userIsAdmin}
+			<Button icon="ph:plus" class="mt-2" onclick={addMatchAndEdit} />
+		{/if}
 	{/if}
 </AdminCard>
 
-<AdminCard title="Inställningar">
-	<Label label="Namn">
-		<InputField bind:value={group.name} oninput={saveCtx.setDirty} />
-	</Label>
+{#if userIsAdmin}
+	<AdminCard title="Inställningar">
+		<Label label="Namn">
+			<InputField bind:value={group.name} oninput={saveCtx.setDirty} />
+		</Label>
 
-	<Button icon="ph:trash" label="Radera grupp" kind="negative" onclick={submitDelete} />
-</AdminCard>
+		<Button icon="ph:trash" label="Radera grupp" kind="negative" onclick={submitDelete} />
+	</AdminCard>
+{/if}
 
 <CreateRosterDialog
 	bind:open={addRosterOpen}

@@ -105,7 +105,7 @@
 			</a>
 
 			{#if note}
-				<Note {note} class="ml-auto" />
+				<Note content={note} class="ml-auto" />
 			{/if}
 		{:else}
 			<div class="grow text-center font-medium">

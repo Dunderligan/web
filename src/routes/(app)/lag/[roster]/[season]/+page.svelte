@@ -8,11 +8,11 @@
 	import Tabs from '$lib/components/ui/Tabs.svelte';
 	import TeamSocial from '$lib/components/ui/TeamSocial.svelte';
 	import { cdnImageSrc, cdnRosterLogoPath, flattenGroup } from '$lib/util';
-	import { page } from '$app/state';
 	import MatchList from '$lib/components/match/MatchList.svelte';
 	import Meta from '$lib/components/structure/Meta.svelte';
 	import { MatchState } from '$lib/types';
 	import { averageLegacyRank, averageRank } from '$lib/rank';
+	import { isModerator } from '$lib/authRole';
 
 	let { data } = $props();
 
@@ -84,7 +84,7 @@
 			<Tabs class="mb-6 grow" items={rosterTabItems} selected={roster.id} />
 		{/if}
 
-		<MembersTable members={roster.members} />
+		<MembersTable members={roster.members} class="mb-12" />
 
 		<MatchList
 			title="Kommande matcher"
@@ -100,25 +100,25 @@
 			matches={playedMatches}
 			seasonSlug={season.slug}
 			mainRosterId={roster.id}
+			hideIfEmpty
 			hideDivision
+			class="mt-6"
 		/>
 	</section>
 
-	<section class="shrink-0 space-y-6 sm:w-1/4">
-		<div class="space-y-2">
+	<section class="shrink-0 space-y-6 sm:w-56">
+		<div class="flex flex-col items-start gap-2">
 			<Button
 				href="/stallningar/{season.slug}?div={division.slug}"
 				label="Se ställningar"
 				icon="ph:table"
-				class="max-w-max"
 				kind="secondary"
 			/>
 
-			{#if page.data.user?.isAdmin}
+			{#if isModerator(data.user?.role)}
 				<Button
 					href="/admin/roster/{roster.id}"
 					kind="secondary"
-					class="max-w-max"
 					label="Redigera lag"
 					icon="ph:pencil-simple"
 				/>

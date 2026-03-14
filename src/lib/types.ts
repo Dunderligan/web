@@ -1,3 +1,5 @@
+import type { Snippet } from 'svelte';
+
 /**
  * SvelteKit accepts these types in the class attribute, but does not expose the type definitions.
  * However, it is often useful to have them for typing class props to allow more flexibility over a simple `string`.
@@ -224,15 +226,27 @@ export type ButtonKind = 'primary' | 'secondary' | 'tertiary' | 'transparent' | 
 
 export type SeasonState = 'upcoming' | 'ongoing' | 'ended';
 
-export type Winner = {
+export type BracketWinner = {
 	roster: MatchRoster;
 	bracket: BaseEntity;
 };
 
 export type TournamentState = { season: BaseEntity & { startedAt: Date | null } } & (
 	| { status: 'ongoing' } // active season
-	| { status: 'offseason'; winners: Winner[] } // season has ended before next registration is published
+	| { status: 'offseason'; winners: BracketWinner[] } // season has ended before next registration is published
 	| { status: 'upcoming'; registrationOpensAt: Date | null } // before registration opens
 	| { status: 'registration'; registrationClosesAt: Date | null } // during registration
-	| { status: 'starting' } // after registration closed but before season start
+	| { status: 'starting'; startsAt: Date | null } // after registration closed but before season start
 );
+
+export type MatchListProps = {
+	seasonSlug?: string;
+	mainRosterId?: string;
+	hideIfEmpty?: boolean;
+	hideDivision?: boolean;
+	title?: string;
+	button?: Snippet;
+	class?: ClassValue;
+	short?: boolean;
+	matches: ResolvedMatchWithContext[];
+};

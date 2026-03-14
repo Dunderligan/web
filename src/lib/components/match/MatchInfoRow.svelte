@@ -16,6 +16,7 @@
 		center?: boolean;
 		hideDivision?: boolean;
 		class?: ClassValue;
+		short?: boolean;
 	};
 
 	let {
@@ -24,7 +25,8 @@
 		bracket,
 		center = false,
 		class: classProp,
-		hideDivision = false
+		hideDivision = false,
+		short = false
 	}: Props = $props();
 
 	const division = $derived(group ? group.division : bracket ? bracket.division : null);
@@ -32,6 +34,7 @@
 	const { icon, label, date } = $derived(
 		{
 			played: {
+				icon: 'ph:check',
 				date: match.playedAt ? formatDate(match.playedAt) : 'Okänt datum'
 			},
 			scheduled: {
@@ -49,11 +52,11 @@
 	class={[
 		classProp,
 		center && 'sm:justify-center',
-		'flex items-center gap-4 text-sm font-medium text-gray-600 dark:text-gray-400'
+		'flex items-center gap-4 text-sm font-semibold text-gray-600 dark:text-gray-400'
 	]}
 >
 	{#if bracket}
-		<Icon icon="ph:trophy" title="Slutspelsmatch" class="mb-1" />
+		<Icon icon="ph:trophy" title="Slutspelsmatch" class="mb-0.5" />
 	{/if}
 
 	<div>
@@ -61,7 +64,7 @@
 			<Icon {icon} />
 		{/if}
 
-		{#if label}
+		{#if label && !short}
 			{label}
 		{/if}
 

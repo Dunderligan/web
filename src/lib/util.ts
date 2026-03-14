@@ -137,13 +137,19 @@ export function seasonState({
 	return 'ongoing';
 }
 
+function isWithinWeek(a: Date, b: Date) {
+	const diff = a.getTime() - b.getTime();
+	if (diff < 0) return false; // a is before b
+	return diff <= 7 * 24 * 60 * 60 * 1000; // 7 days
+}
+
 /** Formats a date in a readable way, without time. */
 export function formatDate(date: Date, extra?: any): string {
+	const isThisWeek = isWithinWeek(date, new Date());
 	const isCurrentYear = date.getFullYear() === new Date().getFullYear();
 
 	return date.toLocaleDateString('sv-SE', {
-		month: 'long',
-		day: 'numeric',
+		...(isThisWeek ? { weekday: 'long' } : { day: 'numeric', month: 'short' }),
 		// only show year if not current year
 		...(isCurrentYear ? {} : { year: 'numeric' }),
 		...extra
@@ -158,6 +164,17 @@ export function formatDateTime(date: Date): string {
 	});
 }
 
+/** Shortens a team name to a string of 3 characters. */
+export function shortenTeamName(name: string) {
+	const words = name.replace(/[():]/g, '').toUpperCase().split(' ');
+	if (words.length === 1) return words[0].slice(0, 3);
+	if (words.length === 2) return words[0].slice(0, 2) + words[1][0];
+	return words
+		.slice(0, 3)
+		.map((word) => word[0])
+		.join('');
+}
+
 /** Client/server agnostic cookie functions */
 
 export async function getCookie(name: string): Promise<string | null> {
@@ -170,12 +187,15 @@ export async function getCookie(name: string): Promise<string | null> {
 	}
 }
 
+const COOKIE_EXPIRATION_MS = 365 * 24 * 60 * 60 * 1000; // 1 year
+
 export function setCookie(name: string, value: string) {
+	const expires = new Date(Date.now() + COOKIE_EXPIRATION_MS);
 	if (browser) {
-		document.cookie = `${name}=${value}; path=/;`;
+		document.cookie = `${name}=${value}; path=/; expires=${expires.toUTCString()}`;
 	} else {
 		const { cookies } = getRequestEvent();
-		cookies.set(name, value, { path: '/', httpOnly: false });
+		cookies.set(name, value, { path: '/', httpOnly: false, expires });
 	}
 }
 
@@ -187,5 +207,3 @@ export async function deleteCookie(name: string) {
 		cookies.delete(name, { path: '/', httpOnly: false });
 	}
 }
-
-export const discordUrl = 'https://discord.gg/74Y9B7dTNN';

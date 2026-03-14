@@ -26,9 +26,7 @@ export const GET = async () => {
 		}
 	});
 
-	const response = {
+	return json({
 		results: rosters
-	};
-
-	return json(response);
+	});
 };
