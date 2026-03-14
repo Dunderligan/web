@@ -15,6 +15,8 @@
 	import MatchInfoRow from './MatchInfoRow.svelte';
 	import MatchNote from '../ui/Note.svelte';
 	import { shortenTeamName } from '$lib/util';
+	import Button from '../ui/Button.svelte';
+	import { PreferencesState } from '$lib/state/preferences.svelte';
 
 	type Props = {
 		match: ResolvedMatchWithContext;
@@ -32,6 +34,8 @@
 		short = false
 	}: Props = $props();
 
+	const prefs = PreferencesState.get();
+
 	const winner = $derived(matchWinner(match));
 
 	// always show main roster on the left
@@ -42,10 +46,12 @@
 	const division = $derived(match.group?.division ?? match.bracket?.division ?? null);
 	const seasonSlug = $derived(seasonSlugProp ?? division?.season.slug);
 
-	const showScore = $derived(hasMatchScore(match));
+	const hasScore = $derived(hasMatchScore(match));
+
+	let spoiler = $derived(prefs.spoilerMode);
 </script>
 
-<div class={['relative overflow-hidden rounded-lg bg-gray-100 px-6 py-3 dark:bg-gray-900']}>
+<div class={['relative rounded-lg bg-gray-100 px-6 py-3 dark:bg-gray-900']}>
 	<MatchInfoRow
 		{match}
 		{short}
@@ -56,18 +62,27 @@
 		center
 	/>
 
-	<div class="flex flex-col items-center gap-2 sm:flex-row">
+	<div class="flex flex-col gap-2 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:items-stretch">
 		{@render side(leftTeam, {
 			root: 'flex-row sm:flex-row-reverse'
 		})}
 
 		<div
 			class={[
-				short ? 'w-12' : 'w-18',
-				'hidden shrink-0 text-center text-3xl text-gray-600 sm:block dark:text-gray-400'
+				short ? 'w-10' : 'w-18',
+				'hidden items-center justify-center gap-2 text-3xl text-gray-600 sm:flex dark:text-gray-400'
 			]}
 		>
-			{#if showScore}
+			{#if match.state === MatchState.SCHEDULED}
+				<span class="text-3xl font-semibold">/</span>
+			{:else if spoiler}
+				<Button
+					icon="ph:eye-slash-fill"
+					onclick={() => (spoiler = false)}
+					class="h-full px-6 text-lg"
+					kind="secondary"
+				/>
+			{:else if hasScore}
 				<span class={[winner === leftTeam && 'text-accent-600 dark:text-accent-500', 'font-bold']}
 					>{matchScore(match, leftTeam)}
 				</span>
@@ -79,8 +94,6 @@
 				>
 			{:else if match.state === MatchState.CANCELLED}
 				<span class="text-3xl font-semibold">x - x</span>
-			{:else if match.state === MatchState.SCHEDULED}
-				<span class="text-3xl font-semibold">vs</span>
 			{:else}
 				<span class="font-semibold">---</span>
 			{/if}
@@ -98,7 +111,9 @@
 	{@const won = roster && isWinner(match, side)}
 	{@const note = matchNote(match, side)}
 
-	<div class={[rootClass, 'flex w-full items-center gap-3 text-gray-700 dark:text-gray-300']}>
+	<div
+		class={[rootClass, 'flex items-center gap-3 overflow-hidden text-gray-700 dark:text-gray-300']}
+	>
 		{#if roster}
 			{@const href = `/lag/${roster.slug}/${seasonSlug}`}
 
@@ -111,7 +126,7 @@
 				{short ? shortenTeamName(roster.name) : roster.name}
 			</a>
 		{:else}
-			<div class="ml-2 font-medium text-gray-500">Okänt lag</div>
+			<div class="ml-2 font-medium text-gray-500">TBD</div>
 		{/if}
 
 		{#if note && !short}
@@ -122,7 +137,7 @@
 			<Icon icon="ph:crown-simple-fill" class="text-xl text-accent-600" title="Vinnare" />
 		{/if}
 
-		{#if showScore}
+		{#if hasScore}
 			<div
 				class={[
 					won ? 'text-accent-600' : 'text-gray-500',

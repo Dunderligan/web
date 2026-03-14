@@ -5,17 +5,18 @@
 	import { page } from '$app/state';
 	import { invalidateAll } from '$app/navigation';
 	import { logout } from '$lib/remote/auth.remote';
-	import { ThemeState } from '$lib/state/theme.svelte';
+	import { PreferencesState } from '$lib/state/preferences.svelte';
 	import Dropdown from '../ui/Dropdown.svelte';
 	import logo from '$lib/assets/images/logo.webp';
 	import { onMount } from 'svelte';
-	import { AuthRole, checkPermission, isModerator } from '$lib/authRole';
+	import { isModerator } from '$lib/authRole';
+	import type { DropdownItem } from '$lib/types';
 
 	type Props = {
-		dark?: boolean;
+		alwaysWhiteTextAtTop?: boolean;
 	};
 
-	let { dark }: Props = $props();
+	let { alwaysWhiteTextAtTop }: Props = $props();
 
 	const links = [
 		{
@@ -36,8 +37,10 @@
 		}
 	];
 
-	const theme = ThemeState.get();
+	const prefs = PreferencesState.get();
+
 	let scrolled = $state(false);
+	let loggingIn = $state(false);
 
 	const user = $derived(page.data.user);
 
@@ -47,13 +50,34 @@
 		return battletag.split('#')[0];
 	});
 
-	const userDropdownItems = $derived([
+	const preferencesDropdownItems: DropdownItem[] = $derived([
 		{
+			type: 'checkbox',
+			icon: alwaysWhiteTextAtTop ? 'ph:moon' : 'ph:sun',
+			label: 'Mörkt tema',
+			checked: prefs.theme === 'dark',
+			onchange: (newValue) => prefs.setTheme(newValue ? 'dark' : 'light')
+		},
+		{
+			type: 'checkbox',
+			icon: prefs.spoilerMode ? 'ph:eye-slash' : 'ph:eye',
+			label: 'Spoilerläge',
+			checked: prefs.spoilerMode,
+			onchange: (newValue) => prefs.setSpoilerMode(newValue)
+		}
+	]);
+
+	const userDropdownItems: DropdownItem[] = $derived([
+		{
+			type: 'button',
+			icon: 'ph:wrench',
 			label: 'Admin',
 			href: '/admin',
 			hidden: !isModerator(user?.role)
 		},
 		{
+			type: 'button',
+			icon: 'ph:sign-out',
 			label: 'Logga ut',
 			onclick: onLogout
 		}
@@ -81,9 +105,9 @@
 
 <nav
 	class={[
-		dark && 'dark',
+		alwaysWhiteTextAtTop && !scrolled ? 'text-gray-200' : 'text-gray-800 dark:text-gray-200',
 		scrolled && 'bg-gray-100/60 backdrop-blur-xs dark:bg-gray-900/60',
-		'fixed z-30 h-20 w-screen bg-linear-to-t from-transparent to-transparent px-12 text-gray-800 transition-colors duration-300 ease-out dark:text-gray-200'
+		'fixed z-30 h-20 w-screen bg-linear-to-t from-transparent to-transparent px-12 transition-colors duration-300 ease-out'
 	]}
 >
 	<div class="mx-auto flex h-full max-w-4xl items-center justify-between gap-2">
@@ -97,20 +121,26 @@
 			{/each}
 		</div>
 
-		<div class="flex items-center gap-8">
-			<button onclick={() => theme.toggle()} class="p-2 text-lg" title="Byt tema">
-				<Icon icon={theme.current === 'light' ? 'ph:sun-fill' : 'ph:moon-fill'} />
-			</button>
+		<div class="flex items-center gap-4">
+			<Dropdown items={preferencesDropdownItems} class="flex items-center justify-center p-3">
+				<Icon icon="ph:gear" class="text-xl" />
+			</Dropdown>
 
 			{#if user}
-				<Dropdown items={userDropdownItems} class="font-display font-medium">
+				<Dropdown items={userDropdownItems} class="p-1.5 font-display font-medium">
 					{shownName}
 				</Dropdown>
 			{:else}
 				<Button
 					href="/api/login/battlenet?next={page.url.pathname}"
-					kind="tertiary"
+					onclick={() => {
+						// setting loggingIn immediately causes the button to be disabled before the navigation occurs
+						setTimeout(() => (loggingIn = true));
+					}}
+					icon="ph:sign-in"
+					kind="secondary"
 					label="Logga in"
+					loading={loggingIn}
 				/>
 			{/if}
 

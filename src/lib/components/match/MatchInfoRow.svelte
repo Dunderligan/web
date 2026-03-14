@@ -73,11 +73,8 @@
 		{/if}
 	</div>
 
-	{#if match.vodUrl}
-		<a class="hover:underline" href={match.vodUrl} target="_blank" rel="noopener noreferrer">
-			<Icon icon="ph:arrow-square-out" />
-			VOD
-		</a>
+	{#if (division && !hideDivision) || match.vodUrl}
+		<span class="-mx-1.5 text-base">•</span>
 	{/if}
 
 	{#if division && !hideDivision}
@@ -87,8 +84,14 @@
 				: 'gruppspel'}"
 			class="hover:underline"
 		>
-			<Icon icon="ph:link" />
 			{bracket?.name ?? division.name}
+		</a>
+	{/if}
+
+	{#if match.vodUrl}
+		<a class="hover:underline" href={match.vodUrl} target="_blank" rel="noopener noreferrer">
+			<Icon icon="ph:arrow-square-out" />
+			VOD
 		</a>
 	{/if}
 </div>
