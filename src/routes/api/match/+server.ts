@@ -17,7 +17,7 @@ export const POST = async ({ request }) => {
 	const body = await request.json();
 	const parsedBody = matchSchema.parse(body);
 
-	const match = await db.insert(schema.match).values(parsedBody).returning();
+	const [match] = await db.insert(schema.match).values(parsedBody).returning();
 
 	return json(match);
 };
