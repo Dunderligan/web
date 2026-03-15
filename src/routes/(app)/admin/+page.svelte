@@ -82,9 +82,10 @@
 </AdminCard>
 
 {#if isAdmin(data.user?.role)}
-	<AdminCard title="Användare">
-		<div class="overflow-hidden rounded-lg">
+	<AdminCard>
+		<div class="space-y-1 overflow-hidden rounded-lg">
 			<AdminLink href="/admin/anvandare">Hantera användare</AdminLink>
+			<AdminLink href="/admin/api-nycklar">Hantera API-nycklar</AdminLink>
 		</div>
 	</AdminCard>
 

@@ -2,14 +2,36 @@ import { error, type Handle, type ServerInit } from '@sveltejs/kit';
 import session from '$lib/server/session';
 import { sequence } from '@sveltejs/kit/hooks';
 import { initDb } from '$lib/server/db';
-import { AuthRole, checkPermission, isModerator } from '$lib/authRole';
+import { isModerator } from '$lib/authRole';
+import apiToken from '$lib/server/apiToken';
 
 const handleAuth: Handle = async ({ event, resolve }) => {
+	event.locals.user = null;
+	event.locals.session = null;
+
+	const authHeader = event.request.headers.get('Authorization');
+
+	if (authHeader) {
+		if (!authHeader.startsWith('Bearer ')) {
+			throw error(401, 'Invalid Authorization header');
+		}
+
+		const token = authHeader.substring('Bearer '.length);
+		const { key, user } = await apiToken.validateToken(token);
+
+		if (!key || !user) {
+			throw error(401, 'Invalid API token');
+		}
+
+		event.locals.user = user;
+
+		return resolve(event);
+	}
+
+	// fallback to session auth
 	const sessionToken = event.cookies.get(session.TOKEN_COOKIE_NAME);
 
 	if (!sessionToken) {
-		event.locals.user = null;
-		event.locals.session = null;
 		return resolve(event);
 	}
 

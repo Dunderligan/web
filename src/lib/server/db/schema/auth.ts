@@ -1,4 +1,4 @@
-import { integer, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { integer, pgEnum, pgTable, text, timestamp, unique, uuid } from 'drizzle-orm/pg-core';
 import { enumToPgEnum, timestamps } from './util';
 import { AuthRole } from '../../../authRole';
 
@@ -21,6 +21,21 @@ export const session = pgTable('session', {
 	...timestamps
 });
 
-export type Session = typeof session.$inferSelect;
+export const apiKey = pgTable(
+	'api_key',
+	{
+		id: uuid().defaultRandom().primaryKey(),
+		userId: uuid()
+			.notNull()
+			.references(() => user.id),
+		tokenHash: text().notNull().unique(),
+		name: text().notNull(),
+		lastUsedAt: timestamp(),
+		...timestamps
+	},
+	(t) => [unique().on(t.userId, t.name)]
+);
 
 export type User = typeof user.$inferSelect;
+export type Session = typeof session.$inferSelect;
+export type ApiKey = typeof apiKey.$inferSelect;
