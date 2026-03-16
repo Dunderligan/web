@@ -2,8 +2,7 @@ import { db } from '$lib/server/db';
 import { entityQuery, fullMatchColumns } from '$lib/server/db/helpers';
 import { calculateStandings } from '$lib/table.js';
 import { aggregateGroups } from '$lib/util';
-import { json } from '@sveltejs/kit';
-import { error } from 'console';
+import { json, error } from '@sveltejs/kit';
 
 export const GET = async ({ params }) => {
 	const division = await db.query.division.findFirst({
