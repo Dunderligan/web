@@ -29,6 +29,9 @@ type Season = {
 }
 
 type Division = {
+    id: string;
+    name: string;
+    slug: string;
     groups: Group[];
     brackets: Bracket[];
 }
