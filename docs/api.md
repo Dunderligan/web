@@ -59,7 +59,7 @@ Returns groups, rosters and brackets for one division.
 Response type:
 
 ```ts
-type Divsision = {
+type DivisionResponse = {
     id: string;
     name: string;
     slug: string;
