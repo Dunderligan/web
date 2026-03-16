@@ -103,7 +103,9 @@ export const createApiKey = command(
 
 		const { key, token } = await apiToken.createKey(name, locals.user!.id);
 
-		return { key, token };
+		const { tokenHash, ...sanitizedKey } = key;
+
+		return { key: sanitizedKey, token };
 	}
 );
 

@@ -9,6 +9,9 @@ export const load = async ({ locals }) => {
 	const keys = await db.query.apiKey.findMany({
 		where: {
 			userId: locals.user.id
+		},
+		columns: {
+			tokenHash: false
 		}
 	});
 
