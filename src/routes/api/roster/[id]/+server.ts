@@ -1,7 +1,7 @@
 import { db } from '$lib/server/db';
 import { entityQuery, memberQuery, nestedGroupQuery } from '$lib/server/db/helpers';
-import { json } from '@sveltejs/kit';
-import { error } from 'console';
+import { json, error } from '@sveltejs/kit';
+
 
 export const GET = async ({ params }) => {
 	const roster = await db.query.roster.findFirst({

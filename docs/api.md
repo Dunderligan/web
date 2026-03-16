@@ -29,6 +29,9 @@ type Season = {
 }
 
 type Division = {
+    id: string;
+    name: string;
+    slug: string;
     groups: Group[];
     brackets: Bracket[];
 }
@@ -56,7 +59,7 @@ Returns groups, rosters and brackets for one division.
 Response type:
 
 ```ts
-type Divsision = {
+type DivisionResponse = {
     id: string;
     name: string;
     slug: string;
