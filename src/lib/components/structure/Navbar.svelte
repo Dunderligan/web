@@ -149,13 +149,13 @@
 					<Icon icon="ph:list" class="text-2xl" />
 				</DropdownMenu.Trigger>
 				<DropdownMenu.Content
-					class="z-50 flex w-lvw flex-col items-stretch gap-1 bg-white py-6 shadow-lg"
+					class="z-50 flex w-lvw flex-col items-stretch gap-1 bg-white py-6 shadow-lg dark:bg-gray-900"
 					avoidCollisions={false}
 				>
 					{#each links as { href, label } (href)}
 						<DropdownMenu.Item>
 							<a
-								class="block px-8 py-2 text-xl font-semibold text-gray-800 hover:bg-gray-100 hover:text-accent-600 hover:underline"
+								class="block px-8 py-2 text-xl font-semibold text-gray-800 dark:text-gray-200"
 								{href}>{label}</a
 							>
 						</DropdownMenu.Item>
