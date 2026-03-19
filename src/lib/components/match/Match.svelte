@@ -63,9 +63,7 @@
 	/>
 
 	<div class="flex flex-col gap-2 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:items-stretch">
-		{@render side(leftTeam, {
-			root: 'flex-row sm:flex-row-reverse'
-		})}
+		{@render side(leftTeam, 'flex-row sm:flex-row-reverse')}
 
 		<div
 			class={[
@@ -76,12 +74,7 @@
 			{#if match.state === MatchState.SCHEDULED}
 				<span class="text-3xl font-semibold">/</span>
 			{:else if spoiler}
-				<Button
-					icon="ph:eye-slash-fill"
-					onclick={() => (spoiler = false)}
-					class="h-full px-6 text-lg"
-					kind="secondary"
-				/>
+				{@render spoilerButton()}
 			{:else if hasScore}
 				<span class={[winner === leftTeam && 'text-accent-600 dark:text-accent-500', 'font-bold']}
 					>{matchScore(match, leftTeam)}
@@ -103,30 +96,26 @@
 	</div>
 </div>
 
-{#snippet side(
-	side: MatchSide,
-	{ root: rootClass, name: nameClass }: { root?: ClassValue; name?: ClassValue } = {}
-)}
+{#snippet side(side: MatchSide, classProp?: ClassValue)}
 	{@const roster = matchRoster(match, side)}
 	{@const won = roster && isWinner(match, side)}
 	{@const note = matchNote(match, side)}
 
 	<div
-		class={[rootClass, 'flex items-center gap-3 overflow-hidden text-gray-700 dark:text-gray-300']}
+		class={[classProp, 'flex items-center gap-3 overflow-hidden text-gray-700 dark:text-gray-300']}
 	>
 		{#if roster}
 			{@const href = `/lag/${roster.slug}/${seasonSlug}`}
 
 			<RosterLogo id={roster.id} {href} class="size-10 sm:size-12" />
 
-			<a
-				{href}
-				class={[nameClass, short && 'shrink-0', 'truncate text-lg font-semibold hover:underline']}
-			>
+			<a {href} class={[short && 'shrink-0', 'truncate text-lg font-semibold hover:underline']}>
 				{short ? shortenTeamName(roster.name) : roster.name}
 			</a>
 		{:else}
-			<div class="ml-2 font-medium text-gray-500">TBD</div>
+			<Icon icon="ph:minus-circle" class="shrink-0 text-4xl text-gray-400" />
+
+			<div class="text-lg font-medium dark:text-gray-400">TBD</div>
 		{/if}
 
 		{#if note && !short}
@@ -137,7 +126,9 @@
 			<Icon icon="ph:crown-simple-fill" class="text-xl text-accent-600" title="Vinnare" />
 		{/if}
 
-		{#if hasScore}
+		{#if spoiler}
+			{@render spoilerButton()}
+		{:else if hasScore}
 			<div
 				class={[
 					won ? 'text-accent-600' : 'text-gray-500',
@@ -148,4 +139,13 @@
 			</div>
 		{/if}
 	</div>
+{/snippet}
+
+{#snippet spoilerButton()}
+	<Button
+		icon="ph:eye-slash-fill"
+		onclick={() => (spoiler = false)}
+		class="h-full px-6 text-lg"
+		kind="secondary"
+	/>
 {/snippet}
