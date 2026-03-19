@@ -124,9 +124,9 @@
 				{short ? shortenTeamName(roster.name) : roster.name}
 			</a>
 		{:else}
-			<Icon icon="ph:minus-circle" class="shrink-0 text-4xl text-gray-400" />
+			<Icon icon="ph:minus-circle" class="shrink-0 text-4xl text-gray-600 dark:text-gray-400" />
 
-			<div class="text-lg font-medium dark:text-gray-400">TBD</div>
+			<div class="text-lg font-semibold text-gray-600 dark:text-gray-400">TBD</div>
 		{/if}
 
 		{#if note && !short}

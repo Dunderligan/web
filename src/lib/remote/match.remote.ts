@@ -32,12 +32,14 @@ export const queryMatches = query(
 			where: {
 				AND: [
 					{
-						// don't include matches without both of the rosters assigned
+						// don't include matches without any roster assigned
 						OR: [
 							{
 								rosterAId: {
 									isNotNull: true
-								},
+								}
+							},
+							{
 								rosterBId: {
 									isNotNull: true
 								}

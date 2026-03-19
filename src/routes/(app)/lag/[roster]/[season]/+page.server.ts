@@ -3,13 +3,12 @@ import {
 	matchRosterQuery,
 	nestedBracketQuery,
 	nestedGroupQuery,
-	rolesOrder,
 	hiddenSeasonFilter,
-	memberQuery
+	memberQuery,
+	fullMatchQueryWithContext
 } from '$lib/server/db/helpers';
 import { db } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
-import { sql } from 'drizzle-orm';
 
 export const load = async ({ params, locals }) => {
 	const data = await db.query.roster.findFirst({
@@ -68,12 +67,6 @@ export const load = async ({ params, locals }) => {
 
 	const matches = await db.query.match.findMany({
 		where: {
-			rosterAId: {
-				isNotNull: true
-			},
-			rosterBId: {
-				isNotNull: true
-			},
 			OR: [
 				{
 					rosterAId: data.id
@@ -83,25 +76,7 @@ export const load = async ({ params, locals }) => {
 				}
 			]
 		},
-		orderBy: groupMatchOrder,
-		columns: {
-			id: true,
-			teamAScore: true,
-			teamBScore: true,
-			draws: true,
-			teamANote: true,
-			teamBNote: true,
-			playedAt: true,
-			scheduledAt: true,
-			state: true,
-			vodUrl: true
-		},
-		with: {
-			rosterA: matchRosterQuery,
-			rosterB: matchRosterQuery,
-			group: nestedGroupQuery,
-			bracket: nestedBracketQuery
-		}
+		...fullMatchQueryWithContext
 	});
 
 	const currentRosterInfo = data.team.rosters.find((r) => r.id === data.id)!;
