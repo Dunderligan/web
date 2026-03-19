@@ -3,8 +3,7 @@
 		type ClassValue,
 		type NestedBracket,
 		type NestedGroup,
-		type MatchWithoutRosters,
-		MatchState
+		type MatchWithoutRosters
 	} from '$lib/types';
 	import { formatDate, formatDateTime } from '$lib/util';
 	import Icon from '../ui/Icon.svelte';

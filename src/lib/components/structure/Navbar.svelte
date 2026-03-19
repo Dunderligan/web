@@ -107,7 +107,7 @@
 	class={[
 		alwaysWhiteTextAtTop && !scrolled ? 'text-gray-200' : 'text-gray-800 dark:text-gray-200',
 		scrolled && 'bg-gray-100/60 backdrop-blur-xs dark:bg-gray-900/60',
-		'fixed z-30 h-20 w-screen bg-linear-to-t from-transparent to-transparent px-12 transition-colors duration-300 ease-out'
+		'fixed z-30 h-20 w-screen bg-linear-to-t from-transparent to-transparent px-8 transition-colors duration-300 ease-out'
 	]}
 >
 	<div class="mx-auto flex h-full max-w-4xl items-center justify-between gap-2">
@@ -117,7 +117,7 @@
 			</a>
 
 			{#each links as { href, label } (href)}
-				<a class="hidden font-medium hover:underline sm:block" {href}>{label}</a>
+				<a class="hidden font-medium hover:underline md:block" {href}>{label}</a>
 			{/each}
 		</div>
 
@@ -145,7 +145,7 @@
 			{/if}
 
 			<DropdownMenu.Root>
-				<DropdownMenu.Trigger class="flex items-center sm:hidden" aria-label="Meny">
+				<DropdownMenu.Trigger class="flex items-center md:hidden" aria-label="Meny">
 					<Icon icon="ph:list" class="text-2xl" />
 				</DropdownMenu.Trigger>
 				<DropdownMenu.Content
