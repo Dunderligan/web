@@ -88,17 +88,6 @@
 			<AdminLink href="/admin/api-nycklar">Hantera API-nycklar</AdminLink>
 		</div>
 	</AdminCard>
-
-	<AdminCard title="Ladda upp data">
-		<div>
-			<input bind:files={dataFiles} type="file" accept="application/json" />
-			<Button
-				onclick={() => uploadData(uploadSeasonData)}
-				disabled={!dataFiles?.length}
-				loading={uploading}>Ladda upp</Button
-			>
-		</div>
-	</AdminCard>
 {/if}
 
 <CreateDialog

@@ -245,9 +245,9 @@ export type MatchListProps = {
 	hideIfEmpty?: boolean;
 	hideDivision?: boolean;
 	title?: string;
-	button?: Snippet;
 	class?: ClassValue;
 	short?: boolean;
+	matchArchiveParams?: string;
 	matches: ResolvedMatchWithContext[];
 };
 

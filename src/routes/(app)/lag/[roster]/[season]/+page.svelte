@@ -93,6 +93,7 @@
 			mainRosterId={roster.id}
 			hideIfEmpty
 			hideDivision
+			matchArchiveParams="roster={roster.id}&status=scheduled"
 		/>
 
 		<MatchList
@@ -103,6 +104,7 @@
 			hideIfEmpty
 			hideDivision
 			class="mt-6"
+			matchArchiveParams="roster={roster.id}&status=played,walkover"
 		/>
 	</section>
 

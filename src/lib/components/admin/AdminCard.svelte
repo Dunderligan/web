@@ -3,10 +3,11 @@
 
 	type Props = {
 		title?: string;
+		description?: Snippet;
 		children?: Snippet;
 	};
 
-	let { title, children }: Props = $props();
+	let { title, description, children }: Props = $props();
 </script>
 
 <div
@@ -14,6 +15,12 @@
 >
 	{#if title}
 		<h2 class="font-display text-2xl font-bold text-gray-700 dark:text-gray-100">{title}</h2>
+	{/if}
+
+	{#if description}
+		<div class="-mt-2 mb-6 text-lg font-medium text-gray-600 dark:text-gray-400">
+			{@render description()}
+		</div>
 	{/if}
 
 	{@render children?.()}

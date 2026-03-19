@@ -56,20 +56,21 @@
 <PageSection topMargin={false}>
 	<div class="flex flex-col gap-2 md:flex-row">
 		<div>
-			<MatchList title="Senaste matcherna" matches={data.matches.latest} hideIfEmpty />
+			<MatchList
+				title="Senaste matcherna"
+				matches={data.matches.latest}
+				hideIfEmpty
+				matchArchiveParams="status=played"
+			/>
 		</div>
 
 		<div class="shrink-0 grow px-2">
-			<MatchList title="Kommande matcher" matches={data.matches.upcoming} short>
-				{#snippet button()}
-					<Button
-						href="/arkiv/matcher?prev=/&status=scheduled"
-						label="Se alla"
-						icon="ph:arrow-right"
-						kind="secondary"
-					/>
-				{/snippet}
-			</MatchList>
+			<MatchList
+				title="Kommande matcher"
+				matches={data.matches.upcoming}
+				short
+				matchArchiveParams="status=scheduled"
+			/>
 		</div>
 	</div>
 </PageSection>

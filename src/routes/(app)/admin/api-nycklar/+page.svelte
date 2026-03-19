@@ -59,6 +59,14 @@
 <Breadcrumbs crumbs={[{ label: 'API-nycklar', href: '/admin/api-nycklar' }]} />
 
 <AdminCard title="Hantera API-nycklar">
+	{#snippet description()}
+		API-nycklar används för att autentisera tredjepartstjänster som behöver utföra handlingar i ditt
+		namn.
+		<br />
+		I nuläget ger API-nycklar tillgång till hela ditt konto, så dela bara ut dem till tjänster du litar
+		på!
+	{/snippet}
+
 	{#if keys.length > 0}
 		<Table
 			rows={keys}

@@ -195,6 +195,7 @@
 			seasonSlug={season.slug}
 			class="mt-12"
 			hideIfEmpty
+			matchArchiveParams="division={division.id}&status=scheduled"
 		/>
 
 		{#if division.latestMatches.length > 0}
@@ -203,16 +204,8 @@
 				title="Senaste matcherna"
 				matches={division.latestMatches.map(resolveMatch)}
 				seasonSlug={season.slug}
-			>
-				{#snippet button()}
-					<Button
-						href="/arkiv/matcher?division={division.id}&prev={page.url.pathname}"
-						label="Se alla"
-						icon="ph:arrow-right"
-						kind="secondary"
-					/>
-				{/snippet}
-			</MatchList>
+				matchArchiveParams="division={division.id}&status=!scheduled"
+			/>
 		{/if}
 	{:else}
 		{#each division.brackets as bracket (bracket.id)}
