@@ -44,6 +44,20 @@
 
 	const user = $derived(page.data.user);
 
+	const loginHref = $derived(`/api/login/battlenet?next=${page.url.pathname}`);
+
+	const hamburgerLinks = $derived.by(() => {
+		if (user) return links;
+
+		return [
+			...links,
+			{
+				href: loginHref,
+				label: 'Logga in'
+			}
+		];
+	});
+
 	const shownName = $derived.by(() => {
 		const battletag = user?.battletag;
 		if (!battletag) return null;
@@ -132,7 +146,7 @@
 				</Dropdown>
 			{:else}
 				<Button
-					href="/api/login/battlenet?next={page.url.pathname}"
+					href={loginHref}
 					onclick={() => {
 						// setting loggingIn immediately causes the button to be disabled before the navigation occurs
 						setTimeout(() => (loggingIn = true));
@@ -140,6 +154,7 @@
 					icon="ph:sign-in"
 					kind="secondary"
 					label="Logga in"
+					class="hidden! md:inline-flex!"
 					loading={loggingIn}
 				/>
 			{/if}
@@ -152,7 +167,7 @@
 					class="z-50 flex w-lvw flex-col items-stretch gap-1 bg-white py-6 shadow-lg dark:bg-gray-900"
 					avoidCollisions={false}
 				>
-					{#each links as { href, label } (href)}
+					{#each hamburgerLinks as { href, label } (href)}
 						<DropdownMenu.Item>
 							<a
 								class="block px-8 py-2 text-xl font-semibold text-gray-800 dark:text-gray-200"
