@@ -16,12 +16,6 @@ async function fetchMatches({
 	return await db.query.match.findMany({
 		limit,
 		where: {
-			rosterAId: {
-				isNotNull: true
-			},
-			rosterBId: {
-				isNotNull: true
-			},
 			...filter,
 			...hiddenMatchFilter(user)
 		},

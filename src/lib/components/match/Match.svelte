@@ -40,15 +40,20 @@
 
 	// always show main roster on the left
 	const flipped = $derived(mainRosterId === match.rosterB?.id);
-	const leftTeam = $derived(flipped ? 'B' : 'A');
-	const rightTeam = $derived(flipSide(leftTeam));
+	const leftSide = $derived(flipped ? 'B' : 'A');
+	const rightSide = $derived(flipSide(leftSide));
 
 	const division = $derived(match.group?.division ?? match.bracket?.division ?? null);
 	const seasonSlug = $derived(seasonSlugProp ?? division?.season.slug);
 
-	const hasScore = $derived(hasMatchScore(match));
-
 	let spoiler = $derived(prefs.spoilerMode);
+
+	const shownState = $derived.by(() => {
+		if (match.state === MatchState.SCHEDULED) return 'scheduled';
+		if (match.state === MatchState.CANCELLED) return 'cancelled';
+		if (spoiler) return 'spoiler';
+		return 'score';
+	});
 </script>
 
 <div class={['relative rounded-lg bg-gray-100 px-6 py-3 dark:bg-gray-900']}>
@@ -63,40 +68,46 @@
 	/>
 
 	<div class="flex flex-col gap-2 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:items-stretch">
-		{@render side(leftTeam, 'flex-row sm:flex-row-reverse')}
+		{@render side({ side: leftSide, class: 'flex-row sm:flex-row-reverse', showSpoiler: true })}
 
 		<div
 			class={[
-				short ? 'w-10' : 'w-18',
-				'hidden items-center justify-center gap-2 text-3xl text-gray-600 sm:flex dark:text-gray-400'
+				short ? 'w-10' : 'w-20',
+				'hidden items-center justify-center gap-2.5 text-3xl text-gray-600 sm:flex dark:text-gray-400'
 			]}
 		>
-			{#if match.state === MatchState.SCHEDULED}
+			{#if shownState === 'scheduled'}
 				<span class="text-3xl font-semibold">/</span>
-			{:else if spoiler}
-				{@render spoilerButton()}
-			{:else if hasScore}
-				<span class={[winner === leftTeam && 'text-accent-600 dark:text-accent-500', 'font-bold']}
-					>{matchScore(match, leftTeam)}
+			{:else if shownState === 'cancelled'}
+				<span class="text-3xl font-semibold">x - x</span>
+			{:else if shownState === 'spoiler'}
+				{@render spoilerButton({ class: 'h-full' })}
+			{:else}
+				<span class={[winner === leftSide && 'text-accent-600 dark:text-accent-500', 'font-bold']}
+					>{matchScore(match, leftSide)}
 				</span>
 
 				<span class="font-bold">-</span>
 
-				<span class={[winner === rightTeam && 'text-accent-600 dark:text-accent-500', 'font-bold']}
-					>{matchScore(match, rightTeam)}</span
+				<span class={[winner === rightSide && 'text-accent-600 dark:text-accent-500', 'font-bold']}
+					>{matchScore(match, rightSide)}</span
 				>
-			{:else if match.state === MatchState.CANCELLED}
-				<span class="text-3xl font-semibold">x - x</span>
-			{:else}
-				<span class="font-semibold">---</span>
 			{/if}
 		</div>
 
-		{@render side(rightTeam)}
+		{@render side({ side: rightSide })}
 	</div>
 </div>
 
-{#snippet side(side: MatchSide, classProp?: ClassValue)}
+{#snippet side({
+	side,
+	class: classProp,
+	showSpoiler
+}: {
+	side: MatchSide;
+	class?: ClassValue;
+	showSpoiler?: boolean;
+})}
 	{@const roster = matchRoster(match, side)}
 	{@const won = roster && isWinner(match, side)}
 	{@const note = matchNote(match, side)}
@@ -126,9 +137,9 @@
 			<Icon icon="ph:crown-simple-fill" class="text-xl text-accent-600" title="Vinnare" />
 		{/if}
 
-		{#if spoiler}
-			{@render spoilerButton()}
-		{:else if hasScore}
+		{#if shownState === 'spoiler' && showSpoiler}
+			{@render spoilerButton({ class: 'ml-auto sm:hidden!' })}
+		{:else if shownState === 'score'}
 			<div
 				class={[
 					won ? 'text-accent-600' : 'text-gray-500',
@@ -141,11 +152,11 @@
 	</div>
 {/snippet}
 
-{#snippet spoilerButton()}
+{#snippet spoilerButton({ class: classProp }: { class?: ClassValue } = {})}
 	<Button
 		icon="ph:eye-slash-fill"
 		onclick={() => (spoiler = false)}
-		class="h-full px-6 text-lg"
+		class={[classProp, 'px-6 text-lg']}
 		kind="secondary"
 	/>
 {/snippet}
