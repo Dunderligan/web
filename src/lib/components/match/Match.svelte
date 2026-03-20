@@ -46,7 +46,15 @@
 	const division = $derived(match.group?.division ?? match.bracket?.division ?? null);
 	const seasonSlug = $derived(seasonSlugProp ?? division?.season.slug);
 
-	let spoiler = $derived(prefs.spoilerMode);
+	const SPOILER_MODE_DURATION = 1000 * 60 * 60 * 24 * 7; // 7 days
+
+	let spoiler = $derived.by(() => {
+		if (!prefs.spoilerMode) return false;
+		if (!match.playedAt) return false;
+
+		const timeSince = Date.now() - new Date(match.playedAt).getTime();
+		return timeSince < SPOILER_MODE_DURATION;
+	});
 
 	const shownState = $derived.by(() => {
 		if (match.state === MatchState.SCHEDULED) return 'scheduled';
@@ -133,7 +141,7 @@
 			<MatchNote content={note} />
 		{/if}
 
-		{#if won}
+		{#if won && !spoiler}
 			<Icon icon="ph:crown-simple-fill" class="text-xl text-accent-600" title="Vinnare" />
 		{/if}
 
