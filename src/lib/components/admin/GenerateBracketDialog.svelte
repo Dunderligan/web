@@ -4,17 +4,19 @@
 	import Checkbox from '../ui/Checkbox.svelte';
 	import InputField from '../ui/InputField.svelte';
 	import Label from '../ui/Label.svelte';
+	import Note from '../ui/Note.svelte';
 	import Select from '../ui/Select.svelte';
 	import CreateDialog from './CreateDialog.svelte';
 
 	type Props = {
 		open: boolean;
+		divisionName: string;
 		divisionId: string;
 	};
 
-	let { open = $bindable(), divisionId }: Props = $props();
+	let { open = $bindable(), divisionId, divisionName }: Props = $props();
 
-	let name = $state('');
+	let name = $derived(divisionName);
 	let roundCount = $state(2);
 	let avoidPreviousMatches = $state(true);
 	let flipStandings = $state(false);
@@ -35,6 +37,11 @@
 
 <CreateDialog wide title="Skapa bracket" bind:open oncreate={submit} disabled={!roundCount}>
 	<Label label="Namn">
+		<Note
+			content="Bracketnamnet används för att särskilja olika brackets i samma division."
+			class="mr-2"
+		/>
+
 		<InputField bind:value={name} placeholder="T.ex. Dunderligan" />
 	</Label>
 

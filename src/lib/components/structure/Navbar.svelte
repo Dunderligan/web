@@ -67,7 +67,7 @@
 	const preferencesDropdownItems: DropdownItem[] = $derived([
 		{
 			type: 'checkbox',
-			icon: alwaysWhiteTextAtTop ? 'ph:moon' : 'ph:sun',
+			icon: prefs.theme === 'dark' ? 'ph:moon' : 'ph:sun',
 			label: 'Mörkt tema',
 			checked: prefs.theme === 'dark',
 			onchange: (newValue) => prefs.setTheme(newValue ? 'dark' : 'light')

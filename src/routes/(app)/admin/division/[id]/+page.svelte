@@ -136,6 +136,10 @@
 	</Label>
 </CreateDialog>
 
-<GenerateBracketDialog bind:open={createBracketOpen} divisionId={division.id} />
+<GenerateBracketDialog
+	bind:open={createBracketOpen}
+	divisionId={division.id}
+	divisionName={division.name}
+/>
 
 <SaveToast />

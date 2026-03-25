@@ -81,7 +81,7 @@
 		<div
 			class={[
 				short ? 'w-10' : 'w-20',
-				'hidden items-center justify-center gap-2.5 text-3xl text-gray-600 sm:flex dark:text-gray-400'
+				'hidden items-center justify-center gap-2 text-3xl text-gray-600 sm:flex dark:text-gray-400'
 			]}
 		>
 			{#if shownState === 'scheduled'}

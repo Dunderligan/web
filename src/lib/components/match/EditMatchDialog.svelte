@@ -173,7 +173,7 @@
 						/>
 					</Label>
 
-					<Label label="Anteckningar lag A">
+					<Label label="Anteckning lag A">
 						<InputField
 							bind:value={match.teamANote}
 							onchange={saveCtx.setDirty}
@@ -182,7 +182,7 @@
 						/>
 					</Label>
 
-					<Label label="Anteckningar lag B">
+					<Label label="Anteckning lag B">
 						<InputField
 							bind:value={match.teamBNote}
 							onchange={saveCtx.setDirty}

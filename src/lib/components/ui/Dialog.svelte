@@ -53,7 +53,7 @@
 				{#if open}
 					<div
 						class={[
-							'fixed top-[50%] left-[50%] z-40 w-full max-w-[calc(100%-1rem)] translate-x-[-50%] translate-y-[-50%] space-y-2 rounded-xl bg-white p-8 shadow-xl dark:border dark:border-gray-800 dark:bg-gray-900',
+							'fixed top-[50%] left-[50%] z-40 w-full max-w-[calc(100%-1rem)] translate-x-[-50%] translate-y-[-50%] space-y-2 rounded-xl bg-white p-8 text-gray-600 shadow-xl dark:border dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300',
 							wide ? 'sm:max-w-xl' : 'sm:max-w-lg'
 						]}
 						transition:fade={{ duration: 25 }}
@@ -72,9 +72,7 @@
 						>
 
 						{#if description}
-							<Dialog.Description
-								class="mb-4 text-center font-medium text-gray-600 dark:text-gray-300"
-							>
+							<Dialog.Description class="mb-4 text-center font-medium">
 								{#if typeof description === 'string'}
 									{description}
 								{:else}
@@ -86,7 +84,7 @@
 						{@render children?.()}
 
 						{#if buttons}
-							<div class="flex items-center justify-end gap-2 pt-4">
+							<div class="flex items-center justify-end gap-2 pt-2">
 								{#each buttons as button}
 									<Button {...button} />
 								{/each}
