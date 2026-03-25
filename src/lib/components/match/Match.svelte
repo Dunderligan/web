@@ -46,7 +46,7 @@
 	const division = $derived(match.group?.division ?? match.bracket?.division ?? null);
 	const seasonSlug = $derived(seasonSlugProp ?? division?.season.slug);
 
-	const SPOILER_MODE_DURATION = 1000 * 60 * 60 * 24 * 7; // 7 days
+	const SPOILER_MODE_DURATION = 1000 * 60 * 60 * 24 * 14; // 14 days
 
 	let spoiler = $derived.by(() => {
 		if (!prefs.spoilerMode) return false;
