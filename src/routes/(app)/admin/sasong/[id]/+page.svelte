@@ -56,6 +56,8 @@
 			name: season.name,
 			startedAt: season.startedAt,
 			endedAt: season.endedAt,
+			legacyRanks: season.legacyRanks,
+			legacySeeding: season.legacySeeding,
 			hidden: season.hidden,
 			registration
 		});
@@ -183,6 +185,16 @@
 			<Label label="Gömd">
 				<Note content="Gömda säsonger kan bara visas av admins." class="mr-2" />
 				<Checkbox bind:checked={season.hidden} onCheckedChange={saveCtx.setDirty} />
+			</Label>
+
+			<div class="h-4"></div>
+
+			<Label label="SR-poäng">
+				<Checkbox bind:checked={season.legacyRanks} onCheckedChange={saveCtx.setDirty} />
+			</Label>
+
+			<Label label="Legacy-seeding">
+				<Checkbox bind:checked={season.legacySeeding} onCheckedChange={saveCtx.setDirty} />
 			</Label>
 		</div>
 

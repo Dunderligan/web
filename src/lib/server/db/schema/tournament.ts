@@ -22,6 +22,7 @@ export const season = pgTable('season', {
 	startedAt: timestamp().notNull(),
 	endedAt: timestamp(),
 	legacyRanks: boolean().notNull().default(false),
+	legacySeeding: boolean().notNull().default(false),
 	hidden: boolean().notNull().default(false),
 	...timestamps
 });
@@ -61,22 +62,19 @@ export const team = pgTable('team', {
 	...timestamps
 });
 
-export const roster = pgTable(
-	'roster',
-	{
-		id: uuid().primaryKey().defaultRandom(),
-		name: text().notNull(),
-		slug: text().notNull(),
-		teamId: uuid()
-			.notNull()
-			.references(() => team.id, { onDelete: 'cascade' }),
-		groupId: uuid()
-			.notNull()
-			.references(() => group.id, { onDelete: 'cascade' }),
-		resigned: boolean().notNull().default(false),
-		...timestamps
-	},
-);
+export const roster = pgTable('roster', {
+	id: uuid().primaryKey().defaultRandom(),
+	name: text().notNull(),
+	slug: text().notNull(),
+	teamId: uuid()
+		.notNull()
+		.references(() => team.id, { onDelete: 'cascade' }),
+	groupId: uuid()
+		.notNull()
+		.references(() => group.id, { onDelete: 'cascade' }),
+	resigned: boolean().notNull().default(false),
+	...timestamps
+});
 
 export const socialPlatformEnum = pgEnum('social_platform', enumToPgEnum(SocialPlatform));
 

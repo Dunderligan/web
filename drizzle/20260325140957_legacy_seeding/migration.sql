@@ -1,0 +1,1 @@
+ALTER TABLE "season" ADD COLUMN "legacy_seeding" boolean DEFAULT false NOT NULL;

@@ -64,6 +64,8 @@ export const updateSeason = command(
 		name: z.string(),
 		startedAt: z.date(),
 		endedAt: z.date().nullish(),
+		legacyRanks: z.boolean(),
+		legacySeeding: z.boolean(),
 		hidden: z.boolean(),
 		registration: z
 			.object({
@@ -73,7 +75,7 @@ export const updateSeason = command(
 			})
 			.nullish()
 	}),
-	async ({ id, name, startedAt, endedAt, hidden, registration }) => {
+	async ({ id, name, startedAt, endedAt, legacyRanks, legacySeeding, hidden, registration }) => {
 		await roleGuard(AuthRole.ADMIN);
 
 		const slug = toSlug(name);
@@ -81,7 +83,7 @@ export const updateSeason = command(
 		await db.transaction(async (tx) => {
 			await tx
 				.update(schema.season)
-				.set({ name, slug, startedAt, endedAt, hidden })
+				.set({ name, slug, startedAt, endedAt, legacyRanks, legacySeeding, hidden })
 				.where(eq(schema.season.id, id));
 
 			if (registration) {

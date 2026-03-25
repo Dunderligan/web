@@ -166,7 +166,7 @@
 				score
 			}))}
 
-			{#if table.type === 'grupp'}
+			{#if table.title}
 				<Subheading class="mt-6 mb-4 flex justify-between">
 					{table.title}
 				</Subheading>
@@ -184,7 +184,7 @@
 					icon="ph:pencil-simple"
 					kind="secondary"
 					class="mt-4 max-w-max"
-					href="/admin/{table.type}/{table.id}"
+					href={table.adminUrl}
 				/>
 			{/if}
 		{/each}
