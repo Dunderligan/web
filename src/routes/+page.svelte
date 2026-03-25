@@ -55,7 +55,7 @@
 
 <PageSection topMargin={false}>
 	<div class="flex flex-col gap-2 md:flex-row">
-		<div>
+		<div class="grow">
 			<MatchList
 				title="Senaste matcherna"
 				matches={data.matches.latest}
@@ -64,7 +64,7 @@
 			/>
 		</div>
 
-		<div class="shrink-0 grow px-2">
+		<div class="shrink-0 px-2">
 			<MatchList
 				title="Kommande matcher"
 				matches={data.matches.upcoming}
