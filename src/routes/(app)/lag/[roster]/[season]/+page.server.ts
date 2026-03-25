@@ -1,12 +1,12 @@
 import {
 	nestedGroupQuery,
-	rolesOrder,
-	fullMatchQueryWithContext,
-	hiddenGroupFilter
+	hiddenGroupFilter,
+	hiddenSeasonFilter,
+	memberQuery,
+	fullMatchQueryWithContext
 } from '$lib/server/db/helpers';
 import { db } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
-import { sql } from 'drizzle-orm';
 
 export const load = async ({ params, locals }) => {
 	const data = await db.query.roster.findFirst({
@@ -23,26 +23,10 @@ export const load = async ({ params, locals }) => {
 		columns: {
 			id: true,
 			name: true,
-			slug: true,
+			slug: true
 		},
 		with: {
-			members: {
-				orderBy: (t) => sql`${rolesOrder(t.role)}, ${t.playerId} ASC`,
-				columns: {
-					isCaptain: true,
-					tier: true,
-					rank: true,
-					sr: true,
-					role: true
-				},
-				with: {
-					player: {
-						columns: {
-							battletag: true
-						}
-					}
-				}
-			},
+			members: memberQuery,
 			team: {
 				columns: {},
 				with: {
@@ -75,12 +59,6 @@ export const load = async ({ params, locals }) => {
 
 	const matches = await db.query.match.findMany({
 		where: {
-			rosterAId: {
-				isNotNull: true
-			},
-			rosterBId: {
-				isNotNull: true
-			},
 			OR: [
 				{
 					rosterAId: data.id

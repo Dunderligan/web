@@ -1,5 +1,6 @@
 import { command, getRequestEvent, query } from '$app/server';
 import { AuthRole, canPromoteTo, checkPermission } from '$lib/authRole';
+import apiToken from '$lib/server/apiToken';
 import { db, schema } from '$lib/server/db';
 import session from '$lib/server/session';
 import { error } from '@sveltejs/kit';
@@ -12,7 +13,7 @@ export const roleGuard = query(z.enum(AuthRole), (required) => {
 	const role = locals.user?.role;
 
 	if (!checkPermission(role, required)) {
-		error(403);
+		error(403, 'Insufficient permissions');
 	}
 });
 
@@ -20,7 +21,7 @@ export const logout = command(async () => {
 	const { locals, cookies } = getRequestEvent();
 
 	if (!locals.session) {
-		return error(401);
+		return error(401, 'Not logged in');
 	}
 
 	await session.invalidate(locals.session.id);
@@ -36,7 +37,7 @@ export const createSuperAdmin = command(
 
 		if (existing) {
 			// already set up
-			error(404);
+			error(400, 'Super admin already exists');
 		}
 
 		const [user] = await db
@@ -81,11 +82,43 @@ export const updateUsers = command(
 
 				// however we deem this unlikely enough to be a problem in practice, and it keeps the logic simpler
 				if (!canPromoteTo(locals.user?.role, user.role)) {
-					throw error(403);
+					throw error(403, 'Insufficient permissions to update user role');
 				}
 
 				await tx.update(schema.user).set({ role: user.role }).where(eq(schema.user.id, user.id));
 			}
 		});
+	}
+);
+
+export const createApiKey = command(
+	z.object({
+		name: z.string().nonempty()
+	}),
+	async ({ name }) => {
+		// only admins can create API keys for now
+		await roleGuard(AuthRole.ADMIN);
+
+		const { locals } = getRequestEvent();
+
+		const { key, token } = await apiToken.createKey(name, locals.user!.id);
+
+		const { tokenHash, ...sanitizedKey } = key;
+
+		return { key: sanitizedKey, token };
+	}
+);
+
+export const deleteApiKey = command(
+	z.object({
+		id: z.uuid()
+	}),
+	async ({ id }) => {
+		// only admins can delete API keys for now
+		await roleGuard(AuthRole.ADMIN);
+
+		const { locals } = getRequestEvent();
+
+		await apiToken.deleteKey(id, locals.user!.id);
 	}
 );

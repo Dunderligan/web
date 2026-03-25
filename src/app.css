@@ -52,11 +52,6 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
-	html {
-		scroll-behavior: smooth;
-		background: white;
-	}
-
 	/*
 	 * Make buttons have a pointer by default.
 	 * Taken from https://tailwindcss.com/docs/upgrade-guide#buttons-use-the-default-cursor 
@@ -100,7 +95,7 @@
 	.floating {
 		z-index: 50;
 		max-height: calc(var(--spacing) * 96);
-		min-width: calc(var(--spacing) * 40);
+		min-width: calc(var(--spacing) * 46);
 		overflow-y: auto;
 		border-radius: var(--radius-lg);
 		border-style: var(--tw-border-style);
@@ -118,7 +113,7 @@
 
 	.dark .floating {
 		background-color: var(--color-gray-900);
-		border-color: var(--color-gray-800);
+		border-color: var(--color-gray-700);
 	}
 
 	/* Style for items inside floating elements, such as select items. */

@@ -1,24 +1,42 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import AsyncMatchList from '$lib/components/match/AsyncMatchList.svelte';
-	import MatchList from '$lib/components/match/MatchList.svelte';
 	import Meta from '$lib/components/structure/Meta.svelte';
 	import PageHeader from '$lib/components/structure/PageHeader.svelte';
 	import PageSection from '$lib/components/structure/PageSection.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
+	import { MatchState } from '$lib/types.js';
 
 	let { data } = $props();
 
 	const prev = $derived(page.url.searchParams.get('prev'));
 
 	const subtitle = $derived.by(() => {
-		if (data.roster) {
-			return `Visar matcher för ${data.roster.name}`;
-		} else if (data.division) {
-			return `Visar matcher i ${data.division.name}, ${data.division.season.name}`;
-		} else {
-			return 'Visar samtliga matcher';
+		let subtitle = 'Visar ';
+
+		const showingAll = !data.roster && !data.division;
+		if (showingAll) {
+			subtitle += 'samtliga ';
 		}
+
+		const states = data.params.state;
+		if (states?.includes(MatchState.PLAYED)) {
+			subtitle += 'spelade ';
+		} else if (states?.includes(MatchState.SCHEDULED)) {
+			subtitle += 'planerade ';
+		}
+
+		if (data.roster) {
+			subtitle += `matcher med ${data.roster.name}`;
+		} else if (data.division) {
+			subtitle += `matcher i ${data.division.name}, ${data.division.season.name}`;
+		} else {
+			subtitle += 'matcher';
+		}
+
+		subtitle += `.`;
+
+		return subtitle;
 	});
 
 	function queryParamHref(param: string, value: any) {

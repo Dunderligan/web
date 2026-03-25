@@ -1,7 +1,8 @@
 import { env } from '$env/dynamic/private';
+import { preferencesFromCookies } from '$lib/state/preferences.svelte';
 
 export const load = async ({ locals, cookies }) => {
-	const theme = cookies.get('theme') ?? null;
+	const preferences = preferencesFromCookies(cookies);
 
 	// SOURCE_COMMIT is set by Coolify to the current git commit hash
 	const commitHash = env.SOURCE_COMMIT ?? null;
@@ -10,6 +11,6 @@ export const load = async ({ locals, cookies }) => {
 	return {
 		user: locals.user,
 		commitHash,
-		theme
+		preferences
 	};
 };

@@ -5,6 +5,10 @@
 	import logo from '$lib/assets/images/logo.webp';
 	import lysatorLogo from '$lib/assets/images/lysator.svg';
 	import { socials } from '$lib/socials';
+	import Dialog from '../ui/Dialog.svelte';
+	import Button from '../ui/Button.svelte';
+
+	let emailDialogOpen = $state(false);
 
 	const commitHash = $derived(page.data.commitHash);
 </script>
@@ -47,9 +51,12 @@
 		<div class="flex w-full flex-col items-start">
 			<div class="mb-2 text-xl font-semibold text-white">Kontakt</div>
 
-			<a href="mailto:dunderleagueow@gmail.com" class="text-lg hover:underline">
-				dunderleagueow@gmail.com
-			</a>
+			<Button
+				label="Visa e-postadress"
+				icon="ph:envelope"
+				kind="secondary"
+				onclick={() => (emailDialogOpen = true)}
+			/>
 		</div>
 
 		<div class="flex w-full items-center gap-4 text-gray-400">
@@ -60,14 +67,23 @@
 			<div>Hemsidan driftas i samarbete med Lysator.</div>
 		</div>
 	</div>
-
-	<!-- <div class="pointer-events-none absolute inset-0" id="pattern"></div> -->
 </footer>
 
-<style>
-	/* #pattern {
-		background-image: url('/topographic-bg.jpg');
-		filter: invert(0);
-		mix-blend-mode: multiply;
-	} */
-</style>
+<Dialog
+	bind:open={emailDialogOpen}
+	title="E-postadress"
+	buttons={[
+		{
+			label: 'Stäng',
+			onclick: () => (emailDialogOpen = false),
+			kind: 'secondary',
+			icon: 'ph:x-circle'
+		}
+	]}
+>
+	{#snippet description()}
+		Du kan nå oss på <a href="mailto:dunderleagueow@gmail.com" class="underline">
+			dunderleagueow@gmail.com
+		</a>
+	{/snippet}
+</Dialog>

@@ -81,6 +81,16 @@ const relations = defineRelations(schema, (r) => ({
 			to: r.season.id,
 			optional: false
 		})
+	},
+	apiKey: {
+		user: r.one.user({
+			from: r.apiKey.userId,
+			to: r.user.id,
+			optional: false
+		})
+	},
+	user: {
+		apiKeys: r.many.apiKey()
 	}
 }));
 

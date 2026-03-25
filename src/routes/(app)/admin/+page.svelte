@@ -82,20 +82,10 @@
 </AdminCard>
 
 {#if isAdmin(data.user?.role)}
-	<AdminCard title="Användare">
-		<div class="overflow-hidden rounded-lg">
+	<AdminCard>
+		<div class="space-y-1 overflow-hidden rounded-lg">
 			<AdminLink href="/admin/anvandare">Hantera användare</AdminLink>
-		</div>
-	</AdminCard>
-
-	<AdminCard title="Ladda upp data">
-		<div>
-			<input bind:files={dataFiles} type="file" accept="application/json" />
-			<Button
-				onclick={() => uploadData(uploadSeasonData)}
-				disabled={!dataFiles?.length}
-				loading={uploading}>Ladda upp</Button
-			>
+			<AdminLink href="/admin/api-nycklar">Hantera API-nycklar</AdminLink>
 		</div>
 	</AdminCard>
 {/if}

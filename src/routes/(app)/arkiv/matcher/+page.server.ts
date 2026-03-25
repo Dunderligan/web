@@ -5,11 +5,7 @@ import { MatchState } from '$lib/types.js';
 
 export const load = async ({ url }) => {
 	const stateParam = url.searchParams.get('status');
-
-	const state = stateParam
-		?.split(',')
-		.filter((str) => Object.values(MatchState).includes(str as MatchState))
-		.map((str) => str as MatchState);
+	const state = stateParam ? parseStateParam(stateParam) : undefined;
 
 	const params = {
 		rosterId: url.searchParams.get('roster') ?? undefined,
@@ -25,6 +21,26 @@ export const load = async ({ url }) => {
 
 	return { query, params, roster, division, pageSize: 10 };
 };
+
+function parseStateParam(param: string): MatchState[] {
+	let invert = false;
+
+	if (param.startsWith('!')) {
+		param = param.substring(1);
+		invert = true;
+	}
+
+	let states = param
+		.split(',')
+		.filter((str) => Object.values(MatchState).includes(str as MatchState))
+		.map((str) => str as MatchState);
+
+	if (invert) {
+		states = Object.values(MatchState).filter((state) => !states.includes(state));
+	}
+
+	return states;
+}
 
 async function fetchRoster(id: string) {
 	return await db.query.roster.findFirst({

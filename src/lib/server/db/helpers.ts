@@ -1,4 +1,4 @@
-import { sql, eq, isNull } from 'drizzle-orm';
+import { sql, eq, isNull, Table } from 'drizzle-orm';
 import { PgTransaction } from 'drizzle-orm/pg-core';
 import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 import { schema } from '$lib/server/db';
@@ -113,6 +113,24 @@ export const finalMatchQuery = {
 	where: {
 		nextMatchId: {
 			isNull: true
+		}
+	}
+} as const;
+
+export const memberQuery = {
+	orderBy: (t: any) => sql`${rolesOrder(t.role)}, ${t.playerId} ASC`,
+	columns: {
+		isCaptain: true,
+		tier: true,
+		rank: true,
+		sr: true,
+		role: true
+	},
+	with: {
+		player: {
+			columns: {
+				battletag: true
+			}
 		}
 	}
 } as const;

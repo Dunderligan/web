@@ -2,17 +2,26 @@
 	import type { Snippet } from 'svelte';
 
 	type Props = {
-		title: string;
+		title?: string;
+		description?: Snippet;
 		children?: Snippet;
 	};
 
-	let { title, children }: Props = $props();
+	let { title, description, children }: Props = $props();
 </script>
 
 <div
-	class="space-y-4 overflow-hidden rounded-xl border-[3px] border-gray-100 bg-white px-8 py-6 dark:border-gray-900 dark:bg-gray-950"
+	class="space-y-4 overflow-hidden rounded-xl border-[3px] border-gray-100 bg-white p-8 dark:border-gray-900 dark:bg-gray-950"
 >
-	<h2 class="font-display text-2xl font-bold text-gray-700 dark:text-gray-100">{title}</h2>
+	{#if title}
+		<h2 class="font-display text-2xl font-bold text-gray-700 dark:text-gray-100">{title}</h2>
+	{/if}
+
+	{#if description}
+		<div class="-mt-2 mb-6 text-lg font-medium text-gray-600 dark:text-gray-400">
+			{@render description()}
+		</div>
+	{/if}
 
 	{@render children?.()}
 </div>

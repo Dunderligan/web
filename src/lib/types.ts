@@ -245,8 +245,24 @@ export type MatchListProps = {
 	hideIfEmpty?: boolean;
 	hideDivision?: boolean;
 	title?: string;
-	button?: Snippet;
 	class?: ClassValue;
 	short?: boolean;
+	matchArchiveParams?: string;
 	matches: ResolvedMatchWithContext[];
+};
+
+export type DropdownItem = {
+	label: string;
+	icon?: string;
+	hidden?: boolean;
+} & (
+	| { type: 'button'; href?: string; onclick?: () => void }
+	| { type: 'checkbox'; checked: boolean; onchange: (value: boolean) => void }
+);
+
+export type Theme = 'light' | 'dark';
+
+export type Preferences = {
+	theme: Theme;
+	spoilerMode: boolean;
 };
