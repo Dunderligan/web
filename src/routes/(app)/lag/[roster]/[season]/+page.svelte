@@ -13,6 +13,7 @@
 	import { MatchState } from '$lib/types';
 	import { averageLegacyRank, averageRank } from '$lib/rank';
 	import { isModerator } from '$lib/authRole';
+	import Placement from '$lib/components/ui/Placement.svelte';
 
 	let { data } = $props();
 
@@ -24,14 +25,10 @@
 	);
 
 	const playedMatches = $derived(
-		roster.matches.filter(
-			(match) => match.state === MatchState.PLAYED || match.state === MatchState.WALKOVER
-		)
+		roster.matches.filter((match) => match.state !== MatchState.SCHEDULED)
 	);
 	const upcomingMatches = $derived(
-		roster.matches.filter(
-			(match) => match.state === MatchState.SCHEDULED || match.state === MatchState.CANCELLED
-		)
+		roster.matches.filter((match) => match.state === MatchState.SCHEDULED)
 	);
 
 	const rosterTabItems = $derived(
@@ -52,6 +49,8 @@
 				};
 			})
 	);
+
+	const placement = $derived(2);
 </script>
 
 <Meta
@@ -123,6 +122,14 @@
 					icon="ph:pencil-simple"
 				/>
 			{/if}
+		</div>
+
+		<div>
+			<div class="mb-1 font-medium text-gray-700 dark:text-gray-400">Resultat</div>
+			<Placement placement={1} />
+			<Placement placement={2} />
+			<Placement placement={3} />
+			<Placement placement={4} />
 		</div>
 
 		{#if average}
