@@ -1,10 +1,4 @@
 import { and, isNotNull, isNull, or, type SQL } from 'drizzle-orm';
-import { timestamp } from 'drizzle-orm/pg-core';
-
-/** Timestamps that all tables should have. */
-export const timestamps = {
-	createdAt: timestamp().defaultNow().notNull()
-};
 
 /**
  * Convert a TypeScript enum to a Postgres enum representation.

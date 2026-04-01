@@ -52,7 +52,8 @@ export enum Rank {
 /** Available social platforms for team social media links. */
 export enum SocialPlatform {
 	YOUTUBE = 'youtube',
-	TWITTER = 'twitter'
+	TWITTER = 'twitter',
+	DISCORD = 'discord'
 }
 
 export enum Role {
@@ -141,7 +142,7 @@ export type FullRoster = RosterWithGroup & {
 	members: Member[];
 };
 
-export type TeamSocial = {
+export type Social = {
 	platform: SocialPlatform;
 	url: string;
 };

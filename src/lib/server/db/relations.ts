@@ -36,8 +36,8 @@ const relations = defineRelations(schema, (r) => ({
 			optional: false
 		}),
 		members: r.many.member(),
-		matchesAsA: r.many.match({ alias: "rosterA" }),
-		matchesAsB: r.many.match({ alias: "rosterB" })
+		matchesAsA: r.many.match({ alias: 'rosterA' }),
+		matchesAsB: r.many.match({ alias: 'rosterB' })
 	},
 	teamSocial: {
 		team: r.one.team({ from: r.teamSocial.teamId, to: r.team.id, optional: false })
@@ -47,7 +47,9 @@ const relations = defineRelations(schema, (r) => ({
 	},
 	player: {
 		memberships: r.many.member(),
-		socials: r.many.playerSocial()
+		socials: r.many.playerSocial(),
+		aliases: r.many.playerAlias(),
+		signatureHeroes: r.many.signatureHero()
 	},
 	member: {
 		player: r.one.player({
@@ -62,8 +64,8 @@ const relations = defineRelations(schema, (r) => ({
 		})
 	},
 	match: {
-		rosterA: r.one.roster({ from: r.match.rosterAId, to: r.roster.id, alias: "rosterA" }),
-		rosterB: r.one.roster({ from: r.match.rosterBId, to: r.roster.id, alias: "rosterB" }),
+		rosterA: r.one.roster({ from: r.match.rosterAId, to: r.roster.id, alias: 'rosterA' }),
+		rosterB: r.one.roster({ from: r.match.rosterBId, to: r.roster.id, alias: 'rosterB' }),
 		bracket: r.one.bracket({ from: r.match.bracketId, to: r.bracket.id }),
 		group: r.one.group({ from: r.match.groupId, to: r.group.id })
 	},
@@ -91,6 +93,28 @@ const relations = defineRelations(schema, (r) => ({
 	},
 	user: {
 		apiKeys: r.many.apiKey()
+	},
+	hero: {
+		signaturePlayers: r.many.signatureHero()
+	},
+	signatureHero: {
+		player: r.one.player({
+			from: r.signatureHero.playerId,
+			to: r.player.id,
+			optional: false
+		}),
+		hero: r.one.hero({
+			from: r.signatureHero.heroId,
+			to: r.hero.id,
+			optional: false
+		})
+	},
+	playerAlias: {
+		player: r.one.player({
+			from: r.playerAlias.playerId,
+			to: r.player.id,
+			optional: false
+		})
 	}
 }));
 

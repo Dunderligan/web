@@ -11,7 +11,7 @@ import {
 	type AnyPgColumn,
 	check
 } from 'drizzle-orm/pg-core';
-import { timestamps, enumToPgEnum } from './util';
+import { enumToPgEnum } from './util';
 import { and, isNotNull, isNull, or, sql } from 'drizzle-orm';
 import { MatchState, MatchType, Rank, Role, SocialPlatform } from '../../../types';
 
@@ -22,8 +22,7 @@ export const season = pgTable('season', {
 	startedAt: timestamp().notNull(),
 	endedAt: timestamp(),
 	legacyRanks: boolean().notNull().default(false),
-	hidden: boolean().notNull().default(false),
-	...timestamps
+	hidden: boolean().notNull().default(false)
 });
 
 export const division = pgTable(
@@ -36,8 +35,7 @@ export const division = pgTable(
 		groupwiseStandings: boolean().notNull().default(false),
 		seasonId: uuid()
 			.notNull()
-			.references(() => season.id, { onDelete: 'cascade' }),
-		...timestamps
+			.references(() => season.id, { onDelete: 'cascade' })
 	},
 	(t) => [unique().on(t.slug, t.seasonId)]
 );
@@ -50,33 +48,27 @@ export const group = pgTable(
 		slug: text().notNull(),
 		divisionId: uuid()
 			.notNull()
-			.references(() => division.id, { onDelete: 'cascade' }),
-		...timestamps
+			.references(() => division.id, { onDelete: 'cascade' })
 	},
 	(t) => [unique().on(t.slug, t.divisionId)]
 );
 
 export const team = pgTable('team', {
-	id: uuid().primaryKey().defaultRandom(),
-	...timestamps
+	id: uuid().primaryKey().defaultRandom()
 });
 
-export const roster = pgTable(
-	'roster',
-	{
-		id: uuid().primaryKey().defaultRandom(),
-		name: text().notNull(),
-		slug: text().notNull(),
-		teamId: uuid()
-			.notNull()
-			.references(() => team.id, { onDelete: 'cascade' }),
-		groupId: uuid()
-			.notNull()
-			.references(() => group.id, { onDelete: 'cascade' }),
-		resigned: boolean().notNull().default(false),
-		...timestamps
-	},
-);
+export const roster = pgTable('roster', {
+	id: uuid().primaryKey().defaultRandom(),
+	name: text().notNull(),
+	slug: text().notNull(),
+	teamId: uuid()
+		.notNull()
+		.references(() => team.id, { onDelete: 'cascade' }),
+	groupId: uuid()
+		.notNull()
+		.references(() => group.id, { onDelete: 'cascade' }),
+	resigned: boolean().notNull().default(false)
+});
 
 export const socialPlatformEnum = pgEnum('social_platform', enumToPgEnum(SocialPlatform));
 
@@ -88,8 +80,7 @@ export const teamSocial = pgTable(
 		url: text().notNull(),
 		teamId: uuid()
 			.notNull()
-			.references(() => team.id, { onDelete: 'cascade' }),
-		...timestamps
+			.references(() => team.id, { onDelete: 'cascade' })
 	},
 	(t) => [unique().on(t.teamId, t.platform)]
 );
@@ -102,8 +93,7 @@ export const playerSocial = pgTable(
 		url: text().notNull(),
 		playerId: uuid()
 			.notNull()
-			.references(() => player.id, { onDelete: 'cascade' }),
-		...timestamps
+			.references(() => player.id, { onDelete: 'cascade' })
 	},
 	(t) => [unique().on(t.playerId, t.platform)]
 );
@@ -111,7 +101,8 @@ export const playerSocial = pgTable(
 export const player = pgTable('player', {
 	id: uuid().primaryKey().defaultRandom(),
 	battletag: text().notNull().unique(),
-	...timestamps
+	pronouns: text(),
+	description: text()
 });
 
 export const rankEnum = pgEnum('rank', enumToPgEnum(Rank));
@@ -133,8 +124,7 @@ export const member = pgTable(
 		tier: integer(),
 		sr: integer(),
 		role: roleEnum().notNull(),
-		isCaptain: boolean().notNull().default(false),
-		...timestamps
+		isCaptain: boolean().notNull().default(false)
 	},
 	(t) => [
 		primaryKey({ columns: [t.playerId, t.rosterId] }),
@@ -168,8 +158,7 @@ export const match = pgTable(
 			onDelete: 'set null'
 		}),
 		/** The vertical order to display this match in a bracket. Ignored for group-stage matches. */
-		order: integer().notNull().default(0),
-		...timestamps
+		order: integer().notNull().default(0)
 	},
 	(t) => [
 		check(
@@ -187,8 +176,7 @@ export const bracket = pgTable('bracket', {
 	name: text().notNull(),
 	divisionId: uuid()
 		.notNull()
-		.references(() => division.id, { onDelete: 'cascade' }),
-	...timestamps
+		.references(() => division.id, { onDelete: 'cascade' })
 });
 
 export const registration = pgTable('registration', {
@@ -199,6 +187,35 @@ export const registration = pgTable('registration', {
 		.notNull(),
 	url: text().notNull(),
 	openDate: timestamp().notNull(),
-	closeDate: timestamp().notNull(),
-	...timestamps
+	closeDate: timestamp().notNull()
 });
+
+export const hero = pgTable('hero', {
+	id: uuid().primaryKey().defaultRandom(),
+	name: text().notNull().unique()
+});
+
+export const signatureHero = pgTable(
+	'signature_hero',
+	{
+		playerId: uuid()
+			.notNull()
+			.references(() => player.id, { onDelete: 'cascade' }),
+		heroId: uuid()
+			.notNull()
+			.references(() => hero.id, { onDelete: 'cascade' })
+	},
+	(t) => [primaryKey({ columns: [t.playerId, t.heroId] })]
+);
+
+export const playerAlias = pgTable(
+	'player_alias',
+	{
+		id: uuid().primaryKey().defaultRandom(),
+		name: text().notNull(),
+		playerId: uuid()
+			.notNull()
+			.references(() => player.id, { onDelete: 'cascade' })
+	},
+	(t) => [unique().on(t.name, t.playerId)]
+);

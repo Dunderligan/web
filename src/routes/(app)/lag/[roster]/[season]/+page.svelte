@@ -13,6 +13,7 @@
 	import { MatchState } from '$lib/types';
 	import { averageLegacyRank, averageRank } from '$lib/rank';
 	import { isModerator } from '$lib/authRole';
+	import Field from '$lib/components/structure/Field.svelte';
 
 	let { data } = $props();
 
@@ -126,24 +127,19 @@
 		</div>
 
 		{#if average}
-			<div>
-				<div class="font-medium text-gray-700 dark:text-gray-400">Genomsnittlig rank</div>
-				<div class="text-xl font-semibold text-gray-800 dark:text-gray-300">
-					<Rank rank={average} />
-				</div>
-			</div>
+			<Field title="Genomsnittlig rank">
+				<Rank rank={average} />
+			</Field>
 		{/if}
 
 		{#if team.socials.length > 0}
-			<div>
-				<div class="font-medium text-gray-700 dark:text-gray-400">Sociala medier</div>
-
+			<Field title="Sociala medier">
 				<div class="mt-1 flex items-center gap-3">
 					{#each team.socials as { platform, url } (platform)}
 						<TeamSocial class="text-3xl" {platform} href={url} />
 					{/each}
 				</div>
-			</div>
+			</Field>
 		{/if}
 	</section>
 </PageSection>

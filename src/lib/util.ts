@@ -19,6 +19,8 @@ export function formatSocialPlatform(platform: SocialPlatform) {
 			return 'Twitter';
 		case SocialPlatform.YOUTUBE:
 			return 'Youtube';
+		case SocialPlatform.DISCORD:
+			return 'Discord';
 	}
 }
 

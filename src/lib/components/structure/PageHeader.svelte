@@ -19,7 +19,7 @@
 	]}
 >
 	{#if title}
-		<h1 class="text-center font-display text-6xl font-extrabold sm:text-left sm:text-7xl">
+		<h1 class="text-center text-6xl font-extrabold sm:text-left sm:text-7xl">
 			{title}
 		</h1>
 	{/if}

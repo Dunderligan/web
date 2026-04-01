@@ -1,49 +1,61 @@
-import { db } from "$lib/server/db"
-import { entityQuery, nestedGroupQuery } from "$lib/server/db/helpers";
-import { error } from "console";
+import { db } from '$lib/server/db';
+import { entityQuery, memberQuery, nestedGroupQuery } from '$lib/server/db/helpers';
+import { error } from 'console';
 
 export const load = async ({ params }) => {
-    const battletag = params.battletag.replace('-', '#');
+	const battletag = params.battletag.replace('-', '#');
 
-    const data = await db.query.player.findFirst({
-        where: {
-            battletag
-        },
-        columns: {
-            id: true,
-            battletag: true
-        },
-        with: {
-            socials: {
-                columns: {
-                    platform: true,
-                    url: true
-                }
-            },
-            memberships: {
-                columns: {
-                    role: true,
-                    rank: true,
-                    tier: true,
-                    sr: true
-                },
-                with: {
-                    roster: {
-                       ...entityQuery,
-                       with: {
-                            group: nestedGroupQuery
-                       }
-                    }
-                }
-            }
-        }
-    });
+	const player = await db.query.player.findFirst({
+		where: {
+			battletag
+		},
+		columns: {
+			id: true,
+			battletag: true,
+			description: true,
+			pronouns: true
+		},
+		with: {
+			socials: {
+				columns: {
+					platform: true,
+					url: true
+				}
+			},
+			memberships: {
+				columns: memberQuery.columns,
+				with: {
+					roster: {
+						...entityQuery,
+						with: {
+							group: nestedGroupQuery
+						}
+					}
+				}
+			},
+			signatureHeroes: {
+				columns: {},
+				with: {
+					hero: {
+						columns: {
+							name: true
+						}
+					}
+				}
+			},
+			aliases: {
+				columns: {
+					name: true
+				}
+			}
+		}
+	});
 
-    if (!data) {
-        throw error(404);
-    }
+	if (!player) {
+		throw error(404);
+	}
 
-    return {
-        player: data
-    }
-}
+	return {
+		player
+	};
+};
