@@ -6,6 +6,7 @@
 	import Navbar from '$lib/components/structure/Navbar.svelte';
 	import { page } from '$app/state';
 	import { PreferencesState } from '$lib/state/preferences.svelte';
+	import { Tooltip } from 'bits-ui';
 
 	let { children, data } = $props();
 
@@ -21,12 +22,14 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<div class={[prefs.theme === 'dark' && 'dark']}>
-	<ProgressBar class="text-accent-500" zIndex={100} />
+<Tooltip.Provider delayDuration={300}>
+	<div class={[prefs.theme === 'dark' && 'dark']}>
+		<ProgressBar class="text-accent-500" zIndex={100} />
 
-	<Navbar alwaysWhiteTextAtTop={isLandingPage} />
+		<Navbar alwaysWhiteTextAtTop={isLandingPage} />
 
-	{@render children()}
+		{@render children()}
 
-	<Footer />
-</div>
+		<Footer />
+	</div>
+</Tooltip.Provider>

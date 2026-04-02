@@ -6,18 +6,16 @@
 
 <div id="background" class="fixed top-0 min-h-140 w-full min-w-lg"></div>
 
-<Tooltip.Provider delayDuration={300}>
-	<div class="relative flex min-h-screen flex-col overflow-hidden">
-		<div
-			class="pointer-events-none fixed top-50 -left-80 size-300 rounded-full bg-accent-400/20 dark:mix-blend-hard-light"
-			id="splotch"
-		></div>
+<div class="relative flex min-h-screen flex-col overflow-hidden">
+	<div
+		class="pointer-events-none fixed top-50 -left-80 size-300 rounded-full bg-accent-400/20 dark:mix-blend-hard-light"
+		id="splotch"
+	></div>
 
-		<div class="mb-12 h-18"></div>
+	<div class="mb-12 h-18"></div>
 
-		{@render children?.()}
-	</div>
-</Tooltip.Provider>
+	{@render children?.()}
+</div>
 
 <style>
 	#background {
