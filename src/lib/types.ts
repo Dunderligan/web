@@ -189,6 +189,11 @@ export type ResolvedMatch = MatchWithoutRosters & {
 	rosterB?: MatchRoster | null;
 };
 
+export type ResolvedMatchWithSeeds = MatchWithoutRosters & {
+	rosterA?: MatchRosterWithSeed | null;
+	rosterB?: MatchRosterWithSeed | null;
+};
+
 /**
  * The minimal roster representation within a match.
  */
@@ -196,6 +201,10 @@ export type MatchRoster = {
 	id: string;
 	name: string;
 	slug: string;
+};
+
+export type MatchRosterWithSeed = MatchRoster & {
+	seed: number;
 };
 
 /**

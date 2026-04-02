@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MatchState, type ResolvedMatch } from '$lib/types';
+	import { MatchState, type ResolvedMatch, type ResolvedMatchWithSeeds } from '$lib/types';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import {
 		matchRoster,
@@ -13,7 +13,7 @@
 	import Note from '../ui/Note.svelte';
 
 	type Props = {
-		match: ResolvedMatch;
+		match: ResolvedMatchWithSeeds;
 		seasonSlug: string;
 		roundIndex: number;
 		hidden?: boolean;
@@ -33,7 +33,7 @@
 	}: Props = $props();
 
 	// don't ask
-	const verticalLineHeight = $derived(78 * roundIndex + 2);
+	const verticalLineHeight = $derived(40 * Math.pow(roundIndex, 2) - 42 * roundIndex + 82);
 
 	const showScore = $derived(hasMatchScore(match));
 </script>
@@ -43,7 +43,7 @@
 		hasNext && 'has-next-round',
 		(hasPrevAbove || hasPrevBelow) && 'has-prev-round',
 		hidden && 'invisible',
-		'relative h-[125px] w-60 rounded-lg'
+		'relative h-[125px] w-52 rounded-lg'
 	]}
 >
 	<MatchInfoRow class="h-[25px] rounded-t-lg bg-gray-100 px-4 dark:bg-gray-900" {match} />
@@ -71,18 +71,37 @@
 
 	{@const href = `/lag/${roster?.slug}/${seasonSlug}`}
 
+	{@const bgClass = showScore
+		? won
+			? 'bg-gray-200 dark:bg-gray-800'
+			: 'bg-gray-50 dark:bg-gray-900'
+		: 'bg-gray-100 dark:bg-gray-900'}
+
+	{@const seedBgClass = showScore
+		? won
+			? 'border-gray-300 dark:border-gray-700'
+			: 'border-gray-100 dark:border-gray-800'
+		: 'border-gray-200 dark:border-gray-800'}
+
 	<div
 		class={[
 			classProp,
-			'flex h-[49px] items-center pr-4 font-medium text-gray-700 dark:text-gray-300',
-			showScore
-				? won
-					? 'bg-gray-200 dark:bg-gray-800'
-					: 'bg-gray-50 dark:bg-gray-900'
-				: 'bg-gray-100 dark:bg-gray-900'
+			bgClass,
+			'relative flex h-[49px] items-center overflow-hidden pr-4 font-medium text-gray-600 dark:text-gray-400'
 		]}
 	>
 		{#if roster}
+			<div
+				class={[
+					seedBgClass,
+					'absolute right-0 bottom-0 border-t-28 border-r-28 border-t-transparent!'
+				]}
+			></div>
+
+			<div class="absolute right-1 bottom-1 z-10 text-xs leading-none font-semibold">
+				{roster.seed}
+			</div>
+
 			<div
 				class={[
 					showScore ? 'text-2xl font-extrabold' : 'text-lg',
@@ -97,19 +116,21 @@
 			<a
 				{href}
 				class={[
-					won && 'font-semibold text-gray-800 dark:text-gray-200',
+					won
+						? 'font-semibold text-gray-800 dark:text-gray-200'
+						: 'font-medium text-gray-700 dark:text-gray-300',
 					'mr-auto truncate hover:underline'
 				]}
 			>
-				{roster?.name}
+				{roster.name}
 			</a>
 
 			{#if note}
 				<Note content={note} class="ml-auto" />
 			{/if}
 		{:else}
-			<div class="grow text-center font-medium">
-				{match.state === MatchState.PLAYED ? '---' : '???'}
+			<div class="grow text-center font-semibold">
+				{match.state === MatchState.PLAYED ? '---' : 'TBD'}
 			</div>
 		{/if}
 	</div>

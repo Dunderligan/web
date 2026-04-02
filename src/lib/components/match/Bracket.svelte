@@ -1,19 +1,19 @@
 <script lang="ts">
-	import { MatchState, type ResolvedMatch } from '$lib/types';
+	import { MatchState, type ResolvedMatch, type ResolvedMatchWithSeeds } from '$lib/types';
 	import BracketMatch from './BracketMatch.svelte';
 
 	type Props = {
-		rounds: ResolvedMatch[][];
+		rounds: ResolvedMatchWithSeeds[][];
 		seasonSlug: string;
 	};
 
 	let { rounds, seasonSlug }: Props = $props();
 
-	function isMatchHidden(match?: ResolvedMatch | null) {
+	function isMatchHidden(match?: ResolvedMatchWithSeeds | null) {
 		if (!match) return true;
 
 		// hide the match if only one roster is known (we assume it's a bye)
-		return match.state === MatchState.PLAYED && (!match.rosterA || !match.rosterB);
+		return match.state === MatchState.WALKOVER && (!match.rosterA || !match.rosterB);
 	}
 </script>
 

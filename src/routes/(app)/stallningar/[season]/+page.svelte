@@ -9,12 +9,12 @@
 	import Bracket from '$lib/components/match/Bracket.svelte';
 	import { buildBracketRounds } from '$lib/bracket';
 	import Subheading from '$lib/components/ui/Subheading.svelte';
-	import type { UnresolvedMatch, ResolvedMatch, Roster } from '$lib/types';
+	import type { UnresolvedMatch, Roster, ResolvedMatchWithSeeds } from '$lib/types';
 	import SeasonStateChip from '$lib/components/ui/SeasonStateChip.svelte';
 	import MatchList from '$lib/components/match/MatchList.svelte';
 	import { goto } from '$app/navigation';
 	import Meta from '$lib/components/structure/Meta.svelte';
-	import { AuthRole, checkPermission, isModerator } from '$lib/authRole';
+	import { isModerator } from '$lib/authRole';
 
 	let { data } = $props();
 
@@ -92,11 +92,26 @@
 		});
 	}
 
-	function resolveRoster(id?: string | null): Roster | null {
-		return division.rosters.find((roster) => roster.id === id) ?? null;
+	function resolveRoster(id?: string | null): (Roster & { seed: number }) | null {
+		const roster = division.rosters.find((roster) => roster.id === id) ?? null;
+		if (!roster) return null;
+
+		for (const division of divisions) {
+			for (const table of division.tables) {
+				const standing = table.standings
+					.map((standing, i) => ({ ...standing, seed: i + 1 }))
+					.find((standing) => standing.rosterId === roster.id);
+
+				if (standing) {
+					return { ...roster, seed: standing.seed };
+				}
+			}
+		}
+
+		return { ...roster, seed: -1 };
 	}
 
-	function resolveMatch(match: UnresolvedMatch): ResolvedMatch {
+	function resolveMatch(match: UnresolvedMatch): ResolvedMatchWithSeeds {
 		return {
 			rosterA: resolveRoster(match.rosterAId),
 			rosterB: resolveRoster(match.rosterBId),

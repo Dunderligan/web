@@ -56,7 +56,10 @@ export function matchWinner(match: LogicalMatch): MatchSide | null {
 }
 
 /** Returns the roster on the given side of a match, or null if not resolved. */
-export function matchRoster(match: ResolvedMatch, side: MatchSide): MatchRoster | null {
+export function matchRoster<R>(
+	match: { rosterA?: R | null; rosterB?: R | null },
+	side: MatchSide
+): R | null {
 	return (side === 'A' ? match.rosterA : match.rosterB) ?? null;
 }
 
