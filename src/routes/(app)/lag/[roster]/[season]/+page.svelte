@@ -68,11 +68,11 @@
 	<RosterLogo id={roster.id} class="size-40" imgSize={256} />
 
 	<div>
-		<h1 class="mb-1 text-center font-display text-5xl font-extrabold sm:text-left sm:text-6xl">
+		<h1 class="text-center font-display text-5xl font-extrabold sm:text-left sm:text-6xl">
 			{roster.name}
 		</h1>
 		<div
-			class="mt-1 mb-3 text-center text-lg font-semibold text-gray-600 sm:text-left dark:text-gray-400"
+			class="mt-1 text-center text-lg font-semibold text-gray-600 sm:text-left dark:text-gray-400"
 		>
 			{division.name}, {season.name}
 		</div>

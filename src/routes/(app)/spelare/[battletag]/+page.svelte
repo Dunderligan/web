@@ -28,15 +28,18 @@
 	const name = $derived(data.player.battletag.split('#')[0]);
 </script>
 
-<PageHeader>
-	<div class="flex items-center">
-		<img
-			src="https://imgsvc.trackercdn.com/url/size(128),fit(cover)/https%3A%2F%2Fd15f34w2p8l1cc.cloudfront.net%2Foverwatch%2Ffbc76412efb4257883ec5322e74a01d4893b7a03676501e08ce6469e7baf5357.png/image.jpg"
-			alt="Profilbild"
-			class="size-32 rounded-2xl"
-		/>
+<PageHeader class="flex flex-col items-center gap-6 sm:flex-row">
+	{#if data.avatarUrl}
+		<img src={data.avatarUrl} alt="Profilbild" class="size-32 rounded-xl" />
+	{/if}
 
-		<h1 class="ml-6 text-6xl font-extrabold sm:text-left sm:text-6xl">{name}</h1>
+	<div>
+		<h1 class="text-center text-6xl font-extrabold sm:text-left sm:text-6xl">{name}</h1>
+		{#if data.title}
+			<h2 class="text-center text-xl font-semibold text-gray-600 sm:text-left dark:text-gray-400">
+				{data.title}
+			</h2>
+		{/if}
 	</div>
 </PageHeader>
 
@@ -63,7 +66,7 @@
 		<Subheading>Rosters</Subheading>
 
 		<Table
-			class="mt-4 grid-cols-[1fr_160px_80px_170px]"
+			class="mt-4 grid-cols-[1fr_130px_50px_60px] sm:grid-cols-[1fr_140px_80px_170px]"
 			rows={sortedMemberships}
 			key={(value) => value.roster.id}
 			columns={[
@@ -81,7 +84,7 @@
 				<div class="gap-2 px-4 py-1.5 font-semibold">
 					<RosterLogo id={roster.id} class="size-12" {href} />
 
-					<a {href} class="hover:underline">
+					<a {href} class="hidden hover:underline sm:inline">
 						{roster.name}
 					</a>
 				</div>
