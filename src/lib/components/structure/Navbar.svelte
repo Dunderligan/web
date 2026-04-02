@@ -84,6 +84,12 @@
 	const userDropdownItems: DropdownItem[] = $derived([
 		{
 			type: 'button',
+			icon: 'ph:user',
+			label: 'Min profil',
+			href: `/spelare/${user?.battletag.replace('#', '-')}`
+		},
+		{
+			type: 'button',
 			icon: 'ph:wrench',
 			label: 'Admin',
 			href: '/admin',

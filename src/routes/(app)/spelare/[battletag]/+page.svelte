@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { isModerator } from '$lib/authRole.js';
+	import { canEditUserPage, isModerator } from '$lib/authRole.js';
 	import Field from '$lib/components/structure/Field.svelte';
 	import PageHeader from '$lib/components/structure/PageHeader.svelte';
 	import PageSection from '$lib/components/structure/PageSection.svelte';
 	import Table from '$lib/components/table/Table.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
+	import HeroPortrait from '$lib/components/ui/HeroPortrait.svelte';
 	import Icon from '$lib/components/ui/Icon.svelte';
 	import Rank from '$lib/components/ui/Rank.svelte';
 	import RosterLogo from '$lib/components/ui/RosterLogo.svelte';
@@ -39,10 +40,10 @@
 	</div>
 </PageHeader>
 
-<PageSection class="flex flex-col-reverse gap-10 sm:flex-row">
+<PageSection class="flex flex-col-reverse gap-10 md:flex-row">
 	<section class="shrink grow">
 		{#if data.player.description}
-			<p>
+			<p class="mb-2 text-lg font-medium text-gray-600 dark:text-gray-400">
 				{data.player.description}
 			</p>
 		{/if}
@@ -51,7 +52,7 @@
 			{@const roster = lastMembership.roster}
 			{@const { season } = flattenGroup(roster.group)}
 
-			<p class="mb-6 text-lg font-medium">
+			<p class="mb-8 text-lg font-semibold">
 				Spelade senast i
 				<a href="/lag/{roster.slug}/{season.slug}" class="text-accent-600 hover:underline">
 					{roster.name}, {season.name}
@@ -104,8 +105,8 @@
 		</Table>
 	</section>
 
-	<section class="shrink-0 space-y-6 sm:w-44">
-		{#if isModerator(data.user?.role)}
+	<section class="shrink-0 space-y-6 md:w-44">
+		{#if canEditUserPage(data.user, data.player.battletag)}
 			<Button
 				href="/admin/spelare/{data.player.id}"
 				label="Redigera"
@@ -122,9 +123,9 @@
 
 		{#if data.player.signatureHeroes.length > 0}
 			<Field title="Signaturhjältar">
-				<div class="flex flex-wrap gap-2">
+				<div class="mt-1 flex flex-wrap gap-1">
 					{#each data.player.signatureHeroes as { hero }}
-						{hero.name}
+						<HeroPortrait name={hero.name} size="sm" />
 					{/each}
 				</div>
 			</Field>

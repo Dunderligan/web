@@ -50,7 +50,8 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 };
 
 const guardAdminPages: Handle = async ({ event, resolve }) => {
-	if (!event.url.pathname.startsWith('/admin')) {
+	// TODO: make this not hardcoded
+	if (!event.url.pathname.startsWith('/admin') || event.url.pathname.startsWith('/admin/spelare')) {
 		return resolve(event);
 	}
 

@@ -11,8 +11,8 @@ import z from 'zod';
 export const editPlayer = command(
 	z.object({
 		id: z.uuid(),
-		pronouns: z.string().max(15).nullable(),
-		description: z.string().max(200).nullable(),
+		pronouns: z.string().max(20).nullable(),
+		description: z.string().max(500).nullable(),
 		socials: z.array(socialSchema),
 		signatureHeroes: z.array(z.uuid()).max(3),
 		aliases: z.array(z.string()).max(5)
