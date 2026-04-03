@@ -43,7 +43,9 @@ export function canEditUserPage(user: User | undefined | null, battletag: string
 		return true;
 	}
 
-	return user.battletag === battletag;
+	// We allow battletags with or without the #, however multiple Battle.net users can have the same name
+	// with a different tag, so for editing rights we make sure to allow only full matches
+	return battletag.includes('#') && user.battletag === battletag;
 }
 
 export function canPromoteTo(userRole: AuthRole | undefined | null, targetRole: AuthRole): boolean {

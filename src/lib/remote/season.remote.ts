@@ -85,8 +85,6 @@ export const updateSeason = command(
 				.where(eq(schema.season.id, id));
 
 			if (registration) {
-				console.log(registration);
-
 				await tx
 					.update(schema.registration)
 					.set(registration)

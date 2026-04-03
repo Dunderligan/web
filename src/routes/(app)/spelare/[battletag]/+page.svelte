@@ -7,11 +7,13 @@
 	import Button from '$lib/components/ui/Button.svelte';
 	import HeroPortrait from '$lib/components/ui/HeroPortrait.svelte';
 	import Icon from '$lib/components/ui/Icon.svelte';
+	import Note from '$lib/components/ui/Note.svelte';
+	import Notice from '$lib/components/ui/Notice.svelte';
 	import Rank from '$lib/components/ui/Rank.svelte';
 	import RosterLogo from '$lib/components/ui/RosterLogo.svelte';
 	import Subheading from '$lib/components/ui/Subheading.svelte';
 	import TeamSocial from '$lib/components/ui/TeamSocial.svelte';
-	import { flattenGroup, roleIcon } from '$lib/util';
+	import { flattenGroup, formatDate, formatDateTime, roleIcon } from '$lib/util';
 
 	let { data } = $props();
 
@@ -26,18 +28,23 @@
 
 	const lastMembership = $derived(sortedMemberships.at(0));
 	const name = $derived(data.player.battletag.split('#')[0]);
+
+	const profile = $derived(data.profile.status === 'found' ? data.profile.profile : null);
+
+	const hasFullTag = $derived(data.player.battletag.includes('#'));
+	const isUser = $derived(data.user?.battletag.split('#')[0] == name);
 </script>
 
 <PageHeader class="flex flex-col items-center gap-6 sm:flex-row">
-	{#if data.avatarUrl}
-		<img src={data.avatarUrl} alt="Profilbild" class="size-32 rounded-xl" />
+	{#if profile}
+		<img src={profile.avatarUrl} alt="Profilbild" class="size-32 rounded-xl" />
 	{/if}
 
 	<div>
 		<h1 class="text-center text-6xl font-extrabold sm:text-left sm:text-6xl">{name}</h1>
-		{#if data.title}
+		{#if profile?.title}
 			<h2 class="text-center text-xl font-semibold text-gray-600 sm:text-left dark:text-gray-400">
-				{data.title}
+				{profile.title}
 			</h2>
 		{/if}
 	</div>
@@ -45,6 +52,12 @@
 
 <PageSection class="flex flex-col-reverse gap-10 md:flex-row">
 	<section class="shrink grow">
+		{#if !hasFullTag && isUser}
+			<Notice kind="info" class="mb-6">
+				Är detta din profil? Spelaren har registrerats utan sin fullständiga battletag.
+			</Notice>
+		{/if}
+
 		{#if data.player.description}
 			<p class="mb-2 text-lg font-medium text-gray-600 dark:text-gray-400">
 				{data.player.description}
@@ -106,6 +119,19 @@
 				</div>
 			{/snippet}
 		</Table>
+
+		<p class="mt-6 text-sm font-medium text-gray-500">
+			{#if data.profile.status === 'found'}
+				Overwatch-profil hämtades automatiskt från Battle.net.
+			{:else if data.profile.status === 'error'}
+				Kunde inte hämta Overwatch-profil: {data.profile.error}.
+			{:else if data.profile.status === 'missing'}
+				Ingen publik Overwatch-profil hittades för denna battletag.
+			{:else if data.profile.status === 'ambiguous'}
+				Flera Overwatch-profiler matchade denna battletag.
+			{/if}
+			Senast hämtad {formatDateTime(new Date(data.profile.date))}.
+		</p>
 	</section>
 
 	<section class="shrink-0 space-y-6 md:w-44">

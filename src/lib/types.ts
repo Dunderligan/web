@@ -267,3 +267,16 @@ export type Preferences = {
 	theme: Theme;
 	spoilerMode: boolean;
 };
+
+export type GameProfile = {
+	avatarUrl: string;
+	title: string | null;
+};
+
+export type GameProfileEntry =
+	| { status: 'found'; profile: GameProfile }
+	| { status: 'missing' }
+	| { status: 'ambiguous' }
+	| { status: 'error'; error: string };
+
+export type GameProfileEntryWithDate = { date: string } & GameProfileEntry;

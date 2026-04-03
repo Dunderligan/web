@@ -1,29 +1,37 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import Icon from './Icon.svelte';
+	import type { ClassValue } from '$lib/types';
 
 	type Props = {
 		kind: 'info' | 'warn';
 		children?: Snippet;
+		class?: ClassValue;
 	};
 
-	let { kind, children }: Props = $props();
+	let { kind, children, class: classProp }: Props = $props();
 
-	const { icon, classes } = $derived(
+	const { icon, class: kindClass } = $derived(
 		{
 			info: {
 				icon: 'ph:info',
-				classes: 'bg-accent-50 text-accent-800 dark:bg-accent-950 dark:text-accent-300'
+				class: 'bg-accent-50 text-accent-800 dark:bg-accent-950 dark:text-accent-300'
 			},
 			warn: {
 				icon: 'ph:warning',
-				classes: 'bg-yellow-50 text-yellow-800 dark:bg-yellow-950 dark:text-yellow-300'
+				class: 'bg-yellow-50 text-yellow-800 dark:bg-yellow-950 dark:text-yellow-300'
 			}
 		}[kind]
 	);
 </script>
 
-<div class={[classes, 'flex min-h-14 items-center gap-2 rounded-lg py-2 pr-3 pl-6 font-medium']}>
+<div
+	class={[
+		kindClass,
+		classProp,
+		'flex min-h-14 items-center gap-2 rounded-lg py-2 pr-3 pl-6 font-medium'
+	]}
+>
 	<Icon {icon} />
 
 	{@render children?.()}
