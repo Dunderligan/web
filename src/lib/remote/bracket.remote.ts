@@ -6,7 +6,7 @@ import { matchSchema } from '$lib/schemas';
 import { roleGuard } from './auth.remote';
 import { createBracket } from '$lib/bracket';
 import { error } from '@sveltejs/kit';
-import { sortBySeed } from '$lib/table';
+import { sortBySeed } from '$lib/standings';
 import { MatchState, type UnresolvedMatchWithOrder } from '$lib/types';
 import { fullMatchColumns, matchRosterQuery } from '$lib/server/db/helpers';
 import { AuthRole } from '$lib/authRole';

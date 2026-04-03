@@ -6,7 +6,7 @@ import {
 	divisionOrder,
 	hiddenSeasonFilter
 } from '$lib/server/db/helpers';
-import { calculateStandings } from '$lib/table';
+import { calculateStandings } from '$lib/standings';
 import { MatchState, type LogicalMatch } from '$lib/types';
 import { aggregateGroups } from '$lib/util';
 import { error } from '@sveltejs/kit';

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { TableScore } from '$lib/table';
+	import type { TableScore } from '$lib/standings';
 	import type { Roster } from '$lib/types';
 	import Icon from '../ui/Icon.svelte';
 	import RosterLogo from '../ui/RosterLogo.svelte';
