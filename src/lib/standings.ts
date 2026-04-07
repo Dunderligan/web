@@ -146,6 +146,7 @@ function compareSeedFirstIteration(
 
 		return (
 			aScore.mapWins - bScore.mapWins || // most map wins
+			aScore.wonAgainst.size - bScore.wonAgainst.size || // most match wins
 			aScore.mapDraws - bScore.mapDraws || // most map draws
 			headToHead || // head-to-head result
 			aScore.opponentMapRecordSum - bScore.opponentMapRecordSum // highest sum of map record (map wins - losses) from fought opponents
