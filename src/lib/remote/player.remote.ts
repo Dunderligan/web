@@ -3,9 +3,10 @@ import { canEditUserPage, isModerator } from '$lib/authRole';
 import { socialSchema } from '$lib/schemas';
 import { db, schema } from '$lib/server/db';
 import { type Transaction } from '$lib/server/db/helpers';
+import overwatch from '$lib/server/overwatch';
 import type { Social } from '$lib/types';
 import { error } from '@sveltejs/kit';
-import { eq, inArray } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import z from 'zod';
 
 export const editPlayer = command(
@@ -99,3 +100,63 @@ async function updateAliases(tx: Transaction, playerId: string, aliases: string[
 		await tx.insert(schema.playerAlias).values(inserts);
 	}
 }
+
+/**
+ * Allows users to take ownership of player profiles that have been
+ * registered without a full tag, but match their battletag name.
+ * */
+export const claimPlayer = command(
+	z.object({
+		battletag: z.string()
+	}),
+	async ({ battletag }) => {
+		const { locals } = getRequestEvent();
+
+		const player = await db.query.player.findFirst({
+			where: { battletag }
+		});
+
+		if (!player) {
+			throw error(404);
+		}
+
+		// only players without a full battletag can be claimed
+		if (player.battletag.includes('#')) {
+			throw error(400);
+		}
+
+		const name = locals.user?.battletag.split('#')[0];
+
+		if (name !== player.battletag) {
+			throw error(403);
+		}
+
+		await db
+			.update(schema.player)
+			.set({ battletag: locals.user!.battletag })
+			.where(eq(schema.player.id, player.id));
+
+		return { id: player.id };
+	}
+);
+
+export const setProfileSlug = command(
+	z.object({
+		playerId: z.string(),
+		slug: z.string()
+	}),
+	async ({ playerId, slug }) => {
+		const { locals } = getRequestEvent();
+
+		if (!canEditUserPage(locals.user, playerId)) {
+			throw error(403);
+		}
+
+		await db
+			.update(schema.player)
+			.set({ overwatchProfileSlug: slug })
+			.where(eq(schema.player.id, playerId));
+
+		await overwatch.invalidateCache(locals.user!.battletag);
+	}
+);

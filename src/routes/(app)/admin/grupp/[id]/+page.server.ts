@@ -8,10 +8,6 @@ export const load = async ({ params }) => {
 		where: {
 			id: params.id
 		},
-		columns: {
-			createdAt: false,
-			divisionId: false
-		},
 		with: {
 			rosters: {
 				orderBy: { name: 'asc' },
@@ -24,21 +20,12 @@ export const load = async ({ params }) => {
 			matches: {
 				orderBy: groupMatchOrder,
 				columns: {
-					createdAt: false,
 					order: false
 				}
 			},
 			division: {
-				columns: {
-					createdAt: false,
-					seasonId: false
-				},
 				with: {
-					season: {
-						columns: {
-							createdAt: false
-						}
-					}
+					season: true
 				}
 			}
 		}

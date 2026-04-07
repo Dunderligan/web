@@ -4,7 +4,7 @@
 	import type { ClassValue } from '$lib/types';
 
 	type Props = {
-		kind: 'info' | 'warn';
+		kind: 'info' | 'warn' | 'error';
 		children?: Snippet;
 		class?: ClassValue;
 	};
@@ -20,6 +20,10 @@
 			warn: {
 				icon: 'ph:warning',
 				class: 'bg-yellow-50 text-yellow-800 dark:bg-yellow-950 dark:text-yellow-300'
+			},
+			error: {
+				icon: 'ph:x-circle',
+				class: 'bg-red-50 text-red-800 dark:bg-red-950 dark:text-red-300'
 			}
 		}[kind]
 	);

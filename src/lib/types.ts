@@ -271,12 +271,13 @@ export type Preferences = {
 export type GameProfile = {
 	avatarUrl: string;
 	title: string | null;
+	slug: string;
 };
 
 export type GameProfileEntry =
 	| { status: 'found'; profile: GameProfile }
+	| { status: 'ambiguous'; candidates: GameProfile[] }
 	| { status: 'missing' }
-	| { status: 'ambiguous' }
 	| { status: 'error'; error: string };
 
 export type GameProfileEntryWithDate = { date: string } & GameProfileEntry;

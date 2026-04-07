@@ -1,0 +1,1 @@
+ALTER TABLE "player" ADD COLUMN "overwatch_profile_slug" text;

@@ -102,7 +102,8 @@ export const player = pgTable('player', {
 	id: uuid().primaryKey().defaultRandom(),
 	battletag: text().notNull().unique(),
 	pronouns: text(),
-	description: text()
+	description: text(),
+	overwatchProfileSlug: text()
 });
 
 export const rankEnum = pgEnum('rank', enumToPgEnum(Rank));

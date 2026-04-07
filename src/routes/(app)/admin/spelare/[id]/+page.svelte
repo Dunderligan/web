@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { invalidate } from '$app/navigation';
 	import { isModerator } from '$lib/authRole';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
@@ -10,10 +11,13 @@
 	import HeroPortrait from '$lib/components/ui/HeroPortrait.svelte';
 	import InputField from '$lib/components/ui/InputField.svelte';
 	import Label from '$lib/components/ui/Label.svelte';
+	import Notice from '$lib/components/ui/Notice.svelte';
+	import OverwatchProfile from '$lib/components/ui/OverwatchProfile.svelte';
 	import Select from '$lib/components/ui/Select.svelte';
-	import { editPlayer } from '$lib/remote/player.remote.js';
+	import { editPlayer, setProfileSlug } from '$lib/remote/player.remote.js';
 	import { SaveContext } from '$lib/state/save.svelte';
-	import { capitalize } from '$lib/util.js';
+	import type { GameProfile } from '$lib/types.js';
+	import { capitalize, formatDateTime } from '$lib/util.js';
 
 	let { data } = $props();
 
@@ -71,6 +75,11 @@
 		newSignatureHeroId = undefined;
 		saveCtx.setDirty();
 		addSignatureHeroOpen = false;
+	}
+
+	async function onProfileClicked(profile: GameProfile) {
+		await setProfileSlug({ playerId: player.id, slug: profile.slug });
+		await invalidate('admin:profile');
 	}
 </script>
 
@@ -145,6 +154,40 @@
 			<Button icon="ph:plus" onclick={() => (addSignatureHeroOpen = true)} />
 		{/if}
 	{/if}
+</AdminCard>
+
+<AdminCard title="Overwatchprofil">
+	{#if data.profile.status === 'found'}
+		<OverwatchProfile name={player.battletag} profile={data.profile.profile} />
+	{:else if data.profile.status === 'missing'}
+		<Notice kind="warn">
+			Profilen hittades inte genom Blizzard API:t. Se till att din profil är offentlig.
+		</Notice>
+	{:else if data.profile.status === 'error'}
+		<Notice kind="error">
+			Ett fel inträffade när profilen skulle hämtas. {data.profile.error}. Kom tillbaka om en stund.
+		</Notice>
+	{:else if data.profile.status === 'ambiguous'}
+		<Notice kind="info"
+			>Det finns flera profiler som matchar denna battletag. Välj din profil nedan för att länka den
+			till ditt konto.
+		</Notice>
+
+		<div class="grid gap-2 sm:grid-cols-2 md:grid-cols-3">
+			{#each data.profile.candidates as candidate (candidate.slug)}
+				<button
+					class="block rounded-md bg-gray-50 p-2 hover:bg-gray-100 hover:bg-gray-800 dark:bg-gray-900"
+					onclick={() => onProfileClicked(candidate)}
+				>
+					<OverwatchProfile name={player.battletag} profile={candidate} />
+				</button>
+			{/each}
+		</div>
+	{/if}
+
+	<p class="text-sm">
+		Hämtades senast {formatDateTime(new Date(data.profile.date))}.
+	</p>
 </AdminCard>
 
 <AdminCard title="Detaljer">

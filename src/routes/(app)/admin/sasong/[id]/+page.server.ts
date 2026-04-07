@@ -10,11 +10,7 @@ export const load = async ({ params }) => {
 		with: {
 			registration: true,
 			divisions: {
-				orderBy: (t) => divisionOrder(t.name),
-				columns: {
-					createdAt: false,
-					seasonId: false
-				}
+				orderBy: (t) => divisionOrder(t.name)
 			}
 		}
 	});

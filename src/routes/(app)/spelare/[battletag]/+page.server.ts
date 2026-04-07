@@ -14,7 +14,8 @@ export const load = async ({ params }) => {
 			id: true,
 			battletag: true,
 			description: true,
-			pronouns: true
+			pronouns: true,
+			overwatchProfileSlug: true
 		},
 		with: {
 			socials: {
@@ -56,7 +57,7 @@ export const load = async ({ params }) => {
 		throw error(404);
 	}
 
-	const profile = await overwatch.getProfile(battletag);
+	const profile = await overwatch.getProfile(battletag, player.overwatchProfileSlug);
 
 	return {
 		player,

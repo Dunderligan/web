@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { canEditUserPage, isModerator } from '$lib/authRole.js';
+	import { goto } from '$app/navigation';
+	import { canEditUserPage } from '$lib/authRole.js';
 	import Field from '$lib/components/structure/Field.svelte';
 	import PageHeader from '$lib/components/structure/PageHeader.svelte';
 	import PageSection from '$lib/components/structure/PageSection.svelte';
@@ -7,13 +8,14 @@
 	import Button from '$lib/components/ui/Button.svelte';
 	import HeroPortrait from '$lib/components/ui/HeroPortrait.svelte';
 	import Icon from '$lib/components/ui/Icon.svelte';
-	import Note from '$lib/components/ui/Note.svelte';
 	import Notice from '$lib/components/ui/Notice.svelte';
+	import OverwatchProfile from '$lib/components/ui/OverwatchProfile.svelte';
 	import Rank from '$lib/components/ui/Rank.svelte';
 	import RosterLogo from '$lib/components/ui/RosterLogo.svelte';
 	import Subheading from '$lib/components/ui/Subheading.svelte';
 	import TeamSocial from '$lib/components/ui/TeamSocial.svelte';
-	import { flattenGroup, formatDate, formatDateTime, roleIcon } from '$lib/util';
+	import { claimPlayer } from '$lib/remote/player.remote.js';
+	import { flattenGroup, formatDateTime, roleIcon } from '$lib/util';
 
 	let { data } = $props();
 
@@ -33,28 +35,33 @@
 
 	const hasFullTag = $derived(data.player.battletag.includes('#'));
 	const isUser = $derived(data.user?.battletag.split('#')[0] == name);
+
+	async function onClaimClicked() {
+		const { id } = await claimPlayer({
+			battletag: data.player.battletag
+		});
+
+		await goto(`/admin/spelare/${id}`);
+	}
 </script>
 
-<PageHeader class="flex flex-col items-center gap-6 sm:flex-row">
-	{#if profile}
-		<img src={profile.avatarUrl} alt="Profilbild" class="size-32 rounded-xl" />
-	{/if}
-
-	<div>
-		<h1 class="text-center text-6xl font-extrabold sm:text-left sm:text-6xl">{name}</h1>
-		{#if profile?.title}
-			<h2 class="text-center text-xl font-semibold text-gray-600 sm:text-left dark:text-gray-400">
-				{profile.title}
-			</h2>
-		{/if}
-	</div>
+<PageHeader>
+	<OverwatchProfile {name} {profile} large hideLink />
 </PageHeader>
 
 <PageSection class="flex flex-col-reverse gap-10 md:flex-row">
 	<section class="shrink grow">
 		{#if !hasFullTag && isUser}
 			<Notice kind="info" class="mb-6">
-				Är detta din profil? Spelaren har registrerats utan sin fullständiga battletag.
+				Är detta din profil?
+
+				<Button
+					onclick={onClaimClicked}
+					label="Redigera"
+					icon="ph:pencil-simple"
+					kind="transparent"
+					class="ml-auto shrink-0"
+				/>
 			</Notice>
 		{/if}
 
@@ -79,7 +86,7 @@
 		<Subheading>Rosters</Subheading>
 
 		<Table
-			class="mt-4 grid-cols-[1fr_130px_50px_60px] sm:grid-cols-[1fr_140px_80px_170px]"
+			class="mt-4 grid-cols-[1fr_160px_50px_60px] sm:grid-cols-[1fr_160px_60px_170px]"
 			rows={sortedMemberships}
 			key={(value) => value.roster.id}
 			columns={[
@@ -122,27 +129,40 @@
 
 		<p class="mt-6 text-sm font-medium text-gray-500">
 			{#if data.profile.status === 'found'}
-				Overwatch-profil hämtades automatiskt från Battle.net.
+				Overwatchprofil hämtades automatiskt från Battle.net.
 			{:else if data.profile.status === 'error'}
-				Kunde inte hämta Overwatch-profil: {data.profile.error}.
+				Kunde inte hämta Overwatchprofil: {data.profile.error}.
 			{:else if data.profile.status === 'missing'}
-				Ingen publik Overwatch-profil hittades för denna battletag.
+				Ingen publik Overwatchprofil hittades för denna battletag.
 			{:else if data.profile.status === 'ambiguous'}
-				Flera Overwatch-profiler matchade denna battletag.
+				Flera Overwatchprofiler matchade denna battletag.
 			{/if}
 			Senast hämtad {formatDateTime(new Date(data.profile.date))}.
 		</p>
 	</section>
 
 	<section class="shrink-0 space-y-6 md:w-44">
-		{#if canEditUserPage(data.user, data.player.battletag)}
-			<Button
-				href="/admin/spelare/{data.player.id}"
-				label="Redigera"
-				icon="ph:pencil-simple"
-				kind="secondary"
-			/>
-		{/if}
+		<div class="space-y-2">
+			{#if canEditUserPage(data.user, data.player.battletag)}
+				<Button
+					href="/admin/spelare/{data.player.id}"
+					label="Redigera"
+					icon="ph:pencil-simple"
+					kind="secondary"
+				/>
+			{/if}
+
+			{#if data.profile.status === 'found'}
+				<Button
+					href="https://overwatch.blizzard.com/en-us/career/{data.profile.profile.slug}"
+					target="_blank"
+					rel="noopener noreferrer"
+					label="Blizzard.com"
+					icon="ph:arrow-square-out"
+					kind="secondary"
+				/>
+			{/if}
+		</div>
 
 		{#if data.player.pronouns}
 			<Field title="Pronomen">
