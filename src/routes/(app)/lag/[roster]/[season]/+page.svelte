@@ -25,7 +25,10 @@
 
 	const playedMatches = $derived(
 		roster.matches.filter(
-			(match) => match.state === MatchState.PLAYED || match.state === MatchState.WALKOVER
+			(match) =>
+				match.state === MatchState.PLAYED ||
+				// don't show walkovers where one team is missing (most often bracket byes)
+				(match.state === MatchState.WALKOVER && match.rosterAId && match.rosterBId)
 		)
 	);
 	const upcomingMatches = $derived(
