@@ -32,14 +32,16 @@
 	</div>
 
 	{#if profile && !hideLink}
+		<!-- the admin panel uses this component within a clickable card, which we don't want to trigger when clicking the link -->
 		<Button
+			onclick={(evt) => evt.stopPropagation()}
 			kind="tertiary"
 			icon="ph:arrow-square-out"
 			title="Visa på blizzard.com"
-			href="https://overwatch.blizzard.com/en-us/career/{profile.slug}"
 			target="_blank"
 			rel="noopener noreferrer"
 			class="ml-auto"
+			href="https://overwatch.blizzard.com/en-us/career/{profile.slug}"
 		/>
 	{/if}
 </div>

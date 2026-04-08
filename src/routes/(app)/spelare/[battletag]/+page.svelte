@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { canEditUserPage } from '$lib/authRole.js';
 	import Field from '$lib/components/structure/Field.svelte';
+	import Meta from '$lib/components/structure/Meta.svelte';
 	import PageHeader from '$lib/components/structure/PageHeader.svelte';
 	import PageSection from '$lib/components/structure/PageSection.svelte';
 	import Table from '$lib/components/table/Table.svelte';
@@ -44,6 +45,12 @@
 		await goto(`/admin/spelare/${id}`);
 	}
 </script>
+
+<Meta
+	title={name}
+	description={data.player.description ?? `Se information om spelaren ${name} i Dunderligan.`}
+	ogImage={profile?.avatarUrl}
+/>
 
 <PageHeader>
 	<OverwatchProfile {name} {profile} large hideLink />
@@ -127,7 +134,7 @@
 			{/snippet}
 		</Table>
 
-		<p class="mt-6 text-sm font-medium text-gray-500">
+		<p class="mt-6 text-sm font-medium text-gray-500 dark:text-gray-400">
 			{#if data.profile.status === 'found'}
 				Overwatchprofil hämtades automatiskt från Battle.net.
 			{:else if data.profile.status === 'error'}
