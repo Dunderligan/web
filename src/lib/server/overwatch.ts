@@ -1,7 +1,6 @@
 import type { GameProfile, GameProfileEntry, GameProfileEntryWithDate } from '$lib/types';
 import { env } from '$env/dynamic/private';
 import { createClient } from 'redis';
-import z from 'zod';
 
 interface Cache {
 	get(key: string): Promise<CacheRow | null>;
@@ -130,7 +129,7 @@ async function searchProfiles(battletag: string): Promise<CacheRow> {
 }
 
 function mapApiProfile(obj: any): GameProfile {
-	return { avatarUrl: obj.avatar, title: obj.title?.en_US, slug: obj.url };
+	return { avatarUrl: obj.avatar, name: obj.name, title: obj.title?.en_US, slug: obj.url };
 }
 
 async function invalidateCache(battletag: string) {

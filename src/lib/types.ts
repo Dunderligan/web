@@ -270,6 +270,7 @@ export type Preferences = {
 
 export type GameProfile = {
 	avatarUrl: string;
+	name: string;
 	title: string | null;
 	slug: string;
 };

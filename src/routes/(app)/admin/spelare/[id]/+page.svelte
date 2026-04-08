@@ -176,10 +176,10 @@
 		<div class="grid gap-2 sm:grid-cols-2 md:grid-cols-3">
 			{#each data.profile.candidates as candidate (candidate.slug)}
 				<button
-					class="block rounded-md bg-gray-50 p-2 hover:bg-gray-100 hover:bg-gray-800 dark:bg-gray-900"
+					class="block rounded-md bg-gray-50 p-2 hover:bg-gray-100 dark:bg-gray-900 dark:hover:bg-gray-800"
 					onclick={() => onProfileClicked(candidate)}
 				>
-					<OverwatchProfile name={player.battletag} profile={candidate} />
+					<OverwatchProfile name={candidate.name} profile={candidate} />
 				</button>
 			{/each}
 		</div>
