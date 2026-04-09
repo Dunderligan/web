@@ -86,7 +86,7 @@
 			type: 'button',
 			icon: 'ph:user',
 			label: 'Min profil',
-			href: `/spelare/${user?.battletag.replace('#', '-')}`
+			href: `/jag`
 		},
 		{
 			type: 'button',

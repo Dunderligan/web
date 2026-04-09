@@ -20,6 +20,8 @@
 
 	let { data } = $props();
 
+	let claimLoading = $state(false);
+
 	const sortedMemberships = $derived(
 		data.player.memberships.toSorted((a, b) => {
 			const aSeason = flattenGroup(a.roster.group).season;
@@ -38,11 +40,17 @@
 	const isUser = $derived(data.user?.battletag.split('#')[0] == name);
 
 	async function onClaimClicked() {
-		const { id } = await claimPlayer({
-			battletag: data.player.battletag
-		});
+		claimLoading = true;
 
-		await goto(`/admin/spelare/${id}`);
+		try {
+			const { id } = await claimPlayer({
+				battletag: data.player.battletag
+			});
+
+			await goto(`/admin/spelare/${id}`);
+		} finally {
+			claimLoading = false;
+		}
 	}
 </script>
 
@@ -63,11 +71,12 @@
 				Är detta din profil?
 
 				<Button
-					onclick={onClaimClicked}
 					label="Redigera"
 					icon="ph:pencil-simple"
 					kind="transparent"
 					class="ml-auto shrink-0"
+					onclick={onClaimClicked}
+					loading={claimLoading}
 				/>
 			</Notice>
 		{/if}
@@ -140,7 +149,7 @@
 			{:else if data.profile.status === 'error'}
 				Kunde inte hämta Overwatchprofil: {data.profile.error}.
 			{:else if data.profile.status === 'missing'}
-				Ingen publik Overwatchprofil hittades för denna battletag.
+				Ingen offentlig Overwatchprofil hittades för denna battletag.
 			{:else if data.profile.status === 'ambiguous'}
 				Flera Overwatchprofiler matchade denna battletag.
 			{/if}

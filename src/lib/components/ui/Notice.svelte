@@ -33,7 +33,7 @@
 	class={[
 		kindClass,
 		classProp,
-		'flex min-h-14 items-center gap-2 rounded-lg py-2 pr-3 pl-6 font-medium'
+		'flex min-h-14 items-center gap-4 rounded-lg py-2 pr-3 pl-6 font-medium'
 	]}
 >
 	<Icon {icon} />
