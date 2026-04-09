@@ -173,7 +173,7 @@
 			till ditt konto.
 		</Notice>
 
-		<div class="grid gap-2 sm:grid-cols-2 md:grid-cols-3">
+		<div class="grid max-h-92 gap-2 overflow-y-auto sm:grid-cols-2 md:grid-cols-3">
 			{#each data.profile.candidates as candidate (candidate.slug)}
 				<button
 					class="block rounded-md bg-gray-50 p-2 hover:bg-gray-100 dark:bg-gray-900 dark:hover:bg-gray-800"

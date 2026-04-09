@@ -13,7 +13,7 @@
 	let { name, profile, large = false, hideLink = false }: Props = $props();
 </script>
 
-<div class={['flex items-center', large ? 'gap-6' : 'gap-2']}>
+<div class={['flex items-center', large ? 'flex-col gap-6 sm:flex-row' : 'gap-2']}>
 	{#if profile?.avatarUrl}
 		<img
 			src={profile.avatarUrl}
@@ -22,8 +22,8 @@
 		/>
 	{/if}
 
-	<div class="text-left">
-		<div class={[large ? 'text-6xl font-extrabold sm:text-6xl' : 'text-lg font-semibold']}>
+	<div class={large ? 'text-center sm:text-left' : 'text-left'}>
+		<div class={[large ? 'text-5xl font-extrabold sm:text-6xl' : 'text-lg font-semibold']}>
 			{name}
 		</div>
 		<div class={[large && 'mt-1 text-lg font-semibold text-gray-600 dark:text-gray-400']}>
