@@ -16,9 +16,10 @@
 		standings: TableEntry[];
 		playoffLine: number | null;
 		seasonSlug: string;
+		showInitialSeeds?: boolean;
 	};
 
-	let { standings, playoffLine, seasonSlug }: Props = $props();
+	let { standings, playoffLine, seasonSlug, showInitialSeeds = false }: Props = $props();
 
 	const rows = $derived.by(() => {
 		if (!playoffLine) return standings;
@@ -44,13 +45,19 @@
 		{
 			label: 'Lag'
 		},
+		...(showInitialSeeds ? [{ label: 'Seed', center: true }] : []),
 		{ label: 'Poäng', center: true, note: 'Antal vunna maps' },
 		{ label: 'W/L/D', center: true, note: 'Map record: Wins/Losses/Draws' },
 		{ label: 'Matcher', center: true }
 	]}
 	{rows}
 	key={(row) => (row === 'playoffLine' ? row : row.roster.id)}
-	class="max-w-2xl grid-cols-[40px_1fr_50px_60px_70px] sm:grid-cols-[50px_1fr_100px_110px_80px]"
+	class={[
+		'max-w-2xl',
+		showInitialSeeds
+			? 'grid-cols-[40px_1fr_40px_50px_60px_70px] sm:grid-cols-[50px_1fr_50px_100px_110px_80px]'
+			: 'grid-cols-[40px_1fr_50px_60px_70px] sm:grid-cols-[50px_1fr_100px_110px_80px]'
+	]}
 >
 	{#snippet row({ index, value: row })}
 		{#if row === 'playoffLine'}
@@ -84,6 +91,12 @@
 
 				<a {href} class="truncate hover:underline">{roster.name}</a>
 			</div>
+
+			{#if showInitialSeeds}
+				<div class="justify-center text-xl">
+					{roster.initialSeed}
+				</div>
+			{/if}
 
 			<div class="justify-center text-xl">
 				{score.mapWins}

@@ -15,18 +15,22 @@ export type TableScore = {
  * Additional per-team data used during the calculation of standings (particularly tiebreakers).
  */
 type ExtraNodeInfo = {
+	roster: StandingsRoster;
 	wonAgainst: Set<string>;
 	lostAgainst: Set<string>;
 	drawedAgainst: Set<string>;
 	opponentMapRecordSum: number;
-	resigned: boolean;
 };
 
 type TableScoreWithInfo = TableScore & ExtraNodeInfo;
 
-type RosterTableScoreWithInfo = [string, TableScoreWithInfo];
-
 type RosterGraph = Map<string, TableScore & ExtraNodeInfo>;
+
+type StandingsRoster = {
+	id: string;
+	resigned?: boolean | null;
+	initialSeed?: number | null;
+};
 
 /**
  * Calculates scores and standings for a list of rosters, according to the scores of the given matches
@@ -35,14 +39,49 @@ type RosterGraph = Map<string, TableScore & ExtraNodeInfo>;
  * The result is sorted from highest to lowest seed (as usually displayed in a table).
  * Resigned rosters are placed at the bottom of the table (that is last in the result).
  */
-export function calculateStandings<R extends { id: string; resigned?: boolean }>(
-	rosters: R[],
+export function calculateStandings(
+	rosters: StandingsRoster[],
 	matches: LogicalMatch[],
 	legacyMode: boolean
 ): {
 	rosterId: string;
 	score: TableScore;
 }[] {
+	const graph = aggregateRosters(rosters, matches);
+
+	for (const [_, score] of graph) {
+		score.opponentMapRecordSum = sumOpponentMapRecord(score, graph);
+	}
+
+	// sort them lowest to highest seed according to the main tiebreakers
+	const sortedScores = [...graph.values()].sort((a, b) =>
+		compareSeedFirstIteration(a, b, graph, legacyMode)
+	);
+
+	// if there's still ties, sort the tied teams according to secondary tiebreakers
+	// we need to do this in two steps because these tiebreakers depend on the (preliminary) seeding of other teams
+	sortedScores.sort((a, b) => compareSeedSecondIteration(a, b, sortedScores, graph, legacyMode));
+
+	// filter our extra info out of the result
+	const result = sortedScores.map(
+		({
+			roster: { id: rosterId },
+			wonAgainst,
+			lostAgainst,
+			drawedAgainst,
+			opponentMapRecordSum,
+			...score
+		}) => ({
+			rosterId,
+			score
+		})
+	);
+
+	// return with the highest seeded team first (descending seed)
+	return result.reverse();
+}
+
+function aggregateRosters(rosters: StandingsRoster[], matches: LogicalMatch[]): RosterGraph {
 	const graph = new Map<string, TableScoreWithInfo>();
 
 	for (const roster of rosters) {
@@ -55,7 +94,7 @@ export function calculateStandings<R extends { id: string; resigned?: boolean }>
 			lostAgainst: new Set(),
 			drawedAgainst: new Set(),
 			opponentMapRecordSum: 0,
-			resigned: roster.resigned ?? false
+			roster
 		});
 	}
 
@@ -96,68 +135,50 @@ export function calculateStandings<R extends { id: string; resigned?: boolean }>
 		teamB.matchesPlayed += 1;
 	}
 
-	for (const [_, score] of graph) {
-		score.opponentMapRecordSum = sumOpponentMapRecord(score, graph);
-	}
-
-	// sort them lowest to highest seed according to the main tiebreakers
-	const sortedScores = [...graph].sort((a, b) =>
-		compareSeedFirstIteration(a, b, graph, legacyMode)
-	);
-
-	// if there's still ties, sort the tied teams according to secondary tiebreakers
-	// we need to do this in two steps because these tiebreakers depend on the (preliminary) seeding of other teams
-	sortedScores.sort((a, b) => compareSeedSecondIteration(a, b, sortedScores, graph, legacyMode));
-
-	// filter our extra info out of the result
-	const result = sortedScores.map(
-		([
-			rosterId,
-			{ wonAgainst, lostAgainst, drawedAgainst, opponentMapRecordSum, resigned, ...score }
-		]) => ({
-			rosterId,
-			score
-		})
-	);
-
-	// return with the highest seeded team first (descending seed)
-	return result.reverse();
+	return graph;
 }
 
 /** Decides whether a should be seeded higher than b. */
 function compareSeedFirstIteration(
-	[aId, aScore]: RosterTableScoreWithInfo,
-	[bId, bScore]: RosterTableScoreWithInfo,
+	a: TableScoreWithInfo,
+	b: TableScoreWithInfo,
 	graph: RosterGraph,
 	legacyMode: boolean
 ): number {
 	// resigned teams are always seeded lower
-	if (aScore.resigned && !bScore.resigned) return -1;
-	if (!aScore.resigned && bScore.resigned) return 1;
+	if (a.roster.resigned && !b.roster.resigned) return -1;
+	if (!a.roster.resigned && b.roster.resigned) return 1;
+
+	const initialOrder = compareNullable(a.roster.initialSeed, b.roster.initialSeed);
 
 	if (legacyMode) {
 		return (
-			aScore.mapWins - bScore.mapWins || // most map wins
-			bScore.mapLosses - aScore.mapLosses || // least map losses
-			aScore.wonAgainst.size - bScore.wonAgainst.size // most match wins
+			a.mapWins - b.mapWins || // most map wins
+			b.mapLosses - a.mapLosses || // least map losses
+			a.wonAgainst.size - b.wonAgainst.size || // most match wins
+			initialOrder
 		);
 	} else {
-		const headToHead = compare(hasBeat(aId, bId, graph), hasBeat(bId, aId, graph));
+		const headToHead = compare(
+			hasBeat(a.roster.id, b.roster.id, graph),
+			hasBeat(b.roster.id, a.roster.id, graph)
+		);
 
 		return (
-			aScore.mapWins - bScore.mapWins || // most map wins
-			aScore.wonAgainst.size - bScore.wonAgainst.size || // most match wins
-			aScore.mapDraws - bScore.mapDraws || // most map draws
+			a.mapWins - b.mapWins || // most map wins
+			a.wonAgainst.size - b.wonAgainst.size || // most match wins
+			a.mapDraws - b.mapDraws || // most map draws
 			headToHead || // head-to-head result
-			aScore.opponentMapRecordSum - bScore.opponentMapRecordSum // highest sum of map record (map wins - losses) from fought opponents
+			a.opponentMapRecordSum - b.opponentMapRecordSum || // highest sum of map record (map wins - losses) from fought opponents
+			initialOrder
 		);
 	}
 }
 
 function compareSeedSecondIteration(
-	a: RosterTableScoreWithInfo,
-	b: RosterTableScoreWithInfo,
-	sortedScores: RosterTableScoreWithInfo[],
+	a: TableScoreWithInfo,
+	b: TableScoreWithInfo,
+	sortedScores: TableScoreWithInfo[],
 	graph: RosterGraph,
 	legacyMode: boolean
 ): number {
@@ -166,8 +187,8 @@ function compareSeedSecondIteration(
 		return firstIter;
 	}
 
-	const [highestBeatenA, lowestLostToA] = highestAndLowestLostTo(a[1], sortedScores);
-	const [highestBeatenB, lowestLostToB] = highestAndLowestLostTo(b[1], sortedScores);
+	const [highestBeatenA, lowestLostToA] = highestAndLowestLostTo(a, sortedScores);
+	const [highestBeatenB, lowestLostToB] = highestAndLowestLostTo(b, sortedScores);
 
 	// keep in mind that a higher seed has a lower index in the sorted array
 	return (
@@ -234,18 +255,18 @@ function compare(a: any, b: any): number {
 /** Returns the indicies of the highest beaten and lowest lost to opponents of a roster. */
 function highestAndLowestLostTo(
 	score: TableScoreWithInfo,
-	sortedScores: RosterTableScoreWithInfo[]
+	sortedScores: TableScoreWithInfo[]
 ): [number | null, number | null] {
 	let highestBeaten: number | null = null;
 	let lowestLostTo: number | null = null;
 
 	for (let i = 0; i < sortedScores.length; i++) {
-		const [rosterId, _] = sortedScores[i];
+		const opponentId = sortedScores[i].roster.id;
 
-		if (score.wonAgainst.has(rosterId) && highestBeaten === null) {
+		if (score.wonAgainst.has(opponentId) && highestBeaten === null) {
 			highestBeaten = i;
 		}
-		if (score.lostAgainst.has(rosterId)) {
+		if (score.lostAgainst.has(opponentId)) {
 			lowestLostTo = i;
 		}
 	}

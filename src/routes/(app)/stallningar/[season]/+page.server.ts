@@ -65,7 +65,8 @@ export const load = async ({ params, locals }) => {
 									id: true,
 									name: true,
 									slug: true,
-									resigned: true
+									resigned: true,
+									initialSeed: true
 								}
 							},
 							matches: {

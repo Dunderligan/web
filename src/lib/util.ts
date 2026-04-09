@@ -122,7 +122,7 @@ export function mapEmptyToUndefined(str: string) {
 	return str;
 }
 
-export function seasonState({
+export function getSeasonState({
 	startedAt,
 	endedAt
 }: {

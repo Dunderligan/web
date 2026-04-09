@@ -68,7 +68,8 @@ export const roster = pgTable('roster', {
 	groupId: uuid()
 		.notNull()
 		.references(() => group.id, { onDelete: 'cascade' }),
-	resigned: boolean().notNull().default(false)
+	resigned: boolean().notNull().default(false),
+	initialSeed: integer()
 });
 
 export const socialPlatformEnum = pgEnum('social_platform', enumToPgEnum(SocialPlatform));
