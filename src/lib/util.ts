@@ -19,6 +19,8 @@ export function formatSocialPlatform(platform: SocialPlatform) {
 			return 'Twitter';
 		case SocialPlatform.YOUTUBE:
 			return 'Youtube';
+		case SocialPlatform.DISCORD:
+			return 'Discord';
 	}
 }
 
@@ -145,11 +147,6 @@ function isWithinWeek(a: Date, b: Date) {
 
 /** Formats a date in a readable way, without time. */
 export function formatDate(date: Date, extra?: any): string {
-	const isToday = date.toDateString() === new Date().toDateString();
-	if (isToday) {
-		return 'idag';
-	}
-
 	const isThisWeek = isWithinWeek(date, new Date());
 	const isCurrentYear = date.getFullYear() === new Date().getFullYear();
 
@@ -162,10 +159,11 @@ export function formatDate(date: Date, extra?: any): string {
 }
 
 /** Formats a date in a readable way, with time. */
-export function formatDateTime(date: Date): string {
+export function formatDateTime(date: Date, extra?: any): string {
 	return formatDate(date, {
 		hour: '2-digit',
-		minute: '2-digit'
+		minute: '2-digit',
+		...extra
 	});
 }
 

@@ -121,7 +121,7 @@
 </script>
 
 <Meta
-	title="{displayMode} - {division.name} - {season.name}"
+	title="{displayMode} — {division.name} — {season.name}"
 	description="Se tabellen och resultaten för {division.name} i {season.name} av Dunderligan."
 />
 

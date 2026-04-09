@@ -56,9 +56,7 @@
 		{#if row === 'playoffLine'}
 			<div class="my-2.5 border-t-2 border-dashed border-red-600"></div>
 			<div class="my-2.5 border-t-2 border-dashed border-red-600"></div>
-			<div class="my-auto bg-transparent text-center text-sm font-semibold text-red-600">
-				Playoffs
-			</div>
+			<div class="my-auto bg-transparent text-center text-sm text-red-600">Playoffs</div>
 			<div class="my-2.5 border-t-2 border-dashed border-red-600"></div>
 			<div class="my-2.5 border-t-2 border-dashed border-red-600"></div>
 		{:else}
@@ -69,7 +67,7 @@
 
 			{@const href = `/lag/${roster.slug}/${seasonSlug}`}
 
-			<div class="relative flex items-center justify-center text-lg font-semibold">
+			<div class="relative justify-center font-semibold">
 				{#if roster.resigned}
 					<Icon
 						icon="ph:minus-circle-fill"
@@ -81,21 +79,21 @@
 				{/if}
 			</div>
 
-			<div class="flex min-w-0 items-center gap-2 py-1.5 text-lg font-semibold">
+			<div class="min-w-0 gap-2 py-1.5 font-semibold">
 				<RosterLogo id={roster.id} {href} class="size-12" />
 
 				<a {href} class="truncate hover:underline">{roster.name}</a>
 			</div>
 
-			<div class="flex items-center justify-center text-xl font-semibold">
+			<div class="justify-center text-xl">
 				{score.mapWins}
 			</div>
 
-			<div class="flex items-center justify-center text-lg font-medium">
+			<div class="justify-center">
 				{score.mapWins}/{score.mapLosses}/{score.mapDraws}
 			</div>
 
-			<div class="flex items-center justify-center text-lg font-medium">
+			<div class="justify-center">
 				{score.matchesPlayed}
 			</div>
 		{/if}

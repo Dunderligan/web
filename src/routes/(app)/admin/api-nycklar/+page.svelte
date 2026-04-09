@@ -80,19 +80,19 @@
 			]}
 		>
 			{#snippet row({ value: key })}
-				<div class="flex items-center py-4 pl-6 text-lg font-semibold">
+				<div class="py-4 pl-6 text-lg font-semibold">
 					{key.name}
 				</div>
 
-				<div class="flex items-center justify-center font-medium">
+				<div class="justify-center">
 					{formatDate(key.createdAt)}
 				</div>
 
-				<div class="flex items-center justify-center font-medium">
+				<div class="justify-center">
 					{key.lastUsedAt ? formatDateTime(key.lastUsedAt) : 'Aldrig'}
 				</div>
 
-				<div class="flex items-center justify-center gap-2">
+				<div class="justify-center gap-2">
 					<Button icon="ph:trash" kind="tertiary" onclick={() => ondelete(key.id)} />
 				</div>
 			{/snippet}

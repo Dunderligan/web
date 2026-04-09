@@ -1,8 +1,6 @@
 import {
-	groupMatchOrder,
-	matchRosterQuery,
-	nestedBracketQuery,
 	nestedGroupQuery,
+	hiddenGroupFilter,
 	hiddenSeasonFilter,
 	memberQuery,
 	fullMatchQueryWithContext
@@ -44,13 +42,7 @@ export const load = async ({ params, locals }) => {
 							slug: true
 						},
 						where: {
-							group: {
-								division: {
-									season: {
-										hidden: hiddenSeasonFilter(locals.user)
-									}
-								}
-							}
+							group: hiddenGroupFilter(locals.user)
 						},
 						with: {
 							group: nestedGroupQuery

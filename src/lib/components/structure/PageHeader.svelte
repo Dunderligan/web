@@ -19,17 +19,17 @@
 	]}
 >
 	{#if title}
-		<h1 class="text-center font-display text-6xl font-extrabold sm:text-left sm:text-7xl">
+		<h1 class="text-center text-6xl font-extrabold sm:text-left sm:text-7xl">
 			{title}
 		</h1>
 	{/if}
 
 	{#if subtitle}
-		<div
+		<h2
 			class="mt-2 mb-1 text-center text-xl font-semibold text-gray-600 sm:text-left dark:text-gray-400"
 		>
 			{subtitle}
-		</div>
+		</h2>
 	{/if}
 
 	{@render children?.()}

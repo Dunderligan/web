@@ -52,7 +52,8 @@ export enum Rank {
 /** Available social platforms for team social media links. */
 export enum SocialPlatform {
 	YOUTUBE = 'youtube',
-	TWITTER = 'twitter'
+	TWITTER = 'twitter',
+	DISCORD = 'discord'
 }
 
 export enum Role {
@@ -141,7 +142,7 @@ export type FullRoster = RosterWithGroup & {
 	members: Member[];
 };
 
-export type TeamSocial = {
+export type Social = {
 	platform: SocialPlatform;
 	url: string;
 };
@@ -275,3 +276,18 @@ export type Preferences = {
 	theme: Theme;
 	spoilerMode: boolean;
 };
+
+export type GameProfile = {
+	avatarUrl: string;
+	name: string;
+	title: string | null;
+	slug: string;
+};
+
+export type GameProfileEntry =
+	| { status: 'found'; profile: GameProfile }
+	| { status: 'ambiguous'; candidates: GameProfile[] }
+	| { status: 'missing' }
+	| { status: 'error'; error: string };
+
+export type GameProfileEntryWithDate = { date: string } & GameProfileEntry;

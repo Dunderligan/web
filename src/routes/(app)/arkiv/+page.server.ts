@@ -8,9 +8,6 @@ export const load = async ({ locals }) => {
 		},
 		where: {
 			hidden: hiddenSeasonFilter(locals.user)
-		},
-		columns: {
-			createdAt: false
 		}
 	});
 

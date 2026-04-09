@@ -1,5 +1,5 @@
 import z from 'zod';
-import { MatchState } from './types';
+import { MatchState, SocialPlatform } from './types';
 
 /** Zod schema for remote functions that take matches as arguments. */
 export const matchSchema = z.object({
@@ -15,4 +15,9 @@ export const matchSchema = z.object({
 	vodUrl: z.url().nullish(),
 	scheduledAt: z.date().nullish(),
 	playedAt: z.date().nullish()
+});
+
+export const socialSchema = z.object({
+	platform: z.enum(SocialPlatform),
+	url: z.url()
 });

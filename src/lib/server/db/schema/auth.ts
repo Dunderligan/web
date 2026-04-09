@@ -1,5 +1,5 @@
 import { integer, pgEnum, pgTable, text, timestamp, unique, uuid } from 'drizzle-orm/pg-core';
-import { enumToPgEnum, timestamps } from './util';
+import { enumToPgEnum } from './util';
 import { AuthRole } from '../../../authRole';
 
 export const authRole = pgEnum('auth_role', enumToPgEnum(AuthRole));
@@ -9,7 +9,7 @@ export const user = pgTable('user', {
 	battletag: text().notNull().unique(),
 	battlenetId: integer().notNull().unique(),
 	role: authRole().notNull().default(AuthRole.USER),
-	...timestamps
+	createdAt: timestamp().defaultNow().notNull()
 });
 
 export const session = pgTable('session', {
@@ -18,7 +18,7 @@ export const session = pgTable('session', {
 		.notNull()
 		.references(() => user.id),
 	expiresAt: timestamp({ withTimezone: true, mode: 'date' }).notNull(),
-	...timestamps
+	createdAt: timestamp().defaultNow().notNull()
 });
 
 export const apiKey = pgTable(
@@ -31,7 +31,7 @@ export const apiKey = pgTable(
 		tokenHash: text().notNull().unique(),
 		name: text().notNull(),
 		lastUsedAt: timestamp(),
-		...timestamps
+		createdAt: timestamp().defaultNow().notNull()
 	},
 	(t) => [unique().on(t.userId, t.name)]
 );

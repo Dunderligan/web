@@ -45,6 +45,7 @@
 		"drizzle-seed": "1.0.0-beta.2-ec83fa8",
 		"iconify-icon": "^3.0.2",
 		"postgres": "^3.4.8",
+		"redis": "^5.11.0",
 		"sharp": "^0.34.5",
 		"slugify": "^1.6.6",
 		"uuid": "^13.0.0",
