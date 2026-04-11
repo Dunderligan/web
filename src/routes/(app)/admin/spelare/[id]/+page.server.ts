@@ -4,7 +4,7 @@ import overwatch from '$lib/server/overwatch.js';
 import { error } from '@sveltejs/kit';
 
 export const load = async ({ params, locals, depends }) => {
-	depends('admin:profile');
+	depends('admin:player');
 
 	const [player, heroes] = await Promise.all([getPlayer(params.id), db.query.hero.findMany()]);
 
@@ -16,10 +16,13 @@ export const load = async ({ params, locals, depends }) => {
 		throw error(403);
 	}
 
+	const matchingPlayers = await getMatchingPlayers(player.aliases.map((alias) => alias.name));
+
 	const profile = await overwatch.getProfile(player.battletag, player.overwatchProfileSlug);
 
 	return {
 		player,
+		matchingPlayers,
 		heroes,
 		profile
 	};
@@ -46,6 +49,23 @@ async function getPlayer(id: string) {
 					name: true
 				}
 			}
+		}
+	});
+}
+
+async function getMatchingPlayers(aliases: string[]) {
+	return await db.query.player.findMany({
+		where: {
+			battletag: {
+				in: aliases
+			}
+		},
+		columns: {
+			id: true,
+			battletag: true
+		},
+		with: {
+			memberships: {}
 		}
 	});
 }

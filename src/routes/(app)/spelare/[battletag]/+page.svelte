@@ -32,6 +32,7 @@
 	);
 
 	const lastMembership = $derived(sortedMemberships.at(0));
+	const anyRegisteredNames = $derived(data.player.memberships.some((m) => m.registeredName));
 	const name = $derived(data.player.battletag.split('#')[0]);
 
 	const profile = $derived(data.profile.status === 'found' ? data.profile.profile : null);
@@ -102,31 +103,41 @@
 		<Subheading>Rosters</Subheading>
 
 		<Table
-			class="mt-4 grid-cols-[1fr_160px_50px_80px] sm:grid-cols-[1fr_160px_60px_170px]"
+			class="mt-4 grid-cols-[1fr_auto_80px_50px_80px] sm:grid-cols-[1fr_auto_160px_60px_140px]"
 			rows={sortedMemberships}
 			key={(value) => value.roster.id}
 			columns={[
 				{ label: 'Lag' },
+				{ label: anyRegisteredNames ? 'Spelade som' : '', center: true },
 				{ label: 'Säsong', center: true },
 				{ label: 'Roll', center: true },
 				{ label: 'Rank' }
 			]}
 		>
 			{#snippet row({ value: membership })}
-				{@const { roster, role, rank, tier, sr } = membership}
+				{@const { roster, role, rank, tier, sr, registeredName } = membership}
 				{@const { division, season } = flattenGroup(roster.group)}
 				{@const href = `/lag/${roster.slug}/${season.slug}`}
 
 				<div class="gap-2 px-4 py-1.5 font-semibold">
 					<RosterLogo id={roster.id} class="size-12" {href} />
 
-					<a {href} class="hidden hover:underline sm:inline">
+					<a {href} class="hidden truncate hover:underline sm:inline">
 						{roster.name}
 					</a>
 				</div>
 
 				<div class="justify-center text-base">
-					{division.name}, {season.name}
+					{registeredName}
+				</div>
+
+				<div class="justify-center text-base">
+					<a href="/stallningar/{season.slug}?div={division.slug}" class="hover:underline">
+						<span class="hidden sm:inline">
+							{division.name},
+						</span>
+						{season.name}
+					</a>
 				</div>
 
 				<div class="justify-center gap-2 text-xl">

@@ -73,6 +73,7 @@
 			rank: season.legacyRanks ? null : Rank.BRONZE,
 			tier: season.legacyRanks ? null : 1,
 			sr: season.legacyRanks ? 0 : null,
+			registeredName: null,
 			player: {
 				id: null as any as string, // the backend will either link this up with an existing player, or create a new one
 				battletag: newPlayerBattletag

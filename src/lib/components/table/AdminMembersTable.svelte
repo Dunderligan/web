@@ -36,9 +36,13 @@
 		{@const hasRank = legacyRanks ? member.sr !== null : member.rank && member.tier}
 
 		<div class="px-6 py-4 font-semibold">
-			<a href="/admin/spelare/{member.player.id}" class="hover:underline"
-				>{member.player.battletag}</a
-			>
+			<a href="/admin/spelare/{member.player.id}" class="hover:underline">
+				{#if member.registeredName}
+					{member.registeredName} <span class="font-medium">({member.player.battletag})</span>
+				{:else}
+					{member.player.battletag}
+				{/if}
+			</a>
 		</div>
 
 		<div class="justify-center gap-2 pr-2">

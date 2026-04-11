@@ -77,6 +77,7 @@ export const editRoster = command(
 				tier: z.int().max(5).min(1).nullable(),
 				sr: z.int().min(0).nullable(),
 				isCaptain: z.boolean(),
+				registeredName: z.string().nullable(),
 				player: z.object({
 					id: z.string().nullable(),
 					battletag: z.string()

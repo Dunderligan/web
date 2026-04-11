@@ -126,7 +126,9 @@ export const member = pgTable(
 		tier: integer(),
 		sr: integer(),
 		role: roleEnum().notNull(),
-		isCaptain: boolean().notNull().default(false)
+		isCaptain: boolean().notNull().default(false),
+		// if the player was registered using a different battletag/name than player.battletag
+		registeredName: text()
 	},
 	(t) => [
 		primaryKey({ columns: [t.playerId, t.rosterId] }),

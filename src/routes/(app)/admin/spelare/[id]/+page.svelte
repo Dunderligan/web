@@ -14,7 +14,7 @@
 	import Notice from '$lib/components/ui/Notice.svelte';
 	import OverwatchProfile from '$lib/components/ui/OverwatchProfile.svelte';
 	import Select from '$lib/components/ui/Select.svelte';
-	import { editPlayer, setProfileSlug } from '$lib/remote/player.remote.js';
+	import { editPlayer, linkPlayerAlias, setProfileSlug } from '$lib/remote/player.remote.js';
 	import { SaveContext } from '$lib/state/save.svelte';
 	import type { GameProfile } from '$lib/types.js';
 	import { capitalize, formatDateTime } from '$lib/util.js';
@@ -34,6 +34,8 @@
 
 	let addSignatureHeroOpen = $state(false);
 	let newSignatureHeroId: string | undefined = $state();
+
+	let linkingAlias = $state(false);
 
 	const remainingHeroes = $derived(
 		data.heroes.filter((hero) => !player.signatureHeroes.some((sh) => sh.hero.id === hero.id))
@@ -77,13 +79,24 @@
 		addSignatureHeroOpen = false;
 	}
 
+	async function linkAlias(otherPlayerId: string) {
+		try {
+			linkingAlias = true;
+
+			await linkPlayerAlias({ playerId: player.id, otherPlayerId });
+			await invalidate('admin:player');
+		} finally {
+			linkingAlias = false;
+		}
+	}
+
 	async function onProfileClicked(profile: GameProfile) {
 		await setProfileSlug({ playerId: player.id, slug: profile.slug });
-		await invalidate('admin:profile');
+		await invalidate('admin:player');
 	}
 </script>
 
-<Breadcrumbs crumbs={[{ label: player.battletag, href }]} />
+<Breadcrumbs crumbs={[{ label: player.battletag, href: `/admin/spelare/${player.id}` }]} />
 
 <AdminSocials
 	emptyText="Denna spelare har inga länkade sociala medier."
@@ -103,7 +116,6 @@
 
 					<Button
 						icon="ph:trash"
-						class="ml-2"
 						kind="tertiary"
 						title="Radera"
 						onclick={() => {
@@ -161,7 +173,7 @@
 		<OverwatchProfile name={player.battletag} profile={data.profile.profile} />
 	{:else if data.profile.status === 'missing'}
 		<Notice kind="warn">
-			Profilen hittades inte genom Blizzard API:t. Se till att din profil är offentlig.
+			Profilen hittades inte på Blizzard. Se till att din profil är offentlig.
 		</Notice>
 	{:else if data.profile.status === 'error'}
 		<Notice kind="error">
@@ -212,6 +224,39 @@
 		</Label>
 	</div>
 </AdminCard>
+
+{#if isModerator(data.user?.role) && data.matchingPlayers.length > 0}
+	<AdminCard title="Matchande spelare">
+		{#snippet description()}
+			Dessa spelare matchar minst ett av aliasen för {player.battletag}. Om någon av dessa är samma
+			person som spelaren ovan, länka dem för att samla all information under en profil.
+		{/snippet}
+
+		{#each data.matchingPlayers as otherPlayer (otherPlayer.id)}
+			<div class="flex items-center gap-12">
+				<div>
+					<a
+						class="block text-lg font-semibold hover:underline"
+						href="/spelare/{otherPlayer.battletag.replace('#', '-')}"
+					>
+						{otherPlayer.battletag}
+					</a>
+					<div class="font-medium">
+						{otherPlayer.memberships.length} rosters
+					</div>
+				</div>
+
+				<Button
+					kind="secondary"
+					icon="ph:link"
+					label="Länka"
+					loading={linkingAlias}
+					onclick={() => linkAlias(otherPlayer.id)}
+				/>
+			</div>
+		{/each}
+	</AdminCard>
+{/if}
 
 <CreateDialog
 	bind:open={createAliasOpen}

@@ -1,10 +1,9 @@
-import { sql, eq, isNull, Table, not, inArray, and, Column } from 'drizzle-orm';
+import { sql, eq } from 'drizzle-orm';
 import { PgTransaction } from 'drizzle-orm/pg-core';
 import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 import { schema } from '$lib/server/db';
 import type { User } from './schema/auth';
-import { AuthRole, checkPermission, isAdmin } from '$lib/authRole';
-import type { Social } from '$lib/types';
+import { isAdmin } from '$lib/authRole';
 
 // Helper queries and functions for database operations.
 
@@ -125,7 +124,8 @@ export const memberQuery = {
 		tier: true,
 		rank: true,
 		sr: true,
-		role: true
+		role: true,
+		registeredName: true
 	},
 	with: {
 		player: {

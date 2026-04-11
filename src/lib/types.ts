@@ -121,6 +121,7 @@ export type Member = {
 	tier: number | null;
 	sr: number | null;
 	isCaptain: boolean;
+	registeredName: string | null;
 	player: {
 		id?: string | null;
 		battletag: string;

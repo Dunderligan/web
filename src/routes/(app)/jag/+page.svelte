@@ -4,8 +4,6 @@
 	import Notice from '$lib/components/ui/Notice.svelte';
 </script>
 
-<PageHeader></PageHeader>
-
 <PageSection>
 	<Notice kind="warn">
 		Du verkar inte ha en spelarprofil kopplad till din Battletag.

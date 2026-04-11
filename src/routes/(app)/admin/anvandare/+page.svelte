@@ -11,7 +11,6 @@
 	import { page } from '$app/state';
 	import InputField from '$lib/components/ui/InputField.svelte';
 	import Label from '$lib/components/ui/Label.svelte';
-	import Note from '$lib/components/ui/Note.svelte';
 
 	let { data } = $props();
 
@@ -87,8 +86,8 @@
 			<b>Superadmin:</b> Högsta rollen, med exklusiv rätt att befordra andra till admin.
 		</li>
 		<li class="mb-1">
-			<b>Admin:</b> Kan göra allt, inklusive se, ändra och ta bort all data, samt befordra användare till
-			moderatorer.
+			<b>Admin:</b> Kan göra allt, inklusive se, ändra och ta bort all data, samt befordra användare
+			till moderatorer.
 		</li>
 		<li>
 			<b>Moderator:</b> Kan endast skapa, ändra och ta bort matchresultat. Har heller inte tillgång till
