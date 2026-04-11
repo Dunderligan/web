@@ -21,6 +21,29 @@ export function formatSocialPlatform(platform: SocialPlatform) {
 			return 'Youtube';
 		case SocialPlatform.DISCORD:
 			return 'Discord';
+		case SocialPlatform.TWITCH:
+			return 'Twitch';
+		case SocialPlatform.TIKTOK:
+			return 'TikTok';
+		case SocialPlatform.BLUESKY:
+			return 'Bluesky';
+	}
+}
+
+export function socialMediaPlatformDomains(platform: SocialPlatform) {
+	switch (platform) {
+		case SocialPlatform.TWITTER:
+			return ['twitter.com', 'x.com'];
+		case SocialPlatform.YOUTUBE:
+			return ['youtube.com', 'youtu.be'];
+		case SocialPlatform.DISCORD:
+			return []; // special case
+		case SocialPlatform.TWITCH:
+			return ['twitch.tv'];
+		case SocialPlatform.TIKTOK:
+			return ['tiktok.com'];
+		case SocialPlatform.BLUESKY:
+			return ['bsky.app'];
 	}
 }
 

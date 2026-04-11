@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { SaveContext } from '$lib/state/save.svelte';
 	import { SocialPlatform, type Social } from '$lib/types';
-	import { formatSocialPlatform } from '$lib/util';
+	import { formatSocialPlatform, socialMediaPlatformDomains } from '$lib/util';
 	import Button from '../ui/Button.svelte';
 	import Icon from '../ui/Icon.svelte';
 	import InputField from '../ui/InputField.svelte';
@@ -24,6 +24,18 @@
 	let newPlatform = $state(SocialPlatform.TWITTER);
 	let newUrl = $state('');
 
+	const newPlatformDomains = $derived(socialMediaPlatformDomains(newPlatform));
+	const invalid = $derived.by(() => {
+		if (!newPlatform || !newUrl) return true;
+
+		if (newPlatform === SocialPlatform.DISCORD) {
+			// check for a discord snowflake ID
+			return !/^\d{17,19}$/.test(newUrl);
+		} else {
+			return !newPlatformDomains.some((domain) => newUrl.includes(domain));
+		}
+	});
+
 	const remainingPlatforms = $derived(
 		Object.values(SocialPlatform).filter(
 			(platform) => !socials.some((social) => social.platform === platform)
@@ -31,6 +43,12 @@
 	);
 
 	async function submit() {
+		if (invalid) return;
+
+		if (newPlatform === SocialPlatform.DISCORD) {
+			newUrl = `https://discord.com/users/${newUrl}`;
+		}
+
 		socials.push({
 			platform: newPlatform,
 			url: newUrl
@@ -91,14 +109,14 @@
 	bind:open={newDialogOpen}
 	oncreate={submit}
 	onclose={reset}
-	disabled={!newUrl || !newPlatform}
+	disabled={invalid}
 >
 	<Label label="Platform">
 		<Select
 			type="single"
 			class="grow"
 			bind:value={newPlatform}
-			itemIcon={(platform) => `ph:${platform}-logo-fill`}
+			itemIcon={(platform) => `ph:${platform}-logo`}
 			items={remainingPlatforms.map((platform) => ({
 				label: formatSocialPlatform(platform),
 				value: platform
@@ -106,7 +124,13 @@
 		/>
 	</Label>
 
-	<Label label="URL">
-		<InputField bind:value={newUrl} placeholder="https://{newPlatform}.com/..." />
-	</Label>
+	{#if newPlatform === SocialPlatform.DISCORD}
+		<Label label="Användar-ID">
+			<InputField bind:value={newUrl} placeholder="T.ex. 308117922260451340..." />
+		</Label>
+	{:else}
+		<Label label="URL">
+			<InputField bind:value={newUrl} placeholder="https://{newPlatformDomains[0]}/..." />
+		</Label>
+	{/if}
 </CreateDialog>

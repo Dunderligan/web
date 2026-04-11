@@ -49,11 +49,14 @@ export enum Rank {
 	CHAMPION = 'champion'
 }
 
-/** Available social platforms for team social media links. */
+/** Available social platforms for team and player social media links. */
 export enum SocialPlatform {
 	YOUTUBE = 'youtube',
 	TWITTER = 'twitter',
-	DISCORD = 'discord'
+	DISCORD = 'discord',
+	TWITCH = 'twitch',
+	TIKTOK = 'tiktok',
+	BLUESKY = 'bluesky'
 }
 
 export enum Role {
