@@ -225,24 +225,24 @@
 	</div>
 </AdminCard>
 
-{#if isModerator(data.user?.role) && data.matchingPlayers.length > 0}
-	<AdminCard title="Matchande spelare">
+{#if isModerator(data.user?.role) && data.matchingProfiles.length > 0}
+	<AdminCard title="Matchande profiler">
 		{#snippet description()}
 			Dessa spelare matchar minst ett av aliasen för {player.battletag}. Om någon av dessa är samma
 			person som spelaren ovan, länka dem för att samla all information under en profil.
 		{/snippet}
 
-		{#each data.matchingPlayers as otherPlayer (otherPlayer.id)}
+		{#each data.matchingProfiles as otherProfile (otherProfile.id)}
 			<div class="flex items-center gap-12">
 				<div>
 					<a
 						class="block text-lg font-semibold hover:underline"
-						href="/spelare/{otherPlayer.battletag.replace('#', '-')}"
+						href="/spelare/{otherProfile.battletag.replace('#', '-')}"
 					>
-						{otherPlayer.battletag}
+						{otherProfile.battletag}
 					</a>
 					<div class="font-medium">
-						{otherPlayer.memberships.length} rosters
+						{otherProfile.memberships.length} rosters
 					</div>
 				</div>
 
@@ -251,7 +251,7 @@
 					icon="ph:link"
 					label="Länka"
 					loading={linkingAlias}
-					onclick={() => linkAlias(otherPlayer.id)}
+					onclick={() => linkAlias(otherProfile.id)}
 				/>
 			</div>
 		{/each}

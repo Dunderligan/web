@@ -103,7 +103,7 @@
 		<Subheading>Rosters</Subheading>
 
 		<Table
-			class="mt-4 grid-cols-[1fr_auto_80px_50px_80px] sm:grid-cols-[1fr_auto_160px_60px_140px]"
+			class="mt-4 grid-cols-[1fr_auto_80px_40px_80px] sm:grid-cols-[1fr_auto_170px_50px_140px]"
 			rows={sortedMemberships}
 			key={(value) => value.roster.id}
 			columns={[

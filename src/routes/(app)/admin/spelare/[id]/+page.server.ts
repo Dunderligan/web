@@ -16,13 +16,13 @@ export const load = async ({ params, locals, depends }) => {
 		throw error(403);
 	}
 
-	const matchingPlayers = await getMatchingPlayers(player.aliases.map((alias) => alias.name));
+	const matchingProfiles = await getMatchingProfiles(player.aliases.map((alias) => alias.name));
 
 	const profile = await overwatch.getProfile(player.battletag, player.overwatchProfileSlug);
 
 	return {
 		player,
-		matchingPlayers,
+		matchingProfiles,
 		heroes,
 		profile
 	};
@@ -53,7 +53,7 @@ async function getPlayer(id: string) {
 	});
 }
 
-async function getMatchingPlayers(aliases: string[]) {
+async function getMatchingProfiles(aliases: string[]) {
 	return await db.query.player.findMany({
 		where: {
 			battletag: {
