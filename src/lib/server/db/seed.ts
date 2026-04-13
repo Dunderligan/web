@@ -187,7 +187,6 @@ export async function seed(db: PostgresJsDatabase<typeof schema>) {
 
 	await Promise.all(
 		players.map(async (player, i) => {
-			let rosterIndex = i % rosters.length;
 			let rank = [
 				Rank.BRONZE,
 				Rank.SILVER,
@@ -199,15 +198,21 @@ export async function seed(db: PostgresJsDatabase<typeof schema>) {
 				Rank.CHAMPION
 			][Math.floor(Math.random() * 8)];
 			let tier = Math.floor(Math.random() * 5) + 1;
-			let isCaptain = i % 7 === 0;
+
+			let rosterIndex = i % rosters.length;
+			let roster = rosters[rosterIndex];
+
+			let memberIndex = Math.floor(i / rosters.length);
+			let isCaptain = memberIndex % 6 === 0;
+			let role = [Role.DAMAGE, Role.SUPPORT, Role.FLEX, Role.TANK][memberIndex % 4];
 
 			await db.insert(schema.member).values({
 				playerId: player.id,
-				rosterId: rosters[rosterIndex].id,
+				rosterId: roster.id,
 				rank,
 				tier,
 				isCaptain,
-				role: ['damage', 'tank', 'support'][i % 3] as Role
+				role
 			});
 		})
 	);
