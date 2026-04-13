@@ -79,8 +79,8 @@
 	<h2 class="font-display text-4xl font-bold">Kolla in vår senaste video!</h2>
 
 	<iframe
-		class="mx-auto mt-8 aspect-video w-full max-w-2xl rounded-lg"
-		src="https://www.youtube-nocookie.com/embed/3bD2l3F6UNc"
+		class="mx-auto mt-8 aspect-video w-full max-w-3xl rounded-lg"
+		src="https://www.youtube-nocookie.com/embed/WVcbBhwOSNY"
 		title="YouTube video player"
 		frameborder="0"
 		allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
