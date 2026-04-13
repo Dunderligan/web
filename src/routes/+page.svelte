@@ -8,8 +8,8 @@
 	import TournamentStateSection from '$lib/components/structure/TournamentStateSection.svelte';
 	import Card from '$lib/components/structure/Card.svelte';
 	import PageSectionAlternate from '$lib/components/structure/PageSectionAlternate.svelte';
-	import discordImage from '$lib/assets/images/discord.png';
-	import twitchImage from '$lib/assets/images/twitch.jpg';
+	import discordImage from '$lib/assets/images/discord.avif';
+	import twitchImage from '$lib/assets/images/twitch.avif';
 	import { socials } from '$lib/socials.js';
 
 	let { data } = $props();
