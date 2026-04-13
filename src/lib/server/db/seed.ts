@@ -95,7 +95,8 @@ export async function seed(db: PostgresJsDatabase<typeof schema>) {
 		division: schema.division,
 		group: schema.group,
 		match: schema.match,
-		social: schema.social
+		teamSocial: schema.teamSocial,
+		playerSocial: schema.playerSocial
 	};
 
 	await reset(db, seedSchema);
@@ -171,7 +172,7 @@ export async function seed(db: PostgresJsDatabase<typeof schema>) {
 
 	let players = await Promise.all(
 		Array.from({ length: teams.length * 6 }).map(async () => {
-			let battletag = `Spelare #${rand()}`;
+			let battletag = `Spelare#${rand()}`;
 
 			let result = await db
 				.insert(schema.player)
