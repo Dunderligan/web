@@ -18,4 +18,4 @@
 	);
 </script>
 
-<img src="/heroes/{name}.png" alt={name} class={[sizeClass, classProp]} />
+<img src="/heroes/{name}.avif" alt={name} class={[sizeClass, classProp]} />

@@ -42,3 +42,7 @@ Here is a sample response from the endpoint:
 To differentiate between profiles with the same name but different tags, we use the `url` field, called `slug` in the codebase. If the API returns multiple profiles for a player, they are able to select a profile in the admin interface, which will store the slug in the database and use that to filter the result from then on. This slug is also used to construct the URL to the official profile page at `https://overwatch.blizzard.com/en-us/career/{slug}`.
 
 The API is quite slow, so we cache the results in Redis (or a `Map` if `REDIS_URL` isn't provided), and refresh it every 24 hours.
+
+## Hero Portraits
+
+Overwatch hero portraits (used for displaying a player's signature heroes) are sourced from https://overwatch.blizzard.com/en-us/heroes/. The initial batch were downloaded and processed using a Python script, however further heroes can easily be added by manually downloading the image and converting it to `avif`.

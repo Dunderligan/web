@@ -15,6 +15,7 @@
 	import OverwatchProfile from '$lib/components/ui/OverwatchProfile.svelte';
 	import Select from '$lib/components/ui/Select.svelte';
 	import { editPlayer, linkPlayerAlias, setProfileSlug } from '$lib/remote/player.remote.js';
+	import TextArea from '$lib/components/ui/TextArea.svelte';
 	import { SaveContext } from '$lib/state/save.svelte';
 	import type { GameProfile } from '$lib/types.js';
 	import { capitalize, formatDateTime } from '$lib/util.js';
@@ -207,19 +208,20 @@
 		<Label label="Pronomen">
 			<InputField
 				placeholder="T.ex. han/honom"
-				onchange={saveCtx.setDirty}
+				oninput={saveCtx.setDirty}
 				bind:value={player.pronouns}
 				maxlength={20}
 			/>
 		</Label>
 
-		<Label label="Beskrivning">
-			<InputField
-				onchange={saveCtx.setDirty}
-				type="textarea"
+		<Label label="Beskrivning" column>
+			<TextArea
+				oninput={saveCtx.setDirty}
 				bind:value={player.description}
 				maxlength={500}
 				disabled={!isModerator(data.user?.role)}
+				class="w-full"
+				placeholder="En kort beskrivning av spelaren..."
 			/>
 		</Label>
 	</div>

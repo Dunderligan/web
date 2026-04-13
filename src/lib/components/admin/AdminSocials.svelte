@@ -128,6 +128,16 @@
 		<Label label="Användar-ID">
 			<InputField bind:value={newUrl} placeholder="T.ex. 308117922260451340..." />
 		</Label>
+
+		<a
+			href="https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID#h_01HRSTXPS5H5D7JBY2QKKPVKNA"
+			target="_blank"
+			rel="noopener noreferrer"
+			class="my-1 font-medium text-accent-600 hover:underline"
+		>
+			<Icon icon="ph:arrow-square-out" />
+			Hur hittar jag mitt användar-ID?
+		</a>
 	{:else}
 		<Label label="URL">
 			<InputField bind:value={newUrl} placeholder="https://{newPlatformDomains[0]}/..." />
