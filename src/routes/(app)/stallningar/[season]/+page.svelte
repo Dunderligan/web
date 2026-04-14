@@ -210,7 +210,7 @@
 			seasonSlug={season.slug}
 			class="mt-12"
 			hideIfEmpty
-			matchArchiveParams="division={division.id}&status=scheduled"
+			matchArchiveParams="divisionId={division.id}&state=scheduled&isBracket=false"
 		/>
 
 		{#if division.latestMatches.length > 0}
@@ -219,7 +219,7 @@
 				title="Senaste matcherna"
 				matches={division.latestMatches.map(resolveMatch)}
 				seasonSlug={season.slug}
-				matchArchiveParams="division={division.id}&status=!scheduled"
+				matchArchiveParams="divisionId={division.id}&state=!scheduled&isBracket=false"
 			/>
 		{/if}
 	{:else}

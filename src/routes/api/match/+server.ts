@@ -1,8 +1,16 @@
 import { AuthRole } from '$lib/authRole.js';
 import { roleGuard } from '$lib/remote/auth.remote.js';
+import { queryMatches } from '$lib/remote/match.remote.js';
 import { db, schema } from '$lib/server/db.js';
+import { parseMatchQueryParams } from '$lib/util';
 import { error, json } from '@sveltejs/kit';
 import z from 'zod';
+
+export const GET = async ({ url }) => {
+	const params = parseMatchQueryParams(url.searchParams);
+	const matches = await queryMatches(params);
+	return json(matches);
+};
 
 const matchSchema = z.object({
 	rosterAId: z.uuid(),

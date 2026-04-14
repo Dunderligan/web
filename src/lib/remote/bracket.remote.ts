@@ -30,7 +30,7 @@ export const generateBracket = command(
 		let qualifying;
 		if (!groupwiseStandings) {
 			// combine all groups and pick the highest seeded teams
-			sortBySeed(rosters, groupMatches);
+			sortBySeed(rosters, groupMatches, false);
 			qualifying = rosters;
 
 			if (flipStandings) {
@@ -44,7 +44,7 @@ export const generateBracket = command(
 
 			for (const group of groups) {
 				// seed each group individually
-				sortBySeed(group.rosters, group.matches);
+				sortBySeed(group.rosters, group.matches, false);
 
 				if (flipStandings) {
 					group.rosters.reverse();
@@ -64,7 +64,7 @@ export const generateBracket = command(
 			}
 
 			// finally sort by overall seed by combining all groups again
-			sortBySeed(qualifying, groupMatches);
+			sortBySeed(qualifying, groupMatches, false);
 		}
 
 		const rounds = createBracket(qualifying, groupMatches, roundCount, {

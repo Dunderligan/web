@@ -1,4 +1,6 @@
 import type { Snippet } from 'svelte';
+import type z from 'zod';
+import type { matchQueryParamsSchema } from './schemas';
 
 /**
  * SvelteKit accepts these types in the class attribute, but does not expose the type definitions.
@@ -158,7 +160,6 @@ export type MatchWithoutRosters = {
 	id: string;
 	groupId?: string | null;
 	divisionId?: string | null;
-	createdAt?: Date;
 	teamAScore: number;
 	teamBScore: number;
 	draws: number;
@@ -295,3 +296,5 @@ export type GameProfileEntry =
 	| { status: 'error'; error: string };
 
 export type GameProfileEntryWithDate = { date: string } & GameProfileEntry;
+
+export type MatchQueryParams = z.infer<typeof matchQueryParamsSchema>;

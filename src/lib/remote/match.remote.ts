@@ -1,7 +1,7 @@
 import { getRequestEvent, query } from '$app/server';
+import { matchQueryParamsSchema } from '$lib/schemas';
 import { db } from '$lib/server/db';
 import {
-	entityQuery,
 	fullMatchColumns,
 	groupMatchOrder,
 	hiddenMatchFilter,
@@ -9,25 +9,16 @@ import {
 	nestedBracketQuery,
 	nestedGroupQuery
 } from '$lib/server/db/helpers';
-import { MatchState } from '$lib/types';
-import z from 'zod';
-
-const PAGE_SIZE = 10;
 
 export const queryMatches = query(
-	z.object({
-		rosterId: z.uuid().optional(),
-		divisionId: z.uuid().optional(),
-		page: z.number().min(0).default(0),
-		state: z.array(z.enum(MatchState)).optional()
-	}),
-	async ({ rosterId, divisionId, state, page }) => {
+	matchQueryParamsSchema,
+	async ({ rosterId, divisionId, seasonId, state, isBracket, page, pageSize }) => {
 		const { locals } = getRequestEvent();
 
 		const results = await db.query.match.findMany({
 			// retrieve one extra to determine if there should be a next page
-			limit: PAGE_SIZE + 1,
-			offset: page * PAGE_SIZE,
+			limit: pageSize ? pageSize + 1 : undefined,
+			offset: pageSize ? page * pageSize : undefined,
 			orderBy: groupMatchOrder,
 			where: {
 				AND: [
@@ -60,11 +51,36 @@ export const queryMatches = query(
 					},
 					hiddenMatchFilter(locals.user)
 				],
-				// if divisionId is not provided, don't include the "group" filter property at all,
-				// otherwise bracket matches would always be excluded (since they don't have a group)
-				...(divisionId && {
-					group: {
-						divisionId
+				OR: [
+					{
+						group: {
+							division: {
+								id: divisionId,
+								season: {
+									id: seasonId
+								}
+							}
+						}
+					},
+					{
+						bracket: {
+							division: {
+								id: divisionId,
+								season: {
+									id: seasonId
+								}
+							}
+						}
+					}
+				],
+				...(isBracket === true && {
+					bracketId: {
+						isNotNull: true
+					}
+				}),
+				...(isBracket === false && {
+					bracketId: {
+						isNull: true
 					}
 				}),
 				...(state && {
@@ -82,8 +98,8 @@ export const queryMatches = query(
 			}
 		});
 
-		const hasNextPage = results.length > PAGE_SIZE;
-		const shownResults = results.slice(0, PAGE_SIZE);
+		const hasNextPage = pageSize ? results.length > pageSize : false;
+		const shownResults = results.slice(0, pageSize);
 
 		return { results: shownResults, hasNextPage };
 	}

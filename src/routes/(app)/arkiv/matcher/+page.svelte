@@ -67,7 +67,7 @@
 				kind="secondary"
 				icon="ph:arrow-left"
 				label="Föregående sida"
-				href={queryParamHref('sida', data.params.page - 1)}
+				href={queryParamHref('page', data.params.page - 1)}
 				data-sveltekit-noscroll
 			/>
 
@@ -82,7 +82,7 @@
 
 		<AsyncMatchList
 			matches={data.query.then((res) => res.results)}
-			skeletonCount={data.pageSize}
+			skeletonCount={data.params.pageSize}
 			mainRosterId={data.params.rosterId}
 		/>
 	</div>
@@ -93,7 +93,7 @@
 		kind="secondary"
 		icon="ph:arrow-right"
 		label="Nästa sida"
-		href={queryParamHref('sida', data.params.page + 1)}
+		href={queryParamHref('page', data.params.page + 1)}
 		{disabled}
 		data-sveltekit-noscroll
 	/>

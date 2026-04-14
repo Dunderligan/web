@@ -60,7 +60,7 @@
 				title="Senaste matcherna"
 				matches={data.matches.latest}
 				hideIfEmpty
-				matchArchiveParams="status=played"
+				matchArchiveParams="state=played"
 			/>
 		</div>
 
@@ -69,7 +69,7 @@
 				title="Kommande matcher"
 				matches={data.matches.upcoming}
 				short
-				matchArchiveParams="status=scheduled"
+				matchArchiveParams="state=scheduled"
 			/>
 		</div>
 	</div>
