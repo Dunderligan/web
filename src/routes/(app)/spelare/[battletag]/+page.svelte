@@ -27,7 +27,7 @@
 
 	const hasMiscRoles = $derived(data.player.memberships.some((m) => isMiscRole(m.role)));
 
-	let showMiscRoles = $derived(hasMiscRoles);
+	let showMiscRoles = $state(false);
 
 	const sortedMemberships = $derived(
 		data.player.memberships
