@@ -97,7 +97,7 @@
 	}
 </script>
 
-<Breadcrumbs crumbs={[{ label: player.battletag, href: `/admin/spelare/${player.id}` }]} />
+<Breadcrumbs crumbs={[{ label: player.battletag, href: `/admin/spelare/${player.id}` }]} hideHome />
 
 <AdminSocials
 	emptyText="Denna spelare har inga länkade sociala medier."
