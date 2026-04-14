@@ -31,12 +31,14 @@ export const load = async ({ params, locals }) => {
 			},
 			memberships: {
 				columns: memberQuery.columns,
+				where: {
+					roster: {
+						group: hiddenGroupFilter(locals.user)
+					}
+				},
 				with: {
 					roster: {
 						...entityQuery,
-						where: {
-							group: hiddenGroupFilter(locals.user)
-						},
 						with: {
 							group: nestedGroupQuery
 						}
