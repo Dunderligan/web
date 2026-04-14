@@ -1,9 +1,14 @@
 import { db } from '$lib/server/db';
-import { entityQuery, memberQuery, nestedGroupQuery } from '$lib/server/db/helpers';
+import {
+	entityQuery,
+	hiddenGroupFilter,
+	memberQuery,
+	nestedGroupQuery
+} from '$lib/server/db/helpers';
 import overwatch from '$lib/server/overwatch';
 import { error } from '@sveltejs/kit';
 
-export const load = async ({ params }) => {
+export const load = async ({ params, locals }) => {
 	const battletag = params.battletag.replace('-', '#');
 
 	const player = await db.query.player.findFirst({
@@ -29,6 +34,9 @@ export const load = async ({ params }) => {
 				with: {
 					roster: {
 						...entityQuery,
+						where: {
+							group: hiddenGroupFilter(locals.user)
+						},
 						with: {
 							group: nestedGroupQuery
 						}
