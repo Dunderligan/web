@@ -82,7 +82,7 @@
 						{formatSocialPlatform(social.platform)}
 					{/snippet}
 
-					<InputField bind:value={social.url} placeholder="URL" />
+					<InputField bind:value={social.url} placeholder="URL" oninput={saveCtx.setDirty} />
 
 					<Button
 						icon="ph:trash"
