@@ -148,7 +148,15 @@ export const setProfileSlug = command(
 	async ({ playerId, slug }) => {
 		const { locals } = getRequestEvent();
 
-		if (!canEditUserPage(locals.user, playerId)) {
+		const player = await db.query.player.findFirst({
+			where: { id: playerId }
+		});
+
+		if (!player) {
+			throw error(404);
+		}
+
+		if (!canEditUserPage(locals.user, player.battletag)) {
 			throw error(403);
 		}
 
