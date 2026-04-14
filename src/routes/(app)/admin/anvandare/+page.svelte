@@ -90,8 +90,8 @@
 			till moderatorer.
 		</li>
 		<li>
-			<b>Moderator:</b> Kan endast skapa, ändra och ta bort matchresultat. Har heller inte tillgång till
-			gömda säsonger.
+			<b>Moderator:</b> Kan skapa matcher och ändra matchresultat, samt redigera spelarprofiler. Har
+			heller inte tillgång till gömda säsonger.
 		</li>
 	</ul>
 {/snippet}
