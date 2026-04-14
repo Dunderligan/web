@@ -17,7 +17,7 @@ export const editPlayer = command(
 		description: z.string().max(500).nullable(),
 		socials: z.array(socialSchema),
 		signatureHeroes: z.array(z.uuid()).max(3),
-		aliases: z.array(z.string()).max(5)
+		aliases: z.array(z.string().max(20)).max(5)
 	}),
 	async ({ id, pronouns, description, socials, signatureHeroes, aliases }) => {
 		const { locals } = getRequestEvent();

@@ -113,7 +113,7 @@
 		<div class="space-y-1.5 py-1">
 			{#each player.aliases as alias, i}
 				<div class="flex max-w-xl items-center gap-2">
-					<InputField value={alias.name} />
+					<InputField value={alias.name} maxlength={20} />
 
 					<Button
 						icon="ph:trash"
