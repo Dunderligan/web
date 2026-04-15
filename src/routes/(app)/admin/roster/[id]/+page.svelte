@@ -76,7 +76,7 @@
 			registeredName: null,
 			player: {
 				id: null as any as string, // the backend will either link this up with an existing player, or create a new one
-				battletag: newPlayerBattletag
+				battletag: newPlayerBattletag.trim()
 			}
 		});
 
@@ -224,7 +224,7 @@
 	bind:open={newPlayerOpen}
 	oncreate={addNewPlayer}
 	onclose={resetNewPlayer}
-	disabled={!newPlayerBattletag}
+	disabled={!newPlayerBattletag.trim()}
 >
 	<Label label="Battletag">
 		<InputField bind:value={newPlayerBattletag} placeholder="Spelare#0000" />
