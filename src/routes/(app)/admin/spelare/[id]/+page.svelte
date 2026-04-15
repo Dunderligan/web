@@ -19,6 +19,7 @@
 	import { SaveContext } from '$lib/state/save.svelte';
 	import type { GameProfile } from '$lib/types.js';
 	import { capitalize, formatDateTime } from '$lib/util.js';
+	import Note from '$lib/components/ui/Note.svelte';
 
 	let { data } = $props();
 
@@ -223,6 +224,8 @@
 				class="w-full"
 				placeholder="En kort beskrivning av spelaren..."
 			/>
+
+			<Note content="Endast administratörer kan redigera detta fält." />
 		</Label>
 	</div>
 </AdminCard>
