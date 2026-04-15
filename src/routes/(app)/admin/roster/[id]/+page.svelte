@@ -227,7 +227,7 @@
 	disabled={!newPlayerBattletag.trim()}
 >
 	<Label label="Battletag">
-		<InputField bind:value={newPlayerBattletag} placeholder="Spelare#0000" />
+		<InputField bind:value={newPlayerBattletag} placeholder="Spelare#0000" onenter={addNewPlayer} />
 	</Label>
 </CreateDialog>
 
