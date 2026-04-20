@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MatchState, type ResolvedMatch, type ResolvedMatchWithSeeds } from '$lib/types';
+	import { MatchState, type ResolvedMatchWithSeeds } from '$lib/types';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import {
 		matchRoster,
@@ -12,25 +12,24 @@
 	import MatchInfoRow from './MatchInfoRow.svelte';
 	import Note from '../ui/Note.svelte';
 
+	type State = 'visible' | 'invisible' | 'hidden';
+
+	type Lines = {
+		forward?: boolean;
+		backward?: boolean;
+		up?: boolean;
+		down?: boolean;
+	};
+
 	type Props = {
 		match: ResolvedMatchWithSeeds;
 		seasonSlug: string;
 		roundIndex: number;
-		hidden?: boolean;
-		hasNext: boolean;
-		hasPrevAbove: boolean;
-		hasPrevBelow: boolean;
+		state: State;
+		lines: Lines;
 	};
 
-	let {
-		match,
-		seasonSlug,
-		roundIndex,
-		hidden = false,
-		hasNext,
-		hasPrevAbove,
-		hasPrevBelow
-	}: Props = $props();
+	let { match, seasonSlug, roundIndex, state, lines }: Props = $props();
 
 	// don't ask
 	const verticalLineHeight = $derived(40 * Math.pow(roundIndex, 2) - 42 * roundIndex + 82);
@@ -40,9 +39,9 @@
 
 <div
 	class={[
-		hasNext && 'has-next-round',
-		(hasPrevAbove || hasPrevBelow) && 'has-prev-round',
-		hidden && 'invisible',
+		lines.forward && 'has-next-round',
+		lines.backward && 'has-prev-round',
+		state === 'hidden' ? 'hidden' : state === 'invisible' ? 'invisible' : 'visible',
 		'relative h-[125px] w-60 rounded-lg'
 	]}
 >
@@ -54,11 +53,11 @@
 
 	{@render side('B', 'rounded-b-lg')}
 
-	{#if hasPrevAbove}
+	{#if lines.up}
 		<div class="vertical-line line-up" style="height: {verticalLineHeight}px"></div>
 	{/if}
 
-	{#if hasPrevBelow}
+	{#if lines.down}
 		<div class="vertical-line line-down" style="height: {verticalLineHeight}px"></div>
 	{/if}
 </div>
