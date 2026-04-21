@@ -8,6 +8,8 @@
 	import Table from '$lib/components/table/Table.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Checkbox from '$lib/components/ui/Checkbox.svelte';
+	import Chip from '$lib/components/ui/Chip.svelte';
+	import ChipToggle from '$lib/components/ui/ChipToggle.svelte';
 	import HeroPortrait from '$lib/components/ui/HeroPortrait.svelte';
 	import Icon from '$lib/components/ui/Icon.svelte';
 	import Label from '$lib/components/ui/Label.svelte';
@@ -18,7 +20,7 @@
 	import Subheading from '$lib/components/ui/Subheading.svelte';
 	import TeamSocial from '$lib/components/ui/TeamSocial.svelte';
 	import { claimPlayer } from '$lib/remote/player.remote.js';
-	import { Role } from '$lib/types.js';
+	import { Role, type FullRoster } from '$lib/types.js';
 	import { flattenGroup, formatDateTime, roleIcon } from '$lib/util';
 
 	let { data } = $props();
@@ -26,19 +28,30 @@
 	let claimLoading = $state(false);
 
 	const hasMiscRoles = $derived(data.player.memberships.some((m) => isMiscRole(m.role)));
+	const hasSpinoffSeasons = $derived(
+		data.player.memberships.some((m) => flattenGroup(m.roster.group).season.spinoff)
+	);
 
 	let showMiscRoles = $state(false);
+	let showSpinoffSeasons = $state(false);
 
 	const sortedMemberships = $derived(
-		data.player.memberships
-			.filter((m) => showMiscRoles || !isMiscRole(m.role))
-			.toSorted((a, b) => {
-				const aSeason = flattenGroup(a.roster.group).season;
-				const bSeason = flattenGroup(b.roster.group).season;
+		data.player.memberships.toSorted((a, b) => {
+			const aSeason = flattenGroup(a.roster.group).season;
+			const bSeason = flattenGroup(b.roster.group).season;
 
-				return bSeason.startedAt.getTime() - aSeason.startedAt.getTime();
-			})
+			return bSeason.startedAt.getTime() - aSeason.startedAt.getTime();
+		})
 	);
+
+	const filteredMemberships = $derived(
+		sortedMemberships.filter(
+			(m) =>
+				(showMiscRoles || !isMiscRole(m.role)) &&
+				(showSpinoffSeasons || !flattenGroup(m.roster.group).season.spinoff)
+		)
+	);
+
 	const lastMembership = $derived(sortedMemberships.at(0));
 	const anyRegisteredNames = $derived(data.player.memberships.some((m) => m.registeredName));
 
@@ -113,14 +126,23 @@
 			</p>
 		{/if}
 
-		{#if sortedMemberships.length === 0}
+		{#if data.player.memberships.length === 0}
 			<Notice kind="info">Inga rosters hittades för denna spelare.</Notice>
 		{:else}
 			<Subheading>Rosters</Subheading>
 
+			<div class="mt-2 flex items-center gap-1">
+				{#if hasSpinoffSeasons}
+					<ChipToggle icon="ph:star" label="Andra turneringar" bind:checked={showSpinoffSeasons} />
+				{/if}
+				{#if hasMiscRoles}
+					<ChipToggle icon="ph:clipboard" label="Coachroller" bind:checked={showMiscRoles} />
+				{/if}
+			</div>
+
 			<Table
-				class="mt-4 grid-cols-[100px_auto_1fr_40px_80px] sm:grid-cols-[1fr_auto_170px_50px_160px]"
-				rows={sortedMemberships}
+				class="mt-2 grid-cols-[100px_auto_1fr_40px_80px] sm:grid-cols-[1fr_auto_170px_50px_160px]"
+				rows={filteredMemberships}
 				key={(value) => value.roster.id}
 				columns={[
 					{ label: 'Lag' },
@@ -169,14 +191,6 @@
 					</div>
 				{/snippet}
 			</Table>
-		{/if}
-
-		{#if hasMiscRoles}
-			<div class="mt-2">
-				<Label label="Visa alla roller">
-					<Checkbox bind:checked={showMiscRoles} class="ml-2" />
-				</Label>
-			</div>
 		{/if}
 
 		<p class="mt-6 text-sm font-medium text-gray-500 dark:text-gray-400">
