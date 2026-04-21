@@ -22,7 +22,8 @@ export const load = async ({ params, locals }) => {
 			slug: true,
 			startedAt: true,
 			endedAt: true,
-			legacySeeding: true
+			legacySeeding: true,
+			spinoff: true
 		},
 		with: {
 			divisions: {

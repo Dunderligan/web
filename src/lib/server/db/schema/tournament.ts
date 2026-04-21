@@ -23,7 +23,8 @@ export const season = pgTable('season', {
 	endedAt: timestamp(),
 	legacyRanks: boolean().notNull().default(false),
 	legacySeeding: boolean().notNull().default(false),
-	hidden: boolean().notNull().default(false)
+	hidden: boolean().notNull().default(false),
+	spinoff: boolean().notNull().default(false)
 });
 
 export const division = pgTable(

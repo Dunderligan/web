@@ -31,6 +31,7 @@ export const nestedDivisionQuery = {
 			columns: {
 				legacyRanks: true,
 				startedAt: true,
+				spinoff: true,
 				...entityQuery.columns
 			}
 		}

@@ -12,6 +12,14 @@ export type ClassDictionary = Record<string, any>;
 export type ClassArray = ClassValue[];
 export type ClassValue = ClassArray | ClassDictionary | string | null | undefined;
 
+export type ListedSeason = {
+	id: string;
+	name: string;
+	slug: string;
+	startedAt: Date;
+	spinoff: boolean;
+};
+
 /** Full rank representation with rank (bronze, silver, etc.) and tier (1-5 where 1 is the highest). */
 export type FullRank = {
 	rank: Rank;
@@ -298,3 +306,5 @@ export type GameProfileEntry =
 export type GameProfileEntryWithDate = { date: string } & GameProfileEntry;
 
 export type MatchQueryParams = z.infer<typeof matchQueryParamsSchema>;
+
+export type ChipColor = 'gray' | 'yellow' | 'green' | 'accent';

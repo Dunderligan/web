@@ -15,6 +15,9 @@
 	import { goto } from '$app/navigation';
 	import Meta from '$lib/components/structure/Meta.svelte';
 	import { isModerator } from '$lib/authRole';
+	import Note from '$lib/components/ui/Note.svelte';
+	import Icon from '$lib/components/ui/Icon.svelte';
+	import Chip from '$lib/components/ui/Chip.svelte';
 
 	let { data } = $props();
 
@@ -131,8 +134,12 @@
 	</h1>
 
 	<div
-		class="flex flex-row flex-wrap items-center justify-center gap-3 text-center sm:flex-row sm:items-center sm:justify-start"
+		class="flex flex-row flex-wrap items-center justify-center gap-2 text-center sm:flex-row sm:items-center sm:justify-start"
 	>
+		{#if season.spinoff}
+			<Chip color="accent" icon="ph:star" label="Spinoff" />
+		{/if}
+
 		<SeasonStateChip {state} />
 
 		<div class="font-medium text-gray-600 dark:text-gray-400">

@@ -59,6 +59,7 @@
 			legacyRanks: season.legacyRanks,
 			legacySeeding: season.legacySeeding,
 			hidden: season.hidden,
+			spinoff: season.spinoff,
 			registration
 		});
 	}
@@ -183,18 +184,24 @@
 			</Label>
 
 			<Label label="Gömd">
-				<Note content="Gömda säsonger kan bara visas av admins." class="mr-2" />
+				<Note content="Gömda säsonger visas endast för administratörer." />
 				<Checkbox bind:checked={season.hidden} onCheckedChange={saveCtx.setDirty} />
 			</Label>
 
-			<div class="h-4"></div>
+			<Label label="Spinoff">
+				<Note
+					content="Spinoff säsonger listas separat i säsongsarkivet och visas som standard inte på spelarsidor."
+				/>
+				<Checkbox bind:checked={season.spinoff} onCheckedChange={saveCtx.setDirty} />
+			</Label>
+
+			<Label label="Legacy seeding">
+				<Note content="Använd seedingreglerna som de var innan ändringarna i säsong 8." />
+				<Checkbox bind:checked={season.legacySeeding} onCheckedChange={saveCtx.setDirty} />
+			</Label>
 
 			<Label label="SR-poäng">
 				<Checkbox bind:checked={season.legacyRanks} onCheckedChange={saveCtx.setDirty} />
-			</Label>
-
-			<Label label="Legacy-seeding">
-				<Checkbox bind:checked={season.legacySeeding} onCheckedChange={saveCtx.setDirty} />
 			</Label>
 		</div>
 
