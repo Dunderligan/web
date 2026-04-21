@@ -19,13 +19,13 @@
 
 <PageSection>
 	{#if mainSeasons.length > 0}
-		<Subheading class="mb-3">Ligasäsonger</Subheading>
+		<Subheading class="mb-4">Ligasäsonger</Subheading>
 
 		{@render seasonList(mainSeasons)}
 	{/if}
 
 	{#if spinoffSeasons.length > 0}
-		<Subheading class="mt-8 mb-3">Andra turneringar</Subheading>
+		<Subheading class="mt-8 mb-4">Andra turneringar</Subheading>
 
 		{@render seasonList(spinoffSeasons)}
 	{/if}
