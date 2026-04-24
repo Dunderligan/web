@@ -165,7 +165,7 @@
 						</a>
 					</div>
 
-					<div class="justify-center text-base">
+					<div class="justify-center text-center text-base">
 						{registeredName}
 					</div>
 
