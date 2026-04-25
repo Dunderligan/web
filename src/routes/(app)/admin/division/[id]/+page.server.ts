@@ -9,11 +9,7 @@ export const load = async ({ params }) => {
 		},
 		with: {
 			groups: {
-				orderBy: { name: 'asc' },
-				columns: {
-					createdAt: false,
-					divisionId: false
-				}
+				orderBy: { name: 'asc' }
 			},
 			season: {},
 			brackets: {

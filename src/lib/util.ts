@@ -5,6 +5,8 @@ import { PUBLIC_CDN_ENDPOINT } from '$env/static/public';
 import {
 	type FlattenedDivision,
 	type FlattenedGroup,
+	type MatchQueryParams,
+	MatchState,
 	type NestedDivision,
 	type NestedGroup,
 	Role,
@@ -19,6 +21,31 @@ export function formatSocialPlatform(platform: SocialPlatform) {
 			return 'Twitter';
 		case SocialPlatform.YOUTUBE:
 			return 'Youtube';
+		case SocialPlatform.DISCORD:
+			return 'Discord';
+		case SocialPlatform.TWITCH:
+			return 'Twitch';
+		case SocialPlatform.TIKTOK:
+			return 'TikTok';
+		case SocialPlatform.BLUESKY:
+			return 'Bluesky';
+	}
+}
+
+export function socialMediaPlatformDomains(platform: SocialPlatform) {
+	switch (platform) {
+		case SocialPlatform.TWITTER:
+			return ['twitter.com', 'x.com'];
+		case SocialPlatform.YOUTUBE:
+			return ['youtube.com', 'youtu.be'];
+		case SocialPlatform.DISCORD:
+			return []; // special case
+		case SocialPlatform.TWITCH:
+			return ['twitch.tv'];
+		case SocialPlatform.TIKTOK:
+			return ['tiktok.com'];
+		case SocialPlatform.BLUESKY:
+			return ['bsky.app'];
 	}
 }
 
@@ -145,11 +172,6 @@ function isWithinWeek(a: Date, b: Date) {
 
 /** Formats a date in a readable way, without time. */
 export function formatDate(date: Date, extra?: any): string {
-	const isToday = date.toDateString() === new Date().toDateString();
-	if (isToday) {
-		return 'idag';
-	}
-
 	const isThisWeek = isWithinWeek(date, new Date());
 	const isCurrentYear = date.getFullYear() === new Date().getFullYear();
 
@@ -162,10 +184,11 @@ export function formatDate(date: Date, extra?: any): string {
 }
 
 /** Formats a date in a readable way, with time. */
-export function formatDateTime(date: Date): string {
+export function formatDateTime(date: Date, extra?: any): string {
 	return formatDate(date, {
 		hour: '2-digit',
-		minute: '2-digit'
+		minute: '2-digit',
+		...extra
 	});
 }
 
@@ -178,6 +201,47 @@ export function shortenTeamName(name: string) {
 		.slice(0, 3)
 		.map((word) => word[0])
 		.join('');
+}
+
+export function parseMatchQueryParams(searchParams: URLSearchParams): MatchQueryParams {
+	const stateParam = searchParams.get('state');
+	const state = stateParam ? parseStateParam(stateParam) : undefined;
+
+	const pageSizeParam = searchParams.get('pageSize');
+	const pageSize = pageSizeParam ? Number(pageSizeParam) : undefined;
+
+	const isBracketParam = searchParams.get('isBracket');
+	const isBracket = isBracketParam ? isBracketParam === 'true' : undefined;
+
+	return {
+		rosterId: searchParams.get('rosterId') ?? undefined,
+		divisionId: searchParams.get('divisionId') ?? undefined,
+		seasonId: searchParams.get('seasonId') ?? undefined,
+		page: Number(searchParams.get('page') ?? 0),
+		isBracket,
+		pageSize,
+		state
+	};
+}
+
+function parseStateParam(param: string): MatchState[] {
+	let invert = false;
+
+	if (param.startsWith('!')) {
+		param = param.substring(1);
+		invert = true;
+	}
+
+	let states = param
+		.split(',')
+		.filter((str) => Object.values(MatchState).includes(str as MatchState))
+		.map((str) => str as MatchState);
+
+	if (invert) {
+		states = Object.values(MatchState).filter((state) => !states.includes(state));
+	}
+
+	return states;
 }
 
 /** Client/server agnostic cookie functions */

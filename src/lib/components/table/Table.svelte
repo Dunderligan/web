@@ -23,7 +23,7 @@
 <div
 	class={[
 		classProp,
-		'__table grid w-full gap-y-1 overflow-hidden overflow-x-auto rounded-lg text-gray-700 dark:text-gray-300'
+		'__table grid w-full gap-y-1 overflow-hidden overflow-x-auto rounded-lg text-lg font-medium text-gray-700 dark:text-gray-300'
 	]}
 >
 	{#each columns as { label, center = false, note }, i}
@@ -31,7 +31,7 @@
 			class={[
 				i === 0 && !center && 'pl-6',
 				center && 'justify-center',
-				'__table-header flex items-center gap-1 bg-gray-50 py-2 font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-400'
+				'__table-header flex items-center gap-1 bg-gray-50 py-2 text-base text-gray-600 dark:bg-gray-800 dark:text-gray-400'
 			]}
 		>
 			{label}
@@ -48,11 +48,13 @@
 </div>
 
 <style>
-	:global(.dark .__table > :not(.__table-header)) {
-		background-color: var(--color-gray-900);
-	}
-
 	:global(.__table > :not(.__table-header)) {
 		background-color: var(--color-gray-100);
+		display: flex;
+		align-items: center;
+	}
+
+	:global(.dark .__table > :not(.__table-header)) {
+		background-color: var(--color-gray-900);
 	}
 </style>

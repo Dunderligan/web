@@ -35,15 +35,21 @@
 	{#snippet row({ value: member, index })}
 		{@const hasRank = legacyRanks ? member.sr !== null : member.rank && member.tier}
 
-		<div class="flex items-center bg-gray-200 px-6 py-4 text-lg font-semibold">
-			{member.player.battletag}
+		<div class="px-6 py-4 font-semibold">
+			<a href="/admin/spelare/{member.player.id}" class="hover:underline">
+				{#if member.registeredName}
+					{member.registeredName} <span class="font-medium">({member.player.battletag})</span>
+				{:else}
+					{member.player.battletag}
+				{/if}
+			</a>
 		</div>
 
-		<div class="flex items-center justify-center gap-2 bg-gray-200 pr-2">
+		<div class="justify-center gap-2 pr-2">
 			<Checkbox bind:checked={member.isCaptain} onCheckedChange={saveCtx.setDirty} {disabled} />
 		</div>
 
-		<div class="flex items-center bg-gray-200 pr-4">
+		<div class="pr-4 text-base">
 			<Select
 				type="single"
 				class="grow"
@@ -58,7 +64,7 @@
 			/>
 		</div>
 
-		<div class="flex items-center gap-2 bg-gray-200 pr-2">
+		<div class="gap-2 pr-2 text-base">
 			{#if hasRank}
 				{#if legacyRanks}
 					<Rank rank={{ sr: member.sr ?? 0 }} hideLabel />
@@ -143,7 +149,7 @@
 			{/if}
 		</div>
 
-		<div class="flex items-center bg-gray-200 pr-4">
+		<div class="pr-4">
 			<Button
 				title="Ta bort"
 				icon="ph:trash"

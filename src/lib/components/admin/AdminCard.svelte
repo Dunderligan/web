@@ -11,14 +11,14 @@
 </script>
 
 <div
-	class="space-y-4 overflow-hidden rounded-xl border-[3px] border-gray-100 bg-white p-8 dark:border-gray-900 dark:bg-gray-950"
+	class="space-y-4 overflow-hidden rounded-xl border-[3px] border-gray-100 bg-white p-8 text-gray-700 dark:border-gray-900 dark:bg-gray-950 dark:text-gray-300"
 >
 	{#if title}
-		<h2 class="font-display text-2xl font-bold text-gray-700 dark:text-gray-100">{title}</h2>
+		<h2 class="font-display text-2xl font-bold text-gray-900 dark:text-gray-100">{title}</h2>
 	{/if}
 
 	{#if description}
-		<div class="-mt-2 mb-6 text-lg font-medium text-gray-600 dark:text-gray-400">
+		<div class="-mt-2 mb-6 font-medium">
 			{@render description()}
 		</div>
 	{/if}

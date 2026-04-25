@@ -1,4 +1,6 @@
 import type { Snippet } from 'svelte';
+import type z from 'zod';
+import type { matchQueryParamsSchema } from './schemas';
 
 /**
  * SvelteKit accepts these types in the class attribute, but does not expose the type definitions.
@@ -9,6 +11,14 @@ import type { Snippet } from 'svelte';
 export type ClassDictionary = Record<string, any>;
 export type ClassArray = ClassValue[];
 export type ClassValue = ClassArray | ClassDictionary | string | null | undefined;
+
+export type ListedSeason = {
+	id: string;
+	name: string;
+	slug: string;
+	startedAt: Date;
+	spinoff: boolean;
+};
 
 /** Full rank representation with rank (bronze, silver, etc.) and tier (1-5 where 1 is the highest). */
 export type FullRank = {
@@ -49,10 +59,14 @@ export enum Rank {
 	CHAMPION = 'champion'
 }
 
-/** Available social platforms for team social media links. */
+/** Available social platforms for team and player social media links. */
 export enum SocialPlatform {
 	YOUTUBE = 'youtube',
-	TWITTER = 'twitter'
+	TWITTER = 'twitter',
+	DISCORD = 'discord',
+	TWITCH = 'twitch',
+	TIKTOK = 'tiktok',
+	BLUESKY = 'bluesky'
 }
 
 export enum Role {
@@ -120,6 +134,7 @@ export type Member = {
 	tier: number | null;
 	sr: number | null;
 	isCaptain: boolean;
+	registeredName: string | null;
 	player: {
 		id?: string | null;
 		battletag: string;
@@ -141,7 +156,7 @@ export type FullRoster = RosterWithGroup & {
 	members: Member[];
 };
 
-export type TeamSocial = {
+export type Social = {
 	platform: SocialPlatform;
 	url: string;
 };
@@ -153,7 +168,6 @@ export type MatchWithoutRosters = {
 	id: string;
 	groupId?: string | null;
 	divisionId?: string | null;
-	createdAt?: Date;
 	teamAScore: number;
 	teamBScore: number;
 	draws: number;
@@ -189,6 +203,11 @@ export type ResolvedMatch = MatchWithoutRosters & {
 	rosterB?: MatchRoster | null;
 };
 
+export type ResolvedMatchWithSeeds = MatchWithoutRosters & {
+	rosterA?: MatchRosterWithSeed | null;
+	rosterB?: MatchRosterWithSeed | null;
+};
+
 /**
  * The minimal roster representation within a match.
  */
@@ -196,6 +215,10 @@ export type MatchRoster = {
 	id: string;
 	name: string;
 	slug: string;
+};
+
+export type MatchRosterWithSeed = MatchRoster & {
+	seed: number;
 };
 
 /**
@@ -266,3 +289,22 @@ export type Preferences = {
 	theme: Theme;
 	spoilerMode: boolean;
 };
+
+export type GameProfile = {
+	avatarUrl: string;
+	name: string;
+	title: string | null;
+	slug: string;
+};
+
+export type GameProfileEntry =
+	| { status: 'found'; profile: GameProfile }
+	| { status: 'ambiguous'; candidates: GameProfile[] }
+	| { status: 'missing' }
+	| { status: 'error'; error: string };
+
+export type GameProfileEntryWithDate = { date: string } & GameProfileEntry;
+
+export type MatchQueryParams = z.infer<typeof matchQueryParamsSchema>;
+
+export type ChipColor = 'gray' | 'yellow' | 'green' | 'accent';

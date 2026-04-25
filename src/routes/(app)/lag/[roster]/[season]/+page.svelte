@@ -14,6 +14,7 @@
 	import { averageLegacyRank, averageRank } from '$lib/rank';
 	import { isModerator } from '$lib/authRole';
 	import Placement from '$lib/components/ui/Placement.svelte';
+	import Field from '$lib/components/structure/Field.svelte';
 
 	let { data } = $props();
 
@@ -25,7 +26,12 @@
 	);
 
 	const playedMatches = $derived(
-		roster.matches.filter((match) => match.state !== MatchState.SCHEDULED)
+		roster.matches.filter(
+			(match) =>
+				match.state === MatchState.PLAYED ||
+				// don't show walkovers where one team is missing (most often bracket byes)
+				(match.state === MatchState.WALKOVER && match.rosterAId && match.rosterBId)
+		)
 	);
 	const upcomingMatches = $derived(
 		roster.matches.filter((match) => match.state === MatchState.SCHEDULED)
@@ -66,11 +72,11 @@
 	<RosterLogo id={roster.id} class="size-40" imgSize={256} />
 
 	<div>
-		<h1 class="mb-1 text-center font-display text-5xl font-extrabold sm:text-left sm:text-6xl">
+		<h1 class="text-center font-display text-5xl font-extrabold sm:text-left sm:text-6xl">
 			{roster.name}
 		</h1>
 		<div
-			class="mt-1 mb-3 text-center text-lg font-semibold text-gray-600 sm:text-left dark:text-gray-400"
+			class="mt-1 text-center text-lg font-semibold text-gray-600 sm:text-left dark:text-gray-400"
 		>
 			{division.name}, {season.name}
 		</div>
@@ -133,24 +139,19 @@
 		</div>
 
 		{#if average}
-			<div>
-				<div class="font-medium text-gray-700 dark:text-gray-400">Genomsnittlig rank</div>
-				<div class="text-xl font-semibold text-gray-800 dark:text-gray-300">
-					<Rank rank={average} />
-				</div>
-			</div>
+			<Field title="Genomsnittlig rank">
+				<Rank rank={average} />
+			</Field>
 		{/if}
 
 		{#if team.socials.length > 0}
-			<div>
-				<div class="font-medium text-gray-700 dark:text-gray-400">Sociala medier</div>
-
+			<Field title="Sociala medier">
 				<div class="mt-1 flex items-center gap-3">
 					{#each team.socials as { platform, url } (platform)}
 						<TeamSocial class="text-3xl" {platform} href={url} />
 					{/each}
 				</div>
-			</div>
+			</Field>
 		{/if}
 	</section>
 </PageSection>

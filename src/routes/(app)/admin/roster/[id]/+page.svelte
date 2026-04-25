@@ -23,6 +23,7 @@
 	import { getDivisionsBySeason } from '$lib/remote/season.remote';
 	import Checkbox from '$lib/components/ui/Checkbox.svelte';
 	import { AuthRole, checkPermission } from '$lib/authRole';
+	import AdminSocials from '$lib/components/admin/AdminSocials.svelte';
 
 	let { data } = $props();
 
@@ -44,16 +45,6 @@
 	let newPlayerOpen = $state(false);
 	let newPlayerBattletag = $state('');
 
-	let remainingPlatforms = $derived(
-		Object.values(SocialPlatform).filter(
-			(platform) => !team.socials.some((social) => social.platform === platform)
-		)
-	);
-
-	let newSocialOpen = $state(false);
-	let newPlatform = $state(SocialPlatform.TWITTER);
-	let newSocialUrl = $state('');
-
 	let linkTeamOpen = $state(false);
 	let linkTeamId: string | undefined = $state();
 
@@ -65,7 +56,7 @@
 	const isAdmin = $derived(checkPermission(data.user?.role, AuthRole.ADMIN));
 
 	async function save() {
-		const { slug } = await editRoster({
+		await editRoster({
 			id: roster.id,
 			teamId: team.id,
 			name: roster.name,
@@ -73,9 +64,6 @@
 			members: roster.members,
 			socials: team.socials
 		});
-
-		// await goto(`/lag/${slug}/${season.slug}`);
-		saveCtx.setDirty();
 	}
 
 	async function addNewPlayer() {
@@ -85,9 +73,10 @@
 			rank: season.legacyRanks ? null : Rank.BRONZE,
 			tier: season.legacyRanks ? null : 1,
 			sr: season.legacyRanks ? 0 : null,
+			registeredName: null,
 			player: {
 				id: null as any as string, // the backend will either link this up with an existing player, or create a new one
-				battletag: newPlayerBattletag
+				battletag: newPlayerBattletag.trim()
 			}
 		});
 
@@ -98,25 +87,6 @@
 	function resetNewPlayer() {
 		newPlayerOpen = false;
 		newPlayerBattletag = '';
-	}
-
-	async function submitNewSocial() {
-		team.socials.push({
-			platform: newPlatform,
-			url: newSocialUrl
-		});
-
-		saveCtx.setDirty();
-		resetNewSocial();
-	}
-
-	function resetNewSocial() {
-		newSocialOpen = false;
-		newSocialUrl = '';
-
-		if (remainingPlatforms.length > 0) {
-			newPlatform = remainingPlatforms[0];
-		}
 	}
 
 	async function onDeleteClick() {
@@ -184,41 +154,10 @@
 </AdminCard>
 
 {#if isAdmin}
-	<AdminCard title="Sociala medier">
-		{#if team.socials.length === 0}
-			<AdminEmptyNotice oncreateclick={() => (newSocialOpen = true)}>
-				Detta lag har inga länkade sociala medier.
-			</AdminEmptyNotice>
-		{:else}
-			<div class="space-y-1.5 py-1">
-				{#each team.socials as social, i (social.platform)}
-					<Label>
-						{#snippet label()}
-							<Icon class="text-2xl" icon="ph:{social.platform}-logo-fill" />
-							{formatSocialPlatform(social.platform)}
-						{/snippet}
-
-						<InputField bind:value={social.url} placeholder="URL" />
-
-						<Button
-							icon="ph:trash"
-							class="ml-2"
-							kind="tertiary"
-							title="Radera"
-							onclick={() => {
-								team.socials.splice(i, 1);
-								saveCtx.setDirty();
-							}}
-						/>
-					</Label>
-				{/each}
-			</div>
-
-			{#if remainingPlatforms.length > 0}
-				<Button icon="ph:plus" onclick={() => (newSocialOpen = true)} />
-			{/if}
-		{/if}
-	</AdminCard>
+	<AdminSocials
+		emptyText="Detta lag har inga länkade sociala medier."
+		bind:socials={team.socials}
+	/>
 
 	<AdminCard title="Inställningar">
 		<Label label="Namn">
@@ -281,39 +220,14 @@
 {/if}
 
 <CreateDialog
-	title="Lägg till social media"
-	bind:open={newSocialOpen}
-	oncreate={submitNewSocial}
-	onclose={resetNewSocial}
-	disabled={!newSocialUrl || !newPlatform}
->
-	<Label label="Platform">
-		<Select
-			type="single"
-			class="grow"
-			bind:value={newPlatform}
-			itemIcon={(platform) => `ph:${platform}-logo-fill`}
-			items={remainingPlatforms.map((platform) => ({
-				label: formatSocialPlatform(platform),
-				value: platform
-			}))}
-		/>
-	</Label>
-
-	<Label label="URL">
-		<InputField bind:value={newSocialUrl} placeholder="https://{newPlatform}.com/..." />
-	</Label>
-</CreateDialog>
-
-<CreateDialog
 	title="Lägg till spelare"
 	bind:open={newPlayerOpen}
 	oncreate={addNewPlayer}
 	onclose={resetNewPlayer}
-	disabled={!newPlayerBattletag}
+	disabled={!newPlayerBattletag.trim()}
 >
 	<Label label="Battletag">
-		<InputField bind:value={newPlayerBattletag} placeholder="Spelare#0000" />
+		<InputField bind:value={newPlayerBattletag} placeholder="Spelare#0000" onenter={addNewPlayer} />
 	</Label>
 </CreateDialog>
 

@@ -1,9 +1,9 @@
-import { sql, eq, isNull, Table } from 'drizzle-orm';
+import { sql, eq } from 'drizzle-orm';
 import { PgTransaction } from 'drizzle-orm/pg-core';
 import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 import { schema } from '$lib/server/db';
 import type { User } from './schema/auth';
-import { AuthRole, checkPermission, isAdmin } from '$lib/authRole';
+import { isAdmin } from '$lib/authRole';
 
 // Helper queries and functions for database operations.
 
@@ -30,6 +30,8 @@ export const nestedDivisionQuery = {
 		season: {
 			columns: {
 				legacyRanks: true,
+				startedAt: true,
+				spinoff: true,
 				...entityQuery.columns
 			}
 		}
@@ -123,11 +125,13 @@ export const memberQuery = {
 		tier: true,
 		rank: true,
 		sr: true,
-		role: true
+		role: true,
+		registeredName: true
 	},
 	with: {
 		player: {
 			columns: {
+				id: true,
 				battletag: true
 			}
 		}
@@ -174,8 +178,8 @@ export async function findOrCreatePlayer(tx: Transaction, battletag: string) {
 		.where(eq(sql<string>`SPLIT_PART(${schema.player.battletag}, '#', 1)`, name));
 
 	if (existingPlayer) {
-		if (name !== battletag && existingPlayer.battletag !== battletag) {
-			// if we got a number tag and the exisitng player doesn't, store the new one
+		if (name !== battletag && !existingPlayer.battletag.includes('#')) {
+			// if we got a number tag and the existing player doesn't, store the new one
 			await tx
 				.update(schema.player)
 				.set({ battletag })

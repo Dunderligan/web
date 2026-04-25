@@ -9,12 +9,15 @@
 	import Bracket from '$lib/components/match/Bracket.svelte';
 	import { buildBracketRounds } from '$lib/bracket';
 	import Subheading from '$lib/components/ui/Subheading.svelte';
-	import type { UnresolvedMatch, ResolvedMatch, Roster } from '$lib/types';
+	import type { UnresolvedMatch, Roster, ResolvedMatchWithSeeds } from '$lib/types';
 	import SeasonStateChip from '$lib/components/ui/SeasonStateChip.svelte';
 	import MatchList from '$lib/components/match/MatchList.svelte';
 	import { goto } from '$app/navigation';
 	import Meta from '$lib/components/structure/Meta.svelte';
-	import { AuthRole, checkPermission, isModerator } from '$lib/authRole';
+	import { isModerator } from '$lib/authRole';
+	import Note from '$lib/components/ui/Note.svelte';
+	import Icon from '$lib/components/ui/Icon.svelte';
+	import Chip from '$lib/components/ui/Chip.svelte';
 
 	let { data } = $props();
 
@@ -92,11 +95,26 @@
 		});
 	}
 
-	function resolveRoster(id?: string | null): Roster | null {
-		return division.rosters.find((roster) => roster.id === id) ?? null;
+	function resolveRoster(id?: string | null): (Roster & { seed: number }) | null {
+		const roster = division.rosters.find((roster) => roster.id === id) ?? null;
+		if (!roster) return null;
+
+		for (const division of divisions) {
+			for (const table of division.tables) {
+				const standing = table.standings
+					.map((standing, i) => ({ ...standing, seed: i + 1 }))
+					.find((standing) => standing.rosterId === roster.id);
+
+				if (standing) {
+					return { ...roster, seed: standing.seed };
+				}
+			}
+		}
+
+		return { ...roster, seed: -1 };
 	}
 
-	function resolveMatch(match: UnresolvedMatch): ResolvedMatch {
+	function resolveMatch(match: UnresolvedMatch): ResolvedMatchWithSeeds {
 		return {
 			rosterA: resolveRoster(match.rosterAId),
 			rosterB: resolveRoster(match.rosterBId),
@@ -116,8 +134,12 @@
 	</h1>
 
 	<div
-		class="flex flex-row flex-wrap items-center justify-center gap-3 text-center sm:flex-row sm:items-center sm:justify-start"
+		class="flex flex-row flex-wrap items-center justify-center gap-2 text-center sm:flex-row sm:items-center sm:justify-start"
 	>
+		{#if season.spinoff}
+			<Chip color="accent" icon="ph:star" label="Spinoff" />
+		{/if}
+
 		<SeasonStateChip {state} />
 
 		<div class="font-medium text-gray-600 dark:text-gray-400">
@@ -166,7 +188,7 @@
 				score
 			}))}
 
-			{#if table.type === 'grupp'}
+			{#if table.title}
 				<Subheading class="mt-6 mb-4 flex justify-between">
 					{table.title}
 				</Subheading>
@@ -184,7 +206,7 @@
 					icon="ph:pencil-simple"
 					kind="secondary"
 					class="mt-4 max-w-max"
-					href="/admin/{table.type}/{table.id}"
+					href={table.adminUrl}
 				/>
 			{/if}
 		{/each}
@@ -195,7 +217,7 @@
 			seasonSlug={season.slug}
 			class="mt-12"
 			hideIfEmpty
-			matchArchiveParams="division={division.id}&status=scheduled"
+			matchArchiveParams="divisionId={division.id}&state=scheduled&isBracket=false"
 		/>
 
 		{#if division.latestMatches.length > 0}
@@ -204,7 +226,7 @@
 				title="Senaste matcherna"
 				matches={division.latestMatches.map(resolveMatch)}
 				seasonSlug={season.slug}
-				matchArchiveParams="division={division.id}&status=!scheduled"
+				matchArchiveParams="divisionId={division.id}&state=!scheduled&isBracket=false"
 			/>
 		{/if}
 	{:else}

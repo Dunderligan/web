@@ -1,0 +1,1 @@
+ALTER TABLE "season" ADD COLUMN "spinoff" boolean DEFAULT false NOT NULL;

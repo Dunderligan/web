@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MatchState, type ResolvedMatch } from '$lib/types';
+	import { MatchState, type ResolvedMatchWithSeeds } from '$lib/types';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import {
 		matchRoster,
@@ -12,37 +12,36 @@
 	import MatchInfoRow from './MatchInfoRow.svelte';
 	import Note from '../ui/Note.svelte';
 
-	type Props = {
-		match: ResolvedMatch;
-		seasonSlug: string;
-		roundIndex: number;
-		hidden?: boolean;
-		hasNext: boolean;
-		hasPrevAbove: boolean;
-		hasPrevBelow: boolean;
+	type State = 'visible' | 'invisible' | 'hidden';
+
+	type Lines = {
+		forward?: boolean;
+		backward?: boolean;
+		up?: boolean;
+		down?: boolean;
 	};
 
-	let {
-		match,
-		seasonSlug,
-		roundIndex,
-		hidden = false,
-		hasNext,
-		hasPrevAbove,
-		hasPrevBelow
-	}: Props = $props();
+	type Props = {
+		match: ResolvedMatchWithSeeds;
+		seasonSlug: string;
+		roundIndex: number;
+		state: State;
+		lines: Lines;
+	};
+
+	let { match, seasonSlug, roundIndex, state, lines }: Props = $props();
 
 	// don't ask
-	const verticalLineHeight = $derived(78 * roundIndex + 2);
+	const verticalLineHeight = $derived(40 * Math.pow(roundIndex, 2) - 42 * roundIndex + 82);
 
 	const showScore = $derived(hasMatchScore(match));
 </script>
 
 <div
 	class={[
-		hasNext && 'has-next-round',
-		(hasPrevAbove || hasPrevBelow) && 'has-prev-round',
-		hidden && 'invisible',
+		lines.forward && 'has-next-round',
+		lines.backward && 'has-prev-round',
+		state === 'hidden' ? 'hidden' : state === 'invisible' ? 'invisible' : 'visible',
 		'relative h-[125px] w-60 rounded-lg'
 	]}
 >
@@ -54,11 +53,11 @@
 
 	{@render side('B', 'rounded-b-lg')}
 
-	{#if hasPrevAbove}
+	{#if lines.up}
 		<div class="vertical-line line-up" style="height: {verticalLineHeight}px"></div>
 	{/if}
 
-	{#if hasPrevBelow}
+	{#if lines.down}
 		<div class="vertical-line line-down" style="height: {verticalLineHeight}px"></div>
 	{/if}
 </div>
@@ -71,18 +70,37 @@
 
 	{@const href = `/lag/${roster?.slug}/${seasonSlug}`}
 
+	{@const bgClass = showScore
+		? won
+			? 'bg-gray-200 dark:bg-gray-800'
+			: 'bg-gray-50 dark:bg-gray-900'
+		: 'bg-gray-100 dark:bg-gray-900'}
+
+	{@const seedBgClass = showScore
+		? won
+			? 'border-gray-300 dark:border-gray-700'
+			: 'border-gray-100 dark:border-gray-800'
+		: 'border-gray-200 dark:border-gray-800'}
+
 	<div
 		class={[
 			classProp,
-			'flex h-[49px] items-center pr-4 font-medium text-gray-700 dark:text-gray-300',
-			showScore
-				? won
-					? 'bg-gray-200 dark:bg-gray-800'
-					: 'bg-gray-50 dark:bg-gray-900'
-				: 'bg-gray-100 dark:bg-gray-900'
+			bgClass,
+			'relative flex h-[49px] items-center overflow-hidden pr-4 font-medium text-gray-600 dark:text-gray-400'
 		]}
 	>
 		{#if roster}
+			<div
+				class={[
+					seedBgClass,
+					'absolute right-0 bottom-0 border-t-28 border-r-28 border-t-transparent!'
+				]}
+			></div>
+
+			<div class="absolute right-1 bottom-1 z-10 text-xs leading-none font-semibold">
+				{roster.seed}
+			</div>
+
 			<div
 				class={[
 					showScore ? 'text-2xl font-extrabold' : 'text-lg',
@@ -97,11 +115,13 @@
 			<a
 				{href}
 				class={[
-					won && 'font-semibold text-gray-800 dark:text-gray-200',
+					won
+						? 'font-semibold text-gray-800 dark:text-gray-200'
+						: 'font-medium text-gray-700 dark:text-gray-300',
 					'mr-auto truncate hover:underline'
 				]}
 			>
-				{roster?.name}
+				{roster.name}
 			</a>
 
 			{#if note}
@@ -109,7 +129,7 @@
 			{/if}
 		{:else}
 			<div class="grow text-center font-medium">
-				{match.state === MatchState.PLAYED ? '---' : '???'}
+				{match.state === MatchState.PLAYED ? '---' : 'TBD'}
 			</div>
 		{/if}
 	</div>

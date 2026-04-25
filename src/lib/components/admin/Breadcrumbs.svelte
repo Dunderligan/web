@@ -9,20 +9,23 @@
 
 	type Props = {
 		crumbs?: Crumb[];
+		hideHome?: boolean;
 	};
 
-	let { crumbs = [] }: Props = $props();
+	let { crumbs = [], hideHome = false }: Props = $props();
 
 	const saveCtx = SaveContext.get();
 </script>
 
 <div class="flex items-center gap-4 font-display text-lg text-gray-600 dark:text-gray-400">
-	<a
-		href="/admin"
-		class="flex items-center justify-center text-xl hover:text-gray-700 dark:hover:text-gray-300"
-	>
-		<Icon icon="ph:house" />
-	</a>
+	{#if !hideHome}
+		<a
+			href="/admin"
+			class="flex items-center justify-center text-xl hover:text-gray-700 dark:hover:text-gray-300"
+		>
+			<Icon icon="ph:house" />
+		</a>
+	{/if}
 
 	{#each crumbs as { label, href }, i}
 		{@const isLast = i == crumbs.length - 1}

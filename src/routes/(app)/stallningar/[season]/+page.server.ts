@@ -6,7 +6,7 @@ import {
 	divisionOrder,
 	hiddenSeasonFilter
 } from '$lib/server/db/helpers';
-import { calculateStandings } from '$lib/table';
+import { calculateStandings } from '$lib/standings';
 import { MatchState, type LogicalMatch } from '$lib/types';
 import { aggregateGroups } from '$lib/util';
 import { error } from '@sveltejs/kit';
@@ -21,7 +21,9 @@ export const load = async ({ params, locals }) => {
 			name: true,
 			slug: true,
 			startedAt: true,
-			endedAt: true
+			endedAt: true,
+			legacySeeding: true,
+			spinoff: true
 		},
 		with: {
 			divisions: {
@@ -89,14 +91,33 @@ export const load = async ({ params, locals }) => {
 		divisions: divisions.map(({ groups, ...division }) => {
 			const { rosters, matches: divisionMatches } = aggregateGroups(groups);
 
-			let tables;
+			let groupings;
 			if (division.groupwiseStandings) {
-				tables = groups.map((group) =>
-					makeTable(group.name, group.id, group.rosters, group.matches, 'grupp')
-				);
+				groupings = groups.map((group) => ({
+					title: group.name,
+					matches: group.matches,
+					rosters: group.rosters,
+					adminUrl: `/admin/grupp/${group.id}`
+				}));
 			} else {
-				tables = [makeTable(division.name, division.id, rosters, divisionMatches, 'division')];
+				groupings = [
+					{
+						title: null,
+						matches: divisionMatches,
+						rosters,
+						adminUrl: `/admin/division/${division.id}`
+					}
+				];
 			}
+
+			const tables = groupings.map(({ matches, rosters, ...table }) => {
+				const standings = calculateStandings(rosters, matches, season.legacySeeding);
+
+				return {
+					...table,
+					standings
+				};
+			});
 
 			divisionMatches.sort((a, b) => compareMatchDates(a, b));
 			const latestMatches = divisionMatches
@@ -116,18 +137,3 @@ export const load = async ({ params, locals }) => {
 		})
 	};
 };
-
-function makeTable<R extends { id: string }>(
-	title: string,
-	id: string,
-	rosters: R[],
-	matches: LogicalMatch[],
-	type: 'division' | 'grupp'
-) {
-	return {
-		title,
-		id,
-		standings: calculateStandings(rosters, matches),
-		type
-	};
-}

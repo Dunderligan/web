@@ -6,6 +6,7 @@ import z from 'zod';
 import { roleGuard } from './auth.remote';
 import { AuthRole } from '$lib/authRole';
 import { entityQuery } from '$lib/server/db/helpers';
+import { createDivision } from './division.remote';
 
 export const createSeason = command(
 	z.object({
@@ -29,6 +30,8 @@ export const createSeason = command(
 				hidden
 			})
 			.returning();
+
+		await createDivision({ name: 'Division 1', seasonId: season.id });
 
 		return { season };
 	}
@@ -64,7 +67,10 @@ export const updateSeason = command(
 		name: z.string(),
 		startedAt: z.date(),
 		endedAt: z.date().nullish(),
+		legacyRanks: z.boolean(),
+		legacySeeding: z.boolean(),
 		hidden: z.boolean(),
+		spinoff: z.boolean(),
 		registration: z
 			.object({
 				url: z.url(),
@@ -73,7 +79,7 @@ export const updateSeason = command(
 			})
 			.nullish()
 	}),
-	async ({ id, name, startedAt, endedAt, hidden, registration }) => {
+	async ({ id, name, registration, ...data }) => {
 		await roleGuard(AuthRole.ADMIN);
 
 		const slug = toSlug(name);
@@ -81,12 +87,10 @@ export const updateSeason = command(
 		await db.transaction(async (tx) => {
 			await tx
 				.update(schema.season)
-				.set({ name, slug, startedAt, endedAt, hidden })
+				.set({ name, slug, ...data })
 				.where(eq(schema.season.id, id));
 
 			if (registration) {
-				console.log(registration);
-
 				await tx
 					.update(schema.registration)
 					.set(registration)

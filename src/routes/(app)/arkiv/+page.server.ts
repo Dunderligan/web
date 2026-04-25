@@ -10,7 +10,11 @@ export const load = async ({ locals }) => {
 			hidden: hiddenSeasonFilter(locals.user)
 		},
 		columns: {
-			createdAt: false
+			id: true,
+			name: true,
+			slug: true,
+			startedAt: true,
+			spinoff: true
 		}
 	});
 

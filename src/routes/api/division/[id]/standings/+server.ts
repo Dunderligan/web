@@ -1,6 +1,6 @@
 import { db } from '$lib/server/db';
 import { entityQuery, fullMatchColumns } from '$lib/server/db/helpers';
-import { calculateStandings } from '$lib/table.js';
+import { calculateStandings } from '$lib/standings.js';
 import { aggregateGroups } from '$lib/util';
 import { json, error } from '@sveltejs/kit';
 

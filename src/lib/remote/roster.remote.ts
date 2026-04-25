@@ -3,15 +3,15 @@ import { S3_BUCKET_NAME } from '$env/static/private';
 import { db, schema } from '$lib/server/db';
 import { findOrCreatePlayer, type Transaction } from '$lib/server/db/helpers';
 import S3 from '$lib/server/s3';
-import { Rank, Role, SocialPlatform, type Member, type TeamSocial } from '$lib/types';
-import { cdnRosterLogoPath, cdnSrc, s3RosterLogoKey, toSlug } from '$lib/util';
+import { Rank, Role, type Member, type Social } from '$lib/types';
+import { cdnRosterLogoPath, s3RosterLogoKey, toSlug } from '$lib/util';
 import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
-import { and, eq, inArray, not, sql } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import z from 'zod';
 import { roleGuard } from './auth.remote';
 import { AuthRole } from '$lib/authRole';
 import sharp from 'sharp';
-import { error } from '@sveltejs/kit';
+import { socialSchema } from '$lib/schemas';
 
 /// Create a roster and add it to a group. If an associated teamId is not provided, a new team will be created.
 export const createRoster = command(
@@ -77,18 +77,14 @@ export const editRoster = command(
 				tier: z.int().max(5).min(1).nullable(),
 				sr: z.int().min(0).nullable(),
 				isCaptain: z.boolean(),
+				registeredName: z.string().nullable(),
 				player: z.object({
 					id: z.string().nullable(),
 					battletag: z.string()
 				})
 			})
 		),
-		socials: z.array(
-			z.object({
-				platform: z.enum(SocialPlatform),
-				url: z.url()
-			})
-		)
+		socials: z.array(socialSchema)
 	}),
 	async ({ id, teamId, name, resigned, members, socials }) => {
 		await roleGuard(AuthRole.ADMIN);
@@ -130,18 +126,14 @@ async function updateMembers(tx: Transaction, rosterId: string, members: Member[
 	await tx.delete(schema.member).where(eq(schema.member.rosterId, rosterId));
 
 	const memberInserts = await Promise.all(
-		members.map(async (member) => {
+		members.map(async ({ player, ...member }) => {
 			// if they already have an associated id, use that
-			let playerId = member.player.id ?? (await findOrCreatePlayer(tx, member.player.battletag));
+			const playerId = player.id ?? (await findOrCreatePlayer(tx, player.battletag));
 
 			return {
 				playerId,
 				rosterId: rosterId,
-				role: member.role,
-				rank: member.rank,
-				tier: member.tier,
-				sr: member.sr,
-				isCaptain: member.isCaptain
+				...member
 			};
 		})
 	);
@@ -151,32 +143,18 @@ async function updateMembers(tx: Transaction, rosterId: string, members: Member[
 	}
 }
 
-async function updateSocials(tx: Transaction, teamId: string, socials: TeamSocial[]) {
-	if (socials.length === 0) {
-		// delete all platforms
-		await tx.delete(schema.social).where(eq(schema.social.teamId, teamId));
-		return;
+async function updateSocials(tx: Transaction, teamId: string, socials: Social[]) {
+	await tx.delete(schema.teamSocial).where(eq(schema.teamSocial.teamId, teamId));
+
+	const inserts = socials.map(({ platform, url }) => ({
+		teamId: teamId,
+		platform,
+		url
+	}));
+
+	if (inserts.length > 0) {
+		await tx.insert(schema.teamSocial).values(inserts);
 	}
-
-	// delete extra platforms
-	const platforms = socials.map((social) => social.platform);
-	await tx
-		.delete(schema.social)
-		.where(and(eq(schema.social.teamId, teamId), not(inArray(schema.social.platform, platforms))));
-
-	await tx
-		.insert(schema.social)
-		.values(
-			socials.map((social) => ({
-				url: social.url,
-				platform: social.platform,
-				teamId
-			}))
-		)
-		.onConflictDoUpdate({
-			target: [schema.social.teamId, schema.social.platform],
-			set: { url: sql.raw(`excluded.${schema.social.url.name}`) }
-		});
 }
 
 export const uploadRosterLogo = command(

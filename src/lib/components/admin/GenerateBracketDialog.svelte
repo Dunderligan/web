@@ -50,7 +50,7 @@
 			class="grow"
 			type="single"
 			bind:value={() => roundCount.toString(), (v: string) => (roundCount = parseInt(v))}
-			items={[2, 3, 4].map((n) => ({
+			items={[2, 3, 4, 5].map((n) => ({
 				label: `${n} rundor (${Math.pow(2, n)} platser)`,
 				value: n.toString()
 			}))}

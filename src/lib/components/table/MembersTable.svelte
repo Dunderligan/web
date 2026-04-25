@@ -27,20 +27,22 @@
 	key={(member) => member.player.battletag}
 	class={[classProp, 'grid-cols-[60px_1fr_100px] sm:grid-cols-[70px_1fr_220px]']}
 >
-	{#snippet row({ value: { player, role, rank, sr, tier, isCaptain } })}
-		<div class="py-3.5 text-center text-xl">
+	{#snippet row({ value: { player, role, rank, sr, tier, isCaptain, registeredName } })}
+		<div class="justify-center py-4.5 text-xl">
 			<Icon icon={roleIcon(role)} title={capitalize(role)} />
 		</div>
 
-		<div class="flex items-center text-lg font-semibold">
-			{player.battletag}
+		<div class="font-semibold">
+			<a href="/spelare/{player.battletag.replace('#', '-')}" class="hover:underline"
+				>{registeredName ?? player.battletag}</a
+			>
 
 			{#if isCaptain}
 				<Icon icon="ph:crown-simple" class="mb-0.5 ml-2" title="Lagkapten" />
 			{/if}
 		</div>
 
-		<div class="flex items-center font-medium">
+		<div class="text-base font-medium">
 			{#if rank && tier}
 				<Rank rank={{ rank, tier }} collapse />
 			{:else if sr}

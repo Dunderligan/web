@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db';
-import { nestedGroupQuery, rolesOrder } from '$lib/server/db/helpers';
+import { entityQuery, memberQuery, nestedGroupQuery, rolesOrder } from '$lib/server/db/helpers';
 import { error } from '@sveltejs/kit';
 import { sql } from 'drizzle-orm';
 
@@ -9,24 +9,7 @@ export const load = async ({ params, locals }) => {
 			id: params.id
 		},
 		with: {
-			members: {
-				orderBy: (t) => sql`${rolesOrder(t.role)}, ${t.playerId} ASC`,
-				columns: {
-					isCaptain: true,
-					tier: true,
-					rank: true,
-					role: true,
-					sr: true
-				},
-				with: {
-					player: {
-						columns: {
-							id: true,
-							battletag: true
-						}
-					}
-				}
-			},
+			members: memberQuery,
 			team: {
 				columns: {
 					id: true
@@ -39,11 +22,7 @@ export const load = async ({ params, locals }) => {
 						}
 					},
 					rosters: {
-						columns: {
-							id: true,
-							name: true,
-							slug: true
-						},
+						...entityQuery,
 						with: {
 							group: nestedGroupQuery
 						}
