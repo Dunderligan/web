@@ -162,8 +162,10 @@ export const match = pgTable(
 		nextMatchId: uuid().references((): AnyPgColumn => match.id, {
 			onDelete: 'set null'
 		}),
-		/** The vertical order to display this match in a bracket. Ignored for group-stage matches. */
-		order: integer().notNull().default(0)
+		/** Used to determine the order of a matches in a bracket in a stable way. Ignored for group-stage matches. */
+		order: integer().notNull().default(0),
+		/** The round number in the bracket, where 0 is the grand final, 1 is semifinals, etc. */
+		round: integer()
 	},
 	(t) => [
 		check(

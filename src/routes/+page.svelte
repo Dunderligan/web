@@ -68,8 +68,8 @@
 			<MatchList
 				title="Kommande matcher"
 				matches={data.matches.upcoming}
-				short
 				matchArchiveParams="state=scheduled"
+				size="sm"
 			/>
 		</div>
 	</div>

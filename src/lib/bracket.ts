@@ -31,15 +31,15 @@ export function createBracket<R extends { id: string }, M extends LogicalMatch>(
 	let order = 0;
 
 	// create the final match
-	rounds.push([createMatch(order++)]);
+	rounds.push([createMatch(order++, 0)]);
 
 	// create matches in reverse order
 	for (let i = 1; i < roundCount; i++) {
 		const round = [];
 
 		for (const nextMatch of rounds[i - 1]) {
-			const matchA = createMatch(order++, nextMatch.id);
-			const matchB = createMatch(order++, nextMatch.id);
+			const matchA = createMatch(order++, i, nextMatch.id);
+			const matchB = createMatch(order++, i, nextMatch.id);
 
 			round.push(matchA);
 			round.push(matchB);
@@ -163,11 +163,12 @@ function getMatchOrder(rounds: number): number[] {
 	}
 }
 
-function createMatch(order: number, nextMatchId?: string): UnresolvedMatchWithOrder {
+function createMatch(order: number, round: number, nextMatchId?: string): UnresolvedMatchWithOrder {
 	return {
 		id: uuidv4(),
 		nextMatchId,
 		order,
+		round,
 		state: MatchState.SCHEDULED,
 		teamAScore: 0,
 		teamBScore: 0,

@@ -6,10 +6,14 @@
 		type MatchSide,
 		flipSide,
 		matchScore,
-		matchNote,
-		hasMatchScore
+		matchNote
 	} from '$lib/match';
-	import { MatchState, type ClassValue, type ResolvedMatchWithContext } from '$lib/types';
+	import {
+		MatchState,
+		type ClassValue,
+		type MatchSize,
+		type ResolvedMatchWithContext
+	} from '$lib/types';
 	import Icon from '../ui/Icon.svelte';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import MatchInfoRow from './MatchInfoRow.svelte';
@@ -23,7 +27,7 @@
 		seasonSlug?: string;
 		mainRosterId?: string;
 		hideDivision?: boolean;
-		short?: boolean;
+		size?: MatchSize;
 	};
 
 	let {
@@ -31,7 +35,7 @@
 		seasonSlug: seasonSlugProp,
 		mainRosterId,
 		hideDivision = false,
-		short = false
+		size = 'md'
 	}: Props = $props();
 
 	const prefs = PreferencesState.get();
@@ -64,24 +68,30 @@
 	});
 </script>
 
-<div class={['relative rounded-lg bg-gray-100 px-6 py-3 dark:bg-gray-900']}>
-	<MatchInfoRow
-		{match}
-		{short}
-		{hideDivision}
-		group={match.group}
-		bracket={match.bracket}
-		class="pb-2"
-		center
-	/>
+<div
+	class={[size === 'xs' ? 'py-2' : 'py-3', 'relative rounded-lg bg-gray-100 px-6 dark:bg-gray-900']}
+>
+	{#if size !== 'xs'}
+		<MatchInfoRow
+			{match}
+			{hideDivision}
+			group={match.group}
+			bracket={match.bracket}
+			class="pb-2"
+			short={size === 'sm'}
+			center
+		/>
+	{/if}
 
 	<div class="flex flex-col gap-2 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:items-stretch">
 		{@render side({ side: leftSide, class: 'flex-row sm:flex-row-reverse', showSpoiler: true })}
 
 		<div
 			class={[
-				short ? 'w-10' : 'w-20',
-				'hidden items-center justify-center gap-2 text-3xl text-gray-600 sm:flex dark:text-gray-400'
+				size === 'md' && 'w-20 gap-2 text-3xl',
+				size === 'sm' && 'w-12 gap-2 text-3xl',
+				size === 'xs' && 'w-14 gap-1.5 text-3xl',
+				'hidden items-center justify-center text-gray-600 sm:flex dark:text-gray-400'
 			]}
 		>
 			{#if shownState === 'scheduled'}
@@ -121,15 +131,21 @@
 	{@const note = matchNote(match, side)}
 
 	<div
-		class={[classProp, 'flex items-center gap-3 overflow-hidden text-gray-700 dark:text-gray-300']}
+		class={[
+			classProp,
+			'flex items-center gap-2.5 overflow-hidden text-gray-700 dark:text-gray-300'
+		]}
 	>
 		{#if roster}
 			{@const href = `/lag/${roster.slug}/${seasonSlug}`}
 
 			<RosterLogo id={roster.id} {href} class="size-10 sm:size-12" />
 
-			<a {href} class={[short && 'shrink-0', 'truncate text-lg font-semibold hover:underline']}>
-				{short ? shortenTeamName(roster.name) : roster.name}
+			<a
+				{href}
+				class={[size === 'sm' && 'shrink-0', 'truncate text-lg font-semibold hover:underline']}
+			>
+				{size === 'md' ? roster.name : shortenTeamName(roster.name)}
 			</a>
 		{:else}
 			<Icon icon="ph:minus-circle" class="shrink-0 text-4xl text-gray-600 dark:text-gray-400" />
@@ -137,11 +153,11 @@
 			<div class="text-lg font-semibold text-gray-600 dark:text-gray-400">TBD</div>
 		{/if}
 
-		{#if note && !short}
+		{#if note && size === 'md'}
 			<MatchNote content={note} />
 		{/if}
 
-		{#if won && !spoiler}
+		{#if won && !spoiler && size === 'md'}
 			<Icon icon="ph:crown-simple-fill" class="text-xl text-accent-600" title="Vinnare" />
 		{/if}
 

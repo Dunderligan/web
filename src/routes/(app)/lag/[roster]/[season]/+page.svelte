@@ -10,11 +10,12 @@
 	import { cdnImageSrc, cdnRosterLogoPath, flattenGroup } from '$lib/util';
 	import MatchList from '$lib/components/match/MatchList.svelte';
 	import Meta from '$lib/components/structure/Meta.svelte';
-	import { MatchState } from '$lib/types';
+	import { MatchState, type ResolvedMatchWithContext } from '$lib/types';
 	import { averageLegacyRank, averageRank } from '$lib/rank';
 	import { isModerator } from '$lib/authRole';
-	import Placement from '$lib/components/ui/Placement.svelte';
 	import Field from '$lib/components/structure/Field.svelte';
+	import Placement from '$lib/components/ui/Placement.svelte';
+	import { placementFromFinalMatch } from '$lib/match.js';
 
 	let { data } = $props();
 
@@ -56,7 +57,24 @@
 			})
 	);
 
-	const placement = $derived(2);
+	$inspect(roster.matches);
+
+	const placement = $derived.by(() => {
+		let finalMatch: ResolvedMatchWithContext | null = null;
+
+		for (const match of roster.matches) {
+			if (match.round === null) continue;
+			if (finalMatch !== null && match.round > finalMatch.round!) continue;
+
+			finalMatch = match;
+		}
+
+		if (finalMatch === null) {
+			return null;
+		}
+
+		return placementFromFinalMatch(finalMatch, roster.id);
+	});
 </script>
 
 <Meta
@@ -130,13 +148,11 @@
 			{/if}
 		</div>
 
-		<div>
-			<div class="mb-1 font-medium text-gray-700 dark:text-gray-400">Resultat</div>
-			<Placement placement={1} />
-			<Placement placement={2} />
-			<Placement placement={3} />
-			<Placement placement={4} />
-		</div>
+		{#if placement}
+			<Field title="Placering">
+				<Placement {...placement} />
+			</Field>
+		{/if}
 
 		{#if average}
 			<Field title="Genomsnittlig rank">

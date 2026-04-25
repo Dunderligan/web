@@ -4,6 +4,8 @@ import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 import { schema } from '$lib/server/db';
 import type { User } from './schema/auth';
 import { isAdmin } from '$lib/authRole';
+import { MatchState, type Placement, type ResolvedMatch } from '$lib/types';
+import { matchRosterId, matchWinner } from '$lib/match';
 
 // Helper queries and functions for database operations.
 
@@ -87,7 +89,8 @@ export const fullMatchColumns = {
 	state: true,
 	vodUrl: true,
 	playedAt: true,
-	scheduledAt: true
+	scheduledAt: true,
+	round: true
 } as const;
 
 export const fullMatchQuery = {
@@ -253,6 +256,6 @@ export function hiddenMatchFilter(user?: User | null) {
 	};
 }
 
-export function canSeeSeason(season: { hidden: boolean }, user?: User | null) {
+export function canSeeSeason(season: { hidden: boolean }, user?: User | null): boolean {
 	return !season.hidden || canSeeHiddenSeasons(user);
 }

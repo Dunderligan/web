@@ -14,7 +14,7 @@
 		hideDivision = false,
 		title,
 		class: classProp,
-		short = false,
+		size = 'md',
 		matchArchiveParams
 	}: MatchListProps = $props();
 
@@ -30,7 +30,7 @@
 
 	<div class={[!title && classProp, 'max-w-2xl space-y-2']}>
 		{#each matches as match (match.id)}
-			<Match {match} {seasonSlug} {hideDivision} {mainRosterId} {short} />
+			<Match {match} {seasonSlug} {hideDivision} {mainRosterId} {size} />
 		{:else}
 			<MatchListPlaceholder />
 		{/each}

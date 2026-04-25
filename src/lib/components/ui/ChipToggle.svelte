@@ -23,6 +23,8 @@
 
 <Button.Root
 	{href}
+	data-sveltekit-replacestate
+	data-sveltekit-noscroll
 	onclick={() => {
 		checked = !checked;
 		onclick?.();

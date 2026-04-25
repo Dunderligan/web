@@ -1,7 +1,6 @@
 import {
 	nestedGroupQuery,
 	hiddenGroupFilter,
-	hiddenSeasonFilter,
 	memberQuery,
 	fullMatchQueryWithContext
 } from '$lib/server/db/helpers';

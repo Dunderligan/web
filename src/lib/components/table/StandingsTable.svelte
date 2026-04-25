@@ -85,7 +85,7 @@
 				<a {href} class="truncate hover:underline">{roster.name}</a>
 			</div>
 
-			<div class="justify-center text-xl">
+			<div class="justify-center text-xl font-semibold">
 				{score.mapWins}
 			</div>
 

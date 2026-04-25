@@ -3,7 +3,9 @@ import {
 	type MatchRoster,
 	type ResolvedMatch,
 	type MatchWithoutRosters,
-	MatchState
+	MatchState,
+	type Placement,
+	type UnresolvedMatch
 } from './types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -108,7 +110,7 @@ export function compareMatchDates(a: MatchWithoutRosters, b: MatchWithoutRosters
 /**
  * Creates a new, unresolved and scheduled match with default values for a group.
  */
-export function createGroupMatch(groupId: string) {
+export function createGroupMatch(groupId: string): UnresolvedMatch {
 	return {
 		id: uuidv4(),
 		groupId,
@@ -124,6 +126,35 @@ export function createGroupMatch(groupId: string) {
 		playedAt: null,
 		scheduledAt: null,
 		vodUrl: null,
-		nextMatchId: null
+		nextMatchId: null,
+		round: null
 	};
+}
+
+export function placementFromFinalMatch(match: ResolvedMatch, rosterId: string): Placement | null {
+	const round = match.round;
+	if (round === null || round === undefined) {
+		// no round means the match is in a group stage, so we can't determine placement
+		return null;
+	}
+
+	if (match.state === MatchState.SCHEDULED) {
+		return null;
+	}
+
+	if (round === 0) {
+		// played in the grand final
+		const winner = matchWinner(match);
+		if (!winner) return { best: 1, worst: 2 };
+
+		const place = matchRosterId(match, winner) === rosterId ? 1 : 2;
+		return { best: place, worst: null };
+	}
+
+	// since we didn't win (or play) the grand final, we lost this match
+
+	const best = Math.pow(2, round) + 1;
+	const worst = Math.pow(2, round + 1);
+
+	return { best, worst };
 }

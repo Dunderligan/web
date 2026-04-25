@@ -168,6 +168,7 @@ export type MatchWithoutRosters = {
 	id: string;
 	groupId?: string | null;
 	divisionId?: string | null;
+	bracketId?: string | null;
 	teamAScore: number;
 	teamBScore: number;
 	draws: number;
@@ -178,6 +179,7 @@ export type MatchWithoutRosters = {
 	scheduledAt?: Date | null;
 	vodUrl?: string | null;
 	nextMatchId?: string | null;
+	round?: number | null;
 };
 
 /**
@@ -262,6 +264,8 @@ export type TournamentState = { season: BaseEntity & { startedAt: Date | null } 
 	| { status: 'starting'; startsAt: Date | null } // after registration closed but before season start
 );
 
+export type MatchSize = 'md' | 'sm' | 'xs';
+
 export type MatchListProps = {
 	seasonSlug?: string;
 	mainRosterId?: string;
@@ -269,7 +273,7 @@ export type MatchListProps = {
 	hideDivision?: boolean;
 	title?: string;
 	class?: ClassValue;
-	short?: boolean;
+	size?: MatchSize;
 	matchArchiveParams?: string;
 	matches: ResolvedMatchWithContext[];
 };
@@ -308,3 +312,8 @@ export type GameProfileEntryWithDate = { date: string } & GameProfileEntry;
 export type MatchQueryParams = z.infer<typeof matchQueryParamsSchema>;
 
 export type ChipColor = 'gray' | 'yellow' | 'green' | 'accent';
+
+export type Placement = {
+	best: number;
+	worst: number | null;
+};

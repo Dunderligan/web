@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { canEditUserPage } from '$lib/authRole.js';
+	import Match from '$lib/components/match/Match.svelte';
 	import Field from '$lib/components/structure/Field.svelte';
 	import Meta from '$lib/components/structure/Meta.svelte';
 	import PageHeader from '$lib/components/structure/PageHeader.svelte';
@@ -13,6 +14,7 @@
 	import Icon from '$lib/components/ui/Icon.svelte';
 	import Notice from '$lib/components/ui/Notice.svelte';
 	import OverwatchProfile from '$lib/components/ui/OverwatchProfile.svelte';
+	import Placement from '$lib/components/ui/Placement.svelte';
 	import Rank from '$lib/components/ui/Rank.svelte';
 	import RosterLogo from '$lib/components/ui/RosterLogo.svelte';
 	import Subheading from '$lib/components/ui/Subheading.svelte';
@@ -28,13 +30,15 @@
 	let showMiscRoles = $derived(page.url.searchParams.get('coachroller') === 'true');
 	let showSpinoffSeasons = $derived(page.url.searchParams.get('spinoff') === 'true');
 
-	const hasMiscRoles = $derived(data.player.memberships.some((m) => isMiscRole(m.role)));
+	const memberships = $derived(data.player.memberships);
+
+	const hasMiscRoles = $derived(memberships.some((m) => isMiscRole(m.role)));
 	const hasSpinoffSeasons = $derived(
-		data.player.memberships.some((m) => flattenGroup(m.roster.group).season.spinoff)
+		memberships.some((m) => flattenGroup(m.roster.group).season.spinoff)
 	);
 
 	const sortedMemberships = $derived(
-		data.player.memberships.toSorted((a, b) => {
+		memberships.toSorted((a, b) => {
 			const aSeason = flattenGroup(a.roster.group).season;
 			const bSeason = flattenGroup(b.roster.group).season;
 
@@ -51,7 +55,7 @@
 	);
 
 	const lastMembership = $derived(sortedMemberships.at(0));
-	const anyRegisteredNames = $derived(data.player.memberships.some((m) => m.registeredName));
+	const anyRegisteredNames = $derived(memberships.some((m) => m.registeredName));
 
 	const name = $derived(data.player.battletag.split('#')[0]);
 	const hasFullTag = $derived(data.player.battletag.includes('#'));
@@ -59,6 +63,12 @@
 	const profile = $derived(data.profile.status === 'found' ? data.profile.profile : null);
 
 	const isCurrentUser = $derived(data.user?.battletag.split('#')[0] == name);
+
+	const achievements = $derived(
+		filteredMemberships
+			.filter((membership) => membership.placement !== null)
+			.sort((a, b) => a.placement!.best - b.placement!.best)
+	);
 
 	async function onClaimClicked() {
 		claimLoading = true;
@@ -195,6 +205,52 @@
 							<Rank rank={{ rank, tier }} collapse />
 						{:else if sr}
 							<Rank rank={{ sr }} collapse />
+						{/if}
+					</div>
+				{/snippet}
+			</Table>
+		{/if}
+
+		{#if achievements.length > 0}
+			<Subheading class="mt-10">Bedrifter</Subheading>
+
+			<Table
+				class="mt-4 grid-cols-[auto_1fr_auto]"
+				rows={achievements}
+				key={(value) => value.roster.id}
+				columns={[
+					{ label: 'Placering' },
+					{ label: 'Säsong', center: true },
+					{ label: 'Resultat', center: true }
+				]}
+			>
+				{#snippet row({ value: achievement })}
+					{@const { roster, placement, finalMatch } = achievement}
+					{@const { division, season } = flattenGroup(roster.group)}
+
+					<div class="justify-center px-4">
+						{#if placement}
+							<Placement {...placement} />
+						{/if}
+					</div>
+
+					<div class="justify-center text-base">
+						<a href="/stallningar/{season.slug}?div={division.slug}" class="hover:underline">
+							<span class="hidden sm:inline">
+								{division.name},
+							</span>
+							{season.name}
+						</a>
+					</div>
+
+					<div>
+						{#if finalMatch}
+							<Match
+								match={finalMatch}
+								seasonSlug={season.slug}
+								mainRosterId={roster.id}
+								size="xs"
+							/>
 						{/if}
 					</div>
 				{/snippet}
