@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 	import { canEditUserPage } from '$lib/authRole.js';
 	import Field from '$lib/components/structure/Field.svelte';
 	import Meta from '$lib/components/structure/Meta.svelte';
@@ -7,12 +8,9 @@
 	import PageSection from '$lib/components/structure/PageSection.svelte';
 	import Table from '$lib/components/table/Table.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
-	import Checkbox from '$lib/components/ui/Checkbox.svelte';
-	import Chip from '$lib/components/ui/Chip.svelte';
 	import ChipToggle from '$lib/components/ui/ChipToggle.svelte';
 	import HeroPortrait from '$lib/components/ui/HeroPortrait.svelte';
 	import Icon from '$lib/components/ui/Icon.svelte';
-	import Label from '$lib/components/ui/Label.svelte';
 	import Notice from '$lib/components/ui/Notice.svelte';
 	import OverwatchProfile from '$lib/components/ui/OverwatchProfile.svelte';
 	import Rank from '$lib/components/ui/Rank.svelte';
@@ -20,20 +18,20 @@
 	import Subheading from '$lib/components/ui/Subheading.svelte';
 	import TeamSocial from '$lib/components/ui/TeamSocial.svelte';
 	import { claimPlayer } from '$lib/remote/player.remote.js';
-	import { Role, type FullRoster } from '$lib/types.js';
+	import { Role } from '$lib/types.js';
 	import { flattenGroup, formatDateTime, roleIcon } from '$lib/util';
 
 	let { data } = $props();
 
 	let claimLoading = $state(false);
 
+	let showMiscRoles = $derived(page.url.searchParams.get('coachroller') === 'true');
+	let showSpinoffSeasons = $derived(page.url.searchParams.get('spinoff') === 'true');
+
 	const hasMiscRoles = $derived(data.player.memberships.some((m) => isMiscRole(m.role)));
 	const hasSpinoffSeasons = $derived(
 		data.player.memberships.some((m) => flattenGroup(m.roster.group).season.spinoff)
 	);
-
-	let showMiscRoles = $state(false);
-	let showSpinoffSeasons = $state(false);
 
 	const sortedMemberships = $derived(
 		data.player.memberships.toSorted((a, b) => {
@@ -133,10 +131,20 @@
 
 			<div class="mt-2 flex items-center gap-1">
 				{#if hasSpinoffSeasons}
-					<ChipToggle icon="ph:star" label="Andra turneringar" bind:checked={showSpinoffSeasons} />
+					<ChipToggle
+						icon="ph:star"
+						label="Andra turneringar"
+						checked={showSpinoffSeasons}
+						href="?spinoff={!showSpinoffSeasons}&coachroller={showMiscRoles}"
+					/>
 				{/if}
 				{#if hasMiscRoles}
-					<ChipToggle icon="ph:clipboard" label="Coachroller" bind:checked={showMiscRoles} />
+					<ChipToggle
+						icon="ph:clipboard"
+						label="Coachroller"
+						checked={showMiscRoles}
+						href="?spinoff={showSpinoffSeasons}&coachroller={!showMiscRoles}"
+					/>
 				{/if}
 			</div>
 

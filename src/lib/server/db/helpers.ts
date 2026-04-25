@@ -178,8 +178,8 @@ export async function findOrCreatePlayer(tx: Transaction, battletag: string) {
 		.where(eq(sql<string>`SPLIT_PART(${schema.player.battletag}, '#', 1)`, name));
 
 	if (existingPlayer) {
-		if (name !== battletag && existingPlayer.battletag !== battletag) {
-			// if we got a number tag and the exisitng player doesn't, store the new one
+		if (name !== battletag && !existingPlayer.battletag.includes('#')) {
+			// if we got a number tag and the existing player doesn't, store the new one
 			await tx
 				.update(schema.player)
 				.set({ battletag })
