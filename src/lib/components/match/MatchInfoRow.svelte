@@ -5,7 +5,7 @@
 		type NestedGroup,
 		type MatchWithoutRosters
 	} from '$lib/types';
-	import { formatDate, formatDateTime } from '$lib/util';
+	import { capitalize, formatDate, formatDateTime } from '$lib/util';
 	import Icon from '../ui/Icon.svelte';
 
 	type Props = {
@@ -38,7 +38,6 @@
 			},
 			scheduled: {
 				icon: 'ph:calendar-blank',
-				label: 'Planerad',
 				date: match.scheduledAt ? formatDateTime(match.scheduledAt) : null
 			},
 			walkover: { icon: 'ph:flag', label: 'Walkover' },
@@ -51,7 +50,7 @@
 	class={[
 		classProp,
 		center && 'sm:justify-center',
-		'flex items-center gap-4 text-sm font-semibold text-gray-600 dark:text-gray-400'
+		'flex items-center gap-4 text-sm font-medium text-gray-600 dark:text-gray-400'
 	]}
 >
 	{#if bracket}
@@ -64,7 +63,7 @@
 		{/if}
 
 		{#if label && !short}
-			{label}
+			{capitalize(label)}
 		{/if}
 
 		{#if date}

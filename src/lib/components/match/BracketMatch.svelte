@@ -128,7 +128,7 @@
 				<Note content={note} class="ml-auto" />
 			{/if}
 		{:else}
-			<div class="grow text-center font-semibold">
+			<div class="grow text-center font-medium">
 				{match.state === MatchState.PLAYED ? '---' : 'TBD'}
 			</div>
 		{/if}
