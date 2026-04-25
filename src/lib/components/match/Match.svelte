@@ -69,10 +69,7 @@
 </script>
 
 <div
-	class={[
-		size === 'xs' ? 'py-1.5' : 'py-3',
-		'relative rounded-lg bg-gray-100 px-6 dark:bg-gray-900'
-	]}
+	class={[size === 'xs' ? 'py-2' : 'py-3', 'relative rounded-lg bg-gray-100 px-6 dark:bg-gray-900']}
 >
 	{#if size !== 'xs'}
 		<MatchInfoRow
@@ -142,7 +139,11 @@
 		{#if roster}
 			{@const href = `/lag/${roster.slug}/${seasonSlug}`}
 
-			<RosterLogo id={roster.id} {href} class="size-10 sm:size-12" />
+			<RosterLogo
+				id={roster.id}
+				{href}
+				class={size === 'xs' ? 'size-8 sm:size-10' : 'size-10 sm:size-12'}
+			/>
 
 			<a
 				{href}
