@@ -69,7 +69,10 @@
 </script>
 
 <div
-	class={[size === 'xs' ? 'py-2' : 'py-3', 'relative rounded-lg bg-gray-100 px-6 dark:bg-gray-900']}
+	class={[
+		size === 'xs' ? 'py-1.5' : 'py-3',
+		'relative rounded-lg bg-gray-100 px-6 dark:bg-gray-900'
+	]}
 >
 	{#if size !== 'xs'}
 		<MatchInfoRow
