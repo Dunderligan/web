@@ -5,6 +5,7 @@ import {
 	fullMatchQuery,
 	hiddenGroupFilter,
 	memberQuery,
+	nestedBracketQuery,
 	nestedGroupQuery
 } from '$lib/server/db/helpers';
 import overwatch from '$lib/server/overwatch';
@@ -12,7 +13,16 @@ import { error } from '@sveltejs/kit';
 
 const finalMatchQuery = {
 	...fullMatchQuery,
+	with: {
+		bracket: nestedBracketQuery,
+		...fullMatchQuery.with
+	},
 	limit: 1,
+	where: {
+		round: {
+			isNotNull: true
+		}
+	},
 	orderBy: {
 		round: 'asc'
 	}
@@ -60,18 +70,10 @@ export const load = async ({ params, locals }) => {
 			signatureHeroes: {
 				columns: {},
 				with: {
-					hero: {
-						columns: {
-							name: true
-						}
-					}
+					hero: true
 				}
 			},
-			aliases: {
-				columns: {
-					name: true
-				}
-			}
+			aliases: true
 		}
 	});
 
@@ -84,8 +86,7 @@ export const load = async ({ params, locals }) => {
 		memberships: data.memberships.map(
 			({ roster: { matchesAsA, matchesAsB, ...roster }, ...membership }) => {
 				const finalMatch =
-					[...matchesAsA, ...matchesAsB].sort((a, b) => (a.round ?? 0) - (b.round ?? 0)).at(0) ??
-					null;
+					[...matchesAsA, ...matchesAsB].sort((a, b) => a.round! - b.round!).at(0) ?? null;
 
 				const placement = finalMatch ? placementFromFinalMatch(finalMatch, roster.id) : null;
 

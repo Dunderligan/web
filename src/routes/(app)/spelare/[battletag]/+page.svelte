@@ -159,7 +159,7 @@
 			</div>
 
 			<Table
-				class="mt-2 grid-cols-[100px_auto_1fr_40px_80px] sm:grid-cols-[1fr_auto_170px_50px_160px]"
+				class="mt-2 grid-cols-[auto_auto_1fr_40px_70px] sm:grid-cols-[1fr_auto_170px_50px_160px]"
 				rows={filteredMemberships}
 				key={(value) => value.roster.id}
 				columns={[
@@ -187,12 +187,9 @@
 						{registeredName}
 					</div>
 
-					<div class="justify-center text-base">
+					<div class="justify-center text-center text-base">
 						<a href="/stallningar/{season.slug}?div={division.slug}" class="hover:underline">
-							<span class="hidden sm:inline">
-								{division.name},
-							</span>
-							{season.name}
+							{division.name}, {season.name}
 						</a>
 					</div>
 
@@ -226,20 +223,21 @@
 			>
 				{#snippet row({ value: achievement })}
 					{@const { roster, placement, finalMatch } = achievement}
-					{@const { division, season } = flattenGroup(roster.group)}
+					{@const { season, division } = flattenGroup(roster.group)}
+					{@const bracket = finalMatch?.bracket}
 
-					<div class="justify-center px-4">
+					<div class="px-4">
 						{#if placement}
 							<Placement {...placement} />
 						{/if}
 					</div>
 
-					<div class="justify-center text-base">
-						<a href="/stallningar/{season.slug}?div={division.slug}" class="hover:underline">
-							<span class="hidden sm:inline">
-								{division.name},
-							</span>
-							{season.name}
+					<div class="justify-center text-center text-base">
+						<a
+							href="/stallningar/{season.slug}?div={division.slug}&visa=slutspel"
+							class="hover:underline"
+						>
+							{bracket?.name}, {season.name}
 						</a>
 					</div>
 

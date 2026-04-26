@@ -88,10 +88,10 @@
 
 		<div
 			class={[
-				size === 'md' && 'w-20 gap-2 text-3xl',
-				size === 'sm' && 'w-12 gap-2 text-3xl',
-				size === 'xs' && 'w-14 gap-1.5 text-3xl',
-				'hidden items-center justify-center text-gray-600 sm:flex dark:text-gray-400'
+				size === 'md' && 'w-16 gap-2',
+				size === 'sm' && 'w-10 gap-2',
+				size === 'xs' && 'w-14 gap-1.5',
+				'hidden items-center justify-center text-3xl text-gray-600 sm:flex dark:text-gray-400'
 			]}
 		>
 			{#if shownState === 'scheduled'}
