@@ -28,13 +28,18 @@
 	class={[classProp, 'grid-cols-[60px_1fr_100px] sm:grid-cols-[70px_1fr_220px]']}
 >
 	{#snippet row({ value: { player, role, rank, sr, tier, isCaptain, registeredName } })}
+		{@const shownName =
+			registeredName ?? (isCaptain ? player.battletag : player.battletag.split('#')[0])}
+
 		<div class="justify-center py-4.5 text-xl">
 			<Icon icon={roleIcon(role)} title={capitalize(role)} />
 		</div>
 
 		<div class="font-semibold">
-			<a href="/spelare/{player.battletag.replace('#', '-')}" class="hover:underline"
-				>{registeredName ?? player.battletag}</a
+			<a
+				href="/spelare/{player.battletag.replace('#', '-')}"
+				class="hover:underline"
+				title={player.battletag}>{shownName}</a
 			>
 
 			{#if isCaptain}
