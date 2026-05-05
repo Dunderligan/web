@@ -1,11 +1,16 @@
-import { command } from '$app/server';
+import { command, query } from '$app/server';
 import { db, schema } from '$lib/server/db';
 import { MatchState, Rank, Role } from '$lib/types';
 import z from 'zod';
 import { roleGuard } from './auth.remote';
 import { AuthRole } from '$lib/authRole';
-import { toSlug } from '$lib/util';
-import { findOrCreatePlayer, type Transaction } from '$lib/server/db/helpers';
+import { flattenGroup, toSlug } from '$lib/util';
+import {
+	entityQuery,
+	findOrCreatePlayer,
+	nestedGroupQuery,
+	type Transaction
+} from '$lib/server/db/helpers';
 import type { DrizzleError } from 'drizzle-orm';
 
 type MemberInput = {
@@ -199,4 +204,105 @@ async function insertRoster(tx: Transaction, groupId: string, name: string, inpu
 	}
 
 	return { roster };
+}
+
+const SEARCH_LIMIT = 10;
+
+type SearchItem = {
+	id: string;
+	href: string;
+	name: string;
+	subtitle: string | null;
+	type: 'player' | 'roster' | 'season';
+};
+
+export const search = query(
+	z.object({
+		query: z.string()
+	}),
+	async ({ query }) => {
+		const results = await Promise.all([
+			searchPlayers(query),
+			searchRosters(query),
+			searchSeasons(query)
+		]);
+
+		return {
+			results: results.flat()
+		};
+	}
+);
+
+async function searchPlayers(query: string): Promise<SearchItem[]> {
+	const players = await db.query.player.findMany({
+		limit: SEARCH_LIMIT,
+		where: {
+			battletag: {
+				ilike: `%${query}%`
+			}
+		},
+		columns: {
+			id: true,
+			battletag: true
+		}
+	});
+
+	return players.map((player) => {
+		return {
+			id: player.id,
+			href: `/spelare/${player.battletag.replace('#', '-')}`,
+			name: player.battletag.split('#')[0],
+			subtitle: 'Spelarprofil',
+			type: 'player'
+		};
+	});
+}
+
+async function searchRosters(query: string): Promise<SearchItem[]> {
+	const rosters = await db.query.roster.findMany({
+		limit: SEARCH_LIMIT,
+		where: {
+			name: {
+				ilike: `%${query}%`
+			}
+		},
+		columns: entityQuery.columns,
+		with: {
+			group: nestedGroupQuery
+		}
+	});
+
+	return rosters.map((roster) => {
+		const { division, season } = flattenGroup(roster.group);
+
+		return {
+			id: roster.id,
+			href: `/lag/${roster.slug}/${season.slug}`,
+			name: roster.name,
+			subtitle: `Lag i ${division.name}, ${season.name}`,
+			type: 'roster'
+		};
+	});
+}
+
+async function searchSeasons(query: string): Promise<SearchItem[]> {
+	const seasons = await db.query.season.findMany({
+		limit: SEARCH_LIMIT,
+		where: {
+			name: {
+				ilike: `%${query}%`
+			}
+		},
+		columns: entityQuery.columns
+	});
+
+	return seasons.map((season) => {
+		return {
+			id: season.id,
+			href: `/stallningar/${season.slug}`,
+			name: season.name,
+			subtitle: null,
+			type: 'season'
+		};
+	});
 }

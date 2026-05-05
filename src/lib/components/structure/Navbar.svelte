@@ -11,6 +11,7 @@
 	import { onMount } from 'svelte';
 	import { isModerator } from '$lib/authRole';
 	import type { DropdownItem } from '$lib/types';
+	import SearchDialog from './SearchDialog.svelte';
 
 	type Props = {
 		alwaysWhiteTextAtTop?: boolean;
@@ -41,6 +42,8 @@
 
 	let scrolled = $state(false);
 	let loggingIn = $state(false);
+
+	let searchOpen = $state(false);
 
 	const user = $derived(page.data.user);
 
@@ -142,6 +145,8 @@
 		</div>
 
 		<div class="flex items-center gap-4">
+			<Button icon="ph:magnifying-glass" kind="tertiary" onclick={() => (searchOpen = true)} />
+
 			<Dropdown items={preferencesDropdownItems} class="flex items-center justify-center p-3">
 				<Icon icon="ph:gear" class="text-xl" />
 			</Dropdown>
@@ -186,3 +191,5 @@
 		</div>
 	</div>
 </nav>
+
+<SearchDialog bind:open={searchOpen} />

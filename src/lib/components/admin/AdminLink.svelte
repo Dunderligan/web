@@ -4,16 +4,18 @@
 
 	type Props = {
 		href: string;
+		onclick?: () => void;
 		highlighted?: boolean;
 		disabled?: boolean;
 		children?: Snippet;
 	};
 
-	let { href, highlighted = false, disabled, children }: Props = $props();
+	let { href, onclick, highlighted = false, disabled, children }: Props = $props();
 </script>
 
 <a
 	{href}
+	{onclick}
 	class={[
 		highlighted
 			? 'bg-accent-600 py-5 pl-8 font-bold text-white hover:bg-accent-700'
