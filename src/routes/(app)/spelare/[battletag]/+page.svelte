@@ -62,7 +62,7 @@
 
 	const profile = $derived(data.profile.status === 'found' ? data.profile.profile : null);
 
-	const isCurrentUser = $derived(data.user?.battletag.split('#')[0] == name);
+	const canClaim = $derived(data.user?.battletag.split('#')[0].toLowerCase() == name.toLowerCase());
 
 	const achievements = $derived(
 		filteredMemberships
@@ -101,7 +101,7 @@
 
 <PageSection class="flex flex-col-reverse gap-10 md:flex-row">
 	<section class="shrink grow">
-		{#if !hasFullTag && isCurrentUser}
+		{#if !hasFullTag && canClaim}
 			<Notice kind="info" class="mb-6">
 				Är detta din profil?
 

@@ -127,7 +127,7 @@ export const claimPlayer = command(
 
 		const name = locals.user?.battletag.split('#')[0];
 
-		if (name !== player.battletag) {
+		if (name?.toLowerCase() !== player.battletag.toLowerCase()) {
 			throw error(403);
 		}
 
