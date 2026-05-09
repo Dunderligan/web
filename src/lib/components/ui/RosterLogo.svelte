@@ -13,8 +13,6 @@
 
 	let { id, class: classProp, imgSize = 64, src: srcOverride, href }: Props = $props();
 
-	let element: HTMLImageElement;
-
 	let src = $derived(srcOverride ?? cdnImageSrc(cdnRosterLogoPath(id), { width: imgSize }));
 
 	function onerror() {
@@ -29,11 +27,5 @@
 {/if}
 
 {#snippet image()}
-	<img
-		{src}
-		{onerror}
-		class={[classProp, 'shrink-0 rounded-[20%] object-contain']}
-		alt="Logotyp"
-		bind:this={element}
-	/>
+	<img {src} {onerror} class={[classProp, 'shrink-0 rounded-[20%] object-contain']} alt="Logotyp" />
 {/snippet}

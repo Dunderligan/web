@@ -41,7 +41,7 @@ export const GET = async ({ params }) => {
 	}
 
 	const tables = groupings.map((grouping) => {
-		const standings = calculateStandings(grouping.rosters, grouping.matches);
+		const standings = calculateStandings(grouping.rosters, grouping.matches, false);
 
 		const resolvedStandings = standings.map(({ rosterId, score }) => {
 			const roster = grouping.rosters.find((roster) => roster.id === rosterId)!;

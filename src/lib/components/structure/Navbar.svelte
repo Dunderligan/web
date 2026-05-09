@@ -106,25 +106,27 @@
 		}
 	]);
 
+	const SCROLL_THRESHOLD = 40;
+
 	async function onLogout() {
 		await logout();
 		await invalidateAll();
 	}
 
-	const SCROLL_THRESHOLD = 40;
+	function onDocumentKeydown(evt: KeyboardEvent) {
+		if (evt.key === 'k' && (evt.metaKey || evt.ctrlKey)) {
+			evt.preventDefault();
+			searchOpen = !searchOpen;
+		}
+	}
 
-	onMount(() => {
-		const onScroll = () => {
-			scrolled = window.scrollY > SCROLL_THRESHOLD;
-		};
-
-		window.addEventListener('scroll', onScroll);
-
-		return () => {
-			window.removeEventListener('scroll', onScroll);
-		};
-	});
+	function onWindowScroll() {
+		scrolled = window.scrollY > SCROLL_THRESHOLD;
+	}
 </script>
+
+<svelte:document onkeydown={onDocumentKeydown} />
+<svelte:window onscroll={onWindowScroll} />
 
 <nav
 	class={[

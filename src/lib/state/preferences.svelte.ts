@@ -1,8 +1,8 @@
 import { browser } from '$app/environment';
 import type { Preferences, Theme } from '$lib/types';
-import { setCookie } from '$lib/util';
 import type { Cookies } from '@sveltejs/kit';
 import { defineContext } from './util';
+import { setCookie } from '$lib/cookies';
 
 const { get, set } = defineContext<PreferencesState>('$_preferences_state');
 
