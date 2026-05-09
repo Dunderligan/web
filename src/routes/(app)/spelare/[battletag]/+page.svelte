@@ -175,7 +175,7 @@
 					{@const { division, season } = flattenGroup(roster.group)}
 					{@const href = `/lag/${roster.slug}/${season.slug}`}
 
-					<div class="gap-2 px-4 py-1.5 font-semibold">
+					<div class={[!registeredName && 'col-span-2', 'gap-2 px-4 py-1.5 font-semibold']}>
 						<RosterLogo id={roster.id} class="size-12" {href} />
 
 						<a {href} class="hidden truncate hover:underline sm:inline">
@@ -183,9 +183,11 @@
 						</a>
 					</div>
 
-					<div class="justify-center text-center text-base">
-						{registeredName}
-					</div>
+					{#if registeredName}
+						<div class="justify-center text-center text-base">
+							{registeredName.split('#')[0]}
+						</div>
+					{/if}
 
 					<div class="justify-center text-center text-base">
 						<a href="/stallningar/{season.slug}?div={division.slug}" class="hover:underline">
