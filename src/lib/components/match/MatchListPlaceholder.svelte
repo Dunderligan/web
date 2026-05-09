@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Icon from '../ui/Icon.svelte';
+	import Placeholder from '../ui/Placeholder.svelte';
 
 	const defaultOption = {
 		icon: 'ph:magnifying-glass',
@@ -47,9 +47,4 @@
 	}
 </script>
 
-<div
-	class="w-full space-y-2 rounded-lg bg-gray-100 p-10 text-center text-gray-700 dark:bg-gray-900 dark:text-gray-300"
->
-	<Icon icon={option.icon} class="mx-auto block text-4xl" />
-	<span class="text-xl font-semibold">{option.text}</span>
-</div>
+<Placeholder {...option} onclick={() => (option = pickOption(true))} />

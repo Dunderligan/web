@@ -51,6 +51,8 @@ export const queryMatches = query(
 					},
 					hiddenMatchFilter(locals.user)
 				],
+				// check target division and season
+				// matches either have a group or a bracket, so we need to check both
 				OR: [
 					{
 						group: {
@@ -73,6 +75,7 @@ export const queryMatches = query(
 						}
 					}
 				],
+				// drizzle does not allow isNotNull: false or isNull: false, so we need to split them
 				...(isBracket === true && {
 					bracketId: {
 						isNotNull: true

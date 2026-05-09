@@ -1,6 +1,7 @@
 import type { Snippet } from 'svelte';
 import type z from 'zod';
 import type { matchQueryParamsSchema } from './schemas';
+import type { ButtonRootProps, WithoutChildren } from 'bits-ui';
 
 /**
  * SvelteKit accepts these types in the class attribute, but does not expose the type definitions.
@@ -316,4 +317,32 @@ export type ChipColor = 'gray' | 'yellow' | 'green' | 'accent';
 export type Placement = {
 	best: number;
 	worst: number | null;
+};
+
+export type ButtonProps = {
+	icon?: string;
+	kind?: ButtonKind;
+	loading?: boolean;
+} & (
+	| { children: Snippet; label?: never; icon?: never }
+	| {
+			children?: never;
+			label: string;
+			icon?: string;
+	  }
+	| {
+			children?: never;
+			label?: never;
+			icon: string;
+	  }
+) &
+	WithoutChildren<ButtonRootProps>;
+
+export type SearchItem = {
+	id: string;
+	href: string;
+	name: string;
+	subtitle?: string | null;
+	image?: string | null;
+	type: 'player' | 'roster' | 'season';
 };

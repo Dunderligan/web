@@ -1,12 +1,18 @@
-import { command } from '$app/server';
+import { command, query } from '$app/server';
 import { db, schema } from '$lib/server/db';
-import { MatchState, Rank, Role } from '$lib/types';
+import { MatchState, Rank, Role, type SearchItem } from '$lib/types';
 import z from 'zod';
 import { roleGuard } from './auth.remote';
 import { AuthRole } from '$lib/authRole';
-import { toSlug } from '$lib/util';
-import { findOrCreatePlayer, type Transaction } from '$lib/server/db/helpers';
+import { cdnImageSrc, cdnRosterLogoPath, flattenGroup, toSlug } from '$lib/util';
+import {
+	entityQuery,
+	findOrCreatePlayer,
+	nestedGroupQuery,
+	type Transaction
+} from '$lib/server/db/helpers';
 import type { DrizzleError } from 'drizzle-orm';
+import overwatch from '$lib/server/overwatch';
 
 type MemberInput = {
 	battletag: string;

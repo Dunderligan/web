@@ -1,27 +1,6 @@
 <script lang="ts">
-	import { type ButtonRootProps, type WithoutChildren } from 'bits-ui';
-	import type { Snippet } from 'svelte';
 	import Icon from './Icon.svelte';
-	import type { ButtonKind } from '$lib/types';
-
-	type Props = {
-		icon?: string;
-		kind?: ButtonKind;
-		loading?: boolean;
-	} & (
-		| { children: Snippet; label?: never; icon?: never }
-		| {
-				children?: never;
-				label: string;
-				icon?: string;
-		  }
-		| {
-				children?: never;
-				label?: never;
-				icon: string;
-		  }
-	) &
-		WithoutChildren<ButtonRootProps>;
+	import type { ButtonProps } from '$lib/types';
 
 	let {
 		icon: iconProp,
@@ -33,7 +12,7 @@
 		kind = 'primary',
 		href,
 		...props
-	}: Props = $props();
+	}: ButtonProps = $props();
 
 	const disabled = $derived(disabledProp || loading);
 	const icon = $derived(loading ? 'ph:spinner' : iconProp);

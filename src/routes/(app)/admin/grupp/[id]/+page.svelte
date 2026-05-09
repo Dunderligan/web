@@ -97,7 +97,7 @@
 	function addMatchAndEdit() {
 		const match = createGroupMatch(data.group.id);
 
-		group.matches.unshift(match);
+		group.matches.unshift(match as any);
 		rosterCtx.editMatch(group.matches[0]);
 		saveCtx.setDirty();
 	}

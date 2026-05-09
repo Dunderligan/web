@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db';
-import { groupMatchOrder as groupMatchOrder } from '$lib/server/db/helpers';
+import { fullMatchColumns, groupMatchOrder as groupMatchOrder } from '$lib/server/db/helpers';
 import { flattenGroup } from '$lib/util';
 import { error } from '@sveltejs/kit';
 
@@ -19,9 +19,7 @@ export const load = async ({ params }) => {
 			},
 			matches: {
 				orderBy: groupMatchOrder,
-				columns: {
-					order: false
-				}
+				columns: fullMatchColumns
 			},
 			division: {
 				with: {
