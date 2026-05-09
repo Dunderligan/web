@@ -241,3 +241,24 @@ function parseStateParam(param: string): MatchState[] {
 
 	return states;
 }
+
+export function compareNullable<T>(
+	a: T | null,
+	b: T | null,
+	cmp: (a: T, b: T) => number = compare
+): number {
+	if (a === null && b === null) return 0;
+	if (a === null) return -1;
+	if (b === null) return 1;
+	return cmp(a, b);
+}
+
+export function compare(a: any, b: any): number {
+	if (a < b) return -1;
+	if (a > b) return 1;
+	return 0;
+}
+
+export function compareNullableStrings(a?: string | null, b?: string | null): number {
+	return compareNullable(a ?? null, b ?? null, (x, y) => x.localeCompare(y));
+}

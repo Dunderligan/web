@@ -1,5 +1,6 @@
 import { hasMatchScore } from './match';
 import { type LogicalMatch } from './types';
+import { compare, compareNullable } from './util';
 
 /**
  * The score of a team in the standings table.
@@ -212,23 +213,6 @@ function hasBeat(aId: string, bId: string, graph: RosterGraph): boolean {
 	}
 
 	return false;
-}
-
-function compareNullable<T>(
-	a: T | null,
-	b: T | null,
-	cmp: (a: T, b: T) => number = compare
-): number {
-	if (a === null && b === null) return 0;
-	if (a === null) return -1;
-	if (b === null) return 1;
-	return cmp(a, b);
-}
-
-function compare(a: any, b: any): number {
-	if (a < b) return -1;
-	if (a > b) return 1;
-	return 0;
 }
 
 /** Returns the indicies of the highest beaten and lowest lost to opponents of a roster. */

@@ -6,6 +6,7 @@
 	import SearchItemLink from '../admin/SearchItemLink.svelte';
 	import Placeholder from '../ui/Placeholder.svelte';
 	import { search } from '$lib/remote/search.remote';
+	import { goto } from '$app/navigation';
 
 	type Props = {
 		open?: boolean;
@@ -33,6 +34,16 @@
 		}, 200);
 	}
 
+	async function onenter() {
+		if (!remoteQuery?.current) return;
+		const values = remoteQuery.current.results;
+		if (values.length === 0) return;
+
+		await goto(values[0].href);
+		reset();
+		open = false;
+	}
+
 	function reset() {
 		query = '';
 		remoteQuery = null;
@@ -53,11 +64,14 @@
 	<InputField
 		class="w-full"
 		bind:value={query}
-		placeholder="Sök efter spelare, lag, säsonger eller sidor..."
+		placeholder="Sök efter spelare, lag eller säsonger..."
+		{onenter}
 		{oninput}
 	/>
 
-	<div class="space-y-1 overflow-hidden rounded-lg">
+	<div
+		class="max-h-[calc(100lvh-2*max(var(--spacing)*8,64px)-160px)] space-y-1 overflow-y-auto rounded-lg"
+	>
 		{#if remoteQuery}
 			{#await remoteQuery}
 				{@render skeleton()}

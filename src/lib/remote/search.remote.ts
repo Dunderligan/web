@@ -3,7 +3,14 @@ import { db } from '$lib/server/db';
 import { entityQuery, nestedGroupQuery } from '$lib/server/db/helpers';
 import overwatch from '$lib/server/overwatch';
 import type { SearchItem } from '$lib/types';
-import { cdnImageSrc, cdnRosterLogoPath, flattenGroup } from '$lib/util';
+import {
+	cdnImageSrc,
+	cdnRosterLogoPath,
+	compare,
+	compareNullable,
+	compareNullableStrings,
+	flattenGroup
+} from '$lib/util';
 import z from 'zod';
 
 const SEARCH_LIMIT = 10;
@@ -13,6 +20,12 @@ export const search = query(
 		query: z.string()
 	}),
 	async ({ query }) => {
+		if (query.trim().length < 3) {
+			return {
+				results: []
+			};
+		}
+
 		const items = await Promise.all([
 			searchPlayers(query),
 			searchRosters(query),
@@ -84,13 +97,13 @@ async function searchRosters(query: string): Promise<SearchItem[]> {
 	});
 
 	return rosters.map((roster) => {
-		const { division, season } = flattenGroup(roster.group);
+		const { season } = flattenGroup(roster.group);
 
 		return {
 			id: roster.id,
 			href: `/lag/${roster.slug}/${season.slug}`,
 			name: roster.name,
-			subtitle: `${division.name}, ${season.name}`,
+			subtitle: season.name,
 			type: 'roster',
 			image: cdnImageSrc(cdnRosterLogoPath(roster.id), { width: 64 })
 		};
@@ -127,9 +140,8 @@ function sortSearchItems(items: SearchItem[], query: string): SearchItem[] {
 
 		return (
 			longestCommonPrefix(bLower, lowerQuery) - longestCommonPrefix(aLower, lowerQuery) ||
-			aLower.localeCompare(bLower) ||
-			a.subtitle?.localeCompare(b.subtitle ?? '') ||
-			0
+			compareNullableStrings(aLower, bLower) ||
+			compareNullableStrings(a.subtitle, b.subtitle)
 		);
 	});
 }

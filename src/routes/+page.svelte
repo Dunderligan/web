@@ -80,7 +80,7 @@
 
 	<iframe
 		class="mx-auto mt-8 aspect-video w-full max-w-3xl rounded-lg"
-		src="https://www.youtube-nocookie.com/embed/WVcbBhwOSNY"
+		src="https://www.youtube-nocookie.com/embed/t-KI8OPKBmk"
 		title="YouTube video player"
 		frameborder="0"
 		allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

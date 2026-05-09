@@ -1,11 +1,9 @@
 import { sql, eq } from 'drizzle-orm';
-import { PgTransaction } from 'drizzle-orm/pg-core';
 import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 import { schema } from '$lib/server/db';
 import type { User } from './schema/auth';
 import { isAdmin } from '$lib/authRole';
-import { MatchState, type Placement, type ResolvedMatch } from '$lib/types';
-import { matchRosterId, matchWinner } from '$lib/match';
+import type { PgAsyncTransaction } from 'drizzle-orm/pg-core';
 
 // Helper queries and functions for database operations.
 
@@ -141,7 +139,7 @@ export const memberQuery = {
 	}
 } as const;
 
-export type Transaction = PgTransaction<PostgresJsQueryResultHKT, typeof schema>;
+export type Transaction = PgAsyncTransaction<PostgresJsQueryResultHKT, typeof schema>;
 
 export function rolesOrder(column: any) {
 	return sql`(

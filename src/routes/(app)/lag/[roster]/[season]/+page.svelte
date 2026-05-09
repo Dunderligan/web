@@ -132,7 +132,7 @@
 	<section class="shrink-0 space-y-6 sm:w-56">
 		<div class="flex flex-col items-start gap-2">
 			<Button
-				href="/stallningar/{season.slug}?div={division.slug}"
+				href="/stallningar/{season.slug}?div={division.slug}#{roster.slug}"
 				label="Se ställningar"
 				icon="ph:table"
 				kind="secondary"

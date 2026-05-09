@@ -16,19 +16,19 @@ importers:
         version: 3.970.0
       '@sveltejs/adapter-node':
         specifier: ^5.5.1
-        version: 5.5.1(@sveltejs/kit@2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3))
+        version: 5.5.1(@sveltejs/kit@2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3))
       arctic:
         specifier: ^3.7.0
         version: 3.7.0
       bits-ui:
         specifier: ^2.15.4
-        version: 2.15.4(@internationalized/date@3.9.0)(@sveltejs/kit@2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3))(svelte@5.46.4)
+        version: 2.15.4(@internationalized/date@3.9.0)(@sveltejs/kit@2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3))(svelte@5.46.4)
       drizzle-orm:
-        specifier: 1.0.0-beta.2-ec83fa8
-        version: 1.0.0-beta.2-ec83fa8(@types/mssql@9.1.8)(gel@2.1.1)(mssql@11.0.1)(postgres@3.4.8)
+        specifier: 1.0.0-beta.22
+        version: 1.0.0-beta.22(@types/mssql@9.1.8)(gel@2.1.1)(mssql@11.0.1)(postgres@3.4.8)(zod@4.3.5)
       drizzle-seed:
-        specifier: 1.0.0-beta.2-ec83fa8
-        version: 1.0.0-beta.2-ec83fa8(drizzle-orm@1.0.0-beta.2-ec83fa8(@types/mssql@9.1.8)(gel@2.1.1)(mssql@11.0.1)(postgres@3.4.8))
+        specifier: 1.0.0-beta.22
+        version: 1.0.0-beta.22(drizzle-orm@1.0.0-beta.22(@types/mssql@9.1.8)(gel@2.1.1)(mssql@11.0.1)(postgres@3.4.8)(zod@4.3.5))
       iconify-icon:
         specifier: ^3.0.2
         version: 3.0.2
@@ -59,25 +59,25 @@ importers:
         version: 1.1.0
       '@prgm/sveltekit-progress-bar':
         specifier: ^3.0.2
-        version: 3.0.2(@sveltejs/kit@2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3))(svelte@5.46.4)
+        version: 3.0.2(@sveltejs/kit@2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3))(svelte@5.46.4)
       '@sveltejs/adapter-auto':
         specifier: ^6.1.1
-        version: 6.1.1(@sveltejs/kit@2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3))
+        version: 6.1.1(@sveltejs/kit@2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3))
       '@sveltejs/kit':
         specifier: ^2.49.5
-        version: 2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3)
+        version: 2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^6.2.4
-        version: 6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4)
+        version: 6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4)
       '@tailwindcss/vite':
         specifier: ^4.1.18
-        version: 4.1.18(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))
+        version: 4.1.18(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))
       '@types/node':
         specifier: ^22.19.7
         version: 22.19.7
       drizzle-kit:
-        specifier: 1.0.0-beta.2-ec83fa8
-        version: 1.0.0-beta.2-ec83fa8
+        specifier: 1.0.0-beta.22
+        version: 1.0.0-beta.22
       prettier:
         specifier: ^3.6.2
         version: 3.6.2
@@ -101,7 +101,7 @@ importers:
         version: 5.9.3
       vite:
         specifier: npm:rolldown-vite@^7.3.1
-        version: rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1)
+        version: rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1)
 
 packages:
 
@@ -1489,15 +1489,17 @@ packages:
   devalue@5.6.2:
     resolution: {integrity: sha512-nPRkjWzzDQlsejL1WVifk5rvcFi/y1onBRxjaFMjZeR9mFpqu2gmAZ9xUB9/IEanEP/vBtGeGganC/GO1fmufg==}
 
-  drizzle-kit@1.0.0-beta.2-ec83fa8:
-    resolution: {integrity: sha512-1lrzKLih+0qk71R1x5mK4h7+qayK/YclHnD837ojWz/l6G6G7t741ZC2hIYOeWSXAX8XDy0NManKmXhEYZzlTA==}
+  drizzle-kit@1.0.0-beta.22:
+    resolution: {integrity: sha512-9HTZuQRljQKTgCx4UhiGn8KYYfHGk4+B/bRR1714W67kz0qgJvdrG527i8rQD8uUyET9UTGR1u8syySJD4znGw==}
     hasBin: true
 
-  drizzle-orm@1.0.0-beta.2-ec83fa8:
-    resolution: {integrity: sha512-aCBxMmsuXgGdNj2LriIYDj/T3sXl5ondTYDxja8Y4c9tX0AuPuX8e4DM5Vnv7YAmrhNf13LtbkqDzdlc/4PpPg==}
+  drizzle-orm@1.0.0-beta.22:
+    resolution: {integrity: sha512-F+DZyVIvH0oVKa/w08Cle1xfoH+pc+htIXHG/frnMLG72aby9NYYr9oc+9XvghnoO4umxFItduz0OMmQJMnenw==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=4'
+      '@effect/sql': ^0.48.5
+      '@effect/sql-pg': ^0.49.7
       '@electric-sql/pglite': '>=0.2.0'
       '@libsql/client': '>=0.10.0'
       '@libsql/client-wasm': '>=0.10.0'
@@ -1505,7 +1507,7 @@ packages:
       '@op-engineering/op-sqlite': '>=2'
       '@opentelemetry/api': ^1.4.1
       '@planetscale/database': '>=1.13'
-      '@prisma/client': '*'
+      '@sinclair/typebox': '>=0.34.8'
       '@sqlitecloud/drivers': '>=1.0.653'
       '@tidbcloud/serverless': '*'
       '@tursodatabase/database': '>=0.2.1'
@@ -1518,6 +1520,7 @@ packages:
       '@upstash/redis': '>=1.34.7'
       '@vercel/postgres': '>=0.8.0'
       '@xata.io/client': '*'
+      arktype: '>=2.0.0'
       better-sqlite3: '>=9.3.0'
       bun-types: '*'
       expo-sqlite: '>=14.0.0'
@@ -1526,13 +1529,19 @@ packages:
       mysql2: '>=2'
       pg: '>=8'
       postgres: '>=3'
-      prisma: '*'
       sql.js: '>=1'
       sqlite3: '>=5'
+      typebox: '>=1.0.0'
+      valibot: '>=1.0.0-beta.7'
+      zod: ^3.25.0 || ^4.0.0
     peerDependenciesMeta:
       '@aws-sdk/client-rds-data':
         optional: true
       '@cloudflare/workers-types':
+        optional: true
+      '@effect/sql':
+        optional: true
+      '@effect/sql-pg':
         optional: true
       '@electric-sql/pglite':
         optional: true
@@ -1548,7 +1557,7 @@ packages:
         optional: true
       '@planetscale/database':
         optional: true
-      '@prisma/client':
+      '@sinclair/typebox':
         optional: true
       '@sqlitecloud/drivers':
         optional: true
@@ -1562,6 +1571,8 @@ packages:
         optional: true
       '@types/better-sqlite3':
         optional: true
+      '@types/mssql':
+        optional: true
       '@types/pg':
         optional: true
       '@types/sql.js':
@@ -1572,6 +1583,8 @@ packages:
         optional: true
       '@xata.io/client':
         optional: true
+      arktype:
+        optional: true
       better-sqlite3:
         optional: true
       bun-types:
@@ -1580,21 +1593,27 @@ packages:
         optional: true
       gel:
         optional: true
+      mssql:
+        optional: true
       mysql2:
         optional: true
       pg:
         optional: true
       postgres:
         optional: true
-      prisma:
-        optional: true
       sql.js:
         optional: true
       sqlite3:
         optional: true
+      typebox:
+        optional: true
+      valibot:
+        optional: true
+      zod:
+        optional: true
 
-  drizzle-seed@1.0.0-beta.2-ec83fa8:
-    resolution: {integrity: sha512-uP0RfYXbBhFZeJuAFmY4w5DE9bnTtHJ/ecCHOHGoibwS6fBayXHVmtBh5uqauFCZYYwJUrHJm+I2YiyP2lEteA==}
+  drizzle-seed@1.0.0-beta.22:
+    resolution: {integrity: sha512-T3wJVOy0es3hHnxgE2fMWrrTVWmwfCryBR9/xIh5hLErvU6QjPFcUX4m0L2Rj0+aLs6RShabQ8j9LYXGm/WVZA==}
     peerDependencies:
       drizzle-orm: '>=1.0.0-beta.2'
 
@@ -1608,11 +1627,6 @@ packages:
   env-paths@3.0.0:
     resolution: {integrity: sha512-dtJUTepzMW3Lm/NPxRf3wP4642UWhjL2sQxc+ym2YMj1m/H2zDNQOlezafzkHwn6sMstjHTwG6iQQsctDW/b1A==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
-
-  esbuild-register@3.6.0:
-    resolution: {integrity: sha512-H2/S7Pm8a9CL1uhp9OvjwrBh5Pvx0H8qVOxNu8Wed9Y7qv56MPtq+GGM8RJpq6glYJn9Wspr8uw7l55uyinNeg==}
-    peerDependencies:
-      esbuild: '>=0.12 <1'
 
   esbuild@0.25.12:
     resolution: {integrity: sha512-bbPBYYrtZbkt6Os6FiTLCTFxvq4tt3JKall1vRwshA3fdVztsLAatFaZobhkBC8/BrPetoa0oksYoKXoG4ryJg==}
@@ -1661,6 +1675,9 @@ packages:
     resolution: {integrity: sha512-Newg9X7mRYskoBjSw70l1YnJ/ZGbq64VPyR821H5WVkTGpHG2O0mQILxCeUhxdYERLFY9B4tUyKLyf3uMTjtKw==}
     engines: {node: '>= 18.0.0'}
     hasBin: true
+
+  get-tsconfig@4.14.0:
+    resolution: {integrity: sha512-yTb+8DXzDREzgvYmh6s9vHsSVCHeC0G3PI5bEXNBHtmshPnO+S5O7qgLEOn0I5QvMy6kpZN8K1NKGyilLb93wA==}
 
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
@@ -1993,6 +2010,9 @@ packages:
     resolution: {integrity: sha512-YwXjATVDT+AuxcyfOwZn046aml9jMlQPvU1VXIlLDVAExe0u93aTfPYSeRgG4p9Q/Jlkj+LXJ1XEoFV+j2JKcQ==}
     engines: {node: '>= 18'}
 
+  resolve-pkg-maps@1.0.0:
+    resolution: {integrity: sha512-seS2Tj26TBVOC2NIc2rOe2y2ZO7efxITtLZcGSOnHHNOQ7CkiUBfw0Iw2ck6xkIhPwLhKNLS8BO+hEpngQlqzw==}
+
   resolve@1.22.11:
     resolution: {integrity: sha512-RfqAvLnMl313r7c9oclB1HhUEAezcpLjz95wFH4LVuhk9JF/r22qmVP9AMmOU4vMX7Q8pN8jwNg/CSpdFnMjTQ==}
     engines: {node: '>= 0.4'}
@@ -2184,6 +2204,7 @@ packages:
 
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   vitefu@1.1.1:
@@ -2706,10 +2727,12 @@ snapshots:
       tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   '@azure/abort-controller@2.1.2':
     dependencies:
       tslib: 2.8.1
+    optional: true
 
   '@azure/core-auth@1.10.1':
     dependencies:
@@ -2718,6 +2741,7 @@ snapshots:
       tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   '@azure/core-client@1.10.1':
     dependencies:
@@ -2730,6 +2754,7 @@ snapshots:
       tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   '@azure/core-http-compat@2.3.1':
     dependencies:
@@ -2738,6 +2763,7 @@ snapshots:
       '@azure/core-rest-pipeline': 1.22.2
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   '@azure/core-lro@2.7.2':
     dependencies:
@@ -2747,10 +2773,12 @@ snapshots:
       tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   '@azure/core-paging@1.6.2':
     dependencies:
       tslib: 2.8.1
+    optional: true
 
   '@azure/core-rest-pipeline@1.22.2':
     dependencies:
@@ -2763,10 +2791,12 @@ snapshots:
       tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   '@azure/core-tracing@1.3.1':
     dependencies:
       tslib: 2.8.1
+    optional: true
 
   '@azure/core-util@1.13.1':
     dependencies:
@@ -2775,6 +2805,7 @@ snapshots:
       tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   '@azure/identity@4.13.0':
     dependencies:
@@ -2791,6 +2822,7 @@ snapshots:
       tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   '@azure/keyvault-common@2.0.0':
     dependencies:
@@ -2804,6 +2836,7 @@ snapshots:
       tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   '@azure/keyvault-keys@4.10.0':
     dependencies:
@@ -2821,6 +2854,7 @@ snapshots:
       tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   '@azure/logger@1.3.0':
     dependencies:
@@ -2828,18 +2862,22 @@ snapshots:
       tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   '@azure/msal-browser@4.28.0':
     dependencies:
       '@azure/msal-common': 15.14.0
+    optional: true
 
-  '@azure/msal-common@15.14.0': {}
+  '@azure/msal-common@15.14.0':
+    optional: true
 
   '@azure/msal-node@3.8.5':
     dependencies:
       '@azure/msal-common': 15.14.0
       jsonwebtoken: 9.0.3
       uuid: 8.3.2
+    optional: true
 
   '@drizzle-team/brocli@0.11.0': {}
 
@@ -3069,7 +3107,8 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@js-joda/core@5.6.5': {}
+  '@js-joda/core@5.6.5':
+    optional: true
 
   '@js-temporal/polyfill@0.5.1':
     dependencies:
@@ -3110,9 +3149,9 @@ snapshots:
 
   '@polka/url@1.0.0-next.29': {}
 
-  '@prgm/sveltekit-progress-bar@3.0.2(@sveltejs/kit@2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3))(svelte@5.46.4)':
+  '@prgm/sveltekit-progress-bar@3.0.2(@sveltejs/kit@2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3))(svelte@5.46.4)':
     dependencies:
-      '@sveltejs/kit': 2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3)
+      '@sveltejs/kit': 2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3)
       svelte: 5.46.4
 
   '@redis/bloom@5.11.0(@redis/client@5.11.0)':
@@ -3633,23 +3672,23 @@ snapshots:
     dependencies:
       acorn: 8.15.0
 
-  '@sveltejs/adapter-auto@6.1.1(@sveltejs/kit@2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3))':
+  '@sveltejs/adapter-auto@6.1.1(@sveltejs/kit@2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3))':
     dependencies:
-      '@sveltejs/kit': 2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3)
+      '@sveltejs/kit': 2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3)
 
-  '@sveltejs/adapter-node@5.5.1(@sveltejs/kit@2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3))':
+  '@sveltejs/adapter-node@5.5.1(@sveltejs/kit@2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3))':
     dependencies:
       '@rollup/plugin-commonjs': 28.0.9(rollup@4.55.1)
       '@rollup/plugin-json': 6.1.0(rollup@4.55.1)
       '@rollup/plugin-node-resolve': 16.0.3(rollup@4.55.1)
-      '@sveltejs/kit': 2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3)
+      '@sveltejs/kit': 2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3)
       rollup: 4.55.1
 
-  '@sveltejs/kit@2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3)':
+  '@sveltejs/kit@2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3)':
     dependencies:
       '@standard-schema/spec': 1.1.0
       '@sveltejs/acorn-typescript': 1.0.8(acorn@8.15.0)
-      '@sveltejs/vite-plugin-svelte': 6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4)
+      '@sveltejs/vite-plugin-svelte': 6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4)
       '@types/cookie': 0.6.0
       acorn: 8.15.0
       cookie: 0.6.0
@@ -3662,26 +3701,26 @@ snapshots:
       set-cookie-parser: 2.7.2
       sirv: 3.0.2
       svelte: 5.46.4
-      vite: rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1)
+      vite: rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1)
     optionalDependencies:
       typescript: 5.9.3
 
-  '@sveltejs/vite-plugin-svelte-inspector@5.0.2(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4)':
+  '@sveltejs/vite-plugin-svelte-inspector@5.0.2(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4)':
     dependencies:
-      '@sveltejs/vite-plugin-svelte': 6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4)
+      '@sveltejs/vite-plugin-svelte': 6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4)
       obug: 2.1.1
       svelte: 5.46.4
-      vite: rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1)
+      vite: rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1)
 
-  '@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4)':
+  '@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4)':
     dependencies:
-      '@sveltejs/vite-plugin-svelte-inspector': 5.0.2(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4)
+      '@sveltejs/vite-plugin-svelte-inspector': 5.0.2(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4)
       deepmerge: 4.3.1
       magic-string: 0.30.21
       obug: 2.1.1
       svelte: 5.46.4
-      vite: rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1)
-      vitefu: 1.1.1(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))
+      vite: rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1)
+      vitefu: 1.1.1(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))
 
   '@swc/helpers@0.5.18':
     dependencies:
@@ -3748,14 +3787,15 @@ snapshots:
       '@tailwindcss/oxide-win32-arm64-msvc': 4.1.18
       '@tailwindcss/oxide-win32-x64-msvc': 4.1.18
 
-  '@tailwindcss/vite@4.1.18(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))':
+  '@tailwindcss/vite@4.1.18(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))':
     dependencies:
       '@tailwindcss/node': 4.1.18
       '@tailwindcss/oxide': 4.1.18
       tailwindcss: 4.1.18
-      vite: rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1)
+      vite: rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1)
 
-  '@tediousjs/connection-string@0.5.0': {}
+  '@tediousjs/connection-string@0.5.0':
+    optional: true
 
   '@tybys/wasm-util@0.10.1':
     dependencies:
@@ -3773,6 +3813,7 @@ snapshots:
       tedious: 19.2.0
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   '@types/node@22.19.7':
     dependencies:
@@ -3781,6 +3822,7 @@ snapshots:
   '@types/readable-stream@4.0.23':
     dependencies:
       '@types/node': 22.19.7
+    optional: true
 
   '@types/resolve@1.20.2': {}
 
@@ -3791,14 +3833,17 @@ snapshots:
       tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   abort-controller@3.0.0:
     dependencies:
       event-target-shim: 5.0.1
+    optional: true
 
   acorn@8.15.0: {}
 
-  agent-base@7.1.4: {}
+  agent-base@7.1.4:
+    optional: true
 
   arctic@3.7.0:
     dependencies:
@@ -3810,17 +3855,18 @@ snapshots:
 
   axobject-query@4.1.0: {}
 
-  base64-js@1.5.1: {}
+  base64-js@1.5.1:
+    optional: true
 
-  bits-ui@2.15.4(@internationalized/date@3.9.0)(@sveltejs/kit@2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3))(svelte@5.46.4):
+  bits-ui@2.15.4(@internationalized/date@3.9.0)(@sveltejs/kit@2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3))(svelte@5.46.4):
     dependencies:
       '@floating-ui/core': 1.7.3
       '@floating-ui/dom': 1.7.4
       '@internationalized/date': 3.9.0
       esm-env: 1.2.2
-      runed: 0.35.1(@sveltejs/kit@2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3))(svelte@5.46.4)
+      runed: 0.35.1(@sveltejs/kit@2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3))(svelte@5.46.4)
       svelte: 5.46.4
-      svelte-toolbelt: 0.10.6(@sveltejs/kit@2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3))(svelte@5.46.4)
+      svelte-toolbelt: 0.10.6(@sveltejs/kit@2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3))(svelte@5.46.4)
       tabbable: 6.4.0
     transitivePeerDependencies:
       - '@sveltejs/kit'
@@ -3831,19 +3877,23 @@ snapshots:
       buffer: 6.0.3
       inherits: 2.0.4
       readable-stream: 4.7.0
+    optional: true
 
   bowser@2.13.1: {}
 
-  buffer-equal-constant-time@1.0.1: {}
+  buffer-equal-constant-time@1.0.1:
+    optional: true
 
   buffer@6.0.3:
     dependencies:
       base64-js: 1.5.1
       ieee754: 1.2.1
+    optional: true
 
   bundle-name@4.1.0:
     dependencies:
       run-applescript: 7.1.0
+    optional: true
 
   chokidar@4.0.3:
     dependencies:
@@ -3853,7 +3903,8 @@ snapshots:
 
   cluster-key-slot@1.1.2: {}
 
-  commander@11.1.0: {}
+  commander@11.1.0:
+    optional: true
 
   commondir@1.0.1: {}
 
@@ -3862,17 +3913,21 @@ snapshots:
   debug@4.4.3:
     dependencies:
       ms: 2.1.3
+    optional: true
 
   deepmerge@4.3.1: {}
 
-  default-browser-id@5.0.1: {}
+  default-browser-id@5.0.1:
+    optional: true
 
   default-browser@5.4.0:
     dependencies:
       bundle-name: 4.1.0
       default-browser-id: 5.0.1
+    optional: true
 
-  define-lazy-prop@3.0.0: {}
+  define-lazy-prop@3.0.0:
+    optional: true
 
   dequal@2.0.3: {}
 
@@ -3880,31 +3935,31 @@ snapshots:
 
   devalue@5.6.2: {}
 
-  drizzle-kit@1.0.0-beta.2-ec83fa8:
+  drizzle-kit@1.0.0-beta.22:
     dependencies:
       '@drizzle-team/brocli': 0.11.0
       '@js-temporal/polyfill': 0.5.1
       esbuild: 0.25.12
-      esbuild-register: 3.6.0(esbuild@0.25.12)
-    transitivePeerDependencies:
-      - supports-color
+      get-tsconfig: 4.14.0
+      jiti: 2.6.1
 
-  drizzle-orm@1.0.0-beta.2-ec83fa8(@types/mssql@9.1.8)(gel@2.1.1)(mssql@11.0.1)(postgres@3.4.8):
-    dependencies:
-      '@types/mssql': 9.1.8
-      mssql: 11.0.1
+  drizzle-orm@1.0.0-beta.22(@types/mssql@9.1.8)(gel@2.1.1)(mssql@11.0.1)(postgres@3.4.8)(zod@4.3.5):
     optionalDependencies:
+      '@types/mssql': 9.1.8
       gel: 2.1.1
+      mssql: 11.0.1
       postgres: 3.4.8
+      zod: 4.3.5
 
-  drizzle-seed@1.0.0-beta.2-ec83fa8(drizzle-orm@1.0.0-beta.2-ec83fa8(@types/mssql@9.1.8)(gel@2.1.1)(mssql@11.0.1)(postgres@3.4.8)):
+  drizzle-seed@1.0.0-beta.22(drizzle-orm@1.0.0-beta.22(@types/mssql@9.1.8)(gel@2.1.1)(mssql@11.0.1)(postgres@3.4.8)(zod@4.3.5)):
     dependencies:
-      drizzle-orm: 1.0.0-beta.2-ec83fa8(@types/mssql@9.1.8)(gel@2.1.1)(mssql@11.0.1)(postgres@3.4.8)
+      drizzle-orm: 1.0.0-beta.22(@types/mssql@9.1.8)(gel@2.1.1)(mssql@11.0.1)(postgres@3.4.8)(zod@4.3.5)
       pure-rand: 6.1.0
 
   ecdsa-sig-formatter@1.0.11:
     dependencies:
       safe-buffer: 5.2.1
+    optional: true
 
   enhanced-resolve@5.18.4:
     dependencies:
@@ -3913,13 +3968,6 @@ snapshots:
 
   env-paths@3.0.0:
     optional: true
-
-  esbuild-register@3.6.0(esbuild@0.25.12):
-    dependencies:
-      debug: 4.4.3
-      esbuild: 0.25.12
-    transitivePeerDependencies:
-      - supports-color
 
   esbuild@0.25.12:
     optionalDependencies:
@@ -3958,9 +4006,11 @@ snapshots:
 
   estree-walker@2.0.2: {}
 
-  event-target-shim@5.0.1: {}
+  event-target-shim@5.0.1:
+    optional: true
 
-  events@3.3.0: {}
+  events@3.3.0:
+    optional: true
 
   fast-xml-parser@5.2.5:
     dependencies:
@@ -3987,6 +4037,10 @@ snapshots:
       - supports-color
     optional: true
 
+  get-tsconfig@4.14.0:
+    dependencies:
+      resolve-pkg-maps: 1.0.0
+
   graceful-fs@4.2.11: {}
 
   hasown@2.0.2:
@@ -3999,6 +4053,7 @@ snapshots:
       debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   https-proxy-agent@7.0.6:
     dependencies:
@@ -4006,6 +4061,7 @@ snapshots:
       debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   iconify-icon@3.0.2:
     dependencies:
@@ -4014,14 +4070,18 @@ snapshots:
   iconv-lite@0.6.3:
     dependencies:
       safer-buffer: 2.1.2
+    optional: true
 
   iconv-lite@0.7.2:
     dependencies:
       safer-buffer: 2.1.2
+    optional: true
 
-  ieee754@1.2.1: {}
+  ieee754@1.2.1:
+    optional: true
 
-  inherits@2.0.4: {}
+  inherits@2.0.4:
+    optional: true
 
   inline-style-parser@0.2.7: {}
 
@@ -4029,11 +4089,13 @@ snapshots:
     dependencies:
       hasown: 2.0.2
 
-  is-docker@3.0.0: {}
+  is-docker@3.0.0:
+    optional: true
 
   is-inside-container@1.0.0:
     dependencies:
       is-docker: 3.0.0
+    optional: true
 
   is-module@1.0.0: {}
 
@@ -4048,13 +4110,15 @@ snapshots:
   is-wsl@3.1.0:
     dependencies:
       is-inside-container: 1.0.0
+    optional: true
 
   isexe@3.1.1:
     optional: true
 
   jiti@2.6.1: {}
 
-  js-md4@0.3.2: {}
+  js-md4@0.3.2:
+    optional: true
 
   jsbi@4.3.2: {}
 
@@ -4070,17 +4134,20 @@ snapshots:
       lodash.once: 4.1.1
       ms: 2.1.3
       semver: 7.7.3
+    optional: true
 
   jwa@2.0.1:
     dependencies:
       buffer-equal-constant-time: 1.0.1
       ecdsa-sig-formatter: 1.0.11
       safe-buffer: 5.2.1
+    optional: true
 
   jws@4.0.1:
     dependencies:
       jwa: 2.0.1
       safe-buffer: 5.2.1
+    optional: true
 
   kleur@4.1.5: {}
 
@@ -4135,19 +4202,26 @@ snapshots:
 
   locate-character@3.0.0: {}
 
-  lodash.includes@4.3.0: {}
+  lodash.includes@4.3.0:
+    optional: true
 
-  lodash.isboolean@3.0.3: {}
+  lodash.isboolean@3.0.3:
+    optional: true
 
-  lodash.isinteger@4.0.4: {}
+  lodash.isinteger@4.0.4:
+    optional: true
 
-  lodash.isnumber@3.0.3: {}
+  lodash.isnumber@3.0.3:
+    optional: true
 
-  lodash.isplainobject@4.0.6: {}
+  lodash.isplainobject@4.0.6:
+    optional: true
 
-  lodash.isstring@4.0.1: {}
+  lodash.isstring@4.0.1:
+    optional: true
 
-  lodash.once@4.1.1: {}
+  lodash.once@4.1.1:
+    optional: true
 
   lz-string@1.5.0: {}
 
@@ -4159,7 +4233,8 @@ snapshots:
 
   mrmime@2.0.1: {}
 
-  ms@2.1.3: {}
+  ms@2.1.3:
+    optional: true
 
   mssql@11.0.1:
     dependencies:
@@ -4171,10 +4246,12 @@ snapshots:
       tedious: 18.6.2
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   nanoid@3.3.11: {}
 
-  native-duplexpair@1.0.0: {}
+  native-duplexpair@1.0.0:
+    optional: true
 
   obug@2.1.1: {}
 
@@ -4184,6 +4261,7 @@ snapshots:
       define-lazy-prop: 3.0.0
       is-inside-container: 1.0.0
       wsl-utils: 0.1.0
+    optional: true
 
   path-parse@1.0.7: {}
 
@@ -4212,7 +4290,8 @@ snapshots:
 
   prettier@3.6.2: {}
 
-  process@0.11.10: {}
+  process@0.11.10:
+    optional: true
 
   pure-rand@6.1.0: {}
 
@@ -4223,6 +4302,7 @@ snapshots:
       events: 3.3.0
       process: 0.11.10
       string_decoder: 1.3.0
+    optional: true
 
   readdirp@4.1.2: {}
 
@@ -4236,15 +4316,18 @@ snapshots:
     transitivePeerDependencies:
       - '@node-rs/xxhash'
 
+  resolve-pkg-maps@1.0.0: {}
+
   resolve@1.22.11:
     dependencies:
       is-core-module: 2.16.1
       path-parse: 1.0.7
       supports-preserve-symlinks-flag: 1.0.0
 
-  rfdc@1.4.1: {}
+  rfdc@1.4.1:
+    optional: true
 
-  rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1):
+  rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1):
     dependencies:
       '@oxc-project/runtime': 0.101.0
       fdir: 6.5.0(picomatch@4.0.3)
@@ -4255,7 +4338,6 @@ snapshots:
       tinyglobby: 0.2.15
     optionalDependencies:
       '@types/node': 22.19.7
-      esbuild: 0.25.12
       fsevents: 2.3.3
       jiti: 2.6.1
 
@@ -4309,24 +4391,27 @@ snapshots:
       '@rollup/rollup-win32-x64-msvc': 4.55.1
       fsevents: 2.3.3
 
-  run-applescript@7.1.0: {}
+  run-applescript@7.1.0:
+    optional: true
 
-  runed@0.35.1(@sveltejs/kit@2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3))(svelte@5.46.4):
+  runed@0.35.1(@sveltejs/kit@2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3))(svelte@5.46.4):
     dependencies:
       dequal: 2.0.3
       esm-env: 1.2.2
       lz-string: 1.5.0
       svelte: 5.46.4
     optionalDependencies:
-      '@sveltejs/kit': 2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3)
+      '@sveltejs/kit': 2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3)
 
   sade@1.8.1:
     dependencies:
       mri: 1.2.0
 
-  safe-buffer@5.2.1: {}
+  safe-buffer@5.2.1:
+    optional: true
 
-  safer-buffer@2.1.2: {}
+  safer-buffer@2.1.2:
+    optional: true
 
   semver@7.7.3: {}
 
@@ -4376,11 +4461,13 @@ snapshots:
 
   source-map-js@1.2.1: {}
 
-  sprintf-js@1.1.3: {}
+  sprintf-js@1.1.3:
+    optional: true
 
   string_decoder@1.3.0:
     dependencies:
       safe-buffer: 5.2.1
+    optional: true
 
   strnum@2.1.2: {}
 
@@ -4402,10 +4489,10 @@ snapshots:
     transitivePeerDependencies:
       - picomatch
 
-  svelte-toolbelt@0.10.6(@sveltejs/kit@2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3))(svelte@5.46.4):
+  svelte-toolbelt@0.10.6(@sveltejs/kit@2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3))(svelte@5.46.4):
     dependencies:
       clsx: 2.1.1
-      runed: 0.35.1(@sveltejs/kit@2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3))(svelte@5.46.4)
+      runed: 0.35.1(@sveltejs/kit@2.49.5(@sveltejs/vite-plugin-svelte@6.2.4(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4))(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1))(svelte@5.46.4)(typescript@5.9.3))(svelte@5.46.4)
       style-to-object: 1.0.14
       svelte: 5.46.4
     transitivePeerDependencies:
@@ -4435,7 +4522,8 @@ snapshots:
 
   tapable@2.3.0: {}
 
-  tarn@3.0.2: {}
+  tarn@3.0.2:
+    optional: true
 
   tedious@18.6.2:
     dependencies:
@@ -4451,6 +4539,7 @@ snapshots:
       sprintf-js: 1.1.3
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   tedious@19.2.0:
     dependencies:
@@ -4466,6 +4555,7 @@ snapshots:
       sprintf-js: 1.1.3
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   tinyglobby@0.2.15:
     dependencies:
@@ -4482,11 +4572,12 @@ snapshots:
 
   uuid@13.0.0: {}
 
-  uuid@8.3.2: {}
+  uuid@8.3.2:
+    optional: true
 
-  vitefu@1.1.1(rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1)):
+  vitefu@1.1.1(rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1)):
     optionalDependencies:
-      vite: rolldown-vite@7.3.1(@types/node@22.19.7)(esbuild@0.25.12)(jiti@2.6.1)
+      vite: rolldown-vite@7.3.1(@types/node@22.19.7)(jiti@2.6.1)
 
   which@4.0.0:
     dependencies:
@@ -4496,6 +4587,7 @@ snapshots:
   wsl-utils@0.1.0:
     dependencies:
       is-wsl: 3.1.0
+    optional: true
 
   zimmerframe@1.1.4: {}
 
