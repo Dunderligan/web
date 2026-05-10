@@ -125,7 +125,7 @@
 		<Accordion.Root type="single">
 			<Accordion.Item class="w-full">
 				<Accordion.Trigger
-					class="flex w-full items-center gap-2 rounded-md bg-gray-100 px-4 py-2 text-left font-medium text-gray-800 hover:bg-gray-200 data-[state=open]:rounded-b-none dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+					class="flex w-full items-center gap-2 rounded-md bg-gray-100 px-4 py-2 text-left font-medium text-gray-800 hover:bg-gray-200 data-[state=open]:rounded-b-none dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800"
 				>
 					<Icon icon="ph:gear-six" class="inline-block" />
 					Fler inställningar

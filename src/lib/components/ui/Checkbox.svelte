@@ -13,7 +13,7 @@
 		classProp,
 		checked
 			? 'border-transparent bg-accent-600 not-[data-disabled]:hover:bg-accent-700'
-			: 'border-gray-300 bg-gray-100 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:hover:bg-gray-700',
+			: 'border-gray-300 bg-gray-100 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:hover:bg-gray-800',
 		'flex size-7 items-center justify-center rounded-md border text-gray-200 data-disabled:cursor-not-allowed data-disabled:opacity-50'
 	]}
 	{...props}

@@ -48,10 +48,8 @@
 					<div
 						class={[
 							wide ? 'sm:max-w-xl' : 'sm:max-w-lg',
-							position === 'top'
-								? 'top-16 sm:top-[max(var(--spacing)*8,64px)]'
-								: 'top-[50%] translate-y-[-50%]',
-							'fixed left-[50%] z-40 w-full max-w-[calc(100%-1rem)] translate-x-[-50%] space-y-2 overflow-y-auto rounded-xl bg-white p-8 text-gray-600 shadow-xl dark:border dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300'
+							position === 'top' ? 'top-8 sm:top-[12.5%]' : 'top-[50%] translate-y-[-50%]',
+							'fixed left-[50%] z-40 w-full max-w-[calc(100%-1rem)] translate-x-[-50%] space-y-2 overflow-y-auto rounded-xl bg-white p-8 text-gray-600 shadow-xl dark:border dark:border-gray-800 dark:bg-gray-950 dark:text-gray-300'
 						]}
 						transition:fade={{ duration: 25 }}
 						onkeydown={(evt) => {

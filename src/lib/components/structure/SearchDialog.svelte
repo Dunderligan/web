@@ -13,6 +13,7 @@
 	};
 
 	let query = $state('');
+	let loading = $state(false);
 	let remoteQuery: RemoteQuery<{ results: SearchItem[] }> | null = $state(null);
 
 	let debounceTimeout: NodeJS.Timeout | null = null;
@@ -26,12 +27,18 @@
 
 		if (query.length < 3) {
 			remoteQuery = null;
+			loading = false;
 			return;
 		}
 
+		loading = true;
+
 		debounceTimeout = setTimeout(() => {
 			remoteQuery = search({ query });
-		}, 200);
+			remoteQuery.finally(() => {
+				loading = false;
+			});
+		}, 300);
 	}
 
 	async function onenter() {
@@ -70,12 +77,12 @@
 	/>
 
 	<div
-		class="max-h-[calc(100lvh-2*max(var(--spacing)*8,64px)-160px)] space-y-1 overflow-y-auto rounded-lg"
+		class="max-h-[calc(100lvh-230px)] space-y-1 overflow-y-auto rounded-lg sm:max-h-[calc(75lvh-160px)]"
 	>
-		{#if remoteQuery}
-			{#await remoteQuery}
-				{@render skeleton()}
-			{:then { results }}
+		{#if loading}
+			{@render skeleton()}
+		{:else if remoteQuery}
+			{#await remoteQuery then { results }}
 				{#if results.length === 0}
 					<Placeholder icon="ph:magnifying-glass" text="Inga resultat hittades" />
 				{:else}
@@ -90,14 +97,12 @@
 					{/each}
 				{/if}
 			{/await}
-		{:else if query.length >= 3}
-			{@render skeleton()}
 		{/if}
 	</div>
 </Dialog>
 
 {#snippet skeleton()}
 	{#each Array.from({ length: 3 })}
-		<div class="h-18 animate-pulse bg-gray-100 dark:bg-gray-700"></div>
+		<div class="h-18 animate-pulse bg-gray-100 dark:bg-gray-800"></div>
 	{/each}
 {/snippet}

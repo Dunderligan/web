@@ -147,11 +147,11 @@
 		</div>
 
 		<div class="flex items-center gap-4">
-			<Button icon="ph:magnifying-glass" kind="tertiary" onclick={() => (searchOpen = true)} />
-
 			<Dropdown items={preferencesDropdownItems} class="flex items-center justify-center p-3">
 				<Icon icon="ph:gear" class="text-xl" />
 			</Dropdown>
+
+			<Button icon="ph:magnifying-glass" kind="secondary" onclick={() => (searchOpen = true)} />
 
 			{#if user}
 				<Dropdown items={userDropdownItems} class="p-1.5 font-display font-medium">
