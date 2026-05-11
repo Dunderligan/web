@@ -5,7 +5,7 @@
 	import PageSection from '$lib/components/structure/PageSection.svelte';
 	import StandingsTable from '$lib/components/table/StandingsTable.svelte';
 	import Tabs from '$lib/components/ui/Tabs.svelte';
-	import { seasonState, formatDate } from '$lib/util';
+	import { getSeasonState, formatDate } from '$lib/util';
 	import Bracket from '$lib/components/match/Bracket.svelte';
 	import { buildBracketRounds } from '$lib/bracket';
 	import Subheading from '$lib/components/ui/Subheading.svelte';
@@ -23,7 +23,7 @@
 
 	let { season, divisions } = $derived(data);
 
-	const state = $derived(seasonState(season));
+	const state = $derived(getSeasonState(season));
 
 	let division = $derived.by(() => {
 		const param = page.url.searchParams.get('div');

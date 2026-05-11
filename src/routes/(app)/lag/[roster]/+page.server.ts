@@ -1,5 +1,5 @@
 import { db, schema } from '$lib/server/db';
-import { canSeeHiddenSeasons } from '$lib/server/db/helpers.js';
+import { canSeeHiddenSeasons } from '$lib/server/db/hidden.js';
 import { error, redirect } from '@sveltejs/kit';
 import { eq, desc, and } from 'drizzle-orm';
 

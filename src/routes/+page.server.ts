@@ -1,5 +1,6 @@
 import { db } from '$lib/server/db';
-import { fullMatchQueryWithContext, hiddenMatchFilter } from '$lib/server/db/helpers';
+import { fullMatchQueryWithContext } from '$lib/server/db/helpers';
+import { hiddenMatchFilter } from '$lib/server/db/hidden.js';
 import type { User } from '$lib/server/db/schema/auth';
 import { fetchTournamentState } from '$lib/server/db/tournamentState.js';
 import { MatchState, type TournamentState, type BracketWinner } from '$lib/types';

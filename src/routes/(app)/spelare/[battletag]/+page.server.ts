@@ -1,15 +1,16 @@
-import { placementFromFinalMatch } from '$lib/match';
-import { db } from '$lib/server/db';
+import { getRosterPlacement } from '$lib/match';
+import { db, schema } from '$lib/server/db';
 import {
 	entityQuery,
 	fullMatchQuery,
-	hiddenGroupFilter,
 	memberQuery,
 	nestedBracketQuery,
 	nestedGroupQuery
 } from '$lib/server/db/helpers';
+import { hiddenGroupFilter } from '$lib/server/db/hidden';
 import overwatch from '$lib/server/overwatch';
 import { error } from '@sveltejs/kit';
+import { eq, inArray, sql } from 'drizzle-orm';
 
 const finalMatchQuery = {
 	...fullMatchQuery,
@@ -31,16 +32,9 @@ const finalMatchQuery = {
 export const load = async ({ params, locals }) => {
 	const battletag = params.battletag.replace('-', '#');
 
-	const data = await db.query.player.findFirst({
+	const player = await db.query.player.findFirst({
 		where: {
 			battletag
-		},
-		columns: {
-			id: true,
-			battletag: true,
-			description: true,
-			pronouns: true,
-			overwatchProfileSlug: true
 		},
 		with: {
 			socials: {
@@ -77,33 +71,53 @@ export const load = async ({ params, locals }) => {
 		}
 	});
 
-	if (!data) {
+	if (!player) {
 		throw error(404);
 	}
 
-	const player = {
-		...data,
-		memberships: data.memberships.map(
-			({ roster: { matchesAsA, matchesAsB, ...roster }, ...membership }) => {
-				const finalMatch =
-					[...matchesAsA, ...matchesAsB].sort((a, b) => a.round! - b.round!).at(0) ?? null;
+	const divisionIds = player.memberships.map((m) => m.roster.group.division.id);
 
-				const placement = finalMatch ? placementFromFinalMatch(finalMatch, roster.id) : null;
+	const { group, roster } = schema;
 
-				return {
-					...membership,
-					roster,
-					finalMatch,
-					placement
-				};
-			}
-		)
-	};
+	const divisionCounts = await db
+		.select({
+			divisionId: group.divisionId,
+			rosterCount: sql<number>`count(*)`
+		})
+		.from(roster)
+		.innerJoin(group, eq(roster.groupId, group.id))
+		.where(inArray(group.divisionId, divisionIds))
+		.groupBy(group.divisionId);
 
-	const profile = await overwatch.getProfile(battletag, data.overwatchProfileSlug);
+	const rosterCountByDivision = new Map(
+		divisionCounts.map((tuple) => [tuple.divisionId, tuple.rosterCount])
+	);
+
+	// calculate placements and final matches to each membership
+	const memberships = player.memberships.map(({ roster, ...membership }) => {
+		const rosterCount = rosterCountByDivision.get(roster.group.division.id) ?? 0;
+
+		const { finalMatch, placement } = getRosterPlacement(
+			[...roster.matchesAsA, ...roster.matchesAsB],
+			roster.id,
+			rosterCount
+		);
+
+		return {
+			...membership,
+			roster,
+			finalMatch,
+			placement
+		};
+	});
+
+	const profile = await overwatch.getProfile(battletag, player.overwatchProfileSlug);
 
 	return {
-		player,
-		profile
+		profile,
+		player: {
+			...player,
+			memberships
+		}
 	};
 };

@@ -10,33 +10,31 @@
 	import { cdnImageSrc, cdnRosterLogoPath, flattenGroup } from '$lib/util';
 	import MatchList from '$lib/components/match/MatchList.svelte';
 	import Meta from '$lib/components/structure/Meta.svelte';
-	import { MatchState, type ResolvedMatchWithContext } from '$lib/types';
+	import { MatchState } from '$lib/types';
 	import { averageLegacyRank, averageRank } from '$lib/rank';
 	import { isModerator } from '$lib/authRole';
 	import Field from '$lib/components/structure/Field.svelte';
 	import Placement from '$lib/components/ui/Placement.svelte';
-	import { placementFromFinalMatch } from '$lib/match.js';
 
 	let { data } = $props();
 
-	let { team, roster } = $derived(data);
-	let { division, season } = $derived(flattenGroup(roster.group));
+	const { roster, matches } = $derived(data);
+	const { division, season } = $derived(flattenGroup(roster.group));
+	const team = $derived(roster.team);
 
 	let average = $derived(
 		season.legacyRanks ? averageLegacyRank(roster.members) : averageRank(roster.members)
 	);
 
 	const playedMatches = $derived(
-		roster.matches.filter(
+		matches.filter(
 			(match) =>
 				match.state === MatchState.PLAYED ||
-				// don't show walkovers where one team is missing (most often bracket byes)
+				// don't show walkovers where one team is missing (byes)
 				(match.state === MatchState.WALKOVER && match.rosterAId && match.rosterBId)
 		)
 	);
-	const upcomingMatches = $derived(
-		roster.matches.filter((match) => match.state === MatchState.SCHEDULED)
-	);
+	const upcomingMatches = $derived(matches.filter((match) => match.state === MatchState.SCHEDULED));
 
 	const rosterTabItems = $derived(
 		team.rosters
@@ -56,25 +54,6 @@
 				};
 			})
 	);
-
-	$inspect(roster.matches);
-
-	const placement = $derived.by(() => {
-		let finalMatch: ResolvedMatchWithContext | null = null;
-
-		for (const match of roster.matches) {
-			if (match.round === null) continue;
-			if (finalMatch !== null && match.round > finalMatch.round!) continue;
-
-			finalMatch = match;
-		}
-
-		if (finalMatch === null) {
-			return null;
-		}
-
-		return placementFromFinalMatch(finalMatch, roster.id);
-	});
 </script>
 
 <Meta
@@ -148,9 +127,9 @@
 			{/if}
 		</div>
 
-		{#if placement}
+		{#if data.placement}
 			<Field title="Placering">
-				<Placement {...placement} />
+				<Placement {...data.placement} />
 			</Field>
 		{/if}
 

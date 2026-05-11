@@ -29,6 +29,17 @@ type RosterTableScoreWithInfo = [string, TableScoreWithInfo];
 
 type RosterGraph = Map<string, TableScore & ExtraNodeInfo>;
 
+type BaseRoster = { id: string; resigned?: boolean };
+
+/** Sorts rosters in-place according to their seed, as calculated by the calculateStandings function. */
+export function sortBySeed(rosters: BaseRoster[], matches: LogicalMatch[], legacyMode: boolean) {
+	const seeds = new Map(
+		calculateStandings(rosters, matches, legacyMode).map((row, seed) => [row.rosterId, seed])
+	);
+
+	rosters.sort((a, b) => seeds.get(a.id)! - seeds.get(b.id)!);
+}
+
 /**
  * Calculates scores and standings for a list of rosters, according to the scores of the given matches
  * and the tournament's (current) tiebreakers.
@@ -36,14 +47,51 @@ type RosterGraph = Map<string, TableScore & ExtraNodeInfo>;
  * The result is sorted from highest to lowest seed (as usually displayed in a table).
  * Resigned rosters are placed at the bottom of the table (that is last in the result).
  */
-export function calculateStandings<R extends { id: string; resigned?: boolean }>(
-	rosters: R[],
+export function calculateStandings(
+	rosters: BaseRoster[],
 	matches: LogicalMatch[],
 	legacyMode: boolean
 ): {
 	rosterId: string;
 	score: TableScore;
 }[] {
+	const graph = createRosterGraph(rosters);
+
+	populateRosterGraph(matches, graph);
+
+	for (const [_, score] of graph) {
+		score.opponentMapRecordSum = sumOpponentMapRecord(score, graph);
+	}
+
+	// sort them lowest to highest seed according to the main tiebreakers
+	const sortedScores = [...graph].sort((a, b) =>
+		compareSeedFirstIteration(a, b, graph, legacyMode)
+	);
+
+	// if there's still ties, sort the tied teams according to secondary tiebreakers
+	// we need to do this in two steps because these tiebreakers depend on the (preliminary) seeding of other teams
+	sortedScores.sort((a, b) => compareSeedSecondIteration(a, b, sortedScores, graph, legacyMode));
+
+	// filter our extra info out of the result
+	const result = sortedScores.map(
+		([rosterId, { mapWins, mapLosses, mapDraws, matchesPlayed }]) => ({
+			rosterId,
+			score: {
+				mapWins,
+				mapLosses,
+				mapDraws,
+				matchesPlayed
+			}
+		})
+	);
+
+	// return with the highest seeded team first (descending seed)
+	return result.reverse();
+}
+
+function createRosterGraph<R extends { id: string; resigned?: boolean }>(
+	rosters: R[]
+): RosterGraph {
 	const graph = new Map<string, TableScoreWithInfo>();
 
 	for (const roster of rosters) {
@@ -60,6 +108,10 @@ export function calculateStandings<R extends { id: string; resigned?: boolean }>
 		});
 	}
 
+	return graph;
+}
+
+function populateRosterGraph(matches: LogicalMatch[], graph: Map<string, TableScoreWithInfo>) {
 	for (const match of matches) {
 		if (!hasMatchScore(match) || !match.rosterAId || !match.rosterBId) continue;
 
@@ -96,33 +148,6 @@ export function calculateStandings<R extends { id: string; resigned?: boolean }>
 		teamA.matchesPlayed += 1;
 		teamB.matchesPlayed += 1;
 	}
-
-	for (const [_, score] of graph) {
-		score.opponentMapRecordSum = sumOpponentMapRecord(score, graph);
-	}
-
-	// sort them lowest to highest seed according to the main tiebreakers
-	const sortedScores = [...graph].sort((a, b) =>
-		compareSeedFirstIteration(a, b, graph, legacyMode)
-	);
-
-	// if there's still ties, sort the tied teams according to secondary tiebreakers
-	// we need to do this in two steps because these tiebreakers depend on the (preliminary) seeding of other teams
-	sortedScores.sort((a, b) => compareSeedSecondIteration(a, b, sortedScores, graph, legacyMode));
-
-	// filter our extra info out of the result
-	const result = sortedScores.map(
-		([
-			rosterId,
-			{ wonAgainst, lostAgainst, drawedAgainst, opponentMapRecordSum, resigned, ...score }
-		]) => ({
-			rosterId,
-			score
-		})
-	);
-
-	// return with the highest seeded team first (descending seed)
-	return result.reverse();
 }
 
 /** Decides whether a should be seeded higher than b. */
@@ -235,17 +260,4 @@ function highestAndLowestLostTo(
 	}
 
 	return [highestBeaten, lowestLostTo];
-}
-
-/** Sorts rosters in-place according to their seed, as calculated by the calculateStandings function. */
-export function sortBySeed<R extends { id: string }>(
-	rosters: R[],
-	matches: LogicalMatch[],
-	legacyMode: boolean
-) {
-	const seeds = new Map(
-		calculateStandings(rosters, matches, legacyMode).map((row, seed) => [row.rosterId, seed])
-	);
-
-	rosters.sort((a, b) => seeds.get(a.id)! - seeds.get(b.id)!);
 }

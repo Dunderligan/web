@@ -5,7 +5,8 @@ import {
 	type MatchWithoutRosters,
 	MatchState,
 	type Placement,
-	type UnresolvedMatch
+	type UnresolvedMatch,
+	type ResolvedMatchWithContext
 } from './types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -131,30 +132,40 @@ export function createGroupMatch(groupId: string): UnresolvedMatch {
 	};
 }
 
-export function placementFromFinalMatch(match: ResolvedMatch, rosterId: string): Placement | null {
-	const round = match.round;
-	if (round === null || round === undefined) {
-		// no round means the match is in a group stage, so we can't determine placement
-		return null;
+export function getRosterPlacement(
+	matches: ResolvedMatchWithContext[],
+	rosterId: string,
+	rosterCount: number
+): { finalMatch: ResolvedMatchWithContext | null; placement: Placement | null } {
+	const finalMatch =
+		matches
+			.filter((match) => match.round != null)
+			.sort((a, b) => a.round! - b.round!)
+			.at(0) ?? null;
+
+	if (!finalMatch) {
+		return { finalMatch, placement: null };
 	}
 
-	if (match.state === MatchState.SCHEDULED) {
-		return null;
+	const round = finalMatch.round!;
+
+	if (finalMatch.state === MatchState.SCHEDULED) {
+		return { finalMatch, placement: null };
 	}
 
 	if (round === 0) {
 		// played in the grand final
-		const winner = matchWinner(match);
-		if (!winner) return { best: 1, worst: 2 };
+		const winner = matchWinner(finalMatch);
+		if (!winner) return { finalMatch, placement: { best: 1, worst: 2 } };
 
-		const place = matchRosterId(match, winner) === rosterId ? 1 : 2;
-		return { best: place, worst: null };
+		const place = matchRosterId(finalMatch, winner) === rosterId ? 1 : 2;
+		return { finalMatch, placement: { best: place, worst: place } };
 	}
 
-	// since we didn't win (or play) the grand final, we lost this match
+	// since we didn't win (or play) the grand final, we lost the final match
 
 	const best = Math.pow(2, round) + 1;
-	const worst = Math.pow(2, round + 1);
+	const worst = Math.min(Math.pow(2, round + 1), rosterCount);
 
-	return { best, worst };
+	return { finalMatch, placement: { best, worst } };
 }

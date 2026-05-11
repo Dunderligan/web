@@ -4,11 +4,11 @@ import { db } from '$lib/server/db';
 import {
 	fullMatchColumns,
 	groupMatchOrder,
-	hiddenMatchFilter,
 	matchRosterQuery,
 	nestedBracketQuery,
 	nestedGroupQuery
 } from '$lib/server/db/helpers';
+import { hiddenMatchFilter } from '$lib/server/db/hidden';
 
 export const queryMatches = query(
 	matchQueryParamsSchema,

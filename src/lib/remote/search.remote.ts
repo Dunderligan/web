@@ -1,6 +1,8 @@
-import { query } from '$app/server';
+import { getRequestEvent, query } from '$app/server';
 import { db } from '$lib/server/db';
 import { entityQuery, nestedGroupQuery } from '$lib/server/db/helpers';
+import { hiddenGroupFilter, hiddenSeasonFilter } from '$lib/server/db/hidden';
+import type { User } from '$lib/server/db/schema/auth';
 import overwatch from '$lib/server/overwatch';
 import type { SearchItem } from '$lib/types';
 import {
@@ -20,6 +22,8 @@ export const search = query(
 		query: z.string()
 	}),
 	async ({ query }) => {
+		const { locals } = getRequestEvent();
+
 		if (query.trim().length < 3) {
 			return {
 				results: []
@@ -28,8 +32,8 @@ export const search = query(
 
 		const items = await Promise.all([
 			searchPlayers(query),
-			searchRosters(query),
-			searchSeasons(query)
+			searchRosters(query, locals.user),
+			searchSeasons(query, locals.user)
 		]);
 
 		const results = sortSearchItems(items.flat(), query);
@@ -82,10 +86,11 @@ async function searchPlayers(query: string): Promise<SearchItem[]> {
 	);
 }
 
-async function searchRosters(query: string): Promise<SearchItem[]> {
+async function searchRosters(query: string, user: User | null): Promise<SearchItem[]> {
 	const rosters = await db.query.roster.findMany({
 		limit: SEARCH_LIMIT,
 		where: {
+			group: hiddenGroupFilter(user),
 			name: {
 				ilike: `%${query}%`
 			}
@@ -110,10 +115,11 @@ async function searchRosters(query: string): Promise<SearchItem[]> {
 	});
 }
 
-async function searchSeasons(query: string): Promise<SearchItem[]> {
+async function searchSeasons(query: string, user: User | null): Promise<SearchItem[]> {
 	const seasons = await db.query.season.findMany({
 		limit: SEARCH_LIMIT,
 		where: {
+			hidden: hiddenSeasonFilter(user),
 			name: {
 				ilike: `%${query}%`
 			}
@@ -147,9 +153,9 @@ function sortSearchItems(items: SearchItem[], query: string): SearchItem[] {
 }
 
 function longestCommonPrefix(a: string, b: string): number {
-	const minLength = Math.min(a.length, b.length);
+	const min = Math.min(a.length, b.length);
 	let i = 0;
-	while (i < minLength && a[i] === b[i]) {
+	while (i < min && a[i] === b[i]) {
 		i++;
 	}
 	return i;

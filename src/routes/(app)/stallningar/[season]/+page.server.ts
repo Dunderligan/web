@@ -1,11 +1,7 @@
 import { compareMatchDates } from '$lib/match';
 import { db } from '$lib/server/db';
-import {
-	fullMatchColumns,
-	groupMatchOrder,
-	divisionOrder,
-	hiddenSeasonFilter
-} from '$lib/server/db/helpers';
+import { fullMatchColumns, groupMatchOrder, divisionOrder } from '$lib/server/db/helpers';
+import { hiddenSeasonFilter } from '$lib/server/db/hidden.js';
 import { calculateStandings } from '$lib/standings';
 import { MatchState } from '$lib/types';
 import { aggregateGroups } from '$lib/util';

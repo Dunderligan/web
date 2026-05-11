@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db';
-import { hiddenSeasonFilter } from '$lib/server/db/helpers.js';
+import { hiddenSeasonFilter } from '$lib/server/db/hidden.js';
 import { error, redirect } from '@sveltejs/kit';
 
 export const load = async ({ locals }) => {
