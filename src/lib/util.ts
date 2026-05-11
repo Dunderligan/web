@@ -5,6 +5,7 @@ import {
 	type FlattenedGroup,
 	type MatchQueryParams,
 	MatchState,
+	type NestedBracket,
 	type NestedDivision,
 	type NestedGroup,
 	Role,

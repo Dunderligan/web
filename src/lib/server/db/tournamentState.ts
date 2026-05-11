@@ -1,7 +1,7 @@
 import { matchRoster, matchWinner } from '$lib/match';
-import type { TournamentState, BracketWinner, MatchState, ResolvedMatch } from '$lib/types';
+import type { TournamentState, BracketWinner, ResolvedMatch, NestedBracket } from '$lib/types';
 import { db } from '../db';
-import { divisionOrder, entityQuery, finalMatchQuery } from './helpers';
+import { divisionOrder, entityQuery, finalMatchQuery, nestedDivisionQuery } from './helpers';
 
 export async function fetchTournamentState(): Promise<TournamentState | null> {
 	const data = await queryLatestSeason();
@@ -24,7 +24,7 @@ export async function fetchTournamentState(): Promise<TournamentState | null> {
 		return {
 			season,
 			status: 'offseason',
-			winners: winners as BracketWinner[]
+			winners
 		};
 	}
 
@@ -61,23 +61,20 @@ export async function fetchTournamentState(): Promise<TournamentState | null> {
 	};
 }
 
-function aggregateWinners(
-	brackets: {
-		name: string;
-		matches: ResolvedMatch[];
-	}[]
-) {
+function aggregateWinners(brackets: (NestedBracket & { matches: ResolvedMatch[] })[]) {
 	return brackets
 		.flatMap(({ matches, ...bracket }) =>
 			matches.map((final) => {
 				const winner = matchWinner(final);
 
-				return winner
-					? {
-							roster: matchRoster(final, winner),
-							bracket
-						}
-					: null;
+				if (!winner) {
+					return null;
+				}
+
+				return {
+					roster: matchRoster(final, winner)!,
+					bracket
+				};
 			})
 		)
 		.filter((match) => match != null);
@@ -107,9 +104,11 @@ async function queryLatestSeason() {
 				with: {
 					brackets: {
 						columns: {
+							id: true,
 							name: true
 						},
 						with: {
+							division: nestedDivisionQuery,
 							matches: finalMatchQuery
 						}
 					}

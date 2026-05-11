@@ -110,10 +110,9 @@ export const fullMatchQueryWithContext = {
 
 export const finalMatchQuery = {
 	...fullMatchQuery,
-	where: {
-		nextMatchId: {
-			isNull: true
-		}
+	limit: 1,
+	orderBy: {
+		round: 'asc'
 	}
 } as const;
 

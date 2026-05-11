@@ -254,7 +254,7 @@ export type SeasonState = 'upcoming' | 'ongoing' | 'ended';
 
 export type BracketWinner = {
 	roster: MatchRoster;
-	bracket: BaseEntity;
+	bracket: NestedBracket;
 };
 
 export type TournamentState = { season: BaseEntity & { startedAt: Date | null } } & (
