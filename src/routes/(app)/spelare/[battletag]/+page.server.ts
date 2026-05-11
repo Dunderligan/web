@@ -10,7 +10,7 @@ import {
 import { hiddenGroupFilter } from '$lib/server/db/hidden';
 import overwatch from '$lib/server/overwatch';
 import { error } from '@sveltejs/kit';
-import { eq, inArray, sql } from 'drizzle-orm';
+import { eq, inArray, not, sql, and } from 'drizzle-orm';
 
 const finalMatchQuery = {
 	...fullMatchQuery,
@@ -86,7 +86,7 @@ export const load = async ({ params, locals }) => {
 		})
 		.from(roster)
 		.innerJoin(group, eq(roster.groupId, group.id))
-		.where(inArray(group.divisionId, divisionIds))
+		.where(and(inArray(group.divisionId, divisionIds), not(roster.resigned)))
 		.groupBy(group.divisionId);
 
 	const rosterCountByDivision = new Map(

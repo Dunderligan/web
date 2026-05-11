@@ -8,7 +8,7 @@ import { hiddenGroupFilter } from '$lib/server/db/hidden.js';
 import { db, schema } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
 import { compareMatchDates, getRosterPlacement } from '$lib/match.js';
-import { eq, sql } from 'drizzle-orm';
+import { and, eq, not, sql } from 'drizzle-orm';
 
 export const load = async ({ params, locals }) => {
 	const roster = await db.query.roster.findFirst({
@@ -78,7 +78,7 @@ async function getRosterCount(divisionId: string) {
 		.select({ rosterCount: sql<number>`count(*)` })
 		.from(roster)
 		.innerJoin(group, eq(roster.groupId, group.id))
-		.where(eq(group.divisionId, divisionId));
+		.where(and(eq(group.divisionId, divisionId), not(roster.resigned)));
 
 	return rosterCount;
 }
