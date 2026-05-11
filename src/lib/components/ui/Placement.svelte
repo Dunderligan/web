@@ -18,14 +18,7 @@
 		if (worst) {
 			return `Top ${worst}`;
 		}
-
-		switch (best) {
-			case 1:
-			case 2:
-				return `${best}:a`;
-			default:
-				return `${best}:e`;
-		}
+		return `${best}:a`;
 	});
 </script>
 

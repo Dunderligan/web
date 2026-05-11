@@ -159,7 +159,7 @@ export function getRosterPlacement(
 		if (!winner) return { finalMatch, placement: { best: 1, worst: 2 } };
 
 		const place = matchRosterId(finalMatch, winner) === rosterId ? 1 : 2;
-		return { finalMatch, placement: { best: place, worst: place } };
+		return { finalMatch, placement: { best: place, worst: null } };
 	}
 
 	// since we didn't win (or play) the grand final, we lost the final match
