@@ -7,7 +7,6 @@
 	import Placeholder from '../ui/Placeholder.svelte';
 	import { search } from '$lib/remote/search.remote';
 	import { goto } from '$app/navigation';
-	import Icon from '../ui/Icon.svelte';
 
 	type Props = {
 		open?: boolean;
@@ -102,7 +101,7 @@
 	</div>
 
 	{#if !loading && !remoteQuery}
-		<div class="text-center text-sm font-medium text-gray-500">
+		<div class="text-center text-sm font-medium text-gray-500 dark:text-gray-400">
 			Tips: Tryck Ctrl + K för att växla sökfältet.
 		</div>
 	{/if}
