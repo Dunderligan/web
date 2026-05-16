@@ -78,7 +78,6 @@ async function searchPlayers(query: string): Promise<SearchItem[]> {
 				id: player.id,
 				href: `/spelare/${player.battletag.replace('#', '-')}`,
 				name: player.battletag.split('#')[0],
-				subtitle: 'Spelarprofil',
 				type: 'player',
 				image: profile.status === 'found' ? profile.profile.avatarUrl : null
 			};
