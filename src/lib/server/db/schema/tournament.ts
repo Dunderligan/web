@@ -127,6 +127,27 @@ export const player = pgTable(
 	(t) => [index('player_battletag_gin_idx').using('gin', t.battletag.op('gin_trgm_ops'))]
 );
 
+export const awardType = pgTable(
+	'award_type',
+	{
+		id: uuid().primaryKey().defaultRandom(),
+		name: text().notNull(),
+		showDivision: boolean().notNull().default(true)
+	},
+	(t) => [unique().on(t.name)]
+);
+
+export const playerAward = pgTable('player_award', {
+	id: uuid().primaryKey().defaultRandom(),
+	awardTypeId: uuid()
+		.notNull()
+		.references(() => awardType.id, { onDelete: 'cascade' }),
+	playerId: uuid()
+		.notNull()
+		.references(() => player.id, { onDelete: 'cascade' }),
+	divisionId: uuid().references(() => division.id, { onDelete: 'cascade' })
+});
+
 export const rankEnum = pgEnum('rank', enumToPgEnum(Rank));
 
 export const roleEnum = pgEnum('role', enumToPgEnum(Role));

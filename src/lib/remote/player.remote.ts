@@ -1,4 +1,4 @@
-import { command, getRequestEvent } from '$app/server';
+import { command, getRequestEvent, query } from '$app/server';
 import { AuthRole, canEditUserPage, isModerator } from '$lib/authRole';
 import { socialSchema } from '$lib/schemas';
 import { db, schema } from '$lib/server/db';
@@ -191,5 +191,45 @@ export const linkPlayerAlias = command(
 			.where(eq(schema.member.playerId, otherPlayerId));
 
 		await db.delete(schema.player).where(eq(schema.player.id, otherPlayerId));
+	}
+);
+
+export const queryPlayers = query(
+	z.object({
+		query: z.string()
+	}),
+	async ({ query }) => {
+		await roleGuard(AuthRole.MODERATOR);
+
+		if (query.trim().length < 2) {
+			return [];
+		}
+
+		return await db.query.player.findMany({
+			limit: 15,
+			where: {
+				OR: [
+					{
+						battletag: {
+							ilike: `%${query}%`
+						}
+					},
+					{
+						aliases: {
+							name: {
+								ilike: `%${query}%`
+							}
+						}
+					}
+				]
+			},
+			columns: {
+				id: true,
+				battletag: true
+			},
+			orderBy: {
+				battletag: 'asc'
+			}
+		});
 	}
 );

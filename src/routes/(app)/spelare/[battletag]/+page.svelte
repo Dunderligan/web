@@ -70,6 +70,15 @@
 			.sort((a, b) => a.placement!.best - b.placement!.best)
 	);
 
+	const awards = $derived(
+		(data.awards ?? []).toSorted((a, b) => {
+			const aTime = a.division?.season.startedAt?.getTime() ?? 0;
+			const bTime = b.division?.season.startedAt?.getTime() ?? 0;
+
+			return bTime - aTime || a.awardType.name.localeCompare(b.awardType.name);
+		})
+	);
+
 	async function onClaimClicked() {
 		claimLoading = true;
 
@@ -86,6 +95,17 @@
 
 	function isMiscRole(role: Role) {
 		return role === Role.COACH || role === Role.MANAGER;
+	}
+
+	function formatAwardContext(award: (typeof data.awards)[number]) {
+		if (!award.division) {
+			return 'Ingen säsong';
+		}
+
+		const { division, awardType } = award;
+		return awardType.showDivision
+			? `${division.name}, ${division.season.name}`
+			: division.season.name;
 	}
 </script>
 
@@ -210,8 +230,8 @@
 			</Table>
 		{/if}
 
-		{#if achievements.length > 0}
-			<Subheading class="mt-10">Bedrifter</Subheading>
+	{#if achievements.length > 0}
+		<Subheading class="mt-10">Bedrifter</Subheading>
 
 			<Table
 				class="mt-4 grid-cols-[auto_1fr_auto]"
@@ -254,8 +274,29 @@
 						{/if}
 					</div>
 				{/snippet}
-			</Table>
-		{/if}
+		</Table>
+	{/if}
+
+	{#if awards.length > 0}
+		<Subheading class="mt-10">Utmärkelser</Subheading>
+
+		<Table
+			class="mt-4 grid-cols-[1fr_1fr]"
+			rows={awards}
+			key={(value) => value.id}
+			columns={[{ label: 'Utmärkelse' }, { label: 'Säsong', center: true }]}
+		>
+			{#snippet row({ value: award })}
+				<div class="px-4 py-2 text-base font-semibold">
+					{award.awardType.name}
+				</div>
+
+				<div class="justify-center text-center text-base">
+					{formatAwardContext(award)}
+				</div>
+			{/snippet}
+		</Table>
+	{/if}
 
 		<p class="mt-6 text-sm font-medium text-gray-500 dark:text-gray-400">
 			{#if data.profile.status === 'found'}

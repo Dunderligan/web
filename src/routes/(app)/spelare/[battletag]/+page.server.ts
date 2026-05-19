@@ -7,7 +7,7 @@ import {
 	nestedBracketQuery,
 	nestedGroupQuery
 } from '$lib/server/db/helpers';
-import { hiddenGroupFilter } from '$lib/server/db/hidden';
+import { hiddenDivisionFilter, hiddenGroupFilter } from '$lib/server/db/hidden';
 import overwatch from '$lib/server/overwatch';
 import { error } from '@sveltejs/kit';
 import { eq, inArray, not, sql, and } from 'drizzle-orm';
@@ -113,8 +113,51 @@ export const load = async ({ params, locals }) => {
 
 	const profile = await overwatch.getProfile(battletag, player.overwatchProfileSlug);
 
+	const awards = await db.query.playerAward.findMany({
+		where: {
+			playerId: player.id,
+			OR: [
+				{
+					divisionId: {
+						isNull: true as true
+					}
+				},
+				{
+					division: hiddenDivisionFilter(locals.user)
+				}
+			]
+		},
+		with: {
+			awardType: {
+				columns: {
+					id: true,
+					name: true,
+					showDivision: true
+				}
+			},
+			division: {
+				columns: {
+					id: true,
+					name: true,
+					slug: true
+				},
+				with: {
+					season: {
+						columns: {
+							id: true,
+							name: true,
+							slug: true,
+							startedAt: true
+						}
+					}
+				}
+			}
+		}
+	});
+
 	return {
 		profile,
+		awards,
 		player: {
 			...player,
 			memberships
