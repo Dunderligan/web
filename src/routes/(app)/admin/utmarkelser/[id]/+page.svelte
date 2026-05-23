@@ -19,51 +19,29 @@
 		createPlayerAward,
 		deleteAwardType,
 		deletePlayerAward,
-		updateAwardType,
-		updatePlayerAward
+		updateAwardType
 	} from '$lib/remote/award.remote';
 
 	let { data } = $props();
 
 	let awardType = $state(data.awardType);
-	let awards = $state(data.awards);
+	let awards = $state(data.awardType.awards);
 
 	$effect(() => {
 		awardType = data.awardType;
-		awards = data.awards;
+		awards = data.awardType.awards;
 	});
 
-	const divisions = $derived(
-		data.divisions.toSorted((a, b) => {
-			const dateDiff = b.season.startedAt.getTime() - a.season.startedAt.getTime();
-			return dateDiff || a.name.localeCompare(b.name);
-		})
-	);
-
-	const divisionItems = $derived(
-		divisions.map((division) => ({
-			value: division.id,
-			label: `${division.season.name} – ${division.name}`
-		}))
-	);
-
-	const canEdit = $derived(isModerator(data.user?.role));
-
-	SaveContext.set(new SaveContext({ save, href: `/admin/utmarkelser/${awardType.id}` }));
+	SaveContext.set(new SaveContext({ save }));
 
 	const saveCtx = SaveContext.get();
 	const confirmCtx = ConfirmContext.get();
 
 	let createOpen = $state(false);
-	let selectedPlayer = $state<{ id: string; battletag: string } | null>(null);
-	let selectedPlayerId = $state<string | undefined>();
-	let selectedDivisionId = $state<string | undefined>();
 
-	let editOpen = $state(false);
-	let editAward = $state<(typeof data.awards)[number] | null>(null);
-	let editPlayerId = $state<string | undefined>();
-	let editSelectedPlayer = $state<{ id: string; battletag: string } | null>(null);
-	let editDivisionId = $state<string | undefined>();
+	let selectedPlayerId = $state<string | undefined>();
+	let selectedSeasonId = $state<string | undefined>();
+	let selectedDivisionId = $state<string | undefined>();
 
 	async function save() {
 		const result = await updateAwardType({
@@ -72,13 +50,13 @@
 			showDivision: awardType.showDivision
 		});
 
-		awardType = result.awardType;
+		awardType = { ...awardType, ...result.awardType };
 	}
 
-	async function submitDelete() {
+	async function submitDeleteAwardType() {
 		await confirmCtx.confirm({
 			title: 'Radera utmärkelse',
-			description: `Är du säker på att du vill radera ${awardType.name}? Alla kopplade utmärkelser tas bort.`,
+			description: `Är du säker på att du vill radera ${awardType.name} och alla tilldelningar av den?`,
 			negative: true,
 			action: async () => {
 				await deleteAwardType({ id: awardType.id });
@@ -87,7 +65,7 @@
 		});
 	}
 
-	async function submitCreateAward() {
+	async function createAward() {
 		if (!selectedPlayerId) return;
 
 		await createPlayerAward({
@@ -96,58 +74,28 @@
 			divisionId: selectedDivisionId ?? null
 		});
 
-		await invalidate('admin:award-type');
+		await invalidate('admin:awards');
 
 		createOpen = false;
-		selectedPlayer = null;
-		selectedPlayerId = undefined;
-		selectedDivisionId = undefined;
+		resetCreateDialog();
 	}
 
-	function openEditAward(award: (typeof data.awards)[number]) {
-		editAward = award;
-		editPlayerId = award.player.id;
-		editSelectedPlayer = award.player;
-		editDivisionId = award.division?.id;
-		editOpen = true;
-	}
-
-	async function submitEditAward() {
-		if (!editAward || !editPlayerId) return;
-
-		await updatePlayerAward({
-			id: editAward.id,
-			playerId: editPlayerId,
-			divisionId: editDivisionId ?? null
-		});
-
-		await invalidate('admin:award-type');
-
-		editOpen = false;
-		editAward = null;
-		editPlayerId = undefined;
-		editSelectedPlayer = null;
-		editDivisionId = undefined;
-	}
-
-	async function submitDeleteAward(id: string) {
+	async function deleteAward(id: string) {
 		await confirmCtx.confirm({
 			title: 'Radera utmärkelse',
 			description: 'Är du säker på att du vill radera den här utmärkelsen?',
 			negative: true,
 			action: async () => {
 				await deletePlayerAward({ id });
-				await invalidate('admin:award-type');
+				await invalidate('admin:awards');
 			}
 		});
 	}
 
-	function formatSeason(award: (typeof data.awards)[number]) {
-		return award.division?.season.name ?? '—';
-	}
-
-	function formatDivision(award: (typeof data.awards)[number]) {
-		return award.division?.name ?? '—';
+	function resetCreateDialog() {
+		selectedPlayerId = undefined;
+		selectedSeasonId = undefined;
+		selectedDivisionId = undefined;
 	}
 </script>
 
@@ -158,147 +106,105 @@
 	]}
 />
 
-<AdminCard title="Utmärkelser">
+<AdminCard title="Vinnare">
 	{#if awards.length === 0}
-		<AdminEmptyNotice
-			oncreateclick={() => (createOpen = true)}
-			hideCreateButton={!canEdit}
-		>
+		<AdminEmptyNotice oncreateclick={() => (createOpen = true)}>
 			Denna utmärkelse har inga vinnare än.
 		</AdminEmptyNotice>
 	{:else}
 		<Table
 			rows={awards}
 			key={(award) => award.id}
-			class="grid-cols-[1fr_1fr_1fr_120px]"
+			class="grid-cols-[1fr_1fr_1fr_100px]"
 			columns={[
-				{ label: 'Spelare' },
-				{ label: 'Säsong', center: true },
-				{ label: 'Division', center: true },
+				{ label: 'Battletag' },
+				{ label: awardType.showDivision ? 'Säsong' : '', center: true },
+				{ label: awardType.showDivision ? 'Division' : '', center: true },
 				{ label: '' }
 			]}
 		>
-			{#snippet row({ value: award })}
-				<div class="py-3 pl-6 font-semibold">
-					{award.player.battletag}
+			{#snippet row({ value: { id, player, division } })}
+				<div class="py-4 pl-6 font-semibold">
+					<a href="/admin/spelare/{player.id}" class="hover:underline">{player.battletag}</a>
 				</div>
 
-				<div class="justify-center text-center">
-					{formatSeason(award)}
+				<div class="justify-center text-center text-base">
+					<a href="/admin/sasong/{division?.season.id}" class="hover:underline"
+						>{division?.season.name}</a
+					>
 				</div>
 
-				<div class="justify-center text-center">
-					{formatDivision(award)}
+				<div class="justify-center text-center text-base">
+					<a href="/admin/division/{division?.id}" class="hover:underline">{division?.name}</a>
 				</div>
 
-				<div class="justify-center gap-2">
-					<Button
-						icon="ph:pencil-simple"
-						kind="tertiary"
-						onclick={() => openEditAward(award)}
-						disabled={!canEdit}
-					/>
-					<Button
-						icon="ph:trash"
-						kind="tertiary"
-						onclick={() => submitDeleteAward(award.id)}
-						disabled={!canEdit}
-					/>
+				<div class="justify-center gap-2 px-2">
+					<Button icon="ph:trash" kind="tertiary" onclick={() => deleteAward(id)} />
 				</div>
 			{/snippet}
 		</Table>
 
-		{#if canEdit}
-			<Button icon="ph:plus" onclick={() => (createOpen = true)} />
-		{/if}
+		<Button icon="ph:plus" onclick={() => (createOpen = true)} />
 	{/if}
 </AdminCard>
 
-{#if canEdit}
-	<AdminCard title="Inställningar">
-		<div class="space-y-2">
-			<Label label="Namn">
-				<InputField bind:value={awardType.name} oninput={saveCtx.setDirty} />
-			</Label>
-
-			<Label label="Visa division">
-				<Checkbox bind:checked={awardType.showDivision} onCheckedChange={saveCtx.setDirty} />
-			</Label>
-		</div>
-
-		<Button icon="ph:trash" label="Radera utmärkelse" kind="negative" onclick={submitDelete} />
-	</AdminCard>
-{/if}
-
-<CreateDialog
-	title="Lägg till utmärkelse"
-	bind:open={createOpen}
-	oncreate={submitCreateAward}
-	disabled={!selectedPlayerId}
-	onclose={() => {
-		selectedPlayer = null;
-		selectedPlayerId = undefined;
-		selectedDivisionId = undefined;
-	}}
->
-	<Label label="Spelare">
-		<PlayerSelect
-			bind:value={selectedPlayerId}
-			onValueChange={(player) => (selectedPlayer = player)}
-		/>
-	</Label>
-
-	{#if selectedPlayer}
-		<div class="text-sm text-gray-600 dark:text-gray-400">
-			Vald spelare: {selectedPlayer.battletag}
-		</div>
-	{/if}
-
-	<Label label="Division">
-		<Select
-			type="single"
-			bind:value={selectedDivisionId}
-			items={divisionItems}
-			canClear
-			placeholder="Ingen division"
-		/>
-	</Label>
-</CreateDialog>
-
-<CreateDialog
-	title="Redigera utmärkelse"
-	bind:open={editOpen}
-	oncreate={submitEditAward}
-	disabled={!editPlayerId}
-	onclose={() => {
-		editOpen = false;
-		editAward = null;
-		editPlayerId = undefined;
-		editSelectedPlayer = null;
-		editDivisionId = undefined;
-	}}
->
-	{#if editAward}
-		<Label label="Spelare">
-			<PlayerSelect
-				bind:value={editPlayerId}
-				onValueChange={(player) => (editSelectedPlayer = player)}
-			/>
+<AdminCard title="Inställningar">
+	<div class="space-y-2">
+		<Label label="Namn">
+			<InputField bind:value={awardType.name} oninput={saveCtx.setDirty} />
 		</Label>
 
-		{#if editSelectedPlayer}
-			<div class="text-sm text-gray-600 dark:text-gray-400">
-				Vald spelare: {editSelectedPlayer.battletag}
-			</div>
-		{/if}
+		<Label label="Har division">
+			<Checkbox bind:checked={awardType.showDivision} onCheckedChange={saveCtx.setDirty} />
+		</Label>
+	</div>
+
+	<Button
+		icon="ph:trash"
+		label="Radera utmärkelse"
+		kind="negative"
+		onclick={submitDeleteAwardType}
+	/>
+</AdminCard>
+
+<CreateDialog
+	title="Tilldela utmärkelse"
+	bind:open={createOpen}
+	oncreate={createAward}
+	disabled={!selectedPlayerId || (awardType.showDivision && !selectedDivisionId)}
+	onclose={resetCreateDialog}
+>
+	<Label label="Spelare">
+		<PlayerSelect bind:value={selectedPlayerId} />
+	</Label>
+
+	{#if awardType.showDivision}
+		<Label label="Säsong">
+			<Select
+				type="single"
+				bind:value={selectedSeasonId}
+				placeholder="Välj säsong..."
+				class="grow"
+				items={data.seasons.map((season) => ({
+					label: season.name,
+					value: season.id
+				}))}
+			/>
+		</Label>
 
 		<Label label="Division">
 			<Select
 				type="single"
-				bind:value={editDivisionId}
-				items={divisionItems}
-				canClear
-				placeholder="Ingen division"
+				bind:value={selectedDivisionId}
+				placeholder="Välj division..."
+				class="grow"
+				items={data.seasons
+					.find((season) => season.id === selectedSeasonId)
+					?.divisions.map((division) => ({
+						label: division.name,
+						value: division.id
+					})) ?? []}
+				disabled={!selectedSeasonId}
 			/>
 		</Label>
 	{/if}

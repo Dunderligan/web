@@ -64,69 +64,11 @@ export const createPlayerAward = command(
 	async ({ awardTypeId, playerId, divisionId }) => {
 		await roleGuard(AuthRole.MODERATOR);
 
-		const [award] = await db
-			.insert(schema.playerAward)
-			.values({
-				awardTypeId,
-				playerId,
-				divisionId: divisionId ?? null
-			})
-			.returning();
-
-		const hydrated = await db.query.playerAward.findFirst({
-			where: {
-				id: award.id
-			},
-			with: {
-				player: {
-					columns: {
-						id: true,
-						battletag: true
-					}
-				},
-				division: {
-					columns: {
-						id: true,
-						name: true,
-						slug: true
-					},
-					with: {
-						season: {
-							columns: {
-								id: true,
-								name: true,
-								slug: true,
-								startedAt: true
-							}
-						}
-					}
-				}
-			}
+		const [playerAward] = await db.insert(schema.playerAward).values({
+			awardTypeId,
+			playerId,
+			divisionId: divisionId ?? null
 		});
-
-		return { award: hydrated ?? award };
-	}
-);
-
-export const updatePlayerAward = command(
-	z.object({
-		id: z.uuid(),
-		playerId: z.uuid(),
-		divisionId: z.uuid().nullish()
-	}),
-	async ({ id, playerId, divisionId }) => {
-		await roleGuard(AuthRole.MODERATOR);
-
-		const [award] = await db
-			.update(schema.playerAward)
-			.set({
-				playerId,
-				divisionId: divisionId ?? null
-			})
-			.where(eq(schema.playerAward.id, id))
-			.returning();
-
-		return { award };
 	}
 );
 

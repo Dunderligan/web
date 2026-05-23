@@ -5,6 +5,7 @@ import {
 	fullMatchQuery,
 	memberQuery,
 	nestedBracketQuery,
+	nestedDivisionQuery,
 	nestedGroupQuery
 } from '$lib/server/db/helpers';
 import { hiddenDivisionFilter, hiddenGroupFilter } from '$lib/server/db/hidden';
@@ -67,7 +68,16 @@ export const load = async ({ params, locals }) => {
 					hero: true
 				}
 			},
-			aliases: true
+			aliases: true,
+			awards: {
+				columns: {
+					id: true
+				},
+				with: {
+					awardType: true,
+					division: nestedDivisionQuery
+				}
+			}
 		}
 	});
 
@@ -113,51 +123,8 @@ export const load = async ({ params, locals }) => {
 
 	const profile = await overwatch.getProfile(battletag, player.overwatchProfileSlug);
 
-	const awards = await db.query.playerAward.findMany({
-		where: {
-			playerId: player.id,
-			OR: [
-				{
-					divisionId: {
-						isNull: true as true
-					}
-				},
-				{
-					division: hiddenDivisionFilter(locals.user)
-				}
-			]
-		},
-		with: {
-			awardType: {
-				columns: {
-					id: true,
-					name: true,
-					showDivision: true
-				}
-			},
-			division: {
-				columns: {
-					id: true,
-					name: true,
-					slug: true
-				},
-				with: {
-					season: {
-						columns: {
-							id: true,
-							name: true,
-							slug: true,
-							startedAt: true
-						}
-					}
-				}
-			}
-		}
-	});
-
 	return {
 		profile,
-		awards,
 		player: {
 			...player,
 			memberships

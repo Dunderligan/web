@@ -346,3 +346,14 @@ export type SearchItem = {
 	image?: string | null;
 	type: 'player' | 'roster' | 'season';
 };
+
+export type PlayerAward = {
+	id: string;
+	division: NestedDivision | null;
+};
+
+export type AwardType = {
+	id: string;
+	name: string;
+	showDivision: boolean;
+};

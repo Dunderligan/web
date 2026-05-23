@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { canEditUserPage } from '$lib/authRole.js';
+	import AwardCard from '$lib/components/ui/AwardCard.svelte';
 	import Match from '$lib/components/match/Match.svelte';
 	import Field from '$lib/components/structure/Field.svelte';
 	import Meta from '$lib/components/structure/Meta.svelte';
@@ -20,7 +21,7 @@
 	import Subheading from '$lib/components/ui/Subheading.svelte';
 	import TeamSocial from '$lib/components/ui/TeamSocial.svelte';
 	import { claimPlayer } from '$lib/remote/player.remote.js';
-	import { Role } from '$lib/types.js';
+	import { Role, type AwardType, type PlayerAward } from '$lib/types.js';
 	import { flattenGroup, formatDateTime, roleIcon } from '$lib/util';
 
 	let { data } = $props();
@@ -36,6 +37,23 @@
 	const hasSpinoffSeasons = $derived(
 		memberships.some((m) => flattenGroup(m.roster.group).season.spinoff)
 	);
+
+	const awardsByType = $derived.by(() => {
+		const map = new Map<string, [AwardType, PlayerAward[]]>();
+
+		for (const award of data.player.awards) {
+			const type = award.awardType;
+			const entry = map.get(type.id);
+
+			if (entry) {
+				entry[1].push(award);
+			} else {
+				map.set(type.id, [type, [award]]);
+			}
+		}
+
+		return map.values().toArray();
+	});
 
 	const sortedMemberships = $derived(
 		memberships.toSorted((a, b) => {
@@ -70,15 +88,6 @@
 			.sort((a, b) => a.placement!.best - b.placement!.best)
 	);
 
-	const awards = $derived(
-		(data.awards ?? []).toSorted((a, b) => {
-			const aTime = a.division?.season.startedAt?.getTime() ?? 0;
-			const bTime = b.division?.season.startedAt?.getTime() ?? 0;
-
-			return bTime - aTime || a.awardType.name.localeCompare(b.awardType.name);
-		})
-	);
-
 	async function onClaimClicked() {
 		claimLoading = true;
 
@@ -95,17 +104,6 @@
 
 	function isMiscRole(role: Role) {
 		return role === Role.COACH || role === Role.MANAGER;
-	}
-
-	function formatAwardContext(award: (typeof data.awards)[number]) {
-		if (!award.division) {
-			return 'Ingen säsong';
-		}
-
-		const { division, awardType } = award;
-		return awardType.showDivision
-			? `${division.name}, ${division.season.name}`
-			: division.season.name;
 	}
 </script>
 
@@ -230,8 +228,8 @@
 			</Table>
 		{/if}
 
-	{#if achievements.length > 0}
-		<Subheading class="mt-10">Bedrifter</Subheading>
+		{#if achievements.length > 0}
+			<Subheading class="mt-10">Bedrifter</Subheading>
 
 			<Table
 				class="mt-4 grid-cols-[auto_1fr_auto]"
@@ -274,29 +272,18 @@
 						{/if}
 					</div>
 				{/snippet}
-		</Table>
-	{/if}
+			</Table>
+		{/if}
 
-	{#if awards.length > 0}
-		<Subheading class="mt-10">Utmärkelser</Subheading>
+		{#if data.player.awards.length > 0}
+			<Subheading class="mt-10">Utmärkelser</Subheading>
 
-		<Table
-			class="mt-4 grid-cols-[1fr_1fr]"
-			rows={awards}
-			key={(value) => value.id}
-			columns={[{ label: 'Utmärkelse' }, { label: 'Säsong', center: true }]}
-		>
-			{#snippet row({ value: award })}
-				<div class="px-4 py-2 text-base font-semibold">
-					{award.awardType.name}
-				</div>
-
-				<div class="justify-center text-center text-base">
-					{formatAwardContext(award)}
-				</div>
-			{/snippet}
-		</Table>
-	{/if}
+			<div class="mt-4 space-y-4">
+				{#each awardsByType as [type, awards]}
+					<AwardCard {type} {awards} />
+				{/each}
+			</div>
+		{/if}
 
 		<p class="mt-6 text-sm font-medium text-gray-500 dark:text-gray-400">
 			{#if data.profile.status === 'found'}

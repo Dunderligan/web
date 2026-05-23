@@ -10,6 +10,7 @@
 	import Checkbox from '$lib/components/ui/Checkbox.svelte';
 	import InputField from '$lib/components/ui/InputField.svelte';
 	import Label from '$lib/components/ui/Label.svelte';
+	import Note from '$lib/components/ui/Note.svelte';
 	import { createAwardType } from '$lib/remote/award.remote';
 	import { SaveContext } from '$lib/state/save.svelte';
 
@@ -39,10 +40,7 @@
 
 <AdminCard title="Utmärkelser">
 	{#if awardTypes.length === 0}
-		<AdminEmptyNotice
-			oncreateclick={() => (createOpen = true)}
-			hideCreateButton={!canEdit}
-		>
+		<AdminEmptyNotice oncreateclick={() => (createOpen = true)} hideCreateButton={!canEdit}>
 			Inga utmärkelser har skapats än.
 		</AdminEmptyNotice>
 	{:else}
@@ -51,7 +49,7 @@
 				<AdminLink href="/admin/utmarkelser/{awardType.id}">
 					<span>{awardType.name}</span>
 					<span class="ml-2 text-base font-medium text-gray-500 dark:text-gray-400">
-						{awardType.awardCount} st
+						{awardType.awards.length}st
 					</span>
 				</AdminLink>
 			{/each}
@@ -66,7 +64,7 @@
 <CreateDialog
 	title="Skapa utmärkelse"
 	bind:open={createOpen}
-	oncreate={oncreate}
+	{oncreate}
 	onclose={() => {
 		newName = '';
 		newShowDivision = true;
@@ -74,10 +72,11 @@
 	disabled={!newName.trim()}
 >
 	<Label label="Namn">
-		<InputField bind:value={newName} placeholder="T.ex. Role Star – Tank" />
+		<InputField bind:value={newName} placeholder="T.ex. Role Star - Tank" />
 	</Label>
 
-	<Label label="Visa division">
+	<Label label="Har division">
+		<Note content="Är utmärkelsen relaterad till en specifik division (som t.ex. Role Star)?" />
 		<Checkbox bind:checked={newShowDivision} />
 	</Label>
 </CreateDialog>

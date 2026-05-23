@@ -21,9 +21,6 @@ export const load = async ({ locals }) => {
 	});
 
 	return {
-		awardTypes: awardTypes.map(({ awards, ...awardType }) => ({
-			...awardType,
-			awardCount: awards.length
-		}))
+		awardTypes
 	};
 };
