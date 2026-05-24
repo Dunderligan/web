@@ -59,16 +59,28 @@ export const createPlayerAward = command(
 	z.object({
 		awardTypeId: z.uuid(),
 		playerId: z.uuid(),
-		divisionId: z.uuid().nullish()
+		divisionId: z.uuid().nullable()
 	}),
 	async ({ awardTypeId, playerId, divisionId }) => {
 		await roleGuard(AuthRole.MODERATOR);
 
-		const [playerAward] = await db.insert(schema.playerAward).values({
+		await db.insert(schema.playerAward).values({
 			awardTypeId,
 			playerId,
-			divisionId: divisionId ?? null
+			divisionId
 		});
+	}
+);
+
+export const updatePlayerAward = command(
+	z.object({
+		id: z.uuid(),
+		description: z.string().nullable()
+	}),
+	async ({ id, description }) => {
+		await roleGuard(AuthRole.MODERATOR);
+
+		await db.update(schema.playerAward).set({ description }).where(eq(schema.playerAward.id, id));
 	}
 );
 

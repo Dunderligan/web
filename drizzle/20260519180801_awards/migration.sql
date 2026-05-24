@@ -8,7 +8,8 @@ CREATE TABLE "player_award" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 	"award_type_id" uuid NOT NULL,
 	"player_id" uuid NOT NULL,
-	"division_id" uuid
+	"division_id" uuid,
+	"description" text
 );
 --> statement-breakpoint
 ALTER TABLE "player_award" ADD CONSTRAINT "player_award_award_type_id_award_type_id_fkey" FOREIGN KEY ("award_type_id") REFERENCES "award_type"("id") ON DELETE CASCADE;--> statement-breakpoint

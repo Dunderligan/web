@@ -71,7 +71,8 @@ export const load = async ({ params, locals }) => {
 			aliases: true,
 			awards: {
 				columns: {
-					id: true
+					id: true,
+					description: true
 				},
 				with: {
 					awardType: true,

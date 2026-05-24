@@ -19,8 +19,11 @@
 		createPlayerAward,
 		deleteAwardType,
 		deletePlayerAward,
-		updateAwardType
+		updateAwardType,
+		updatePlayerAward
 	} from '$lib/remote/award.remote';
+	import type { PlayerAward } from '$lib/types.js';
+	import TextArea from '$lib/components/ui/TextArea.svelte';
 
 	let { data } = $props();
 
@@ -42,6 +45,10 @@
 	let selectedPlayerId = $state<string | undefined>();
 	let selectedSeasonId = $state<string | undefined>();
 	let selectedDivisionId = $state<string | undefined>();
+
+	let editAward = $state<PlayerAward | null>(null);
+	let editOpen = $state(false);
+	let newDescription = $state('');
 
 	async function save() {
 		const result = await updateAwardType({
@@ -78,6 +85,20 @@
 
 		createOpen = false;
 		resetCreateDialog();
+	}
+
+	async function updateAward() {
+		if (!editAward) return;
+
+		await updatePlayerAward({
+			id: editAward.id,
+			description: newDescription.length > 0 ? newDescription : null
+		});
+
+		await invalidate('admin:awards');
+
+		editOpen = false;
+		editAward = null;
 	}
 
 	async function deleteAward(id: string) {
@@ -123,23 +144,36 @@
 				{ label: '' }
 			]}
 		>
-			{#snippet row({ value: { id, player, division } })}
+			{#snippet row({ value: award })}
 				<div class="py-4 pl-6 font-semibold">
-					<a href="/admin/spelare/{player.id}" class="hover:underline">{player.battletag}</a>
-				</div>
-
-				<div class="justify-center text-center text-base">
-					<a href="/admin/sasong/{division?.season.id}" class="hover:underline"
-						>{division?.season.name}</a
+					<a href="/admin/spelare/{award.player.id}" class="hover:underline"
+						>{award.player.battletag}</a
 					>
 				</div>
 
 				<div class="justify-center text-center text-base">
-					<a href="/admin/division/{division?.id}" class="hover:underline">{division?.name}</a>
+					<a href="/admin/sasong/{award.division?.season.id}" class="hover:underline"
+						>{award.division?.season.name}</a
+					>
+				</div>
+
+				<div class="justify-center text-center text-base">
+					<a href="/admin/division/{award.division?.id}" class="hover:underline"
+						>{award.division?.name}</a
+					>
 				</div>
 
 				<div class="justify-center gap-2 px-2">
-					<Button icon="ph:trash" kind="tertiary" onclick={() => deleteAward(id)} />
+					<Button
+						icon="ph:pencil-simple"
+						kind="tertiary"
+						onclick={() => {
+							editAward = award;
+							newDescription = award.description ?? '';
+							editOpen = true;
+						}}
+					/>
+					<Button icon="ph:trash" kind="tertiary" onclick={() => deleteAward(award.id)} />
 				</div>
 			{/snippet}
 		</Table>
@@ -205,6 +239,23 @@
 						value: division.id
 					})) ?? []}
 				disabled={!selectedSeasonId}
+			/>
+		</Label>
+	{/if}
+</CreateDialog>
+
+<CreateDialog
+	title="Redigera utmärkelse"
+	bind:open={editOpen}
+	oncreate={updateAward}
+	createLabel="Spara"
+>
+	{#if editAward}
+		<Label label="Beskrivning" column>
+			<TextArea
+				bind:value={newDescription}
+				class="w-full"
+				placeholder="En motivering av varför denna spelare har tilldelats utmärkelsen..."
 			/>
 		</Label>
 	{/if}

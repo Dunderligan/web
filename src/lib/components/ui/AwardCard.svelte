@@ -17,7 +17,9 @@
 	const shownAwards = $derived(expanded ? awards : awards.slice(0, COLLAPSED_MAX_COUNT));
 </script>
 
-<div class="relative min-h-40 rounded-lg bg-gray-100 pt-4 pb-6 dark:bg-gray-900">
+<div
+	class="relative min-h-40 rounded-lg bg-gray-100 py-4 font-medium text-gray-700 dark:bg-gray-900 dark:text-gray-300"
+>
 	<div
 		class="banner flex items-center gap-4 overflow-hidden py-3 pr-4 pl-30 text-xl font-bold text-white"
 	>
@@ -32,7 +34,19 @@
 		{/if}
 	</div>
 
-	<div class="mt-4 ml-30 font-medium text-gray-700 dark:text-gray-300">
+	{#if awards[0].description}
+		<div class="relative mt-4 mr-4 ml-30 min-h-16 resize-y overflow-hidden whitespace-pre-line">
+			<p class="text-sm">Motivering:</p>
+
+			<p>"{awards[0].description}"</p>
+
+			<div
+				class="absolute right-0 bottom-0 left-0 h-6 bg-linear-to-t from-gray-100 to-transparent"
+			></div>
+		</div>
+	{/if}
+
+	<div class="mt-4 ml-30">
 		{#each shownAwards as award (award.id)}
 			{#if award.division}
 				<div>
