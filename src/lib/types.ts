@@ -97,33 +97,40 @@ export enum MatchState {
  * See the $lib/server/db/helpers.ts file for the equivalent query definition.
  */
 export type BaseEntity = {
+	id: string;
 	name: string;
 	slug: string;
 };
 
+export type BaseSeason = BaseEntity & {
+	legacyRanks: boolean;
+	startedAt: Date;
+	spinoff: boolean;
+};
+
 // Definitions of nested entities used in various places throughout the app.
-export type NestedSeason<S = BaseEntity> = S;
-export type NestedDivision<S = BaseEntity, D = S> = D & {
+export type NestedSeason<S = BaseSeason> = S;
+export type NestedDivision<S = BaseSeason, D = BaseEntity> = D & {
 	season: S;
 };
-export type NestedGroup<S = BaseEntity, D = S, G = S> = G & {
+export type NestedGroup<S = BaseSeason, D = BaseEntity, G = BaseEntity> = G & {
 	division: NestedDivision<S, D>;
 };
 
-export type FlattenedSeason<S = BaseEntity> = {
+export type FlattenedSeason<S = BaseSeason> = {
 	season: S;
 };
-export type FlattenedDivision<S = BaseEntity, D = S> = {
+export type FlattenedDivision<S = BaseSeason, D = BaseEntity> = {
 	season: S;
 	division: D;
 };
-export type FlattenedGroup<S = BaseEntity, D = S, G = S> = {
+export type FlattenedGroup<S = BaseSeason, D = BaseEntity, G = BaseEntity> = {
 	season: S;
 	division: D;
 	group: G;
 };
 
-export type NestedBracket<S = BaseEntity, D = S> = {
+export type NestedBracket<S = BaseSeason, D = BaseEntity> = {
 	id: string;
 	name: string;
 	division: NestedDivision<S, D>;

@@ -22,7 +22,7 @@
 	import TeamSocial from '$lib/components/ui/TeamSocial.svelte';
 	import { claimPlayer } from '$lib/remote/player.remote.js';
 	import { Role, type AwardType, type PlayerAward } from '$lib/types.js';
-	import { flattenGroup, formatDateTime, roleIcon } from '$lib/util';
+	import { compareNullable, flattenGroup, formatDateTime, roleIcon } from '$lib/util';
 
 	let { data } = $props();
 
@@ -52,7 +52,16 @@
 			}
 		}
 
-		return map.values().toArray();
+		for (const [_, awards] of map) {
+			awards[1].sort((a, b) =>
+				compareNullable(b.division?.season.startedAt, a.division?.season.startedAt)
+			);
+		}
+
+		return map
+			.values()
+			.toArray()
+			.sort((a, b) => a[0].name.localeCompare(b[0].name));
 	});
 
 	const sortedMemberships = $derived(

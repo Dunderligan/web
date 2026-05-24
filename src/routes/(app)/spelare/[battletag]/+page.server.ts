@@ -8,7 +8,7 @@ import {
 	nestedDivisionQuery,
 	nestedGroupQuery
 } from '$lib/server/db/helpers';
-import { hiddenDivisionFilter, hiddenGroupFilter } from '$lib/server/db/hidden';
+import { hiddenGroupFilter } from '$lib/server/db/hidden';
 import overwatch from '$lib/server/overwatch';
 import { error } from '@sveltejs/kit';
 import { eq, inArray, not, sql, and } from 'drizzle-orm';
