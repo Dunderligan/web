@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { isModerator } from '$lib/authRole';
+	import { isAdmin, isModerator } from '$lib/authRole';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
 	import AdminLink from '$lib/components/admin/AdminLink.svelte';
@@ -20,7 +20,7 @@
 
 	let awardTypes = $state(data.awardTypes);
 
-	const canEdit = $derived(isModerator(data.user?.role));
+	const canEdit = $derived(isAdmin(data.user?.role));
 
 	let createOpen = $state(false);
 	let newName = $state('');

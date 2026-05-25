@@ -11,7 +11,7 @@ export const createAwardType = command(
 		showDivision: z.boolean()
 	}),
 	async ({ name, showDivision }) => {
-		await roleGuard(AuthRole.MODERATOR);
+		await roleGuard(AuthRole.ADMIN);
 
 		const [awardType] = await db
 			.insert(schema.awardType)
@@ -32,7 +32,7 @@ export const updateAwardType = command(
 		showDivision: z.boolean()
 	}),
 	async ({ id, name, showDivision }) => {
-		await roleGuard(AuthRole.MODERATOR);
+		await roleGuard(AuthRole.ADMIN);
 
 		const [awardType] = await db
 			.update(schema.awardType)
@@ -49,7 +49,7 @@ export const deleteAwardType = command(
 		id: z.uuid()
 	}),
 	async ({ id }) => {
-		await roleGuard(AuthRole.MODERATOR);
+		await roleGuard(AuthRole.ADMIN);
 
 		await db.delete(schema.awardType).where(eq(schema.awardType.id, id));
 	}

@@ -251,7 +251,7 @@
 	createLabel="Spara"
 >
 	{#if editAward}
-		<Label label="Beskrivning" column>
+		<Label label="Motivering" column>
 			<TextArea
 				bind:value={newDescription}
 				class="w-full"

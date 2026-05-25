@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { AwardType, PlayerAward } from '$lib/types';
 	import medal from '$lib/assets/images/medal.png';
+	import Icon from './Icon.svelte';
 
 	type Props = {
 		type: AwardType;
@@ -11,42 +12,60 @@
 
 	const COLLAPSED_MAX_COUNT = 3;
 
-	let expanded = $state(false);
+	let expandedAwards = $state(false);
 
-	const canExpand = $derived(awards.length > COLLAPSED_MAX_COUNT);
-	const shownAwards = $derived(expanded ? awards : awards.slice(0, COLLAPSED_MAX_COUNT));
+	const canExpandAwards = $derived(awards.length > COLLAPSED_MAX_COUNT);
+	const shownAwards = $derived(expandedAwards ? awards : awards.slice(0, COLLAPSED_MAX_COUNT));
+
+	let expandedDescription = $state(false);
+
+	const description = $derived(awards.at(0)?.description ?? null);
+	const canExpandDescription = $derived(description !== null && description.split('\n').length > 3);
 </script>
 
 <div
 	class="relative min-h-40 rounded-lg bg-gray-100 py-4 font-medium text-gray-700 dark:bg-gray-900 dark:text-gray-300"
 >
+	<img class="absolute -top-1 -left-4 w-36 drop-shadow-sm" src={medal} alt="Medal" />
+
 	<div
 		class="banner flex items-center gap-4 overflow-hidden py-3 pr-4 pl-30 text-xl font-bold text-white"
 	>
-		<span>
+		<div>
 			{type.name}
-		</span>
+		</div>
 
 		{#if awards.length > 1}
-			<span>
+			<div>
 				x{awards.length}
-			</span>
+			</div>
 		{/if}
 	</div>
 
-	{#if awards[0].description}
-		<div class="relative mt-4 mr-4 ml-30 min-h-16 resize-y overflow-hidden whitespace-pre-line">
-			<p class="text-sm">Motivering:</p>
+	<div class="mt-4 mr-4 ml-30">
+		{#if description}
+			<div class={[!expandedDescription && 'line-clamp-3', 'relative whitespace-pre-line']}>
+				<p class="text-sm">Motivering:</p>
 
-			<p>"{awards[0].description}"</p>
+				<p>"{awards[0].description}"</p>
 
-			<div
-				class="absolute right-0 bottom-0 left-0 h-6 bg-linear-to-t from-gray-100 to-transparent"
-			></div>
-		</div>
-	{/if}
+				{#if canExpandDescription && !expandedDescription}
+					<div
+						class="absolute right-0 bottom-0 left-0 h-6 bg-linear-to-t from-gray-100 to-transparent"
+					></div>
+				{/if}
+			</div>
 
-	<div class="mt-4 ml-30">
+			{#if canExpandDescription && !expandedDescription}
+				<button
+					onclick={() => (expandedDescription = true)}
+					class="mt-1 block font-semibold hover:underline"
+				>
+					Läs mer
+				</button>
+			{/if}
+		{/if}
+
 		{#each shownAwards as award (award.id)}
 			{#if award.division}
 				<div>
@@ -55,14 +74,15 @@
 			{/if}
 		{/each}
 
-		{#if canExpand && !expanded}
-			<button onclick={() => (expanded = true)} class="block hover:underline">
+		{#if canExpandAwards && !expandedAwards}
+			<button
+				onclick={() => (expandedAwards = true)}
+				class="mt-1 block font-semibold hover:underline"
+			>
 				...och {awards.length - COLLAPSED_MAX_COUNT} fler</button
 			>
 		{/if}
 	</div>
-
-	<img class="absolute -top-1 -left-4 w-36" src={medal} alt="Medal" />
 </div>
 
 <style>
