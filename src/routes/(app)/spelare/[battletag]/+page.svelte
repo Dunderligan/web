@@ -58,10 +58,7 @@
 			);
 		}
 
-		return map
-			.values()
-			.toArray()
-			.sort((a, b) => a[0].name.localeCompare(b[0].name));
+		return [...map.values()].sort((a, b) => a[0].name.localeCompare(b[0].name));
 	});
 
 	const sortedMemberships = $derived(

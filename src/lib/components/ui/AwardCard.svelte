@@ -47,11 +47,11 @@
 			<div class={[!expandedDescription && 'line-clamp-3', 'relative whitespace-pre-line']}>
 				<p class="text-sm">Motivering:</p>
 
-				<p>"{awards[0].description}"</p>
+				<p>"{description}"</p>
 
 				{#if canExpandDescription && !expandedDescription}
 					<div
-						class="absolute right-0 bottom-0 left-0 h-6 bg-linear-to-t from-gray-100 to-transparent"
+						class="absolute right-0 bottom-0 left-0 h-6 bg-linear-to-t from-gray-100 to-transparent dark:from-gray-900"
 					></div>
 				{/if}
 			</div>
