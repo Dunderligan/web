@@ -22,8 +22,8 @@
 		"@oslojs/encoding": "^1.1.0",
 		"@prgm/sveltekit-progress-bar": "^3.0.2",
 		"@sveltejs/adapter-auto": "^6.1.1",
-		"@sveltejs/kit": "^2.49.5",
-		"@sveltejs/vite-plugin-svelte": "^6.2.4",
+		"@sveltejs/kit": "^2.68.0",
+		"@sveltejs/vite-plugin-svelte": "^7.1.2",
 		"@tailwindcss/vite": "^4.1.18",
 		"@types/node": "^22.19.7",
 		"drizzle-kit": "1.0.0-beta.2-ec83fa8",
@@ -34,7 +34,7 @@
 		"svelte-check": "^4.3.5",
 		"tailwindcss": "^4.1.18",
 		"typescript": "^5.9.3",
-		"vite": "^7.3.1"
+		"vite": "^8.0.0"
 	},
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.970.0",
