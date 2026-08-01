@@ -2,6 +2,7 @@
 	import type { AwardType, PlayerAward } from '$lib/types';
 	import medal from '$lib/assets/images/medal.png';
 	import Icon from './Icon.svelte';
+	import { flattenDivision } from '$lib/util';
 
 	type Props = {
 		type: AwardType;
@@ -56,27 +57,32 @@
 				{/if}
 			</div>
 
-			{#if canExpandDescription && !expandedDescription}
+			{#if canExpandDescription}
 				<button
-					onclick={() => (expandedDescription = true)}
+					onclick={() => (expandedDescription = !expandedDescription)}
 					class="mt-1 block font-semibold hover:underline"
 				>
-					Läs mer
+					{expandedDescription ? 'Visa mindre' : 'Visa mer'}
 				</button>
 			{/if}
 		{/if}
 
 		{#each shownAwards as award (award.id)}
 			{#if award.division}
-				<div>
-					{award.division.name}, {award.division.season.name}
-				</div>
+				{@const { division, season } = flattenDivision(award.division)}
+
+				<a
+					href="/stallningar/{season.slug}?div={division.slug}"
+					class="block max-w-max hover:underline"
+				>
+					{division.name}, {season.name}
+				</a>
 			{/if}
 		{/each}
 
 		{#if canExpandAwards && !expandedAwards}
 			<button
-				onclick={() => (expandedAwards = true)}
+				onclick={() => (expandedAwards = !expandedAwards)}
 				class="mt-1 block font-semibold hover:underline"
 			>
 				...och {awards.length - COLLAPSED_MAX_COUNT} fler</button
