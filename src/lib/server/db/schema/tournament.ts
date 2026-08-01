@@ -132,7 +132,8 @@ export const awardType = pgTable(
 	{
 		id: uuid().primaryKey().defaultRandom(),
 		name: text().notNull(),
-		showDivision: boolean().notNull().default(true)
+		showDivision: boolean().notNull().default(true),
+		imageUrl: text()
 	},
 	(t) => [unique().on(t.name)]
 );

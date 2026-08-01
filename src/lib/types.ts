@@ -364,4 +364,5 @@ export type AwardType = {
 	id: string;
 	name: string;
 	showDivision: boolean;
+	imageUrl: string | null;
 };

@@ -20,10 +20,12 @@
 		deleteAwardType,
 		deletePlayerAward,
 		updateAwardType,
-		updatePlayerAward
+		updatePlayerAward,
+		uploadAwardTypeImage
 	} from '$lib/remote/award.remote';
 	import type { PlayerAward } from '$lib/types.js';
 	import TextArea from '$lib/components/ui/TextArea.svelte';
+	import ImageUpload from '$lib/components/admin/ImageUpload.svelte';
 
 	let { data } = $props();
 
@@ -190,6 +192,21 @@
 
 		<Label label="Har division">
 			<Checkbox bind:checked={awardType.showDivision} onCheckedChange={saveCtx.setDirty} />
+		</Label>
+
+		<Label label="Bild">
+			<ImageUpload
+				alt="Bild för utmärkelsen"
+				image={awardType.imageUrl}
+				upload={async (buffer) => {
+					const result = await uploadAwardTypeImage({
+						id: awardType.id,
+						image: buffer
+					});
+
+					awardType = { ...awardType, ...result.awardType };
+				}}
+			/>
 		</Label>
 	</div>
 
