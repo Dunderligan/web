@@ -100,10 +100,7 @@
 
 <Breadcrumbs crumbs={[{ label: player.battletag, href: `/admin/spelare/${player.id}` }]} hideHome />
 
-<AdminSocials
-	emptyText="Denna spelare har inga länkade sociala medier."
-	bind:socials={player.socials}
-/>
+<AdminSocials emptyText="Denna spelare har inga länkar." bind:socials={player.socials} />
 
 <AdminCard title="Alias">
 	{#if player.aliases.length === 0}

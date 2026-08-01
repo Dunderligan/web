@@ -154,10 +154,7 @@
 </AdminCard>
 
 {#if isAdmin}
-	<AdminSocials
-		emptyText="Detta lag har inga länkade sociala medier."
-		bind:socials={team.socials}
-	/>
+	<AdminSocials emptyText="Detta lag har inga länkar." bind:socials={team.socials} />
 
 	<AdminCard title="Inställningar">
 		<Label label="Namn">

@@ -140,7 +140,7 @@
 		{/if}
 
 		{#if team.socials.length > 0}
-			<Field title="Sociala medier">
+			<Field title="Länker">
 				<div class="mt-1 flex items-center gap-3">
 					{#each team.socials as { platform, url } (platform)}
 						<TeamSocial class="text-3xl" {platform} href={url} />

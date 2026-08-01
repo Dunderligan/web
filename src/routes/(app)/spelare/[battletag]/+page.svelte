@@ -326,7 +326,7 @@
 		{/if}
 
 		{#if data.player.socials.length > 0}
-			<Field title="Sociala medier">
+			<Field title="Länkar">
 				<div class="mt-1 flex items-center gap-3">
 					{#each data.player.socials as { platform, url } (platform)}
 						<TeamSocial class="text-3xl" {platform} href={url} />
