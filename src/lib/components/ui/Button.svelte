@@ -26,7 +26,7 @@
 				'text-gray-600 font-medium hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-800',
 			transparent:
 				'text-accent-800 hover:bg-accent-100 dark:text-accent-300 dark:hover:bg-accent-900',
-			negative: 'bg-red-700 hover:bg-red-600 font-semibold text-red-100 hover:text-white'
+			destructive: 'bg-red-700 hover:bg-red-600 font-semibold text-red-100 hover:text-white'
 		}[kind]
 	);
 </script>

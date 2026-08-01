@@ -248,7 +248,7 @@ export type LogicalMatch = {
 	state: MatchState;
 };
 
-export type ButtonKind = 'primary' | 'secondary' | 'tertiary' | 'transparent' | 'negative';
+export type ButtonKind = 'primary' | 'secondary' | 'tertiary' | 'transparent' | 'destructive';
 
 export type SeasonState = 'upcoming' | 'ongoing' | 'ended';
 

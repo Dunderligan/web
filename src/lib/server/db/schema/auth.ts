@@ -16,7 +16,7 @@ export const session = pgTable('session', {
 	id: text().primaryKey(),
 	userId: uuid()
 		.notNull()
-		.references(() => user.id),
+		.references(() => user.id, { onDelete: 'cascade' }),
 	expiresAt: timestamp({ withTimezone: true, mode: 'date' }).notNull(),
 	createdAt: timestamp().defaultNow().notNull()
 });
@@ -27,7 +27,7 @@ export const apiKey = pgTable(
 		id: uuid().defaultRandom().primaryKey(),
 		userId: uuid()
 			.notNull()
-			.references(() => user.id),
+			.references(() => user.id, { onDelete: 'cascade' }),
 		tokenHash: text().notNull().unique(),
 		name: text().notNull(),
 		lastUsedAt: timestamp(),

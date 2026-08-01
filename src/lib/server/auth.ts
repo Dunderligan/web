@@ -26,7 +26,12 @@ async function createUser(battlenetId: number, battletag: string) {
 	};
 }
 
+async function deleteUser(id: string) {
+	await db.delete(schema.user).where(eq(schema.user.id, id));
+}
+
 export default {
 	getUserFromBattletag,
-	createUser
+	createUser,
+	deleteUser
 };

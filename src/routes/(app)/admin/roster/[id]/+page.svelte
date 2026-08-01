@@ -93,7 +93,7 @@
 		await confirm.confirm({
 			title: 'Radera roster',
 			description: `Är du säker på att du vill radera ${roster.name} från ${season.name}? <b>Detta går inte att ångra!</b>`,
-			negative: true,
+			destructive: true,
 			action: async () => {
 				await deleteRoster({
 					id: roster.id
@@ -183,7 +183,7 @@
 				onclick={() => (changeGroupOpen = true)}
 			/>
 
-			<Button icon="ph:trash" label="Radera roster" kind="negative" onclick={onDeleteClick} />
+			<Button icon="ph:trash" label="Radera roster" kind="destructive" onclick={onDeleteClick} />
 		</div>
 	</AdminCard>
 

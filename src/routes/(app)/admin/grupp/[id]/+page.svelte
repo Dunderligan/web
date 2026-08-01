@@ -72,7 +72,7 @@
 		await confirmCtx.confirm({
 			title: 'Radera grupp',
 			description: `Är du säker på att du vill radera ${group.name} i ${season.name}, ${division.name} <b>tillsammans med ${group.rosters.length} rosters</b>?`,
-			negative: true,
+			destructive: true,
 			action: async () => {
 				await deleteGroup({
 					id: group.id
@@ -163,7 +163,7 @@
 			<InputField bind:value={group.name} oninput={saveCtx.setDirty} />
 		</Label>
 
-		<Button icon="ph:trash" label="Radera grupp" kind="negative" onclick={submitDelete} />
+		<Button icon="ph:trash" label="Radera grupp" kind="destructive" onclick={submitDelete} />
 	</AdminCard>
 {/if}
 

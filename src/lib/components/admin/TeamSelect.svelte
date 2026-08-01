@@ -84,34 +84,36 @@
 	></Combobox.Input>
 
 	{#if searchQuery.length >= 2}
-		<Combobox.Content class="floating w-(--bits-combobox-anchor-width)">
-			{#if loading}
-				<div class="py-2 text-center font-medium text-gray-500">
-					<Icon icon="ph:spinner" class="animate-spin" />
-				</div>
-			{:else if teams.size === 0}
-				<div class="py-2 text-center font-medium text-gray-600 dark:text-gray-300">
-					Inga lag hittades
-				</div>
-			{:else}
-				{#each teams as [teamId, rosters] (teamId)}
-					<Combobox.Item value={teamId} class="floating-item my-0.5 flex-col gap-2">
-						{#each rosters as roster (roster.id)}
-							<div class="flex w-full items-center">
-								<RosterLogo id={roster.id} class="mr-3 size-8" />
-								<div>
+		<Combobox.Portal>
+			<Combobox.Content class="floating w-(--bits-combobox-anchor-width)">
+				{#if loading}
+					<div class="py-2 text-center font-medium text-gray-500">
+						<Icon icon="ph:spinner" class="animate-spin" />
+					</div>
+				{:else if teams.size === 0}
+					<div class="py-2 text-center font-medium text-gray-600 dark:text-gray-300">
+						Inga lag hittades
+					</div>
+				{:else}
+					{#each teams as [teamId, rosters] (teamId)}
+						<Combobox.Item value={teamId} class="floating-item my-0.5 flex-col gap-2">
+							{#each rosters as roster (roster.id)}
+								<div class="flex w-full items-center">
+									<RosterLogo id={roster.id} class="mr-3 size-8" />
 									<div>
-										{roster.name}
-									</div>
-									<div class="text-sm">
-										{roster.group.division.season.name}
+										<div>
+											{roster.name}
+										</div>
+										<div class="text-sm">
+											{roster.group.division.season.name}
+										</div>
 									</div>
 								</div>
-							</div>
-						{/each}
-					</Combobox.Item>
-				{/each}
-			{/if}
-		</Combobox.Content>
+							{/each}
+						</Combobox.Item>
+					{/each}
+				{/if}
+			</Combobox.Content>
+		</Combobox.Portal>
 	{/if}
 </Combobox.Root>

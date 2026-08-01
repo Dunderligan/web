@@ -73,6 +73,10 @@ async function invalidate(sessionId: string) {
 	await db.delete(schema.session).where(eq(schema.session.id, sessionId));
 }
 
+async function invalidateAll(userId: string) {
+	await db.delete(schema.session).where(eq(schema.session.userId, userId));
+}
+
 function setTokenCookie(cookies: Cookies, token: string, expiresAt: Date) {
 	cookies.set(TOKEN_COOKIE_NAME, token, {
 		expires: expiresAt,
@@ -92,6 +96,7 @@ export default {
 	create,
 	validateToken,
 	invalidate,
+	invalidateAll,
 	setTokenCookie,
 	deleteTokenCookie
 };

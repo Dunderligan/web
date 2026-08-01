@@ -40,7 +40,7 @@
 		},
 		{
 			label: 'Fortsätt',
-			kind: context.current?.negative ? 'negative' : 'primary',
+			kind: context.current?.destructive ? 'destructive' : 'primary',
 			icon: context.current?.icon,
 			loading,
 			onclick: confirm
