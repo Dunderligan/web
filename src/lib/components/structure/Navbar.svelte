@@ -93,6 +93,12 @@
 		},
 		{
 			type: 'button',
+			icon: 'ph:gear',
+			label: 'Inställningar',
+			href: '/jag/installningar'
+		},
+		{
+			type: 'button',
 			icon: 'ph:wrench',
 			label: 'Admin',
 			href: '/admin',

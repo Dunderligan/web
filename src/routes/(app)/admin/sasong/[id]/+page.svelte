@@ -68,7 +68,7 @@
 		await confirmCtx.confirm({
 			title: 'Radera säsong',
 			description: `Är du säker på att du vill radera ${season.name}?`,
-			negative: true,
+			destructive: true,
 			action: async () => {
 				await deleteSeason({
 					id: season.id
@@ -95,7 +95,7 @@
 		await confirmCtx.confirm({
 			title: 'Radera anmälningsformulär',
 			description: `Är du säker på att du vill radera anmälan för ${season.name}?`,
-			negative: true,
+			destructive: true,
 			action: async () => {
 				if (!registration) return;
 
@@ -154,7 +154,7 @@
 			<Button
 				icon="ph:trash"
 				label="Radera anmälan"
-				kind="negative"
+				kind="destructive"
 				onclick={submitDeleteRegistration}
 			/>
 		{:else}
@@ -205,7 +205,7 @@
 			</Label>
 		</div>
 
-		<Button icon="ph:trash" label="Radera säsong" kind="negative" onclick={submitDelete} />
+		<Button icon="ph:trash" label="Radera säsong" kind="destructive" onclick={submitDelete} />
 	</AdminCard>
 {/if}
 

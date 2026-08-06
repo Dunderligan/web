@@ -40,7 +40,7 @@
 		await confirmCtx.confirm({
 			title: 'Radera division',
 			description: `Är du säker på att du vill radera ${division.name}, ${season.name}?`,
-			negative: true,
+			destructive: true,
 			action: async () => {
 				await deleteDivision({
 					id: division.id
@@ -118,7 +118,7 @@
 			</Label>
 		</div>
 
-		<Button icon="ph:trash" label="Radera division" kind="negative" onclick={submitDelete} />
+		<Button icon="ph:trash" label="Radera division" kind="destructive" onclick={submitDelete} />
 	</AdminCard>
 {/if}
 

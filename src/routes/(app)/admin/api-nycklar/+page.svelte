@@ -46,7 +46,7 @@
 			title: 'Radera API-nyckel',
 			description:
 				'Är du säker på att du vill radera den här API-nyckeln? Alla applikationer som använder den kommer att sluta fungera. Den här åtgärden går inte att ångra.',
-			negative: true,
+			destructive: true,
 			action: async () => {
 				await deleteApiKey({ id });
 

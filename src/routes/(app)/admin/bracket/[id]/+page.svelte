@@ -39,7 +39,7 @@
 		await confirmCtx.confirm({
 			title: 'Radera bracket',
 			description: `Är du säker på att du vill radera bracket ${bracket.name ?? division.name}, ${season.name}?`,
-			negative: true,
+			destructive: true,
 			action: async () => {
 				await deleteBracket({
 					id: bracket.id
@@ -111,7 +111,7 @@
 			</Label>
 		</div>
 
-		<Button icon="ph:trash" label="Radera bracket" kind="negative" onclick={onDeleteClicked} />
+		<Button icon="ph:trash" label="Radera bracket" kind="destructive" onclick={onDeleteClicked} />
 	</AdminCard>
 {/if}
 

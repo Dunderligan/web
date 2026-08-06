@@ -3,7 +3,6 @@
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import AdminLink from '$lib/components/admin/AdminLink.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
 	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
 	import InputField from '$lib/components/ui/InputField.svelte';
 	import Label from '$lib/components/ui/Label.svelte';
@@ -11,7 +10,6 @@
 	import DateInput from '$lib/components/ui/DateInput.svelte';
 	import { createSeason } from '$lib/remote/season.remote';
 	import Checkbox from '$lib/components/ui/Checkbox.svelte';
-	import { uploadSeasonData } from '$lib/remote/misc.remote';
 	import { isAdmin, isModerator } from '$lib/authRole.js';
 	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
 
@@ -29,9 +27,6 @@
 	let legacyRanks = $state(false);
 	let hidden = $state(false);
 
-	let dataFiles = $state<FileList | null>(null);
-	let uploading = $state(false);
-
 	async function submitNewSeason() {
 		const { season } = await createSeason({
 			name: newSeasonName,
@@ -46,22 +41,6 @@
 	function resetNewSeason() {
 		newSeasonName = '';
 		newSeasonStartedAt = new Date();
-	}
-
-	async function uploadData(func: (json: any) => Promise<{ season: { id: string } }>) {
-		if (!dataFiles?.length) return;
-
-		uploading = true;
-		try {
-			const file = dataFiles[0];
-			const text = await file.text();
-			const json = JSON.parse(text);
-
-			const { season } = await func(json);
-			await goto(`/admin/sasong/${season.id}`);
-		} finally {
-			uploading = false;
-		}
 	}
 </script>
 

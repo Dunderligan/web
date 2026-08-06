@@ -255,7 +255,7 @@ export type LogicalMatch = {
 	state: MatchState;
 };
 
-export type ButtonKind = 'primary' | 'secondary' | 'tertiary' | 'transparent' | 'negative';
+export type ButtonKind = 'primary' | 'secondary' | 'tertiary' | 'transparent' | 'destructive';
 
 export type SeasonState = 'upcoming' | 'ongoing' | 'ended';
 
@@ -365,4 +365,10 @@ export type AwardType = {
 	name: string;
 	showDivision: boolean;
 	imageUrl: string | null;
+};
+
+export type Hero = {
+	name: string;
+	slug: string;
+	role: Role;
 };

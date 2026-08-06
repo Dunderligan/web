@@ -5,7 +5,7 @@ const { get, set } = defineContext<ConfirmContext>('$_confirm_state');
 export type ConfirmData = {
 	title: string;
 	description: string;
-	negative?: boolean;
+	destructive?: boolean;
 	icon?: string;
 	action?: () => Promise<void>;
 };

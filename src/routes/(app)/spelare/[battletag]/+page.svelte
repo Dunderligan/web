@@ -338,7 +338,7 @@
 			<Field title="Signaturhjältar">
 				<div class="mt-1 flex flex-wrap gap-1">
 					{#each data.player.signatureHeroes as { hero }}
-						<HeroPortrait name={hero.name} size="sm" />
+						<HeroPortrait {hero} size="sm" />
 					{/each}
 				</div>
 			</Field>
@@ -360,7 +360,7 @@
 		{/if}
 
 		{#if data.player.socials.length > 0}
-			<Field title="Sociala medier">
+			<Field title="Länkar">
 				<div class="mt-1 flex items-center gap-3">
 					{#each data.player.socials as { platform, url } (platform)}
 						<TeamSocial class="text-3xl" {platform} href={url} />

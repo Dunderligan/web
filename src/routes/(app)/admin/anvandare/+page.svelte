@@ -52,11 +52,11 @@
 		]}
 	>
 		{#snippet row({ value: user })}
-			<div class="flex items-center py-4 pl-6 text-lg font-semibold">
+			<div class="py-4 pl-6 font-semibold">
 				{user.battletag}
 			</div>
 
-			<div class="flex items-center justify-center">
+			<div>
 				<Select
 					type="single"
 					class="grow"
@@ -71,7 +71,7 @@
 				/>
 			</div>
 
-			<div class="flex items-center justify-center font-medium">
+			<div class="justify-center">
 				{formatDate(user.createdAt)}
 			</div>
 		{/snippet}

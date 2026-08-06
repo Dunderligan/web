@@ -68,7 +68,7 @@
 	}
 </script>
 
-<AdminCard title="Sociala medier">
+<AdminCard title="Länkar">
 	{#if socials.length === 0}
 		<AdminEmptyNotice oncreateclick={() => (newDialogOpen = true)}>
 			{emptyText}
