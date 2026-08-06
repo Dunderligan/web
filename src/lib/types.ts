@@ -346,3 +346,9 @@ export type SearchItem = {
 	image?: string | null;
 	type: 'player' | 'roster' | 'season';
 };
+
+export type Hero = {
+	name: string;
+	slug: string;
+	role: Role;
+};

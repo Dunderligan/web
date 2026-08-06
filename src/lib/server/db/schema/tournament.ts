@@ -218,7 +218,9 @@ export const registration = pgTable('registration', {
 
 export const hero = pgTable('hero', {
 	id: uuid().primaryKey().defaultRandom(),
-	name: text().notNull().unique()
+	name: text().notNull(),
+	slug: text().notNull().unique(),
+	role: roleEnum().notNull()
 });
 
 export const signatureHero = pgTable(

@@ -141,7 +141,7 @@
 		<div class="space-y-1.5 py-1">
 			{#each player.signatureHeroes as { hero }, i}
 				<div class="flex items-center gap-2">
-					<HeroPortrait name={hero.name} size="sm" />
+					<HeroPortrait {hero} size="sm" />
 
 					<div class="font-medium capitalize">
 						{hero.name}
@@ -290,7 +290,7 @@
 			{#snippet itemSnippet({ value })}
 				{@const hero = data.heroes.find((h) => h.id === value)!}
 
-				<HeroPortrait name={hero.name} size="xs" class="mr-2" />
+				<HeroPortrait {hero} size="xs" class="mr-2" />
 			{/snippet}
 		</Select>
 	</Label>

@@ -304,7 +304,7 @@
 			<Field title="Signaturhjältar">
 				<div class="mt-1 flex flex-wrap gap-1">
 					{#each data.player.signatureHeroes as { hero }}
-						<HeroPortrait name={hero.name} size="sm" />
+						<HeroPortrait {hero} size="sm" />
 					{/each}
 				</div>
 			</Field>

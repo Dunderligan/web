@@ -64,7 +64,11 @@ export const load = async ({ params, locals }) => {
 			signatureHeroes: {
 				columns: {},
 				with: {
-					hero: true
+					hero: {
+						columns: {
+							id: false
+						}
+					}
 				}
 			},
 			aliases: true
