@@ -25,17 +25,6 @@ export const POST = async ({ request }) => {
 		where: {
 			battletag: {
 				ilike: battletag
-			},
-			memberships: {
-				roster: {
-					group: {
-						division: {
-							season: {
-								id: seasonId
-							}
-						}
-					}
-				}
 			}
 		},
 		columns: {

@@ -12,38 +12,38 @@ Response type:
 
 ```ts
 type SeasonResponse = {
-  seasons: Season[]
-}
+	seasons: Season[];
+};
 
 type Season = {
-  id: string;
-  name: string;
-  slug: string;
-  legacyRanks: boolean;
-  hidden: boolean;
-  startedAt: string;
-  endedAt: string | null;
-  divisions: Division[];
-}
+	id: string;
+	name: string;
+	slug: string;
+	legacyRanks: boolean;
+	hidden: boolean;
+	startedAt: string;
+	endedAt: string | null;
+	divisions: Division[];
+};
 
 type Division = {
-    id: string;
-    name: string;
-    slug: string;
-    groups: Group[];
-    brackets: Bracket[];
-}
+	id: string;
+	name: string;
+	slug: string;
+	groups: Group[];
+	brackets: Bracket[];
+};
 
 type Group = {
-    id: string;
-    name: string;
-    slug: string;
-}
+	id: string;
+	name: string;
+	slug: string;
+};
 
 type Bracket = {
-    id: string;
-    name: string;
-}
+	id: string;
+	name: string;
+};
 ```
 
 ## `GET /division/[id]`
@@ -54,37 +54,37 @@ Response type:
 
 ```ts
 type DivisionResponse = {
-    id: string;
-    name: string;
-    slug: string;
-    season: Season;
-    groups: Group[];
-    brackets: Bracket[];
-}
+	id: string;
+	name: string;
+	slug: string;
+	season: Season;
+	groups: Group[];
+	brackets: Bracket[];
+};
 
 type Season = {
-  id: string;
-  name: string;
-  slug: string;
-}
+	id: string;
+	name: string;
+	slug: string;
+};
 
 type Group = {
-    id: string;
-    name: string;
-    slug: string;
-    rosters: Roster[];
-}
+	id: string;
+	name: string;
+	slug: string;
+	rosters: Roster[];
+};
 
 type Roster = {
-    id: string;
-    name: string;
-    slug: string;
-}
+	id: string;
+	name: string;
+	slug: string;
+};
 
 type Bracket = {
-    id: string;
-    name: string;
-}
+	id: string;
+	name: string;
+};
 ```
 
 ## `GET /division/[id]/standings`
@@ -95,22 +95,22 @@ Response type:
 
 ```ts
 type DivisionStandings = {
-    tables: Table[]
+	tables: Table[];
 };
 
 type Table = {
-    name: string;
-    standings: {
-        score: TableScore;
-        roster: Roster;
-    }[];
-}
+	name: string;
+	standings: {
+		score: TableScore;
+		roster: Roster;
+	}[];
+};
 
 type Roster = {
-    id: string;
-    name: string;
-    slug: string;
-}
+	id: string;
+	name: string;
+	slug: string;
+};
 
 type TableScore = {
 	mapWins: number;
@@ -128,55 +128,62 @@ Response type:
 
 ```ts
 type Roster = {
-    id: string;
-    name: string;
-    slug: string;
-    group: Group;
-    team: Team;
-    members: Member[];
-}
+	id: string;
+	name: string;
+	slug: string;
+	group: Group;
+	team: Team;
+	members: Member[];
+};
 
 type Group = {
-    id: string;
-    name: string;
-    slug: string;
-    division: Division;
-}
+	id: string;
+	name: string;
+	slug: string;
+	division: Division;
+};
 
 type Division = {
-    id: string;
-    name: string;
-    slug: string;
-    season: Season;
-}
+	id: string;
+	name: string;
+	slug: string;
+	season: Season;
+};
 
 type Season = {
-    id: string;
-    name: string;
-    slug: string;
-    legacyRanks: boolean;
-}
+	id: string;
+	name: string;
+	slug: string;
+	legacyRanks: boolean;
+};
 
 type Member = {
-    rank: Rank | null;
-    role: Role;
-    tier: number | null;
-    sr: number | null;
-    isCaptain: boolean;
-    player: {
-        battletag: string;
-    };
-}
+	rank: Rank | null;
+	role: Role;
+	tier: number | null;
+	sr: number | null;
+	isCaptain: boolean;
+	player: {
+		battletag: string;
+	};
+};
 
 type Team = {
-    id: string;
-}
+	id: string;
+};
 
-type Rank = 'champion' | 'grandmaster' | 'master' | 'diamond' | 'platinum' | 'gold' | 'silver' | 'bronze';
+type Rank =
+	| 'champion'
+	| 'grandmaster'
+	| 'master'
+	| 'diamond'
+	| 'platinum'
+	| 'gold'
+	| 'silver'
+	| 'bronze';
 
 type Role = 'tank' | 'damage' | 'support' | 'flex' | 'coach' | 'manager';
 ```
-
 
 ## `POST /match`
 
@@ -186,37 +193,37 @@ Request type:
 
 ```ts
 type CreateMatchRequest = {
-    rosterAId: string;
-    rosterBId: string;
-    groupId: string;
-    scheduledAt: string | null; // ISO date string
-}
+	rosterAId: string;
+	rosterBId: string;
+	groupId: string;
+	scheduledAt: string | null; // ISO date string
+};
 ```
 
 Response type:
 
 ```ts
 type Match = {
-    id: string;
-    createdAt: string;
-    groupId: string | null;
-    bracketId: string | null;
-    rosterAId: string | null;
-    rosterBId: string | null;
-    teamAScore: number;
-    teamBScore: number;
-    draws: number;
-    teamANote: string | null;
-    teamBNote: string | null;
-    state: MatchState;
-    playedAt: string | null;
-    scheduledAt: string | null;
-    vodUrl: string | null;
-    nextMatchId: string | null;
-    order: number;
-}
+	id: string;
+	createdAt: string;
+	groupId: string | null;
+	bracketId: string | null;
+	rosterAId: string | null;
+	rosterBId: string | null;
+	teamAScore: number;
+	teamBScore: number;
+	draws: number;
+	teamANote: string | null;
+	teamBNote: string | null;
+	state: MatchState;
+	playedAt: string | null;
+	scheduledAt: string | null;
+	vodUrl: string | null;
+	nextMatchId: string | null;
+	order: number;
+};
 
-type MatchState = 'scheduled' |'played' | 'walkover' | 'cancelled'
+type MatchState = 'scheduled' | 'played' | 'walkover' | 'cancelled';
 ```
 
 ## `GET /match`
@@ -237,12 +244,12 @@ Response type:
 
 ```ts
 type MatchResponse = {
-    results: Match[];
-    hasNextPage: boolean;
-}
+	results: Match[];
+	hasNextPage: boolean;
+};
 
 type Match = {
-    id: string;
+	id: string;
 	teamAScore: number;
 	teamBScore: number;
 	draws: number;
@@ -253,46 +260,118 @@ type Match = {
 	scheduledAt: string | null; // ISO date string
 	vodUrl: string | null;
 	nextMatchId: string | null;
-    rosterA: MatchRoster | null;
-    rosterB: MatchRoster | null;
-    // exactly one of these are be null
-    group: Group | null,
-    bracket: Bracket | null;
-}
+	rosterA: MatchRoster | null;
+	rosterB: MatchRoster | null;
+	// exactly one of these are be null
+	group: Group | null;
+	bracket: Bracket | null;
+};
 
 type MatchRoster = {
-    id: string;
-    name: string;
-    slug: string;
-}
+	id: string;
+	name: string;
+	slug: string;
+};
 
 type Group = {
-    id: string;
-    name: string;
-    slug: string;
-    division: Division;
-}
+	id: string;
+	name: string;
+	slug: string;
+	division: Division;
+};
 
 type Bracket = {
-    id: string;
-    name: string;
-    division: Division;
-}
+	id: string;
+	name: string;
+	division: Division;
+};
 
 type Division = {
-    id: string;
-    name: string;
-    slug: string;
-    season: Season;
-}
+	id: string;
+	name: string;
+	slug: string;
+	season: Season;
+};
 
 type Season = {
-    id: string;
-    name: string;
-    slug: string;
-    legacyRanks: boolean;
-    startedAt: string | null; // ISO date string
-}
+	id: string;
+	name: string;
+	slug: string;
+	legacyRanks: boolean;
+	startedAt: string | null; // ISO date string
+};
 
 type MatchState = 'scheduled' | 'played' | 'walkover' | 'cancelled';
+```
+
+## `POST /checkin`
+
+Checks in a Discord user by battletag for the season. Requires an API key with admin privileges or higher.
+
+Returns an error if the user was already checked in, or if no player with the battletag (case-insensitive) was found.
+
+Request type:
+
+```ts
+export type CheckinRequest = {
+	seasonId: string;
+	battletag: string;
+	discordId: string;
+};
+```
+
+Response type:
+
+```ts
+export type Checkin = {
+	discordId: string;
+	checkedInAt: Date;
+	player: {
+		id: string;
+		battletag: string;
+		memberships: {
+			rank: Rank | null;
+			role: Role;
+			tier: number | null;
+			sr: number | null;
+			isCaptain: boolean;
+			registeredName: string | null;
+			roster: {
+				id: string;
+				name: string;
+				slug: string;
+			};
+		}[];
+	};
+};
+```
+
+## `GET /api/checkin/[seasonId]/[discordId]`
+
+Get a checked-in user by season and discord id. Requires an API key with admin privileges or higher.
+
+Response type:
+
+```ts
+export type Checkin = {
+	discordId: string;
+	checkedInAt: Date;
+	player: {
+		id: string;
+		battletag: string;
+		memberships: {
+			rank: Rank | null;
+			role: Role;
+			tier: number | null;
+			sr: number | null;
+			isCaptain: boolean;
+			registeredName: string | null;
+			roster: {
+				id: string;
+				name: string;
+				slug: string;
+			};
+		}[];
+	};
+};
 ```
