@@ -5,6 +5,7 @@
 	type Props = {
 		class?: ClassValue;
 		topMargin?: boolean;
+		shadow?: boolean;
 		children?: Snippet;
 	};
 
