@@ -31,7 +31,7 @@
 			(match) =>
 				match.state === MatchState.PLAYED ||
 				// don't show walkovers where one team is missing (byes)
-				(match.state === MatchState.WALKOVER && match.rosterAId && match.rosterBId)
+				(match.state === MatchState.WALKOVER && match.rosterA && match.rosterB)
 		)
 	);
 	const upcomingMatches = $derived(matches.filter((match) => match.state === MatchState.SCHEDULED));

@@ -212,12 +212,16 @@ export function parseMatchQueryParams(searchParams: URLSearchParams): MatchQuery
 	const isBracketParam = searchParams.get('isBracket');
 	const isBracket = isBracketParam ? isBracketParam === 'true' : undefined;
 
+	// default to true
+	const includeEmpty = searchParams.get('includeEmpty') === 'true';
+
 	return {
 		rosterId: searchParams.get('rosterId') ?? undefined,
 		divisionId: searchParams.get('divisionId') ?? undefined,
 		seasonId: searchParams.get('seasonId') ?? undefined,
 		page: Number(searchParams.get('page') ?? 0),
 		isBracket,
+		includeEmpty,
 		pageSize,
 		state
 	};

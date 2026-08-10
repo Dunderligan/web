@@ -90,7 +90,12 @@ export const fullMatchColumns = {
 } as const;
 
 export const fullMatchQuery = {
-	columns: fullMatchColumns,
+	columns: {
+		...fullMatchColumns,
+		// The IDs are already included in the joined roster objects, don't query them twice
+		rosterAId: false,
+		rosterBId: false
+	},
 	orderBy: groupMatchOrder,
 	with: {
 		rosterA: matchRosterQuery,
@@ -99,8 +104,7 @@ export const fullMatchQuery = {
 } as const;
 
 export const fullMatchQueryWithContext = {
-	columns: fullMatchColumns,
-	orderBy: groupMatchOrder,
+	...fullMatchQuery,
 	with: {
 		...fullMatchQuery.with,
 		group: nestedGroupQuery,
