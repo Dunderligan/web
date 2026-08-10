@@ -29,6 +29,17 @@ export const GET = async ({ params }) => {
 						...memberQueryWithoutPlayer,
 						with: {
 							roster: matchRosterQuery
+						},
+						where: {
+							roster: {
+								group: {
+									division: {
+										season: {
+											id: seasonId
+										}
+									}
+								}
+							}
 						}
 					}
 				}
