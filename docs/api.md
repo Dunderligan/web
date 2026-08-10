@@ -1,12 +1,10 @@
+# API Docs
+
 The site has a small public API, documented here. All paths are prefixed with `/api` (for example, the full URL to the first endpoint is https://dunderligan.se/api/season).
 
 An API key is required for some routes. These can currently only be created by admins in the admin panel. The client provides the API key in the `Authorization` header as a `Bearer` token.
 
----
-
-```
-GET /season
-```
+## `GET /season`
 
 Returns all seasons with divisions, groups and brackets.
 
@@ -48,11 +46,7 @@ type Bracket = {
 }
 ```
 
----
-
-```
-GET /division/[id]
-```
+## `GET /division/[id]`
 
 Returns groups, rosters and brackets for one division.
 
@@ -93,11 +87,7 @@ type Bracket = {
 }
 ```
 
----
-
-```
-GET /division/[id]/standings
-```
+## `GET /division/[id]/standings`
 
 Returns standings for a division.
 
@@ -130,11 +120,7 @@ type TableScore = {
 };
 ```
 
----
-
-```
-GET /roster/[id]
-```
+## `GET /roster/[id]`
 
 Returns roster with players, group, division and season.
 
@@ -191,11 +177,8 @@ type Rank = 'champion' | 'grandmaster' | 'master' | 'diamond' | 'platinum' | 'go
 type Role = 'tank' | 'damage' | 'support' | 'flex' | 'coach' | 'manager';
 ```
 
----
 
-```
-POST /match
-```
+## `POST /match`
 
 Creates a scheduled match between two rosters. Requires an API key with moderator privileges or higher.
 
@@ -236,11 +219,7 @@ type Match = {
 type MatchState = 'scheduled' |'played' | 'walkover' | 'cancelled'
 ```
 
----
-
-```
-GET /match
-```
+## `GET /match`
 
 Returns matches, filtered by query parameters.
 

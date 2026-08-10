@@ -250,3 +250,18 @@ export const playerAlias = pgTable(
 		index('player_alias_name_gin_idx').using('gin', t.name.op('gin_trgm_ops'))
 	]
 );
+
+export const playerCheckin = pgTable(
+	'player_checkin',
+	{
+		playerId: uuid()
+			.notNull()
+			.references(() => player.id, { onDelete: 'cascade' }),
+		seasonId: uuid()
+			.notNull()
+			.references(() => season.id, { onDelete: 'cascade' }),
+		discordId: text().notNull(),
+		checkedInAt: timestamp().notNull().defaultNow()
+	},
+	(t) => [primaryKey({ columns: [t.playerId, t.seasonId] }), unique().on(t.discordId, t.seasonId)]
+);

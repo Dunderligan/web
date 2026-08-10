@@ -20,19 +20,24 @@ export const entityQuery = {
 } as const;
 
 /**
+ * Query for the base information about a season.
+ */
+export const nestedSeasonQuery = {
+	columns: {
+		legacyRanks: true,
+		startedAt: true,
+		spinoff: true,
+		...entityQuery.columns
+	}
+};
+
+/**
  * Query for a division with the parent season nested.
  */
 export const nestedDivisionQuery = {
 	...entityQuery,
 	with: {
-		season: {
-			columns: {
-				legacyRanks: true,
-				startedAt: true,
-				spinoff: true,
-				...entityQuery.columns
-			}
-		}
+		season: nestedSeasonQuery
 	}
 } as const;
 
@@ -116,7 +121,7 @@ export const finalMatchQuery = {
 	}
 } as const;
 
-export const memberQuery = {
+export const memberQueryWithoutPlayer = {
 	orderBy: (t: any) => sql`${rolesOrder(t.role)}, ${t.playerId} ASC`,
 	columns: {
 		isCaptain: true,
@@ -125,7 +130,11 @@ export const memberQuery = {
 		sr: true,
 		role: true,
 		registeredName: true
-	},
+	}
+} as const;
+
+export const memberQuery = {
+	...memberQueryWithoutPlayer,
 	with: {
 		player: {
 			columns: {
