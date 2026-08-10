@@ -19,8 +19,8 @@ export const matchSchema = z.object({
 	teamBNote: z.string().nullish(),
 	state: z.enum(MatchState).default(MatchState.SCHEDULED),
 	vodUrl: z.url().nullish(),
-	scheduledAt: z.date().nullish(),
-	playedAt: z.date().nullish()
+	scheduledAt: z.coerce.date().nullish(),
+	playedAt: z.coerce.date().nullish()
 });
 
 export const socialSchema = z.object({
