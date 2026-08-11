@@ -15,15 +15,15 @@
 		{
 			info: {
 				icon: 'ph:info',
-				class: 'bg-accent-50 text-accent-800 dark:bg-accent-950 dark:text-accent-300'
+				class: 'bg-accent-50 text-accent-800 dark:bg-accent-950/70 dark:text-accent-200'
 			},
 			warn: {
 				icon: 'ph:warning',
-				class: 'bg-yellow-50 text-yellow-800 dark:bg-yellow-950 dark:text-yellow-300'
+				class: 'bg-yellow-50 text-yellow-800 dark:bg-yellow-950/70 dark:text-yellow-200'
 			},
 			error: {
 				icon: 'ph:x-circle',
-				class: 'bg-red-50 text-red-800 dark:bg-red-950 dark:text-red-300'
+				class: 'bg-red-50 text-red-800 dark:bg-red-950/70 dark:text-red-200'
 			}
 		}[kind]
 	);
@@ -36,7 +36,7 @@
 		'flex min-h-14 items-center gap-4 rounded-lg py-2 pr-3 pl-6 font-medium'
 	]}
 >
-	<Icon {icon} />
+	<Icon {icon} class="mb-0.5" />
 
 	{@render children?.()}
 </div>

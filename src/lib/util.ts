@@ -267,3 +267,14 @@ export function compare(a: any, b: any): number {
 export function compareNullableStrings(a?: string | null, b?: string | null): number {
 	return compareNullable(a ?? null, b ?? null, (x, y) => x.localeCompare(y));
 }
+
+export const PLAYER_ROLES = [Role.DAMAGE, Role.TANK, Role.SUPPORT, Role.FLEX];
+export const ORGANIZATION_ROLES = [Role.COACH, Role.MANAGER];
+
+export function isPlayerRole(role: Role): boolean {
+	return PLAYER_ROLES.includes(role);
+}
+
+export function isOrganizationRole(role: Role): boolean {
+	return ORGANIZATION_ROLES.includes(role);
+}

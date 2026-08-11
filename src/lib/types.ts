@@ -54,6 +54,7 @@ export enum Rank {
 	SILVER = 'silver',
 	GOLD = 'gold',
 	PLATINUM = 'platinum',
+	EMERALD = 'emerald',
 	DIAMOND = 'diamond',
 	MASTER = 'master',
 	GRANDMASTER = 'grandmaster',

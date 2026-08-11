@@ -19,15 +19,16 @@
 
 	const typeClass = $derived(
 		{
-			primary: 'bg-accent-600 not-disabled:hover:bg-accent-700 font-semibold text-white',
+			primary:
+				'bg-accent-600 not-disabled:hover:bg-accent-700 font-semibold text-white dark:bg-accent-700 dark:not-disabled:hover:bg-accent-800',
 			secondary:
 				'bg-gray-200 text-gray-700 not-disabled:hover:bg-gray-300 font-semibold dark:bg-gray-800 dark:not-disabled:hover:bg-gray-700 dark:text-gray-300',
 			tertiary:
-				'text-gray-600 font-medium not-disabled:hover:bg-gray-50 dark:text-gray-400 dark:not-disabled:hover:bg-gray-800',
+				'text-gray-600 font-medium not-disabled:hover:bg-gray-100 dark:text-gray-400 dark:not-disabled:hover:bg-gray-800',
 			transparent:
 				'text-accent-800 not-disabled:hover:bg-accent-100 dark:text-accent-300 dark:not-disabled:hover:bg-accent-900',
 			destructive:
-				'bg-red-700 not-disabled:hover:bg-red-600 font-semibold text-red-100 not-disabled:hover:text-white'
+				'bg-red-700 not-disabled:hover:bg-red-600 font-semibold text-red-100 not-disabled:hover:text-white dark:bg-red-800 dark:not-disabled:hover:bg-red-700 dark:not-disabled:hover:text-white'
 		}[kind]
 	);
 </script>

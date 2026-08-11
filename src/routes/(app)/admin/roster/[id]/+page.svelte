@@ -5,8 +5,6 @@
 	import AdminLink from '$lib/components/admin/AdminLink.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
-	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
-	import Icon from '$lib/components/ui/Icon.svelte';
 	import InputField from '$lib/components/ui/InputField.svelte';
 	import Label from '$lib/components/ui/Label.svelte';
 	import RosterLogoUpload from '$lib/components/admin/RosterLogoUpload.svelte';
@@ -14,16 +12,17 @@
 	import Select from '$lib/components/ui/Select.svelte';
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
 	import { SaveContext } from '$lib/state/save.svelte';
-	import { Rank, Role, SocialPlatform } from '$lib/types';
-	import { formatSocialPlatform, flattenGroup } from '$lib/util';
+	import { Rank, Role } from '$lib/types';
+	import { flattenGroup } from '$lib/util';
 	import TeamSelect from '$lib/components/admin/TeamSelect.svelte';
 	import { deleteRoster, editRoster, mergeTeams, moveRoster } from '$lib/remote/roster.remote';
-	import AdminMembersTable from '$lib/components/table/AdminMembersTable.svelte';
+	import EditableMembersTable from '$lib/components/table/EditableMembersTable.svelte';
 	import Notice from '$lib/components/ui/Notice.svelte';
 	import { getDivisionsBySeason } from '$lib/remote/season.remote';
 	import Checkbox from '$lib/components/ui/Checkbox.svelte';
 	import { AuthRole, checkPermission } from '$lib/authRole';
 	import AdminSocials from '$lib/components/admin/AdminSocials.svelte';
+	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
 
 	let { data } = $props();
 
@@ -41,9 +40,6 @@
 
 	let confirm = ConfirmContext.get();
 	let saveCtx = SaveContext.get();
-
-	let newPlayerOpen = $state(false);
-	let newPlayerBattletag = $state('');
 
 	let linkTeamOpen = $state(false);
 	let linkTeamId: string | undefined = $state();
@@ -64,29 +60,6 @@
 			members: roster.members,
 			socials: team.socials
 		});
-	}
-
-	async function addNewPlayer() {
-		roster.members.push({
-			isCaptain: false,
-			role: Role.DAMAGE,
-			rank: season.legacyRanks ? null : Rank.BRONZE,
-			tier: season.legacyRanks ? null : 1,
-			sr: season.legacyRanks ? 0 : null,
-			registeredName: null,
-			player: {
-				id: null as any as string, // the backend will either link this up with an existing player, or create a new one
-				battletag: newPlayerBattletag.trim()
-			}
-		});
-
-		saveCtx.setDirty();
-		resetNewPlayer();
-	}
-
-	function resetNewPlayer() {
-		newPlayerOpen = false;
-		newPlayerBattletag = '';
 	}
 
 	async function onDeleteClick() {
@@ -133,24 +106,11 @@
 />
 
 <AdminCard title="Spelare">
-	{#if roster.members.length === 0}
-		<AdminEmptyNotice oncreateclick={() => (newPlayerOpen = true)} hideCreateButton={!isAdmin}>
-			Detta roster har inga medlemmar.
-		</AdminEmptyNotice>
-	{:else}
-		<AdminMembersTable
-			bind:members={roster.members}
-			legacyRanks={season.legacyRanks}
-			disabled={!isAdmin}
-			ondelete={(index) => {
-				roster.members.splice(index, 1);
-			}}
-		/>
-
-		{#if isAdmin}
-			<Button kind="primary" icon="ph:plus" onclick={() => (newPlayerOpen = true)} />
-		{/if}
-	{/if}
+	<EditableMembersTable
+		bind:members={roster.members}
+		legacyRanks={season.legacyRanks}
+		disabled={!isAdmin}
+	/>
 </AdminCard>
 
 {#if isAdmin}
@@ -215,18 +175,6 @@
 		{/if}
 	</AdminCard>
 {/if}
-
-<CreateDialog
-	title="Lägg till spelare"
-	bind:open={newPlayerOpen}
-	oncreate={addNewPlayer}
-	onclose={resetNewPlayer}
-	disabled={!newPlayerBattletag.trim()}
->
-	<Label label="Battletag">
-		<InputField bind:value={newPlayerBattletag} placeholder="Spelare#0000" onenter={addNewPlayer} />
-	</Label>
-</CreateDialog>
 
 <CreateDialog
 	title="Länka roster"

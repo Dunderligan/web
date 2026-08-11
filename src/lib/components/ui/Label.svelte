@@ -10,7 +10,7 @@
 	let { label, column = false, children }: Props = $props();
 </script>
 
-<div class={['flex max-w-xl gap-2', column ? 'flex-col items-start' : 'items-center']}>
+<label class={['flex max-w-xl gap-2', column ? 'flex-col items-start' : 'items-center']}>
 	<div
 		class="flex w-1/3 min-w-40 shrink grow-0 items-center gap-2 font-medium text-gray-700 dark:text-gray-300"
 	>
@@ -22,4 +22,4 @@
 	</div>
 
 	{@render children?.()}
-</div>
+</label>
