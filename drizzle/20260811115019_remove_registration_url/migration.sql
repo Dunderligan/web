@@ -1,0 +1,1 @@
+ALTER TABLE "registration" DROP COLUMN "url";

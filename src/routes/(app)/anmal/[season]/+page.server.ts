@@ -10,8 +10,7 @@ export const load = async ({ params }) => {
 		},
 		columns: {
 			openDate: true,
-			closeDate: true,
-			url: true
+			closeDate: true
 		}
 	});
 

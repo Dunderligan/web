@@ -14,16 +14,5 @@
 
 	{#if closed}
 		<Notice kind="warn">Anmälan för denna säsong är stängd.</Notice>
-	{:else}
-		<iframe
-			src={data.registration.url}
-			width="100%"
-			height="4100"
-			frameborder="0"
-			title="Anmälningsformulär"
-			class="mx-auto"
-		>
-			Laddar formulär...
-		</iframe>
-	{/if}
+	{:else}{/if}
 </PageSection>

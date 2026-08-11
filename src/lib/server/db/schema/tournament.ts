@@ -211,7 +211,6 @@ export const registration = pgTable('registration', {
 		.unique()
 		.references(() => season.id, { onDelete: 'cascade' })
 		.notNull(),
-	url: text().notNull(),
 	openDate: timestamp().notNull(),
 	closeDate: timestamp().notNull()
 });
