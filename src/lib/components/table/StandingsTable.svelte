@@ -56,7 +56,7 @@
 		{#if row === 'playoffLine'}
 			<div class="my-2.5 border-t-2 border-dashed border-red-600"></div>
 			<div class="my-2.5 border-t-2 border-dashed border-red-600"></div>
-			<div class="my-auto bg-transparent text-center text-sm text-red-600">Playoffs</div>
+			<div class="justify-center bg-transparent! text-sm text-red-600">Playoffs</div>
 			<div class="my-2.5 border-t-2 border-dashed border-red-600"></div>
 			<div class="my-2.5 border-t-2 border-dashed border-red-600"></div>
 		{:else}
