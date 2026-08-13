@@ -51,7 +51,7 @@ export const POST = async ({ request }) => {
 		.returning();
 
 	if (!checkin) {
-		// player was already checked in
+		// player was already checked in, return 409 Conflict
 		error(409, 'Player already checked in');
 	}
 

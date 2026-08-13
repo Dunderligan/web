@@ -48,7 +48,7 @@ export const GET = async ({ params }) => {
 	});
 
 	if (!checkin) {
-		error(404);
+		error(404, 'Player either does not exist or has not checked in for this season');
 	}
 
 	return json(checkin);
