@@ -117,6 +117,14 @@
 
 {#snippet viewport()}
 	<Select.Viewport>
+		{#if canClear && type === 'single' && selectedItem}
+			<Select.Item label="Rensa" value="__clear" class="floating-item">
+				{@render icon('ph:backspace')}
+
+				<span>Rensa</span>
+			</Select.Item>
+		{/if}
+
 		{#each items as item, i (i + item.value)}
 			<Select.Item {...item} class="floating-item">
 				{#snippet children({ selected })}
@@ -130,14 +138,6 @@
 				{/snippet}
 			</Select.Item>
 		{/each}
-
-		{#if canClear && type === 'single' && selectedItem}
-			<Select.Item label="Rensa" value="__clear" class="floating-item">
-				{@render icon('ph:x-circle')}
-
-				<span>Rensa</span>
-			</Select.Item>
-		{/if}
 	</Select.Viewport>
 {/snippet}
 

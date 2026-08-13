@@ -105,7 +105,7 @@
 </AdminCard>
 
 <CreateDialog
-	title="Lägg till social media"
+	title="Lägg till länk"
 	bind:open={newDialogOpen}
 	oncreate={submit}
 	onclose={reset}
