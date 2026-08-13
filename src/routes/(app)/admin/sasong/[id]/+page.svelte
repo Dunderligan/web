@@ -22,6 +22,7 @@
 	import Note from '$lib/components/ui/Note.svelte';
 	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
 	import { isAdmin } from '$lib/authRole.js';
+	import AdminLink from '$lib/components/admin/AdminLink.svelte';
 
 	const { data } = $props();
 
@@ -60,6 +61,7 @@
 			legacySeeding: season.legacySeeding,
 			hidden: season.hidden,
 			spinoff: season.spinoff,
+			checkinOpen: season.checkinOpen,
 			registration
 		});
 	}
@@ -202,6 +204,10 @@
 
 			<Label label="SR-poäng">
 				<Checkbox bind:checked={season.legacyRanks} onCheckedChange={saveCtx.setDirty} />
+			</Label>
+
+			<Label label="Incheckning öppen">
+				<Checkbox bind:checked={season.checkinOpen} onCheckedChange={saveCtx.setDirty} />
 			</Label>
 		</div>
 

@@ -1,9 +1,15 @@
 import { db } from '$lib/server/db';
-import { entityQuery, memberQuery, nestedGroupQuery, rolesOrder } from '$lib/server/db/helpers';
+import {
+	entityQuery,
+	memberQuery,
+	nestedGroupQuery,
+	retrievePlayerCheckins
+} from '$lib/server/db/helpers';
+import type { PlayerCheckin } from '$lib/types';
+import { flattenGroup } from '$lib/util';
 import { error } from '@sveltejs/kit';
-import { sql } from 'drizzle-orm';
 
-export const load = async ({ params, locals }) => {
+export const load = async ({ params }) => {
 	const data = await db.query.roster.findFirst({
 		where: {
 			id: params.id
@@ -39,5 +45,14 @@ export const load = async ({ params, locals }) => {
 	const currentRosterInfo = data.team.rosters.find((roster) => roster.id === data.id)!;
 	const { team, ...roster } = { ...data, ...currentRosterInfo };
 
-	return { roster, team };
+	const { season } = flattenGroup(roster.group);
+
+	const checkins = season.checkinOpen
+		? await retrievePlayerCheckins(
+				season.id,
+				roster.members.map((member) => member.player.id)
+			)
+		: new Map<string, PlayerCheckin>();
+
+	return { roster, team, checkins };
 };

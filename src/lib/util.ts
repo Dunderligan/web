@@ -58,7 +58,7 @@ export function flattenDivision<S, D>(
 	return { season, division: division as D };
 }
 
-/** Flattens a nested group. ({ group: { division: { season } } } -> { group, division, season }) */
+/** Flattens a nested group. (`{ group: { division: { season } } } -> { group, division, season }`) */
 export function flattenGroup<S, D, G>(nestedGroup: NestedGroup<S, D, G>): FlattenedGroup<S, D, G> {
 	const { division: nestedDivision, ...group } = nestedGroup;
 	const { season, division } = flattenDivision(nestedDivision);

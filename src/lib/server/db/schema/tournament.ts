@@ -27,7 +27,8 @@ export const season = pgTable(
 		legacyRanks: boolean().notNull().default(false),
 		legacySeeding: boolean().notNull().default(false),
 		hidden: boolean().notNull().default(false),
-		spinoff: boolean().notNull().default(false)
+		spinoff: boolean().notNull().default(false),
+		checkinOpen: boolean().notNull().default(false)
 	},
 	(t) => [index('season_name_gin_idx').using('gin', t.name.op('gin_trgm_ops'))]
 );

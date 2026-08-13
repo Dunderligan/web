@@ -1,7 +1,8 @@
 import { sql, eq } from 'drizzle-orm';
 import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
-import { schema } from '$lib/server/db';
+import { db, schema } from '$lib/server/db';
 import type { PgTransaction } from 'drizzle-orm/pg-core';
+import type { PlayerCheckin } from '$lib/types';
 
 // Helper queries and functions for database operations.
 
@@ -27,9 +28,10 @@ export const nestedSeasonQuery = {
 		legacyRanks: true,
 		startedAt: true,
 		spinoff: true,
+		checkinOpen: true,
 		...entityQuery.columns
 	}
-};
+} as const;
 
 /**
  * Query for a division with the parent season nested.
@@ -203,4 +205,25 @@ export async function findOrCreatePlayer(tx: Transaction, battletag: string) {
 
 		return newPlayer.id;
 	}
+}
+
+export async function retrievePlayerCheckins(
+	seasonId: string,
+	playerIds: string[]
+): Promise<Map<string, PlayerCheckin>> {
+	const checkins = await db.query.playerCheckin.findMany({
+		where: {
+			seasonId: seasonId,
+			playerId: {
+				in: playerIds
+			}
+		},
+		columns: {
+			playerId: true,
+			checkedInAt: true,
+			discordId: true
+		}
+	});
+
+	return new Map(checkins.map(({ playerId, ...data }) => [playerId, data]));
 }

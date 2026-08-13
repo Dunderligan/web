@@ -20,12 +20,13 @@
 	import RosterSelect from '$lib/components/admin/RosterSelect.svelte';
 	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
 	import { isAdmin } from '$lib/authRole.js';
+	import Progress from '$lib/components/ui/Progress.svelte';
 
 	const { data } = $props();
 
 	let group = $state(data.group);
-	let division = $state(data.division);
-	let season = $state(data.season);
+	const division = $derived(data.division);
+	const season = $derived(data.season);
 
 	RosterContext.set(new RosterContext(data.group.rosters));
 	SaveContext.set(
@@ -122,7 +123,24 @@
 	>
 		{#snippet linkContent({ item: roster })}
 			<RosterLogo id={roster.id} class="mr-2 inline size-12" />
-			<span>{roster.name}</span>
+
+			<div class="grow pr-4">
+				<div>{roster.name}</div>
+
+				{#if season.checkinOpen}
+					{@const totalCount = roster.members.length}
+					{@const checkedInCount = roster.members.filter((member) =>
+						data.checkins.has(member.player.id)
+					).length}
+
+					<Progress
+						label="Incheck:"
+						value={checkedInCount}
+						max={totalCount}
+						color={checkedInCount === totalCount ? 'green' : 'accent'}
+					/>
+				{/if}
+			</div>
 		{/snippet}
 	</AdminLinkList>
 </AdminCard>
