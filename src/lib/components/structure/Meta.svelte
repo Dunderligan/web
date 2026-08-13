@@ -22,7 +22,7 @@
 
 	const fullTitle = $derived(title ? `${title} | Dunderligan` : 'Dunderligan');
 
-	const ACCENT_COLOR = 'rgb(174, 84, 141)';
+	const ACCENT_COLOR = '#ae548d';
 </script>
 
 <svelte:head>
