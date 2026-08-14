@@ -14,15 +14,14 @@ export const updateRegistration = command(
 	z.object({
 		id: z.uuid(),
 		openDate: z.date(),
-		closeDate: z.date()
+		closeDate: z.date(),
+		minPlayers: z.number().int().min(1),
+		maxPlayers: z.number().int().min(1)
 	}),
-	async ({ id, openDate, closeDate }) => {
+	async ({ id, ...data }) => {
 		await roleGuard(AuthRole.ADMIN);
 
-		await db
-			.update(schema.registration)
-			.set({ openDate, closeDate })
-			.where(eq(schema.registration.id, id));
+		await db.update(schema.registration).set(data).where(eq(schema.registration.id, id));
 	}
 );
 
@@ -50,6 +49,15 @@ export const submitTeam = command(
 	async ({ registrationId, data }) => {
 		const { locals } = getRequestEvent();
 
+		const registration = await db.query.registration.findFirst({
+			where: { id: registrationId },
+			columns: { closeDate: true }
+		});
+
+		if (registration && registration.closeDate < new Date()) {
+			throw error(400, 'This registration is closed and cannot be submitted to');
+		}
+
 		const [submission] = await db
 			.insert(schema.teamSubmission)
 			.values({
@@ -73,7 +81,12 @@ async function validateUserAccess(submissionId: string): Promise<User> {
 
 	const submission = await db.query.teamSubmission.findFirst({
 		where: { id: submissionId },
-		columns: { submittedById: true }
+		columns: { submittedById: true },
+		with: {
+			registration: {
+				columns: { closeDate: true }
+			}
+		}
 	});
 
 	if (!submission) {
@@ -84,45 +97,54 @@ async function validateUserAccess(submissionId: string): Promise<User> {
 		throw error(403, 'You do not have permission to access this submission');
 	}
 
+	if (submission.registration.closeDate < new Date() && !isAdmin(locals.user.role)) {
+		throw error(403, 'This registration is closed and cannot be edited');
+	}
+
 	return locals.user;
 }
 
 export const editTeamSubmission = command(
 	z.object({
-		submissionId: z.uuid(),
+		id: z.uuid(),
 		data: submissionSchema
 	}),
-	async ({ submissionId, data }) => {
-		const user = await validateUserAccess(submissionId);
+	async ({ id, data }) => {
+		const user = await validateUserAccess(id);
 
 		await db
 			.update(schema.teamSubmission)
 			.set({
 				name: data.name,
-				data: { members: data.members },
+				data,
 				editedAt: new Date(),
 				// If the user is not an admin, request a re-review of the submission
 				status: !isAdmin(user.role) ? SubmissionStatus.PENDING : undefined
 			})
-			.where(eq(schema.teamSubmission.id, submissionId));
+			.where(eq(schema.teamSubmission.id, id));
 	}
 );
 
-export const deleteTeamSubmission = command(
-	z.object({ submissionId: z.uuid() }),
-	async ({ submissionId }) => {
-		await validateUserAccess(submissionId);
+export const deleteTeamSubmission = command(z.object({ id: z.uuid() }), async ({ id }) => {
+	await validateUserAccess(id);
 
-		await db.delete(schema.teamSubmission).where(eq(schema.teamSubmission.id, submissionId));
+	const [deletedSubmission] = await db
+		.delete(schema.teamSubmission)
+		.where(eq(schema.teamSubmission.id, id))
+		.returning({ approvedRosterId: schema.teamSubmission.approvedRosterId });
+
+	if (deletedSubmission?.approvedRosterId) {
+		// If the submission was approved at least once and earned a roster, delete it as well
+		await db.delete(schema.roster).where(eq(schema.roster.id, deletedSubmission.approvedRosterId));
 	}
-);
+});
 
 export const reviewTeamSubmission = command(
 	z.object({
 		submissionId: z.uuid(),
 		// The group to place the roster into, if the submission is approved.
-		// This is ignored if approve is set to false.
-		groupId: z.uuid(),
+		// This is required when approving a submission for the first time.
+		groupId: z.uuid().optional(),
 		approve: z.boolean()
 	}),
 	async ({ submissionId, groupId, approve }) => {
@@ -153,6 +175,13 @@ export const reviewTeamSubmission = command(
 
 		let rosterId = submission.approvedRosterId;
 		if (!rosterId) {
+			if (!groupId) {
+				throw error(
+					400,
+					'Group ID must be provided when approving a submission for the first time'
+				);
+			}
+
 			// This submission has not been approved before, create its roster.
 			const { roster } = await createRoster({
 				groupId,
@@ -168,19 +197,25 @@ export const reviewTeamSubmission = command(
 			members: data.members
 		});
 
-		await applyReview(submissionId, true, user);
+		await applyReview(submissionId, true, user, rosterId);
 
 		return { roster: { id: rosterId } };
 	}
 );
 
-async function applyReview(submissionId: string, approve: boolean, user: User) {
+async function applyReview(
+	submissionId: string,
+	approve: boolean,
+	user: User,
+	approvedRosterId?: string
+) {
 	await db
 		.update(schema.teamSubmission)
 		.set({
 			status: approve ? SubmissionStatus.APPROVED : SubmissionStatus.REJECTED,
 			reviewedAt: new Date(),
-			reviewedById: user.id
+			reviewedById: user.id,
+			approvedRosterId
 		})
 		.where(eq(schema.teamSubmission.id, submissionId));
 }

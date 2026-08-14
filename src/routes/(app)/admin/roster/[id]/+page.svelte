@@ -23,6 +23,7 @@
 	import { AuthRole, checkPermission } from '$lib/authRole';
 	import AdminSocials from '$lib/components/admin/AdminSocials.svelte';
 	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
+	import GroupSelect from '$lib/components/form/GroupSelect.svelte';
 
 	let { data } = $props();
 
@@ -203,20 +204,7 @@
 	disabled={!changeGroupTo}
 >
 	<Label label="Grupp">
-		{#await getDivisionsBySeason({ seasonId: season.id }) then { divisions }}
-			<Select
-				type="single"
-				class="grow"
-				items={divisions.flatMap((division) =>
-					division.groups.map((group) => ({
-						label: `${division.name}, ${group.name}`,
-						value: group.id
-					}))
-				)}
-				bind:value={changeGroupTo}
-				placeholder="Välj grupp"
-			/>
-		{/await}
+		<GroupSelect seasonId={season.id} bind:groupId={changeGroupTo} />
 	</Label>
 </CreateDialog>
 

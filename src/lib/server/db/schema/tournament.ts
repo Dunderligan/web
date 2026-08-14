@@ -221,7 +221,9 @@ export const registration = pgTable('registration', {
 		.references(() => season.id, { onDelete: 'cascade' })
 		.notNull(),
 	openDate: timestamp().notNull(),
-	closeDate: timestamp().notNull()
+	closeDate: timestamp().notNull(),
+	maxPlayers: integer().notNull().default(5),
+	minPlayers: integer().notNull().default(5)
 });
 
 export const submissionStatusEnum = pgEnum('submission_status', enumToPgEnum(SubmissionStatus));

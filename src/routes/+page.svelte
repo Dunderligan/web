@@ -52,9 +52,7 @@
 			icon="ph:arrow-right"
 			class="mt-6 max-w-max shadow-lg"
 			label={seasonRegistrationsOpen ? 'Anmäl ditt lag' : 'Se ställningarna'}
-			href={seasonRegistrationsOpen
-				? `/anmalan/skapa/${seasonRegistrationsOpen.slug}`
-				: '/stallningar'}
+			href={seasonRegistrationsOpen ? `/anmal/${seasonRegistrationsOpen.slug}` : '/stallningar'}
 		/>
 	</div>
 </header>

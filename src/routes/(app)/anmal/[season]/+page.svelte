@@ -10,11 +10,11 @@
 	import Button from '$lib/components/ui/Button.svelte';
 	import Checkbox from '$lib/components/ui/Checkbox.svelte';
 	import Dialog from '$lib/components/ui/Dialog.svelte';
+	import DiscordLink from '$lib/components/ui/DiscordLink.svelte';
 	import InputField from '$lib/components/ui/InputField.svelte';
 	import Label from '$lib/components/ui/Label.svelte';
 	import Notice from '$lib/components/ui/Notice.svelte';
 	import { submitTeam } from '$lib/remote/registration.remote.js';
-	import { socials } from '$lib/socials.js';
 	import { SaveContext } from '$lib/state/save.svelte.js';
 	import { Role, type ButtonKind, type TeamSubmission } from '$lib/types.js';
 	import { formatDate } from '$lib/util';
@@ -100,7 +100,15 @@
 <PageHeader title="Anmälan" subtitle={season.name} />
 
 <PageSection class="space-y-8">
-	<Button label="Tillbaka" href="/" kind="secondary" icon="ph:arrow-left" />
+	{#if data.userSubmissions.length > 0}
+		<Notice kind="warn">
+			<p>
+				Det ser ut som att du redan har skickat in en anmälan för denna säsong. För att redigera din
+				anmälan, gå till <a class="hover:underline" href="/jag/anmalningar">Mina anmälningar</a>,
+				eller fortsätt här för att anmäla ett nytt lag.
+			</p>
+		</Notice>
+	{/if}
 
 	{#if closed}
 		<Notice kind="warn">Anmälan för denna säsong är stängd.</Notice>
@@ -113,10 +121,11 @@
 				</p>
 
 				<p>
-					<b>Anmälningsperioden</b> för den 8:e säsongen av Dunderligan är 1/2 till och med 28/2
+					<b>Anmälningsperioden</b> för {season.name} är {formatDate(data.registration.openDate)} till
+					{formatDate(data.registration.closeDate)}.
 				</p>
 
-				<p>
+				<!-- <p>
 					Ligastart 7/3
 					<br />
 					Grundserien avslutas 5/4
@@ -124,15 +133,14 @@
 					Varje lag förväntas däremellan spela fyra matcher för att placera sig inför slutspelet.
 				</p>
 
-				<p>Slutspelet börjar 7/4, finalerna spelas och <b>ligan avslutas senast 26/4</b></p>
+				<p>Slutspelet börjar 7/4, finalerna spelas och <b>ligan avslutas senast 26/4</b></p> -->
 
-				<p>
-					<a
-						class="font-semibold text-accent-600 hover:underline"
-						href={socials.discord}
-						target="_blank">Inbjudningslänk till Discord</a
-					>
-				</p>
+				<Notice kind="discord">
+					<p>
+						Mer information hittar du i Dunderligans <DiscordLink>Discordserver</DiscordLink>, som
+						dessutom är obligatorisk att gå med i för alla ligans deltagare.
+					</p>
+				</Notice>
 			</div>
 		</AdminCard>
 
@@ -212,8 +220,8 @@
 					legacyRanks={season.legacyRanks}
 					forceFullBattletag
 					forceRanks
-					minPlayers={6}
-					maxPlayers={9}
+					minPlayers={data.registration.minPlayers}
+					maxPlayers={data.registration.maxPlayers}
 					minTeamCaptains={1}
 					maxPlayersByRole={{ [Role.MANAGER]: 1, [Role.COACH]: 2 }}
 				/>
@@ -234,7 +242,7 @@
 
 			<Label
 				class="mt-6"
-				label="Jag godkänner reglerna och accepterar villkoren för mitt lags deltagande i Dunderligan"
+				label="Jag godkänner reglerna och accepterar villkoren för mitt lags deltagande i Dunderligan."
 				fullWidth
 				flipped
 			>
@@ -291,7 +299,7 @@
 	bind:open={createdDialogOpen}
 	buttons={[
 		{
-			label: 'Tillbaka',
+			label: 'Till startsidan',
 			href: '/',
 			kind: 'secondary',
 			icon: 'ph:arrow-left'
@@ -309,7 +317,7 @@
 	]}
 >
 	{#snippet description()}
-		<p>Din anmälan har skickats in och väntar på att bli godkänd av ligaledningen.</p>
+		<p>Din anmälan har skickats in och väntar nu på att bli godkänd av ligaledningen.</p>
 
 		{#if loggedIn}
 			<p>
@@ -317,6 +325,12 @@
 				användarnamn uppe i högra hörnet.
 			</p>
 		{/if}
+
+		<p>
+			Tänk på att samtliga medlemmar måste vara anslutna i <br />
+			<DiscordLink>Discordservern</DiscordLink> innan säsongen drar igång. Nu är därför ett bra tillfälle
+			att gå med själv samt sprida ordet till dina lagkamrater.
+		</p>
 	{/snippet}
 </Dialog>
 

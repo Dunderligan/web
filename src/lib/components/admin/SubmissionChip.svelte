@@ -11,7 +11,7 @@
 	const { icon, label, color } = $derived(
 		{
 			approved: { icon: 'ph:check-circle', label: 'Godkänd', color: 'green' },
-			rejected: { icon: 'ph:x-circle', label: 'Avslagen', color: 'gray' },
+			rejected: { icon: 'ph:x-circle', label: 'Nekad', color: 'red' },
 			pending: { icon: 'ph:hourglass', label: 'Väntar', color: 'yellow' }
 		}[status] as { icon: string; label: string; color: ChipColor }
 	);

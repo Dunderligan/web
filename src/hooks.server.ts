@@ -49,9 +49,15 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
+// TODO: make this not hardcoded
+const adminPaths = ['/admin'];
+const adminExceptions = ['/admin/spelare', '/admin/submission'];
+
 const guardAdminPages: Handle = async ({ event, resolve }) => {
-	// TODO: make this not hardcoded
-	if (!event.url.pathname.startsWith('/admin') || event.url.pathname.startsWith('/admin/spelare')) {
+	if (
+		!adminPaths.some((path) => event.url.pathname.startsWith(path)) ||
+		adminExceptions.some((path) => event.url.pathname.startsWith(path))
+	) {
 		return resolve(event);
 	}
 

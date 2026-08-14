@@ -2,19 +2,17 @@
 	import { goto } from '$app/navigation';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
-	import AdminLink from '$lib/components/admin/AdminLink.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import SaveToast from '$lib/components/admin/SaveToast.svelte';
 	import SubmissionChip from '$lib/components/admin/SubmissionChip.svelte';
 	import Table from '$lib/components/table/Table.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
-	import Chip from '$lib/components/ui/Chip.svelte';
 	import DateInput from '$lib/components/ui/DateInput.svelte';
+	import InputField from '$lib/components/ui/InputField.svelte';
 	import Label from '$lib/components/ui/Label.svelte';
 	import { deleteRegistration, updateRegistration } from '$lib/remote/registration.remote.js';
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
 	import { SaveContext } from '$lib/state/save.svelte.js';
-	import type { ChipColor } from '$lib/types.js';
 	import { formatDate } from '$lib/util.js';
 
 	const { data } = $props();
@@ -46,7 +44,9 @@
 		await updateRegistration({
 			id: registration.id,
 			openDate: registration.openDate,
-			closeDate: registration.closeDate
+			closeDate: registration.closeDate,
+			minPlayers: registration.minPlayers,
+			maxPlayers: registration.maxPlayers
 		});
 	}
 </script>
@@ -121,6 +121,24 @@
 				bind:value={registration.closeDate}
 				type="datetime-local"
 				oninput={saveCtx.setDirty}
+			/>
+		</Label>
+
+		<Label label="Min antal spelare">
+			<InputField
+				type="number"
+				bind:value={registration.minPlayers}
+				oninput={saveCtx.setDirty}
+				required
+			/>
+		</Label>
+
+		<Label label="Max antal spelare">
+			<InputField
+				type="number"
+				bind:value={registration.maxPlayers}
+				oninput={saveCtx.setDirty}
+				required
 			/>
 		</Label>
 	</div>

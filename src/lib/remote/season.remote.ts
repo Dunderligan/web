@@ -5,7 +5,7 @@ import { eq } from 'drizzle-orm';
 import z from 'zod';
 import { roleGuard } from './auth.remote';
 import { AuthRole } from '$lib/authRole';
-import { entityQuery } from '$lib/server/db/helpers';
+import { divisionOrder, entityQuery } from '$lib/server/db/helpers';
 import { createDivision } from './division.remote';
 
 export const createSeason = command(
@@ -104,9 +104,7 @@ export const getDivisionsBySeason = query(
 			where: {
 				seasonId
 			},
-			orderBy: {
-				name: 'asc'
-			},
+			orderBy: (t) => divisionOrder(t.name),
 			...entityQuery,
 			with: {
 				groups: entityQuery

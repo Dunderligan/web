@@ -9,6 +9,7 @@
 		wide?: boolean;
 		description?: string | Snippet;
 		createLabel?: string;
+		createIcon?: string;
 		oncreate?: () => Promise<void>;
 		onclose?: () => void;
 		children: Snippet;
@@ -21,6 +22,7 @@
 		wide = false,
 		description,
 		createLabel = 'Skapa',
+		createIcon = 'ph:plus',
 		oncreate,
 		onclose,
 		children
@@ -60,7 +62,7 @@
 		},
 		{
 			label: createLabel,
-			icon: 'ph:plus',
+			icon: createIcon,
 			disabled,
 			loading,
 			onclick: create

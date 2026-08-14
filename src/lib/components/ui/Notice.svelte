@@ -4,7 +4,7 @@
 	import type { ClassValue } from '$lib/types';
 
 	type Props = {
-		kind: 'info' | 'warn' | 'error';
+		kind: 'info' | 'warn' | 'error' | 'discord';
 		children?: Snippet;
 		class?: ClassValue;
 	};
@@ -24,6 +24,10 @@
 			error: {
 				icon: 'ph:x-circle',
 				class: 'bg-red-50 text-red-800 dark:bg-red-950/70 dark:text-red-200'
+			},
+			discord: {
+				icon: 'ph:discord-logo',
+				class: 'bg-indigo-50 text-indigo-800 dark:bg-indigo-950/70 dark:text-indigo-200'
 			}
 		}[kind]
 	);
@@ -33,10 +37,10 @@
 	class={[
 		kindClass,
 		classProp,
-		'flex min-h-14 items-center gap-4 rounded-lg py-3 pr-3 pl-6 font-medium'
+		'flex min-h-14 items-center gap-4 rounded-lg py-3 pr-3 pl-6 text-base font-medium'
 	]}
 >
-	<Icon {icon} class="mb-0.5" />
+	<Icon {icon} class="text-lg" />
 
 	{@render children?.()}
 </div>

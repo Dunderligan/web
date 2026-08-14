@@ -67,7 +67,7 @@
 			label="Anmäl ditt lag"
 			kind="secondary"
 			class="mt-12 text-lg"
-			href="/anmalan/skapa/{season.slug}"
+			href="/anmal/{season.slug}"
 		/>
 	{:else if tournamentState.status === 'upcoming'}
 		<h4 class="text-xl font-semibold">
