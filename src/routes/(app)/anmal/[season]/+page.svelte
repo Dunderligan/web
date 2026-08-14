@@ -16,7 +16,7 @@
 	import Notice from '$lib/components/ui/Notice.svelte';
 	import { submitTeam } from '$lib/remote/registration.remote.js';
 	import { SaveContext } from '$lib/state/save.svelte.js';
-	import { Role, type ButtonKind, type TeamSubmission } from '$lib/types.js';
+	import { Role, type ButtonKind, type TeamSubmissionData } from '$lib/types.js';
 	import { formatDate } from '$lib/util';
 	import { onMount } from 'svelte';
 
@@ -40,7 +40,7 @@
 	let createdDialogOpen = $state(false);
 	let createdId: string | null = $state(null);
 
-	let submission: TeamSubmission | 'loading' = $state('loading');
+	let submission: TeamSubmissionData | 'loading' = $state('loading');
 
 	onMount(() => {
 		load();
@@ -328,7 +328,7 @@
 
 		<p>
 			Tänk på att samtliga medlemmar måste vara anslutna i <br />
-			<DiscordLink>Discordservern</DiscordLink> innan säsongen drar igång. Nu är därför ett bra tillfälle
+			<DiscordLink>Discordservern</DiscordLink> innan säsongen drar igång. Därför är det nu ett bra tillfälle
 			att gå med själv samt sprida ordet till dina lagkamrater.
 		</p>
 	{/snippet}

@@ -3,6 +3,7 @@
 	import { page } from '$app/state';
 	import { isAdmin } from '$lib/authRole';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
+	import AdminLink from '$lib/components/admin/AdminLink.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import ConfirmDialog from '$lib/components/admin/ConfirmDialog.svelte';
 	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
@@ -74,7 +75,7 @@
 		confirmCtx.confirm({
 			title: 'Spara ändringar',
 			description:
-				'Är du säker på att du vill spara dina ändringar? Ändringarna kommer att skickas in för granskning och laget kan behöva granskas på nytt.',
+				'Är du säker på att du vill spara dina ändringar? Ändringarna kommer att behöva granskas på nytt.',
 			action: async () => {
 				await save();
 			}
@@ -158,6 +159,12 @@
 			<SubmissionChip status={submission.status} />
 		</Label>
 
+		{#if submission.submittedBy}
+			<Label label="Skickades in av">
+				<span class="font-medium">{submission.submittedBy.battletag}</span>
+			</Label>
+		{/if}
+
 		<Label label="Granskades senast">
 			{#if submission.reviewedAt && submission.reviewedBy}
 				<span class="font-medium"
@@ -188,25 +195,15 @@
 				/>
 				<Button icon="ph:x-circle" label="Neka" kind="destructive" onclick={reject} {loading} />
 			</div>
-		{:else if submission.status === SubmissionStatus.APPROVED}
+		{:else if submission.status === SubmissionStatus.REJECTED && submission.approvedRosterId}
 			<Notice kind="info">
-				Det här laget har blivit godkänt och tilldelats en plats i säsongen. {#if registrationOpen}
-					Ägaren av laget kan fortfarande redigera anmälan och skicka in den på nytt för granskning.
-				{/if}
+				Det här laget har tidigare blivit godkänt och tilldelats en plats i säsongen, men sedan dess
+				har blivit uppdaterad och nekats på nytt.
 			</Notice>
-		{:else if submission.status === SubmissionStatus.REJECTED}
-			{#if submission.approvedRosterId}
-				<Notice kind="info">
-					Det här laget har tidigare blivit godkänt och tilldelats en plats i säsongen, men sedan
-					dess har blivit uppdaterad och nekats på nytt.
-				</Notice>
-			{/if}
+		{/if}
 
-			{#if registrationOpen}
-				<Notice kind="info">
-					Ägaren av laget kan fortfarande redigera anmälan och skicka in den på nytt för granskning.
-				</Notice>
-			{/if}
+		{#if submission.approvedRosterId}
+			<AdminLink href="/admin/roster/{submission.approvedRosterId}" rounded>Redigera lag</AdminLink>
 		{/if}
 	{:else if submission.status === SubmissionStatus.APPROVED && registrationOpen}
 		<Notice kind="info">

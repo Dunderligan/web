@@ -360,7 +360,16 @@ export type Hero = {
 	role: Role;
 };
 
-export type TeamSubmission = {
+export type TeamSubmissionData = {
 	name: string;
 	members: Member[];
+};
+
+export type TeamSubmissionInfo = {
+	id: string;
+	name: string;
+	status: SubmissionStatus;
+	createdAt: Date;
+	reviewedAt: Date | null;
+	editedAt: Date | null;
 };

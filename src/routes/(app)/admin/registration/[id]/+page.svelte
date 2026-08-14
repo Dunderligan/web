@@ -5,6 +5,7 @@
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import SaveToast from '$lib/components/admin/SaveToast.svelte';
 	import SubmissionChip from '$lib/components/admin/SubmissionChip.svelte';
+	import SubmissionsTable from '$lib/components/admin/SubmissionsTable.svelte';
 	import Table from '$lib/components/table/Table.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import DateInput from '$lib/components/ui/DateInput.svelte';
@@ -60,44 +61,7 @@
 
 <AdminCard title="Laganmälningar">
 	{#if registration.submissions.length > 0}
-		<Table
-			rows={registration.submissions}
-			columns={[
-				{ label: 'Lagnamn' },
-				{ label: 'Status', center: true },
-				{ label: 'Skapad', center: true },
-				{ label: 'Redigerad', center: true },
-				{ label: 'Granskad', center: true },
-				{ label: '' }
-			]}
-			class="grid-cols-[auto_1fr_1fr_1fr_1fr_auto]"
-			noBackground
-		>
-			{#snippet row({ value: submission })}
-				<div class="px-6 py-4 font-semibold">
-					{submission.name}
-				</div>
-
-				<div class="justify-center">
-					<SubmissionChip status={submission.status} />
-				</div>
-
-				{#each [submission.createdAt, submission.editedAt, submission.reviewedAt] as date}
-					<div class="justify-center">
-						{date ? formatDate(date) : '-'}
-					</div>
-				{/each}
-
-				<div>
-					<Button
-						icon="ph:arrow-right"
-						label="Hantera"
-						kind="secondary"
-						href="/admin/submission/{submission.id}"
-					/>
-				</div>
-			{/snippet}
-		</Table>
+		<SubmissionsTable submissions={registration.submissions} />
 	{:else}
 		<AdminEmptyNotice hideCreateButton>
 			Inga lag har anmält sig än. När lag skickar in sina anmälningar kommer de att visas här.
