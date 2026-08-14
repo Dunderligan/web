@@ -167,6 +167,18 @@ export function rolesOrder(column: any) {
 	) ASC`;
 }
 
+export function rosterSeasonFilter(seasonId: string) {
+	return {
+		group: {
+			division: {
+				season: {
+					id: seasonId
+				}
+			}
+		}
+	};
+}
+
 /**
  * An sql ordering that puts "Dunderligan" first, then alphabetically by the provided column.
  *

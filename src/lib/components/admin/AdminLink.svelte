@@ -8,9 +8,10 @@
 		highlighted?: boolean;
 		disabled?: boolean;
 		children?: Snippet;
+		rounded?: boolean;
 	};
 
-	let { href, onclick, highlighted = false, disabled, children }: Props = $props();
+	let { href, onclick, highlighted = false, disabled, children, rounded }: Props = $props();
 </script>
 
 <a
@@ -21,6 +22,7 @@
 			? 'bg-accent-600 py-5 pl-8 font-bold text-white hover:bg-accent-700'
 			: 'bg-gray-100 py-2.5 pl-6 font-semibold text-gray-700 hover:bg-gray-200 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800',
 		disabled && 'pointer-events-none opacity-70',
+		rounded && 'rounded-lg',
 		'flex min-h-14 items-center pr-6 text-lg hover:underline'
 	]}
 >

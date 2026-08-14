@@ -10,7 +10,7 @@ import { flattenGroup } from '$lib/util';
 import { error } from '@sveltejs/kit';
 
 export const load = async ({ params }) => {
-	const data = await db.query.group.findFirst({
+	const group = await db.query.group.findFirst({
 		where: {
 			id: params.id
 		},
@@ -44,11 +44,11 @@ export const load = async ({ params }) => {
 		}
 	});
 
-	if (!data) {
+	if (!group) {
 		error(404);
 	}
 
-	const { season, division, group } = flattenGroup(data);
+	const { season } = flattenGroup(group);
 
 	let checkins = new Map<string, PlayerCheckin>();
 	if (season.checkinOpen) {
@@ -60,8 +60,6 @@ export const load = async ({ params }) => {
 	}
 
 	return {
-		season,
-		division,
 		group,
 		checkins
 	};

@@ -1,7 +1,11 @@
 import { AuthRole } from '$lib/authRole.js';
 import { roleGuard } from '$lib/remote/auth.remote.js';
 import { db, schema } from '$lib/server/db';
-import { matchRosterQuery, memberQueryWithoutPlayer } from '$lib/server/db/helpers.js';
+import {
+	matchRosterQuery,
+	memberQueryWithoutPlayer,
+	rosterSeasonFilter
+} from '$lib/server/db/helpers.js';
 import { error, json, redirect } from '@sveltejs/kit';
 import z from 'zod';
 
@@ -32,15 +36,7 @@ export const GET = async ({ params }) => {
 							roster: matchRosterQuery
 						},
 						where: {
-							roster: {
-								group: {
-									division: {
-										season: {
-											id: seasonId
-										}
-									}
-								}
-							}
+							roster: rosterSeasonFilter(seasonId)
 						}
 					}
 				}

@@ -124,6 +124,16 @@
 </AdminCard>
 
 {#if isAdmin(data.user?.role)}
+	<AdminCard title="Inchecking">
+		<Label label="Incheckning öppen">
+			<Checkbox bind:checked={season.checkinOpen} onCheckedChange={saveCtx.setDirty} />
+		</Label>
+
+		{#if season.checkinOpen}
+			<AdminLink href="/admin/checkin/{season.id}" rounded>Visa överblick</AdminLink>
+		{/if}
+	</AdminCard>
+
 	<AdminCard title="Anmälan">
 		{#if registration}
 			<div class="space-y-2">
@@ -204,10 +214,6 @@
 
 			<Label label="SR-poäng">
 				<Checkbox bind:checked={season.legacyRanks} onCheckedChange={saveCtx.setDirty} />
-			</Label>
-
-			<Label label="Incheckning öppen">
-				<Checkbox bind:checked={season.checkinOpen} onCheckedChange={saveCtx.setDirty} />
 			</Label>
 		</div>
 

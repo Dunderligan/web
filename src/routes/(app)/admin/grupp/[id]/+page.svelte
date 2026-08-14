@@ -21,12 +21,13 @@
 	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
 	import { isAdmin } from '$lib/authRole.js';
 	import Progress from '$lib/components/ui/Progress.svelte';
+	import AdminRosterList from '$lib/components/admin/AdminRosterList.svelte';
 
 	const { data } = $props();
 
 	let group = $state(data.group);
-	const division = $derived(data.division);
-	const season = $derived(data.season);
+	const division = $derived(group.division);
+	const season = $derived(division.season);
 
 	RosterContext.set(new RosterContext(data.group.rosters));
 	SaveContext.set(
@@ -115,34 +116,13 @@
 />
 
 <AdminCard title="Lag">
-	<AdminLinkList
-		items={group.rosters}
-		linkHref={(roster) => `/admin/roster/${roster.id}`}
+	<AdminRosterList
+		rosters={group.rosters}
 		emptyText="Denna grupp har inga lag!"
 		oncreateclick={() => (addRosterOpen = true)}
-	>
-		{#snippet linkContent({ item: roster })}
-			<RosterLogo id={roster.id} class="mr-2 inline size-12" />
-
-			<div class="grow pr-4">
-				<div>{roster.name}</div>
-
-				{#if season.checkinOpen}
-					{@const totalCount = roster.members.length}
-					{@const checkedInCount = roster.members.filter((member) =>
-						data.checkins.has(member.player.id)
-					).length}
-
-					<Progress
-						label="Incheck:"
-						value={checkedInCount}
-						max={totalCount}
-						color={checkedInCount === totalCount ? 'green' : 'accent'}
-					/>
-				{/if}
-			</div>
-		{/snippet}
-	</AdminLinkList>
+		showCheckins={season.checkinOpen}
+		checkins={data.checkins}
+	/>
 </AdminCard>
 
 <AdminCard title="Gruppspel">

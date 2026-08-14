@@ -3,8 +3,9 @@
 	import type { ComponentProps } from 'svelte';
 
 	type Props = ComponentProps<typeof Progress.Root> & {
-		label: string;
+		label?: string;
 		valueLabel?: string;
+		inline?: boolean;
 		color: 'accent' | 'gray' | 'green' | 'yellow';
 	};
 
@@ -14,6 +15,7 @@
 		min = 0,
 		label,
 		valueLabel = `${value}/${max}`,
+		inline = false,
 		color,
 		...props
 	}: Props = $props();
@@ -28,8 +30,8 @@
 	);
 </script>
 
-<div class="flex w-full items-center gap-2">
-	<div class="shrink-0 text-sm">
+<div class={[inline ? 'flex-row items-center gap-2' : 'flex-col gap-1', 'flex']}>
+	<div class={[inline ? 'text-sm' : 'text-lg', 'shrink-0']}>
 		<span class="font-medium">{label}</span>
 		<span class="font-semibold">{valueLabel}</span>
 	</div>
@@ -40,10 +42,10 @@
 		{max}
 		{...props}
 		aria-valuetext={valueLabel}
-		class="relative h-2 w-full overflow-hidden rounded-full bg-white dark:bg-gray-950"
+		class="relative h-2.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-800"
 	>
 		<div
-			class={['flex h-full w-full rounded-full', colorClass]}
+			class={[colorClass, 'flex h-full w-full rounded-full']}
 			style={`transform: translateX(-${(1 - ((value ?? 0) - min) / (max - min)) * 100}%)`}
 		></div>
 	</Progress.Root>
