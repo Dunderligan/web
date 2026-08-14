@@ -21,6 +21,8 @@
 	}: Props = $props();
 
 	const fullTitle = $derived(title ? `${title} | Dunderligan` : 'Dunderligan');
+
+	const ACCENT_COLOR = '#ae548d';
 </script>
 
 <svelte:head>
@@ -45,4 +47,5 @@
 	<meta property="og:domain" content={page.url.hostname} />
 	<meta property="og:site_name" content="Dunderligan" />
 	<meta property="og:locale" content="sv_SE" />
+	<meta property="theme-color" content={ACCENT_COLOR} />
 </svelte:head>

@@ -43,6 +43,20 @@ To differentiate between profiles with the same name but different tags, we use 
 
 The API is quite slow, so we cache the results in Redis (or a `Map` if `REDIS_URL` isn't provided), and refresh it every 24 hours.
 
-## Hero Portraits
+## Adding a Hero
 
-Overwatch hero portraits (used for displaying a player's signature heroes) are sourced from https://overwatch.blizzard.com/en-us/heroes/. The initial batch were downloaded and processed using a Python script, however further heroes can easily be added by manually downloading the image and converting it to `avif`.
+### 1. Create a database migration
+
+1. Run `pnpm db:generate --name add_hero_<name> --custom` to create an empty migration file.
+2. Enter the following content:
+
+```sql
+INSERT INTO hero (name, slug, role) VALUES ('<name>', '<url-friendly slug>', '<tank, damange or support>');
+```
+
+### 2. Add a hero portrait
+
+Hero portraits are sourced from https://overwatch.blizzard.com/en-us/heroes/ and placed into `static/heroes`.
+
+1. Download the image from the website and convert it to a `webp`.
+2. Add the image to `static/heroes` with the name matching the hero's slug.
