@@ -3,6 +3,7 @@
 	import { type AnyRank, type Member, Rank as RankEnum, Role } from '$lib/types';
 	import {
 		capitalize,
+		compareRoles,
 		isOrganizationRole,
 		isPlayerRole,
 		ORGANIZATION_ROLES,
@@ -22,6 +23,7 @@
 	type Props = {
 		legacyRanks: boolean;
 		members: Member[];
+		memberLinks?: boolean;
 		disabled?: boolean;
 		forceRanks?: boolean;
 		forceFullBattletag?: boolean;
@@ -30,11 +32,13 @@
 		minTeamCaptains?: number;
 		maxTeamCaptains?: number;
 		maxPlayersByRole?: { [role in Role]?: number };
+		invalid?: boolean;
 	};
 
 	let {
 		legacyRanks,
 		members = $bindable(),
+		memberLinks,
 		disabled = false,
 		forceRanks = false,
 		forceFullBattletag = false,
@@ -42,36 +46,59 @@
 		maxPlayers,
 		minTeamCaptains,
 		maxTeamCaptains,
-		maxPlayersByRole
+		maxPlayersByRole,
+		invalid = $bindable(false)
 	}: Props = $props();
 
 	const saveCtx = SaveContext.get();
 
+	const sortedMembers = $derived(
+		members.toSorted((a, b) => {
+			return compareRoles(a.role, b.role) || a.player.battletag.localeCompare(b.player.battletag);
+		})
+	);
+
 	const players = $derived(members.filter((member) => !isOrganizationRole(member.role)));
 	const hasMaxPlayers = $derived(maxPlayers !== undefined && players.length >= maxPlayers);
+	const hasTooFewPlayers = $derived(minPlayers !== undefined && players.length < minPlayers);
 
 	const teamCaptains = $derived(members.filter((member) => member.isCaptain));
 	const hasMaxTeamCaptains = $derived(
 		maxTeamCaptains !== undefined && teamCaptains.length >= maxTeamCaptains
+	);
+	const hasTooFewCaptains = $derived(
+		minTeamCaptains !== undefined && teamCaptains.length < minTeamCaptains
+	);
+
+	const hasMaxMembers = $derived(
+		Object.values(Role).every((role) => isRoleFilled(role)) ||
+			(hasMaxPlayers && ORGANIZATION_ROLES.every((role) => isRoleFilled(role)))
 	);
 
 	let newPlayerOpen = $state(false);
 	let newPlayerBattletag = $state('');
 	let newPlayerRole = $state(Role.DAMAGE);
 	let newPlayerRank: AnyRank | null = $state(defaultRank());
-	let newPlayerCaptian = $state(false);
+	let newPlayerCaptain = $state(false);
 
-	const FULL_BATTLETAG_REGEX = /^[^#]+#[0-9]{4,5}$/;
+	const FULL_BATTLETAG_REGEX = /^[^#\ ]+#[0-9]{4,5}$/;
 
 	let newPlayerBattletagAlreadyExists = $state(false);
 	let newPlayerHasFullBattletag = $state(true);
 
-	const newPlayerInvalid = $derived(
-		!newPlayerBattletag.trim() ||
-			newPlayerBattletagAlreadyExists ||
-			(forceFullBattletag && !newPlayerHasFullBattletag) ||
-			isRoleFilled(newPlayerRole)
+	const newPlayerValid = $derived(
+		newPlayerBattletag.trim().length > 0 &&
+			!newPlayerBattletagAlreadyExists &&
+			(!forceFullBattletag || newPlayerHasFullBattletag) &&
+			!isRoleFilled(newPlayerRole) &&
+			(!isPlayerRole(newPlayerRole) || !hasMaxPlayers)
 	);
+
+	$effect(() => {
+		// These are the only two conditions that can make the table invalid,
+		// whereas the others are enforced by the UI.
+		invalid = hasTooFewCaptains || hasTooFewPlayers;
+	});
 
 	async function addNewPlayer() {
 		let rank = isOrganizationRole(newPlayerRole) && forceRanks ? null : newPlayerRank;
@@ -84,7 +111,7 @@
 					: { rank: rank.rank, tier: rank.tier, sr: null };
 
 		members.push({
-			isCaptain: newPlayerCaptian,
+			isCaptain: newPlayerCaptain,
 			role: newPlayerRole,
 			registeredName: null,
 			player: {
@@ -103,6 +130,10 @@
 		newPlayerBattletag = '';
 		newPlayerRole = Role.DAMAGE;
 		newPlayerRank = defaultRank();
+		newPlayerCaptain = false;
+
+		newPlayerBattletagAlreadyExists = false;
+		newPlayerHasFullBattletag = true;
 	}
 
 	function defaultRank(): AnyRank {
@@ -144,10 +175,6 @@
 	}
 
 	function isRoleFilled(role: Role): boolean {
-		if (isPlayerRole(role) && hasMaxPlayers) {
-			return true;
-		}
-
 		if (!maxPlayersByRole) {
 			return false;
 		}
@@ -162,7 +189,7 @@
 		const trimmed = newPlayerBattletag.trim();
 		if (trimmed.length === 0) {
 			newPlayerBattletagAlreadyExists = false;
-			newPlayerHasFullBattletag = false;
+			newPlayerHasFullBattletag = true;
 			return;
 		}
 
@@ -181,7 +208,7 @@
 
 <div>
 	<Table
-		rows={members}
+		rows={sortedMembers}
 		columns={[
 			{ label: 'Battletag' },
 			{ label: 'Kapten', center: true },
@@ -194,13 +221,17 @@
 	>
 		{#snippet row({ value: member, index })}
 			<div class="px-6 py-4 font-semibold">
-				<a href="/admin/spelare/{member.player.id}" class="hover:underline">
+				<svelte:element
+					this={memberLinks ? 'a' : 'div'}
+					href={memberLinks ? `/admin/spelare/${member.player.id}` : undefined}
+					class={[memberLinks && 'hover:underline']}
+				>
 					{#if member.registeredName}
 						{member.registeredName} <span class="font-medium">({member.player.battletag})</span>
 					{:else}
 						{member.player.battletag}
 					{/if}
-				</a>
+				</svelte:element>
 			</div>
 
 			<div class="justify-center gap-2 pr-2">
@@ -260,22 +291,22 @@
 		<Button
 			kind="primary"
 			icon="ph:plus"
-			label="Lägg till"
+			label="Lägg till spelare"
 			class="mt-4"
 			onclick={() => (newPlayerOpen = true)}
-			disabled={Object.values(Role).every((role) => isRoleFilled(role))}
+			disabled={hasMaxMembers}
 		/>
 	{/if}
 
-	{#if minPlayers !== undefined && players.length < minPlayers}
+	{#if hasTooFewPlayers}
 		<Notice kind="error" class="mt-2">
 			Ditt lag måste ha minst {minPlayers} spelare.
 		</Notice>
 	{/if}
 
-	{#if minTeamCaptains !== undefined && teamCaptains.length < minTeamCaptains}
+	{#if hasTooFewCaptains}
 		<Notice kind="error" class="mt-2">
-			Ditt lag måste ha minst {minTeamCaptains} lagkapten{minTeamCaptains > 1 ? 'er' : ''}.
+			Ditt lag måste ha minst {minTeamCaptains} lagkapten{(minTeamCaptains ?? 0 > 1) ? 'er' : ''}.
 		</Notice>
 	{/if}
 
@@ -291,7 +322,7 @@
 	bind:open={newPlayerOpen}
 	oncreate={addNewPlayer}
 	onclose={resetNewPlayer}
-	disabled={newPlayerInvalid}
+	disabled={!newPlayerValid}
 	createLabel="Lägg till"
 >
 	<Label label="Battletag">
@@ -322,8 +353,8 @@
 
 	<Label label="Lagkapten">
 		{@render captainCheckbox({
-			checked: newPlayerCaptian,
-			onCheckedChange: (newValue) => (newPlayerCaptian = newValue)
+			checked: newPlayerCaptain,
+			onCheckedChange: (newValue) => (newPlayerCaptain = newValue)
 		})}
 	</Label>
 
@@ -332,6 +363,12 @@
 			Det finns redan det maximala antalet medlemmar med rollen {capitalize(newPlayerRole)} ({maxPlayersByRole?.[
 				newPlayerRole
 			]}).
+		</Notice>
+	{/if}
+
+	{#if isPlayerRole(newPlayerRole) && hasMaxPlayers}
+		<Notice kind="error">
+			Det finns redan det maximala antalet spelare ({maxPlayers}).
 		</Notice>
 	{/if}
 

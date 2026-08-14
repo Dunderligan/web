@@ -12,16 +12,13 @@
 	import { SaveContext } from '$lib/state/save.svelte';
 	import DateInput from '$lib/components/ui/DateInput.svelte';
 	import { createDivision } from '$lib/remote/division.remote';
-	import {
-		createRegistration,
-		deleteRegistration,
-		deleteSeason,
-		updateSeason
-	} from '$lib/remote/season.remote';
+	import { createRegistration, deleteSeason, updateSeason } from '$lib/remote/season.remote';
 	import Checkbox from '$lib/components/ui/Checkbox.svelte';
 	import Note from '$lib/components/ui/Note.svelte';
 	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
 	import { isAdmin } from '$lib/authRole.js';
+	import AdminLink from '$lib/components/admin/AdminLink.svelte';
+	import Chip from '$lib/components/ui/Chip.svelte';
 
 	const { data } = $props();
 
@@ -37,7 +34,6 @@
 	let newDivisionName = $state('');
 
 	let createRegistrationOpen = $state(false);
-	let newRegistrationUrl = $state('');
 	let newRegistrationStart = $state(new Date());
 	let newRegistrationEnd = $state(new Date());
 
@@ -59,12 +55,11 @@
 			legacyRanks: season.legacyRanks,
 			legacySeeding: season.legacySeeding,
 			hidden: season.hidden,
-			spinoff: season.spinoff,
-			registration
+			spinoff: season.spinoff
 		});
 	}
 
-	async function submitDelete() {
+	async function onDeleteClicked() {
 		await confirmCtx.confirm({
 			title: 'Radera säsong',
 			description: `Är du säker på att du vill radera ${season.name}?`,
@@ -80,32 +75,13 @@
 	}
 
 	async function submitCreateRegistation() {
-		const result = await createRegistration({
+		const { registration } = await createRegistration({
 			seasonId: season.id,
-			url: newRegistrationUrl,
 			openDate: newRegistrationStart,
 			closeDate: newRegistrationEnd
 		});
 
-		registration = result.registration;
-		createRegistrationOpen = false;
-	}
-
-	async function submitDeleteRegistration() {
-		await confirmCtx.confirm({
-			title: 'Radera anmälningsformulär',
-			description: `Är du säker på att du vill radera anmälan för ${season.name}?`,
-			destructive: true,
-			action: async () => {
-				if (!registration) return;
-
-				await deleteRegistration({
-					id: registration.id
-				});
-
-				registration = null;
-			}
-		});
+		await goto(`/admin/registration/${registration.id}`);
 	}
 </script>
 
@@ -124,39 +100,9 @@
 {#if isAdmin(data.user?.role)}
 	<AdminCard title="Anmälan">
 		{#if registration}
-			<div class="space-y-2">
-				<Label label="Länk">
-					<InputField
-						bind:value={registration.url}
-						placeholder="https://docs.google.com/forms..."
-						onchange={saveCtx.setDirty}
-					/>
-				</Label>
-
-				<Label label="Startdatum">
-					<DateInput
-						bind:value={registration.openDate}
-						type="datetime-local"
-						oninput={saveCtx.setDirty}
-						required
-					/>
-				</Label>
-
-				<Label label="Slutdatum">
-					<DateInput
-						bind:value={registration.closeDate}
-						type="datetime-local"
-						oninput={saveCtx.setDirty}
-					/>
-				</Label>
+			<div class="overflow-hidden rounded-lg">
+				<AdminLink href="/admin/registration/{registration.id}">Hantera anmälan</AdminLink>
 			</div>
-
-			<Button
-				icon="ph:trash"
-				label="Radera anmälan"
-				kind="destructive"
-				onclick={submitDeleteRegistration}
-			/>
 		{:else}
 			<AdminEmptyNotice oncreateclick={() => (createRegistrationOpen = true)}
 				>Säsongen har inget anmälningsformulär.</AdminEmptyNotice
@@ -205,7 +151,7 @@
 			</Label>
 		</div>
 
-		<Button icon="ph:trash" label="Radera säsong" kind="destructive" onclick={submitDelete} />
+		<Button icon="ph:trash" label="Radera säsong" kind="destructive" onclick={onDeleteClicked} />
 	</AdminCard>
 {/if}
 
@@ -221,14 +167,10 @@
 </CreateDialog>
 
 <CreateDialog
-	title="Skapa anmälning"
+	title="Skapa anmälningsformulär"
 	bind:open={createRegistrationOpen}
 	oncreate={submitCreateRegistation}
 >
-	<Label label="Länk">
-		<InputField bind:value={newRegistrationUrl} placeholder="https://docs.google.com/forms..." />
-	</Label>
-
 	<Label label="Startdatum">
 		<DateInput bind:value={newRegistrationStart} type="datetime-local" required />
 	</Label>

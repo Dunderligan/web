@@ -86,7 +86,6 @@
 	async function submitNewRoster(name: string, teamId?: string) {
 		const { roster } = await createRoster({
 			groupId: group.id,
-			seasonSlug: season.slug,
 			name: name,
 			teamId
 		});

@@ -28,6 +28,8 @@ export class SaveContext {
 	private saveAction?: () => Promise<void>;
 	private discardAction: () => Promise<void>;
 
+	autoSave = $state(false);
+
 	// the href to return to after saving/discarding
 	// TODO: currently not used?
 	href?: string;
@@ -35,11 +37,13 @@ export class SaveContext {
 	constructor(options?: {
 		save?: () => Promise<void>;
 		discard?: () => Promise<void>;
+		autoSave?: boolean;
 		href?: string;
 	}) {
 		this.saveAction = options?.save;
 		this.discardAction = options?.discard ?? invalidateAll;
 
+		this.autoSave = options?.autoSave ?? false;
 		this.href = options?.href;
 
 		beforeNavigate(({ cancel }) => {
@@ -56,7 +60,11 @@ export class SaveContext {
 	}
 
 	setDirty = () => {
-		this.isDirty = true;
+		if (this.autoSave) {
+			this.saveAction?.();
+		} else {
+			this.isDirty = true;
+		}
 	};
 
 	save = async () => {

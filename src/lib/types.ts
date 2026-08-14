@@ -92,6 +92,12 @@ export enum MatchState {
 	CANCELLED = 'cancelled'
 }
 
+export enum SubmissionStatus {
+	PENDING = 'pending',
+	APPROVED = 'approved',
+	REJECTED = 'rejected'
+}
+
 /**
  * Base information used to identify seasons, divisions, groups, etc.
  * Often used in nested types from database queries.
@@ -138,7 +144,7 @@ export type Member = {
 	isCaptain: boolean;
 	registeredName: string | null;
 	player: {
-		id?: string | null;
+		id: string | null;
 		battletag: string;
 	};
 };
@@ -352,4 +358,9 @@ export type Hero = {
 	name: string;
 	slug: string;
 	role: Role;
+};
+
+export type TeamSubmission = {
+	name: string;
+	members: Member[];
 };

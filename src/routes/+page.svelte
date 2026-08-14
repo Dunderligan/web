@@ -13,6 +13,14 @@
 	import { socials } from '$lib/socials.js';
 
 	let { data } = $props();
+
+	const seasonRegistrationsOpen = $derived.by(() => {
+		if (data.tournamentState?.status !== 'registration') {
+			return null;
+		}
+
+		return data.tournamentState.season;
+	});
 </script>
 
 <Meta />
@@ -42,9 +50,11 @@
 
 		<Button
 			icon="ph:arrow-right"
-			class="mt-8 max-w-max shadow-lg"
-			label="Se ställningar"
-			href="/stallningar"
+			class="mt-6 max-w-max shadow-lg"
+			label={seasonRegistrationsOpen ? 'Anmäl ditt lag' : 'Se ställningarna'}
+			href={seasonRegistrationsOpen
+				? `/anmalan/skapa/${seasonRegistrationsOpen.slug}`
+				: '/stallningar'}
 		/>
 	</div>
 </header>

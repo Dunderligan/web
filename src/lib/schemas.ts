@@ -1,5 +1,5 @@
 import z from 'zod';
-import { MatchState, SocialPlatform } from './types';
+import { MatchState, Rank, Role, SocialPlatform } from './types';
 
 /**
  * Zod schema for remote functions that take matches as arguments.
@@ -37,4 +37,17 @@ export const matchQueryParamsSchema = z.object({
 	includeEmpty: z.boolean().default(false),
 	page: z.number().min(0).default(0),
 	pageSize: z.number().min(1).optional()
+});
+
+export const memberSchema = z.object({
+	role: z.enum(Role),
+	rank: z.enum(Rank).nullable(),
+	tier: z.int().max(5).min(1).nullable(),
+	sr: z.int().min(0).nullable(),
+	isCaptain: z.boolean(),
+	registeredName: z.string().nullable(),
+	player: z.object({
+		id: z.string().nullable(),
+		battletag: z.string()
+	})
 });

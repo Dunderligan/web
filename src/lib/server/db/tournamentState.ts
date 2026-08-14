@@ -94,8 +94,7 @@ async function queryLatestSeason() {
 			registration: {
 				columns: {
 					openDate: true,
-					closeDate: true,
-					url: true
+					closeDate: true
 				}
 			},
 			divisions: {

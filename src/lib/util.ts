@@ -204,7 +204,7 @@ export function shortenTeamName(name: string) {
 
 export function parseMatchQueryParams(searchParams: URLSearchParams): MatchQueryParams {
 	const stateParam = searchParams.get('state');
-	const state = stateParam ? parseStateParam(stateParam) : undefined;
+	const state = stateParam ? parseMatchStateParam(stateParam) : undefined;
 
 	const pageSizeParam = searchParams.get('pageSize');
 	const pageSize = pageSizeParam ? Number(pageSizeParam) : undefined;
@@ -227,7 +227,7 @@ export function parseMatchQueryParams(searchParams: URLSearchParams): MatchQuery
 	};
 }
 
-function parseStateParam(param: string): MatchState[] {
+function parseMatchStateParam(param: string): MatchState[] {
 	let invert = false;
 
 	if (param.startsWith('!')) {
@@ -245,6 +245,15 @@ function parseStateParam(param: string): MatchState[] {
 	}
 
 	return states;
+}
+
+export function compareRoles(a: Role, b: Role): number {
+	const order = [Role.TANK, Role.DAMAGE, Role.SUPPORT, Role.FLEX, Role.COACH, Role.MANAGER];
+
+	const aIndex = order.indexOf(a);
+	const bIndex = order.indexOf(b);
+
+	return aIndex - bIndex;
 }
 
 export function compareNullable<T>(

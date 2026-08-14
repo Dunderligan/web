@@ -35,7 +35,7 @@
 			class={[
 				i === 0 && !center && 'pl-6',
 				center && 'justify-center',
-				noBackground ? '' : 'bg-gray-50! dark:bg-gray-800!',
+				noBackground ? 'border-gray-300! dark:border-gray-700!' : 'bg-gray-50! dark:bg-gray-800!',
 				'flex items-center gap-1 py-2 text-base'
 			]}
 		>

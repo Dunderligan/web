@@ -11,17 +11,16 @@ import z from 'zod';
 import { roleGuard } from './auth.remote';
 import { AuthRole } from '$lib/authRole';
 import sharp from 'sharp';
-import { socialSchema } from '$lib/schemas';
+import { memberSchema, socialSchema } from '$lib/schemas';
 
 /// Create a roster and add it to a group. If an associated teamId is not provided, a new team will be created.
 export const createRoster = command(
 	z.object({
 		groupId: z.uuidv4(),
-		seasonSlug: z.string(),
 		name: z.string().nonempty(),
 		teamId: z.uuidv4().nullish()
 	}),
-	async ({ groupId, seasonSlug, name, teamId }) => {
+	async ({ groupId, name, teamId }) => {
 		await roleGuard(AuthRole.ADMIN);
 
 		if (!teamId) {
@@ -67,54 +66,43 @@ export const deleteRoster = command(
 export const editRoster = command(
 	z.object({
 		id: z.string(),
-		teamId: z.string(),
-		name: z.string(),
-		resigned: z.boolean(),
-		members: z.array(
-			z.object({
-				role: z.enum(Role),
-				rank: z.enum(Rank).nullable(),
-				tier: z.int().max(5).min(1).nullable(),
-				sr: z.int().min(0).nullable(),
-				isCaptain: z.boolean(),
-				registeredName: z.string().nullable(),
-				player: z.object({
-					id: z.string().nullable(),
-					battletag: z.string()
-				})
-			})
-		),
-		socials: z.array(socialSchema)
+		name: z.string().optional(),
+		teamId: z.string().optional(),
+		resigned: z.boolean().optional(),
+		members: z.array(memberSchema).optional(),
+		socials: z.array(socialSchema).optional()
 	}),
 	async ({ id, teamId, name, resigned, members, socials }) => {
 		await roleGuard(AuthRole.ADMIN);
 
-		const newSlug = toSlug(name);
-
 		await db.transaction(async (tx) => {
-			await Promise.all([
-				updateInfo(tx, id, name, newSlug, resigned),
-				updateMembers(tx, id, members),
-				updateSocials(tx, teamId, socials)
-			]);
-		});
+			const tasks = [];
 
-		return { slug: newSlug };
+			if (name || resigned !== undefined) {
+				tasks.push(updateInfo(tx, id, name, resigned));
+			}
+
+			if (members) {
+				tasks.push(updateMembers(tx, id, members));
+			}
+
+			if (socials && teamId) {
+				tasks.push(updateSocials(tx, teamId, socials));
+			}
+
+			await Promise.all(tasks);
+		});
 	}
 );
 
-async function updateInfo(
-	tx: Transaction,
-	rosterId: string,
-	name: string,
-	slug: string,
-	resigned: boolean
-) {
+async function updateInfo(tx: Transaction, rosterId: string, name?: string, resigned?: boolean) {
+	const newSlug = name ? toSlug(name) : undefined;
+
 	await tx
 		.update(schema.roster)
 		.set({
 			name,
-			slug,
+			slug: newSlug,
 			resigned
 		})
 		.where(eq(schema.roster.id, rosterId));
@@ -122,7 +110,7 @@ async function updateInfo(
 
 async function updateMembers(tx: Transaction, rosterId: string, members: Member[]) {
 	// delete all the members and insert them again
-	// there is probably a more effective way to do this
+	// there is probably a more efficient way to do this
 	await tx.delete(schema.member).where(eq(schema.member.rosterId, rosterId));
 
 	const memberInserts = await Promise.all(

@@ -105,11 +105,12 @@
 	]}
 />
 
-<AdminCard title="Spelare">
+<AdminCard title="Spelartrupp">
 	<EditableMembersTable
 		bind:members={roster.members}
 		legacyRanks={season.legacyRanks}
 		disabled={!isAdmin}
+		memberLinks
 	/>
 </AdminCard>
 

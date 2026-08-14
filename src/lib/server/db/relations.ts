@@ -37,7 +37,11 @@ const relations = defineRelations(schema, (r) => ({
 		}),
 		members: r.many.member(),
 		matchesAsA: r.many.match({ alias: 'rosterA' }),
-		matchesAsB: r.many.match({ alias: 'rosterB' })
+		matchesAsB: r.many.match({ alias: 'rosterB' }),
+		submission: r.one.teamSubmission({
+			from: r.roster.id,
+			to: r.teamSubmission.approvedRosterId
+		})
 	},
 	teamSocial: {
 		team: r.one.team({ from: r.teamSocial.teamId, to: r.team.id, optional: false })
@@ -82,6 +86,28 @@ const relations = defineRelations(schema, (r) => ({
 			from: r.registration.seasonId,
 			to: r.season.id,
 			optional: false
+		}),
+		submissions: r.many.teamSubmission()
+	},
+	teamSubmission: {
+		registration: r.one.registration({
+			from: r.teamSubmission.registrationId,
+			to: r.registration.id,
+			optional: false
+		}),
+		submittedBy: r.one.user({
+			from: r.teamSubmission.submittedById,
+			to: r.user.id,
+			alias: 'submittedBy'
+		}),
+		reviewedBy: r.one.user({
+			from: r.teamSubmission.reviewedById,
+			to: r.user.id,
+			alias: 'reviewedBy'
+		}),
+		approvedRoster: r.one.roster({
+			from: r.teamSubmission.approvedRosterId,
+			to: r.roster.id
 		})
 	},
 	apiKey: {
@@ -92,7 +118,9 @@ const relations = defineRelations(schema, (r) => ({
 		})
 	},
 	user: {
-		apiKeys: r.many.apiKey()
+		apiKeys: r.many.apiKey(),
+		submittedTeams: r.many.teamSubmission({ alias: 'submittedBy' }),
+		reviewedTeams: r.many.teamSubmission({ alias: 'reviewedBy' })
 	},
 	hero: {
 		signaturePlayers: r.many.signatureHero()

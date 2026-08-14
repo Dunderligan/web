@@ -11,16 +11,8 @@ export const load = async ({ params, locals }) => {
 		with: {
 			members: memberQuery,
 			team: {
-				columns: {
-					id: true
-				},
 				with: {
-					socials: {
-						columns: {
-							platform: true,
-							url: true
-						}
-					},
+					socials: true,
 					rosters: {
 						...entityQuery,
 						with: {

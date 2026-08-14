@@ -14,7 +14,16 @@ import {
 } from 'drizzle-orm/pg-core';
 import { enumToPgEnum } from './util';
 import { and, isNotNull, isNull, or, sql } from 'drizzle-orm';
-import { MatchState, MatchType, Rank, Role, SocialPlatform } from '../../../types';
+import {
+	MatchState,
+	MatchType,
+	Rank,
+	Role,
+	SocialPlatform,
+	SubmissionStatus
+} from '../../../types';
+import { user } from './auth';
+import { jsonb } from 'drizzle-orm/cockroach-core';
 
 export const season = pgTable(
 	'season',
@@ -213,6 +222,24 @@ export const registration = pgTable('registration', {
 		.notNull(),
 	openDate: timestamp().notNull(),
 	closeDate: timestamp().notNull()
+});
+
+export const submissionStatusEnum = pgEnum('submission_status', enumToPgEnum(SubmissionStatus));
+
+export const teamSubmission = pgTable('team_submission', {
+	id: uuid().primaryKey().defaultRandom(),
+	registrationId: uuid()
+		.notNull()
+		.references(() => registration.id, { onDelete: 'cascade' }),
+	submittedById: uuid().references(() => user.id, { onDelete: 'set null' }),
+	approvedRosterId: uuid().references(() => roster.id, { onDelete: 'set null' }),
+	name: text().notNull(), // keep a copy of data.name for easier searching and fetching
+	data: jsonb().notNull(),
+	createdAt: timestamp().defaultNow().notNull(),
+	editedAt: timestamp(),
+	reviewedAt: timestamp(),
+	reviewedById: uuid().references(() => user.id, { onDelete: 'set null' }),
+	status: submissionStatusEnum().notNull().default(SubmissionStatus.PENDING)
 });
 
 export const hero = pgTable('hero', {

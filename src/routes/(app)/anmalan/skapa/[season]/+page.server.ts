@@ -1,4 +1,5 @@
 import { db } from '$lib/server/db.js';
+import { entityQuery } from '$lib/server/db/helpers.js';
 import { error } from '@sveltejs/kit';
 
 export const load = async ({ params }) => {
@@ -9,8 +10,17 @@ export const load = async ({ params }) => {
 			}
 		},
 		columns: {
+			id: true,
 			openDate: true,
 			closeDate: true
+		},
+		with: {
+			season: {
+				columns: {
+					legacyRanks: true,
+					...entityQuery.columns
+				}
+			}
 		}
 	});
 

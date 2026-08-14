@@ -15,6 +15,8 @@ export const roleGuard = query(z.enum(AuthRole), (required) => {
 	if (!checkPermission(role, required)) {
 		error(403, 'Insufficient permissions');
 	}
+
+	return locals.user!;
 });
 
 export const logout = command(async () => {

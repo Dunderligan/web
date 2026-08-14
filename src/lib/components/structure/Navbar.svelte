@@ -100,7 +100,7 @@
 		{
 			type: 'button',
 			icon: 'ph:wrench',
-			label: 'Admin',
+			label: 'Adminpanel',
 			href: '/admin',
 			hidden: !isModerator(user?.role)
 		},
