@@ -518,19 +518,17 @@ type Season = {
 type MatchState = 'scheduled' | 'played' | 'walkover' | 'cancelled';
 ```
 
-## `POST /checkin`
+## `POST /checkin/[seasonId]/[discordId]`
 
 Checks in a Discord user by battletag for the season. Requires an API key with admin privileges or higher.
 
-Returns an error if the user was already checked in, or if no player with the battletag (case-insensitive) was found.
+Returns a 409 Conflict if the user was already checked in, or a 404 Not Found if no player with the battletag (case-insensitive) was found.
 
 Request type:
 
 ```ts
 export type CheckinRequest = {
-	seasonId: string;
 	battletag: string;
-	discordId: string;
 };
 ```
 
