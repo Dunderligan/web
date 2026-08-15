@@ -353,3 +353,8 @@ export type Hero = {
 	slug: string;
 	role: Role;
 };
+
+export type PlayerCheckin = {
+	discordId: string;
+	checkedInAt: Date;
+};

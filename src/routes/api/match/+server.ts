@@ -28,7 +28,7 @@ export const POST = async ({ request }) => {
 	const body = await request.json();
 	const parsedBody = createMatchSchema.safeParse(body);
 	if (!parsedBody.success) {
-		throw error(400, 'Invalid request body');
+		throw error(400);
 	}
 
 	const [{ id }] = await db.insert(schema.match).values(parsedBody.data).returning({

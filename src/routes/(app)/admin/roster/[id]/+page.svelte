@@ -110,6 +110,8 @@
 		bind:members={roster.members}
 		legacyRanks={season.legacyRanks}
 		disabled={!isAdmin}
+		showCheckins={season.checkinOpen}
+		checkins={data.checkins}
 	/>
 </AdminCard>
 
