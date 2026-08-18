@@ -81,7 +81,7 @@
 	let newPlayerRank: AnyRank | null = $state(defaultRank());
 	let newPlayerCaptain = $state(false);
 
-	const FULL_BATTLETAG_REGEX = /^[^#\ ]+#[0-9]{4,5}$/;
+	const FULL_BATTLETAG_REGEX = /^[^#\ ]+#[0-9]{4,6}$/;
 
 	let newPlayerBattletagAlreadyExists = $state(false);
 	let newPlayerHasFullBattletag = $state(true);
