@@ -13,6 +13,7 @@
 		formatDateTime,
 		isOrganizationRole,
 		isPlayerRole,
+		ORGANIZATION_ROLES,
 		roleIcon
 	} from '$lib/util';
 	import Button from '../ui/Button.svelte';
@@ -56,7 +57,7 @@
 		minTeamCaptains,
 		maxTeamCaptains,
 		maxPlayersByRole,
-		invalid = $bindable(false)
+		invalid = $bindable(false),
 		showCheckins = false,
 		checkins = new Map()
 	}: Props = $props();

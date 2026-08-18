@@ -14,7 +14,6 @@
 	import { deleteRegistration, updateRegistration } from '$lib/remote/registration.remote.js';
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
 	import { SaveContext } from '$lib/state/save.svelte.js';
-	import { formatDate } from '$lib/util.js';
 
 	const { data } = $props();
 

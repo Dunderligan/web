@@ -26,7 +26,7 @@
 	noBackground
 >
 	{#snippet row({ value: submission })}
-		<div class="px-6 py-4 font-semibold">
+		<div class="py-4 font-semibold">
 			{submission.name}
 		</div>
 
