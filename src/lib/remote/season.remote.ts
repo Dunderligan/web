@@ -68,7 +68,8 @@ export const updateSeason = command(
 		legacyRanks: z.boolean(),
 		legacySeeding: z.boolean(),
 		hidden: z.boolean(),
-		spinoff: z.boolean()
+		spinoff: z.boolean(),
+		checkinOpen: z.boolean()
 	}),
 	async ({ id, name, ...data }) => {
 		await roleGuard(AuthRole.ADMIN);

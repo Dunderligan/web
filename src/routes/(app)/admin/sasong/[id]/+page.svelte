@@ -55,7 +55,8 @@
 			legacyRanks: season.legacyRanks,
 			legacySeeding: season.legacySeeding,
 			hidden: season.hidden,
-			spinoff: season.spinoff
+			spinoff: season.spinoff,
+			checkinOpen: season.checkinOpen
 		});
 	}
 
@@ -98,6 +99,16 @@
 </AdminCard>
 
 {#if isAdmin(data.user?.role)}
+	<AdminCard title="Inchecking">
+		<Label label="Incheckning öppen">
+			<Checkbox bind:checked={season.checkinOpen} onCheckedChange={saveCtx.setDirty} />
+		</Label>
+
+		{#if season.checkinOpen}
+			<AdminLink href="/admin/checkin/{season.id}" rounded>Visa överblick</AdminLink>
+		{/if}
+	</AdminCard>
+
 	<AdminCard title="Anmälan">
 		{#if registration}
 			<div class="overflow-hidden rounded-lg">

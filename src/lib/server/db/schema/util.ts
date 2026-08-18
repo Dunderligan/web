@@ -10,7 +10,7 @@ export function enumToPgEnum<T extends Record<string, any>>(
 	return Object.values(myEnum).map((value: any) => `${value}`) as any;
 }
 
-export function xor(a: SQL<unknown>, b: SQL<unknown>) {
+export function xor(a: SQL<unknown>, b: SQL<unknown>): SQL<unknown> {
 	// first-order conjunctive normal form btw 😎
 	return and(or(isNotNull(a), isNotNull(b)), or(isNull(a), isNull(b)))!;
 }

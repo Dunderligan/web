@@ -48,7 +48,7 @@
 		{/if}
 	{/each}
 
-	{#if saveCtx.href}
+	{#if saveCtx && saveCtx.href}
 		<a
 			class="ml-2 text-sm font-medium hover:text-accent-700 hover:underline dark:hover:text-accent-500"
 			href={saveCtx.href}

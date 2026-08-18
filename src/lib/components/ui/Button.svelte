@@ -24,7 +24,7 @@
 			secondary:
 				'bg-gray-200 text-gray-700 not-disabled:hover:bg-gray-300 font-semibold dark:bg-gray-800 dark:not-disabled:hover:bg-gray-700 dark:text-gray-300',
 			tertiary:
-				'text-gray-600 font-medium not-disabled:hover:bg-gray-100 dark:text-gray-400 dark:not-disabled:hover:bg-gray-800',
+				'text-gray-600 font-medium not-disabled:hover:bg-gray-50 dark:text-gray-400 dark:not-disabled:hover:bg-gray-900',
 			transparent:
 				'text-accent-800 not-disabled:hover:bg-accent-100 dark:text-accent-300 dark:not-disabled:hover:bg-accent-900',
 			destructive:

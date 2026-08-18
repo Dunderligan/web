@@ -373,3 +373,8 @@ export type TeamSubmissionInfo = {
 	reviewedAt: Date | null;
 	editedAt: Date | null;
 };
+
+export type PlayerCheckin = {
+	discordId: string;
+	checkedInAt: Date;
+};

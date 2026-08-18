@@ -1,12 +1,18 @@
 <script lang="ts">
 	import { SaveContext } from '$lib/state/save.svelte';
-	import { type AnyRank, type Member, Rank as RankEnum, Role } from '$lib/types';
+	import {
+		type AnyRank,
+		type Member,
+		type PlayerCheckin,
+		Rank as RankEnum,
+		Role
+	} from '$lib/types';
 	import {
 		capitalize,
 		compareRoles,
+		formatDateTime,
 		isOrganizationRole,
 		isPlayerRole,
-		ORGANIZATION_ROLES,
 		roleIcon
 	} from '$lib/util';
 	import Button from '../ui/Button.svelte';
@@ -19,6 +25,7 @@
 	import RankInput from '../ui/RankInput.svelte';
 	import { isLegacyRank } from '$lib/rank';
 	import Notice from '../ui/Notice.svelte';
+	import Icon from '../ui/Icon.svelte';
 
 	type Props = {
 		legacyRanks: boolean;
@@ -33,6 +40,8 @@
 		maxTeamCaptains?: number;
 		maxPlayersByRole?: { [role in Role]?: number };
 		invalid?: boolean;
+		showCheckins?: boolean;
+		checkins?: Map<string, PlayerCheckin>;
 	};
 
 	let {
@@ -48,6 +57,8 @@
 		maxTeamCaptains,
 		maxPlayersByRole,
 		invalid = $bindable(false)
+		showCheckins = false,
+		checkins = new Map()
 	}: Props = $props();
 
 	const saveCtx = SaveContext.get();
@@ -210,17 +221,36 @@
 	<Table
 		rows={sortedMembers}
 		columns={[
+			...(showCheckins ? [{ label: 'Incheck', center: true }] : []),
 			{ label: 'Battletag' },
 			{ label: 'Kapten', center: true },
 			{ label: 'Roll', center: true },
 			{ label: 'Rank', center: true },
 			{ label: '', center: true }
 		]}
-		class="grid-cols-[1fr_80px_160px_250px_50px]"
+		class={showCheckins
+			? 'grid-cols-[80px_1fr_80px_160px_250px_auto]'
+			: 'grid-cols-[1fr_80px_160px_250px_auto]'}
 		noBackground
 	>
 		{#snippet row({ value: member, index })}
 			<div class="px-6 py-4 font-semibold">
+				{#if showCheckins}
+					{@const checkin = member.player.id ? checkins.get(member.player.id) : null}
+
+					<div class="justify-center text-xl">
+						{#if checkin}
+							<Icon
+								icon="ph:check-circle-fill"
+								class="text-green-600"
+								title="Incheckad {formatDateTime(checkin.checkedInAt)}"
+							/>
+						{:else}
+							<Icon icon="ph:x-circle-fill" class="text-red-600" title="Inte incheckad" />
+						{/if}
+					</div>
+				{/if}
+
 				<svelte:element
 					this={memberLinks ? 'a' : 'div'}
 					href={memberLinks ? `/admin/spelare/${member.player.id}` : undefined}

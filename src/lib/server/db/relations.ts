@@ -4,7 +4,8 @@ import schema from './schema.js';
 const relations = defineRelations(schema, (r) => ({
 	season: {
 		divisions: r.many.division(),
-		registration: r.one.registration()
+		registration: r.one.registration(),
+		checkins: r.many.playerCheckin()
 	},
 	division: {
 		season: r.one.season({
@@ -53,7 +54,8 @@ const relations = defineRelations(schema, (r) => ({
 		memberships: r.many.member(),
 		socials: r.many.playerSocial(),
 		aliases: r.many.playerAlias(),
-		signatureHeroes: r.many.signatureHero()
+		signatureHeroes: r.many.signatureHero(),
+		checkins: r.many.playerCheckin()
 	},
 	member: {
 		player: r.one.player({
@@ -141,6 +143,18 @@ const relations = defineRelations(schema, (r) => ({
 		player: r.one.player({
 			from: r.playerAlias.playerId,
 			to: r.player.id,
+			optional: false
+		})
+	},
+	playerCheckin: {
+		player: r.one.player({
+			from: r.playerCheckin.playerId,
+			to: r.player.id,
+			optional: false
+		}),
+		season: r.one.season({
+			from: r.playerCheckin.seasonId,
+			to: r.season.id,
 			optional: false
 		})
 	}

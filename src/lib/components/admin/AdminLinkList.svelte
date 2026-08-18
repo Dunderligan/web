@@ -8,6 +8,7 @@
 
 	type Props<T> = {
 		items: T[];
+		itemKey?: (item: T) => string;
 		linkHref: (item: T) => string;
 		linkLabel?: (item: T) => string;
 		linkContent?: Snippet<[{ item: T }]>;
@@ -15,19 +16,22 @@
 		oncreateclick?: () => void;
 		createButtonLabel?: string;
 		createButtonIcon?: string;
+		hideCreateButton?: boolean;
 	};
 
 	let {
 		items,
+		itemKey,
 		linkHref,
 		linkLabel,
 		linkContent,
 		oncreateclick,
 		emptyText,
+		hideCreateButton: hideProp,
 		...emptyNoticeProps
 	}: Props<T> = $props();
 
-	const hideCreateButton = $derived(!isAdmin(page.data.user?.role));
+	const hideCreateButton = $derived(hideProp || !isAdmin(page.data.user?.role));
 </script>
 
 {#if items.length === 0}
@@ -36,7 +40,7 @@
 	</AdminEmptyNotice>
 {:else}
 	<div class="space-y-1 overflow-hidden rounded-lg">
-		{#each items as item}
+		{#each items as item (itemKey?.(item) ?? item)}
 			<AdminLink href={linkHref(item)}>
 				{#if linkContent}
 					{@render linkContent({ item })}

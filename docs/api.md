@@ -1,3 +1,5 @@
+# API Documentation
+
 The site has a small public API, documented here. All paths are prefixed with `/api` (for example, the full URL to the first endpoint is https://dunderligan.se/api/season).
 
 An API key is required for some routes. These can currently only be created by admins in the admin panel. The client provides the API key in the `Authorization` header as a `Bearer` token.
@@ -516,3 +518,72 @@ type Season = {
 type MatchState = 'scheduled' | 'played' | 'walkover' | 'cancelled';
 ```
 
+## `POST /checkin/[seasonId]/[discordId]`
+
+Checks in a Discord user by battletag for the season. Requires an API key with admin privileges or higher.
+
+Returns a 409 Conflict if the user was already checked in, or a 404 Not Found if no player with the battletag (case-insensitive) was found.
+
+Request type:
+
+```ts
+export type CheckinRequest = {
+	battletag: string;
+};
+```
+
+Response type:
+
+```ts
+export type Checkin = {
+	discordId: string;
+	checkedInAt: Date;
+	player: {
+		id: string;
+		battletag: string;
+		memberships: {
+			rank: Rank | null;
+			role: Role;
+			tier: number | null;
+			sr: number | null;
+			isCaptain: boolean;
+			registeredName: string | null;
+			roster: {
+				id: string;
+				name: string;
+				slug: string;
+			};
+		}[];
+	};
+};
+```
+
+## `GET /api/checkin/[seasonId]/[discordId]`
+
+Get a checked-in user by season and discord id. Requires an API key with admin privileges or higher.
+
+Response type:
+
+```ts
+export type Checkin = {
+	discordId: string;
+	checkedInAt: Date;
+	player: {
+		id: string;
+		battletag: string;
+		memberships: {
+			rank: Rank | null;
+			role: Role;
+			tier: number | null;
+			sr: number | null;
+			isCaptain: boolean;
+			registeredName: string | null;
+			roster: {
+				id: string;
+				name: string;
+				slug: string;
+			};
+		}[];
+	};
+};
+```

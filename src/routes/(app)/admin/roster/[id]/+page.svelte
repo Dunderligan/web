@@ -112,6 +112,8 @@
 		legacyRanks={season.legacyRanks}
 		disabled={!isAdmin}
 		memberLinks
+		showCheckins={season.checkinOpen}
+		checkins={data.checkins}
 	/>
 </AdminCard>
 
