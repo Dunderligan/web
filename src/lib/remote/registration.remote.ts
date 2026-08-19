@@ -182,7 +182,7 @@ export const reviewTeamSubmission = command(
 		if (!approve) {
 			// Reject the submission immediately. If the submission was approved before being edited and now rejected,
 			// we **don't** revert the roster creation. Instead, we leave the roster as is (and still open for edits).
-			await applyReview(submissionId, false, user);
+			await applyReview(submissionId, SubmissionStatus.REJECTED, user);
 			return;
 		}
 
@@ -214,7 +214,7 @@ export const reviewTeamSubmission = command(
 			members: data.members
 		});
 
-		await applyReview(submissionId, true, user, rosterId);
+		await applyReview(submissionId, SubmissionStatus.APPROVED, user, rosterId);
 
 		// Copy the user-uploaded submission logo to the proper roster location.
 		// This will overwrite any existing roster logo from a previous approval.
@@ -226,14 +226,14 @@ export const reviewTeamSubmission = command(
 
 async function applyReview(
 	submissionId: string,
-	approve: boolean,
+	status: SubmissionStatus,
 	user: User,
 	approvedRosterId?: string
 ) {
 	await db
 		.update(schema.teamSubmission)
 		.set({
-			status: approve ? SubmissionStatus.APPROVED : SubmissionStatus.REJECTED,
+			status,
 			reviewedAt: new Date(),
 			reviewedById: user.id,
 			approvedRosterId
