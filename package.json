@@ -44,6 +44,7 @@
 		"drizzle-orm": "1.0.0-beta.2-ec83fa8",
 		"drizzle-seed": "1.0.0-beta.2-ec83fa8",
 		"iconify-icon": "^3.0.2",
+		"idb-keyval": "^6.3.0",
 		"postgres": "^3.4.8",
 		"redis": "^5.11.0",
 		"sharp": "^0.34.5",

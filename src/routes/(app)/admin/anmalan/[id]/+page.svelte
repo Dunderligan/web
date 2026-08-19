@@ -4,9 +4,7 @@
 	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import SaveToast from '$lib/components/admin/SaveToast.svelte';
-	import SubmissionChip from '$lib/components/admin/SubmissionChip.svelte';
 	import SubmissionsTable from '$lib/components/admin/SubmissionsTable.svelte';
-	import Table from '$lib/components/table/Table.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import DateInput from '$lib/components/ui/DateInput.svelte';
 	import InputField from '$lib/components/ui/InputField.svelte';
@@ -54,7 +52,7 @@
 <Breadcrumbs
 	crumbs={[
 		{ label: season.name, href: `/admin/sasong/${season.id}` },
-		{ label: 'Anmälan', href: `/admin/registration/${registration.id}` }
+		{ label: 'Anmälan', href: `/admin/anmalan/${registration.id}` }
 	]}
 />
 

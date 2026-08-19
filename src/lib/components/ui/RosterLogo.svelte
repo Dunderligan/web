@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ClassValue } from '$lib/types';
-	import { cdnImageSrc, cdnRosterLogoPath } from '$lib/util';
 	import placeholderTeam from '$lib/assets/images/placeholder-team.avif';
+	import cdn from '$lib/cdn';
 
 	type Props = {
 		id: string;
@@ -13,7 +13,7 @@
 
 	let { id, class: classProp, imgSize = 64, src: srcOverride, href }: Props = $props();
 
-	let src = $derived(srcOverride ?? cdnImageSrc(cdnRosterLogoPath(id), { width: imgSize }));
+	let src = $derived(srcOverride ?? cdn.rosterLogoUrl(id, { width: imgSize }));
 
 	function onerror() {
 		src = placeholderTeam;

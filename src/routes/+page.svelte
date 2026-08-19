@@ -1,7 +1,6 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/Button.svelte';
 	import PageSection from '$lib/components/structure/PageSection.svelte';
-	import { cdnSrc } from '$lib/util';
 	import MatchList from '$lib/components/match/MatchList.svelte';
 	import Meta from '$lib/components/structure/Meta.svelte';
 	import trailerThumbnail from '$lib/assets/images/trailer-thumbnail.avif';
@@ -11,6 +10,7 @@
 	import discordImage from '$lib/assets/images/discord.avif';
 	import twitchImage from '$lib/assets/images/twitch.avif';
 	import { socials } from '$lib/socials.js';
+	import cdn from '$lib/cdn.js';
 
 	let { data } = $props();
 
@@ -27,7 +27,7 @@
 
 <header class="relative h-200 w-full px-4">
 	<video
-		src={cdnSrc('/dunderligan/trailer.mp4')}
+		src={cdn.srcUrl('dunderligan/trailer.mp4')}
 		class="trailer absolute top-0 left-0 -z-10 h-full w-full bg-cover object-cover brightness-50"
 		autoplay
 		muted

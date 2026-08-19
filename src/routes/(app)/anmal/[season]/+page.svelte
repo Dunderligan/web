@@ -11,6 +11,7 @@
 	import Checkbox from '$lib/components/ui/Checkbox.svelte';
 	import Dialog from '$lib/components/ui/Dialog.svelte';
 	import DiscordLink from '$lib/components/ui/DiscordLink.svelte';
+	import ImageUpload from '$lib/components/ui/ImageUpload.svelte';
 	import InputField from '$lib/components/ui/InputField.svelte';
 	import Label from '$lib/components/ui/Label.svelte';
 	import Notice from '$lib/components/ui/Notice.svelte';
@@ -19,12 +20,11 @@
 	import { Role, type ButtonKind, type TeamSubmissionData } from '$lib/types.js';
 	import { formatDate } from '$lib/util';
 	import { onMount } from 'svelte';
+	import { get, set } from 'idb-keyval';
 
 	let { data } = $props();
 
-	SaveContext.set(
-		new SaveContext({ save: async () => save(), discard: async () => load(), autoSave: true })
-	);
+	SaveContext.set(new SaveContext({ save, discard: load, autoSave: true }));
 
 	const saveCtx = SaveContext.get();
 
@@ -40,30 +40,25 @@
 	let createdDialogOpen = $state(false);
 	let createdId: string | null = $state(null);
 
+	let logo: File | undefined = $state();
 	let submission: TeamSubmissionData | 'loading' = $state('loading');
 
-	onMount(() => {
-		load();
-	});
+	onMount(load);
 
 	const storageKey = $derived(`teamSubmission_${season.slug}`);
+	const logoStorageKey = $derived(`${storageKey}_logo`);
 
-	function load() {
-		const stored = localStorage.getItem(storageKey);
-		if (stored) {
-			console.log('Restoring team submission from localStorage');
-			submission = JSON.parse(stored);
-		} else {
-			submission = {
-				name: '',
-				members: []
-			};
-		}
+	async function load() {
+		submission = await get<TeamSubmissionData>(storageKey).then(
+			(data) => data ?? { name: '', members: [] }
+		);
+		logo = await get(logoStorageKey);
 	}
 
-	function save() {
+	async function save() {
 		if (submission === 'loading') return;
-		localStorage.setItem(storageKey, JSON.stringify(submission));
+		await set(storageKey, $state.snapshot(submission));
+		await set(logoStorageKey, logo);
 	}
 
 	function clear() {
@@ -79,11 +74,16 @@
 
 		try {
 			submitting = true;
+			if (!logo) return;
+
+			const logoBuffer = await logo.arrayBuffer();
+
 			submission.name = submission.name.trim();
 
 			const { submission: created } = await submitTeam({
 				registrationId: data.registration.id,
-				data: submission
+				data: submission,
+				logo: logoBuffer
 			});
 
 			createdId = created.id;
@@ -153,6 +153,10 @@
 						bind:value={submission.name}
 						onchange={saveCtx.setDirty}
 					/>
+				</Label>
+
+				<Label label="Logotyp">
+					<ImageUpload bind:file={logo} onFileChanged={saveCtx.setDirty} />
 				</Label>
 			{/if}
 		</AdminCard>
@@ -308,7 +312,7 @@
 			? [
 					{
 						label: 'Till anmälan',
-						href: `/admin/submission/${createdId}`,
+						href: `/admin/laganmalan/${createdId}`,
 						kind: 'primary' as ButtonKind,
 						icon: 'ph:arrow-right'
 					}

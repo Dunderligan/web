@@ -7,7 +7,7 @@
 	import RosterLogo from '$lib/components/ui/RosterLogo.svelte';
 	import Tabs from '$lib/components/ui/Tabs.svelte';
 	import TeamSocial from '$lib/components/ui/TeamSocial.svelte';
-	import { cdnImageSrc, cdnRosterLogoPath, flattenGroup } from '$lib/util';
+	import { flattenGroup } from '$lib/util';
 	import MatchList from '$lib/components/match/MatchList.svelte';
 	import Meta from '$lib/components/structure/Meta.svelte';
 	import { MatchState } from '$lib/types';
@@ -15,6 +15,7 @@
 	import { isModerator } from '$lib/authRole';
 	import Field from '$lib/components/structure/Field.svelte';
 	import Placement from '$lib/components/ui/Placement.svelte';
+	import cdn from '$lib/cdn.js';
 
 	let { data } = $props();
 
@@ -59,7 +60,7 @@
 <Meta
 	title={roster.name}
 	description="Se medlemmar och senaste matcher för {roster.name}, {division.name} i {season.name}."
-	ogImage={cdnImageSrc(cdnRosterLogoPath(roster.id), { width: 630 })}
+	ogImage={cdn.rosterLogoUrl(roster.id, { width: 630, height: 630 })}
 	ogImageAlt="Logotyp för {roster.name}"
 	ogImageWidth={630}
 	ogImageHeight={630}

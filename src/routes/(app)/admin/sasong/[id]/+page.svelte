@@ -82,7 +82,7 @@
 			closeDate: newRegistrationEnd
 		});
 
-		await goto(`/admin/registration/${registration.id}`);
+		await goto(`/admin/anmalan/${registration.id}`);
 	}
 </script>
 
@@ -112,7 +112,7 @@
 	<AdminCard title="Anmälan">
 		{#if registration}
 			<div class="overflow-hidden rounded-lg">
-				<AdminLink href="/admin/registration/{registration.id}">Hantera anmälan</AdminLink>
+				<AdminLink href="/admin/anmalan/{registration.id}">Hantera anmälan</AdminLink>
 			</div>
 		{:else}
 			<AdminEmptyNotice oncreateclick={() => (createRegistrationOpen = true)}

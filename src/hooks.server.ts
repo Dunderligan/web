@@ -51,7 +51,7 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 
 // TODO: make this not hardcoded
 const adminPaths = ['/admin'];
-const adminExceptions = ['/admin/spelare', '/admin/submission'];
+const adminExceptions = ['/admin/spelare', '/admin/laganmalan'];
 
 const guardAdminPages: Handle = async ({ event, resolve }) => {
 	if (

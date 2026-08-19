@@ -2,6 +2,7 @@
 	import { goto, invalidate } from '$app/navigation';
 	import { page } from '$app/state';
 	import { isAdmin } from '$lib/authRole';
+	import cdn from '$lib/cdn.js';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import AdminLink from '$lib/components/admin/AdminLink.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
@@ -12,12 +13,13 @@
 	import GroupSelect from '$lib/components/form/GroupSelect.svelte';
 	import EditableMembersTable from '$lib/components/table/EditableMembersTable.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
+	import ImageUpload from '$lib/components/ui/ImageUpload.svelte';
 	import InputField from '$lib/components/ui/InputField.svelte';
 	import Label from '$lib/components/ui/Label.svelte';
 	import Notice from '$lib/components/ui/Notice.svelte';
 	import {
 		deleteTeamSubmission,
-		editTeamSubmission,
+		editTeamSubmissionData,
 		reviewTeamSubmission
 	} from '$lib/remote/registration.remote.js';
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
@@ -58,7 +60,7 @@
 					id: submission.id
 				});
 				if (userIsAdmin) {
-					await goto(`/admin/registration/${registration.id}`);
+					await goto(`/admin/anmalan/${registration.id}`);
 				} else {
 					await goto(`/jag/mina-anmalningar`);
 				}
@@ -83,7 +85,7 @@
 	}
 
 	async function save() {
-		await editTeamSubmission({
+		await editTeamSubmissionData({
 			id: submission.id,
 			data: submission.data
 		});
@@ -144,8 +146,8 @@
 <Breadcrumbs
 	crumbs={[
 		{ label: season.name, href: `/admin/sasong/${season.id}` },
-		{ label: 'Anmälan', href: `/admin/registration/${registration.id}` },
-		{ label: submission.name, href: `/admin/submission/${submission.id}` }
+		{ label: 'Anmälan', href: `/admin/anmalan/${registration.id}` },
+		{ label: submission.name, href: `/admin/laganmalan/${submission.id}` }
 	]}
 />
 
@@ -253,6 +255,10 @@
 				oninput={saveCtx.setDirty}
 				disabled={!canEdit}
 			/>
+		</Label>
+
+		<Label label="Logotyp">
+			<ImageUpload src={cdn.submissionLogoUrl(submission.id, { width: 200 })} />
 		</Label>
 	</div>
 

@@ -45,7 +45,7 @@
 				icon="ph:arrow-right"
 				label="Hantera"
 				kind="secondary"
-				href="/admin/submission/{submission.id}"
+				href="/admin/laganmalan/{submission.id}"
 			/>
 		</div>
 	{/snippet}

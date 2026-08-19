@@ -1,11 +1,9 @@
 import slugify from 'slugify';
-import { PUBLIC_CDN_ENDPOINT } from '$env/static/public';
 import {
 	type FlattenedDivision,
 	type FlattenedGroup,
 	type MatchQueryParams,
 	MatchState,
-	type NestedBracket,
 	type NestedDivision,
 	type NestedGroup,
 	Role,
@@ -73,39 +71,6 @@ export function toSlug(str: string) {
 		lower: true,
 		locale: 'sv-SE'
 	});
-}
-
-/**
- * Returns a url to the CDN endpoint (specified via environment variable) with a path appended.
- * The path must be prefixed with a forward slash.
- */
-export function cdnSrc(path: string) {
-	return `${PUBLIC_CDN_ENDPOINT}${path}`;
-}
-
-/**
- * Returns a url to the Cloudflare Images endpoint with the specified transformations applied.
- * See https://developers.cloudflare.com/images/transform-images/transform-via-url/ for details.
- *
- * This assumes Images is configured on top of the CDN domain (called zones by cloudflare).
- */
-export function cdnImageSrc(path: string, { width, height }: { width: number; height?: number }) {
-	let filters = `format=auto,fit=scale-down,width=${width}`;
-	if (height) {
-		filters += `,height=${height}`;
-	}
-
-	return cdnSrc(`/cdn-cgi/image/${filters}${path}`);
-}
-
-/** Returns the CDN path (as used with cdnSrc) for a roster logo. */
-export function cdnRosterLogoPath(rosterId: string) {
-	return `/${s3RosterLogoKey(rosterId)}`;
-}
-
-/** Returns the S3 key for a roster logo. */
-export function s3RosterLogoKey(rosterId: string) {
-	return `logos/${rosterId}.webp`;
 }
 
 export function capitalize(str: string) {

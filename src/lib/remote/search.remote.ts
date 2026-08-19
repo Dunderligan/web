@@ -1,18 +1,12 @@
 import { getRequestEvent, query } from '$app/server';
+import cdn from '$lib/cdn';
 import { db } from '$lib/server/db';
 import { entityQuery, nestedGroupQuery } from '$lib/server/db/helpers';
 import { hiddenGroupFilter, hiddenSeasonFilter } from '$lib/server/db/hidden';
 import type { User } from '$lib/server/db/schema/auth';
 import overwatch from '$lib/server/overwatch';
 import type { SearchItem } from '$lib/types';
-import {
-	cdnImageSrc,
-	cdnRosterLogoPath,
-	compare,
-	compareNullable,
-	compareNullableStrings,
-	flattenGroup
-} from '$lib/util';
+import { compareNullableStrings, flattenGroup } from '$lib/util';
 import z from 'zod';
 
 const SEARCH_LIMIT = 10;
@@ -109,7 +103,7 @@ async function searchRosters(query: string, user: User | null): Promise<SearchIt
 			name: roster.name,
 			subtitle: season.name,
 			type: 'roster',
-			image: cdnImageSrc(cdnRosterLogoPath(roster.id), { width: 64 })
+			image: cdn.rosterLogoUrl(roster.id, { width: 64 })
 		};
 	});
 }

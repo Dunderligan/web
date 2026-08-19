@@ -1,17 +1,15 @@
 import { command } from '$app/server';
-import { S3_BUCKET_NAME } from '$env/static/private';
 import { db, schema } from '$lib/server/db';
 import { findOrCreatePlayer, type Transaction } from '$lib/server/db/helpers';
-import S3 from '$lib/server/s3';
-import { Rank, Role, type Member, type Social } from '$lib/types';
-import { cdnRosterLogoPath, s3RosterLogoKey, toSlug } from '$lib/util';
-import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
+import { type Member, type Social } from '$lib/types';
+import { toSlug } from '$lib/util';
 import { eq } from 'drizzle-orm';
 import z from 'zod';
 import { roleGuard } from './auth.remote';
 import { AuthRole } from '$lib/authRole';
-import sharp from 'sharp';
 import { memberSchema, socialSchema } from '$lib/schemas';
+import s3 from '$lib/server/s3';
+import cdn from '$lib/cdn';
 
 /// Create a roster and add it to a group. If an associated teamId is not provided, a new team will be created.
 export const createRoster = command(
@@ -53,13 +51,9 @@ export const deleteRoster = command(
 
 		await db.delete(schema.roster).where(eq(schema.roster.id, id));
 
-		// TODO: also delete logos when rosters are deleted from cascades (deleting groups e.t.c.)
-		const command = new DeleteObjectCommand({
-			Bucket: S3_BUCKET_NAME,
-			Key: cdnRosterLogoPath(id)
-		});
+		await s3.deleteFile(cdn.rosterLogoKey(id));
 
-		await S3.send(command);
+		// TODO: also delete logos when rosters are deleted from cascades (deleting groups e.t.c.)
 	}
 );
 
@@ -153,17 +147,7 @@ export const uploadRosterLogo = command(
 	async ({ rosterId, file }) => {
 		await roleGuard(AuthRole.ADMIN);
 
-		const converted = await sharp(file).webp({ lossless: true }).toBuffer();
-		const key = s3RosterLogoKey(rosterId);
-
-		const command = new PutObjectCommand({
-			Bucket: S3_BUCKET_NAME,
-			Key: key,
-			Body: converted,
-			ContentType: `image/webp`
-		});
-
-		await S3.send(command);
+		await s3.uploadImage(file, cdn.rosterLogoKey(rosterId));
 	}
 );
 

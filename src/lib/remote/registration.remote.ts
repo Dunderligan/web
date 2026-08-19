@@ -9,6 +9,8 @@ import { roleGuard } from './auth.remote';
 import type { User } from '$lib/server/db/schema/auth';
 import { SubmissionStatus } from '$lib/types';
 import { createRoster, editRoster } from './roster.remote';
+import s3 from '$lib/server/s3';
+import cdn from '$lib/cdn';
 
 export const updateRegistration = command(
 	z.object({
@@ -44,9 +46,10 @@ const submissionSchema = z.object({
 export const submitTeam = command(
 	z.object({
 		registrationId: z.uuid(),
+		logo: z.instanceof(ArrayBuffer),
 		data: submissionSchema
 	}),
-	async ({ registrationId, data }) => {
+	async ({ registrationId, logo, data }) => {
 		const { locals } = getRequestEvent();
 
 		const registration = await db.query.registration.findFirst({
@@ -67,6 +70,8 @@ export const submitTeam = command(
 				data
 			})
 			.returning({ id: schema.teamSubmission.id });
+
+		await s3.uploadImage(logo, cdn.submissionLogoKey(submission.id));
 
 		return { submission };
 	}
@@ -104,7 +109,7 @@ async function validateUserAccess(submissionId: string): Promise<User> {
 	return locals.user;
 }
 
-export const editTeamSubmission = command(
+export const editTeamSubmissionData = command(
 	z.object({
 		id: z.uuid(),
 		data: submissionSchema
@@ -122,6 +127,18 @@ export const editTeamSubmission = command(
 				status: !isAdmin(user.role) ? SubmissionStatus.PENDING : undefined
 			})
 			.where(eq(schema.teamSubmission.id, id));
+	}
+);
+
+export const editTeamSubmissionLogo = command(
+	z.object({
+		id: z.uuid(),
+		logo: z.instanceof(ArrayBuffer)
+	}),
+	async ({ id, logo }) => {
+		await validateUserAccess(id);
+
+		await s3.uploadImage(logo, cdn.submissionLogoKey(id));
 	}
 );
 
