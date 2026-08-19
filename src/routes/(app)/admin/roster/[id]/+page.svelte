@@ -25,6 +25,7 @@
 	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
 	import Table from '$lib/components/table/Table.svelte';
 	import Icon from '$lib/components/ui/Icon.svelte';
+	import { deleteCheckin } from '$lib/remote/checkin.remote.js';
 
 	let { data } = $props();
 
@@ -96,6 +97,18 @@
 
 		changeGroupOpen = false;
 	}
+
+	async function onCheckinRevokeClick(battletag: string, discordId: string) {
+		await confirm.confirm({
+			title: 'Ta bort incheckning',
+			description: `Är du säker på att du vill ta bort incheckningen för <b>${battletag}</b>? Spelaren kommer behöva checka in igen.`,
+			destructive: true,
+			action: async () => {
+				await deleteCheckin({ seasonId: season.id, discordId });
+				await invalidateAll();
+			}
+		});
+	}
 </script>
 
 <Breadcrumbs
@@ -141,17 +154,21 @@
 						{/if}
 					</div>
 
-					<div>
+					<div class="gap-2">
 						{#if checkin}
 							<Button
 								icon="ph:arrow-square-out"
 								label="Visa på discord"
-								kind="tertiary"
+								kind="secondary"
 								href="https://discord.com/users/{checkin.discordId}"
 								openInNewTab
 							/>
 
-							<Button icon="ph:link-break" kind="tertiary" />
+							<Button
+								icon="ph:link-break"
+								kind="secondary"
+								onclick={() => onCheckinRevokeClick(member.player.battletag, checkin.discordId)}
+							/>
 						{/if}
 					</div>
 				{/snippet}

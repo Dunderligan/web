@@ -114,11 +114,15 @@ async function searchProfilesAndCache(battletag: string): Promise<CacheRow> {
 
 async function searchProfiles(battletag: string): Promise<CacheRow> {
 	const name = battletag.split('#')[0];
-	const response = await fetch(
-		`https://overwatch.blizzard.com/en-us/search/account-by-name/${name}/`
-	);
-
 	const date = new Date().toISOString();
+
+	let response: Response;
+	try {
+		response = await fetch(`https://overwatch.blizzard.com/en-us/search/account-by-name/${name}/`);
+	} catch (error) {
+		console.error('Error fetching Overwatch profile:', error);
+		return { error: 'Failed to fetch profile', date: new Date().toISOString() };
+	}
 
 	if (!response.ok) {
 		return { error: `${response.status} ${response.statusText}`, date };

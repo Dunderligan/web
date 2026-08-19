@@ -29,7 +29,6 @@ export class SaveContext {
 	private discardAction: () => Promise<void>;
 
 	// the href to return to after saving/discarding
-	// TODO: currently not used?
 	href?: string;
 
 	constructor(options?: {
