@@ -23,6 +23,8 @@
 	import { AuthRole, checkPermission } from '$lib/authRole';
 	import AdminSocials from '$lib/components/admin/AdminSocials.svelte';
 	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
+	import Table from '$lib/components/table/Table.svelte';
+	import Icon from '$lib/components/ui/Icon.svelte';
 
 	let { data } = $props();
 
@@ -105,17 +107,58 @@
 	]}
 />
 
-<AdminCard title="Spelare">
+<AdminCard title="Spelartrupp">
 	<EditableMembersTable
 		bind:members={roster.members}
 		legacyRanks={season.legacyRanks}
 		disabled={!isAdmin}
-		showCheckins={season.checkinOpen}
-		checkins={data.checkins}
 	/>
 </AdminCard>
 
 {#if isAdmin}
+	{#if season.checkinOpen}
+		<AdminCard title="Incheckning">
+			<Table
+				rows={roster.members}
+				columns={[
+					{ label: 'Spelare' },
+					{ label: 'Incheckad', center: true },
+					{ label: 'Åtgärder', center: true }
+				]}
+				class="grid-cols-[1fr_1fr_auto]"
+				noBackground
+			>
+				{#snippet row({ value: member })}
+					{@const checkin = data.checkins.get(member.player.id)}
+
+					<div class="py-3 font-semibold">{member.player.battletag}</div>
+
+					<div class="justify-center text-xl">
+						{#if checkin}
+							<Icon icon="ph:check-circle-fill" class="text-green-600" />
+						{:else}
+							<Icon icon="ph:x-circle-fill" class="text-red-600" />
+						{/if}
+					</div>
+
+					<div>
+						{#if checkin}
+							<Button
+								icon="ph:arrow-square-out"
+								label="Visa på discord"
+								kind="tertiary"
+								href="https://discord.com/users/{checkin.discordId}"
+								openInNewTab
+							/>
+
+							<Button icon="ph:link-break" kind="tertiary" />
+						{/if}
+					</div>
+				{/snippet}
+			</Table>
+		</AdminCard>
+	{/if}
+
 	<AdminSocials emptyText="Detta lag har inga länkar." bind:socials={team.socials} />
 
 	<AdminCard title="Inställningar">

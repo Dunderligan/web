@@ -25,7 +25,7 @@
 	class={[
 		classProp,
 		noBackground
-			? '*:border-b *:border-gray-200 dark:*:border-gray-800'
+			? '*:border-b *:border-gray-100 dark:*:border-gray-800'
 			: 'gap-y-1 *:bg-gray-100 dark:*:bg-gray-900',
 		'grid w-full overflow-hidden overflow-x-auto rounded-lg text-lg font-medium text-gray-700 *:flex *:items-center dark:text-gray-300'
 	]}
@@ -34,7 +34,8 @@
 		<div
 			class={[
 				center && 'justify-center',
-				noBackground ? '' : 'bg-gray-50! dark:bg-gray-800!',
+				noBackground ? 'border-gray-200! dark:border-gray-700!' : 'bg-gray-50! dark:bg-gray-800!',
+				!noBackground && i === 0 && !center && 'pl-6',
 				'flex items-center gap-1 py-2 text-base'
 			]}
 		>

@@ -324,6 +324,7 @@ export type ButtonProps = {
 	icon?: string;
 	kind?: ButtonKind;
 	loading?: boolean;
+	openInNewTab?: boolean;
 } & (
 	| { children: Snippet; label?: never; icon?: never }
 	| {

@@ -124,13 +124,13 @@
 </AdminCard>
 
 {#if isAdmin(data.user?.role)}
-	<AdminCard title="Inchecking">
+	<AdminCard title="Incheckning">
 		<Label label="Incheckning öppen">
 			<Checkbox bind:checked={season.checkinOpen} onCheckedChange={saveCtx.setDirty} />
 		</Label>
 
 		{#if season.checkinOpen}
-			<AdminLink href="/admin/checkin/{season.id}" rounded>Visa överblick</AdminLink>
+			<AdminLink href="/admin/incheckning/{season.id}" rounded>Visa överblick</AdminLink>
 		{/if}
 	</AdminCard>
 
