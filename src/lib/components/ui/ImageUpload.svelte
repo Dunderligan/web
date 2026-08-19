@@ -43,7 +43,7 @@
 <label class="group relative flex size-24 shrink-0 cursor-pointer items-center justify-center">
 	{#if image}
 		{@render image({ srcOverride: resolvedSrc ?? null, class: imageClass })}
-	{:else if file}
+	{:else if resolvedSrc}
 		<img src={resolvedSrc} class={[imageClass, 'object-contain']} alt="" />
 	{:else}
 		<div

@@ -18,7 +18,7 @@
 	const registration = $state(data.registration);
 	const season = $derived(registration.season);
 
-	SaveContext.set(new SaveContext({ save }));
+	SaveContext.set(new SaveContext({ save, href: `/anmal/${season.slug}` }));
 
 	const confirmCtx = ConfirmContext.get();
 	const saveCtx = SaveContext.get();

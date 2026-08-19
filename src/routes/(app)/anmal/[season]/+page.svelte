@@ -21,6 +21,7 @@
 	import { formatDate } from '$lib/util';
 	import { onMount } from 'svelte';
 	import { get, set } from 'idb-keyval';
+	import Link from '$lib/components/ui/Link.svelte';
 
 	let { data } = $props();
 
@@ -61,8 +62,9 @@
 		await set(logoStorageKey, logo);
 	}
 
-	function clear() {
-		localStorage.removeItem(storageKey);
+	async function clear() {
+		await set(storageKey, null);
+		await set(logoStorageKey, null);
 		submission = {
 			name: '',
 			members: []
@@ -88,10 +90,11 @@
 
 			createdId = created.id;
 			createdDialogOpen = true;
-			clear();
 		} finally {
 			submitting = false;
 		}
+
+		await clear();
 	}
 </script>
 
@@ -104,8 +107,8 @@
 		<Notice kind="warn">
 			<p>
 				Det ser ut som att du redan har skickat in en anmälan för denna säsong. För att redigera din
-				anmälan, gå till <a class="hover:underline" href="/jag/anmalningar">Mina anmälningar</a>,
-				eller fortsätt här för att anmäla ett nytt lag.
+				anmälan, gå till <Link href="/jag/anmalningar">Mina anmälningar</Link>, eller fortsätt här
+				för att anmäla ett nytt lag.
 			</p>
 		</Notice>
 	{/if}

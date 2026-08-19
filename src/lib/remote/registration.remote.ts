@@ -216,6 +216,10 @@ export const reviewTeamSubmission = command(
 
 		await applyReview(submissionId, true, user, rosterId);
 
+		// Copy the user-uploaded submission logo to the proper roster location.
+		// This will overwrite any existing roster logo from a previous approval.
+		await s3.copyFile(cdn.submissionLogoKey(submissionId), cdn.rosterLogoKey(rosterId));
+
 		return { roster: { id: rosterId } };
 	}
 );

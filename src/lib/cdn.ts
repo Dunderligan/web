@@ -14,13 +14,13 @@ function srcUrl(key: string) {
  *
  * This assumes Images is configured on top of the CDN domain (called zones by cloudflare).
  */
-function imageSrcUrl(path: string, { width, height }: { width: number; height?: number }) {
+function imageSrcUrl(key: string, { width, height }: { width: number; height?: number }) {
 	let filters = `format=auto,fit=scale-down,width=${width}`;
 	if (height) {
 		filters += `,height=${height}`;
 	}
 
-	return srcUrl(`/cdn-cgi/image/${filters}${path}`);
+	return srcUrl(`cdn-cgi/image/${filters}/${key}`);
 }
 
 /** Returns the S3 key for a roster logo. */

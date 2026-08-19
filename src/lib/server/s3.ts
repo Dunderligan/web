@@ -4,8 +4,12 @@ import {
 	S3_ENDPOINT,
 	S3_SECRET_ACCESS_KEY
 } from '$env/static/private';
-import { PUBLIC_CDN_ENDPOINT } from '$env/static/public';
-import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import {
+	CopyObjectCommand,
+	DeleteObjectCommand,
+	PutObjectCommand,
+	S3Client
+} from '@aws-sdk/client-s3';
 import sharp from 'sharp';
 
 const S3 = new S3Client({
@@ -46,4 +50,14 @@ async function deleteFile(key: string) {
 	await S3.send(command);
 }
 
-export default { uploadImage, deleteFile };
+async function copyFile(sourceKey: string, destinationKey: string) {
+	const command = new CopyObjectCommand({
+		Bucket: S3_BUCKET_NAME,
+		CopySource: `${S3_BUCKET_NAME}/${sourceKey}`,
+		Key: destinationKey
+	});
+
+	await S3.send(command);
+}
+
+export default { uploadImage, deleteFile, copyFile };
