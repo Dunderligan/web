@@ -42,7 +42,7 @@
 		>
 	{/each}
 
-	{#if saveCtx.href}
+	{#if saveCtx && saveCtx.href}
 		<a class="ml-2 text-sm font-medium hover:text-accent-500 hover:underline" href={saveCtx.href}>
 			<Icon icon="ph:link-simple" />
 			Visa</a

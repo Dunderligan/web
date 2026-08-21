@@ -1,0 +1,1 @@
+ALTER TYPE "rank" ADD VALUE 'emerald' BEFORE 'diamond';

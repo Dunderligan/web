@@ -15,23 +15,27 @@
 		row: Snippet<[{ value: T; index: number }]>;
 		key?: (value: T) => any;
 		class?: ClassValue;
+		noBackground?: boolean;
 	};
 
-	let { columns, rows, row, key, class: classProp }: Props = $props();
+	let { columns, rows, row, key, class: classProp, noBackground }: Props = $props();
 </script>
 
 <div
 	class={[
 		classProp,
-		'__table grid w-full gap-y-1 overflow-hidden overflow-x-auto rounded-lg text-lg font-medium text-gray-700 dark:text-gray-300'
+		noBackground
+			? '*:border-b *:border-gray-200 dark:*:border-gray-800'
+			: 'gap-y-1 *:bg-gray-100 dark:*:bg-gray-900',
+		'grid w-full overflow-hidden overflow-x-auto rounded-lg text-lg font-medium text-gray-700 *:flex *:items-center dark:text-gray-300'
 	]}
 >
 	{#each columns as { label, center = false, note }, i}
 		<div
 			class={[
-				i === 0 && !center && 'pl-6',
 				center && 'justify-center',
-				'__table-header flex items-center gap-1 bg-gray-50 py-2 text-base text-gray-600 dark:bg-gray-800 dark:text-gray-400'
+				noBackground ? '' : 'bg-gray-50! dark:bg-gray-800!',
+				'flex items-center gap-1 py-2 text-base'
 			]}
 		>
 			{label}
@@ -46,15 +50,3 @@
 		{@render row({ value, index })}
 	{/each}
 </div>
-
-<style>
-	:global(.__table > :not(.__table-header)) {
-		background-color: var(--color-gray-100);
-		display: flex;
-		align-items: center;
-	}
-
-	:global(.dark .__table > :not(.__table-header)) {
-		background-color: var(--color-gray-900);
-	}
-</style>

@@ -1,3 +1,5 @@
+# API Documentation
+
 The site has a small public API, documented here. All paths are prefixed with `/api` (for example, the full URL to the first endpoint is https://dunderligan.se/api/season).
 
 An API key is required for some routes. These can currently only be created by admins in the admin panel. The client provides the API key in the `Authorization` header as a `Bearer` token.
@@ -197,71 +199,32 @@ type Role = 'tank' | 'damage' | 'support' | 'flex' | 'coach' | 'manager';
 POST /match
 ```
 
-Creates a scheduled match between two rosters. Requires an API key with moderator privileges or higher.
+Creates group match. Requires an API key with moderator privileges or higher.
 
 Request type:
 
 ```ts
 type CreateMatchRequest = {
-    rosterAId: string;
-    rosterBId: string;
     groupId: string;
-    scheduledAt: string | null; // ISO date string
+    teamAScore?: number; // defaults to 0
+    teamBScore?: number; // defaults to 0
+    draws?: number; // defaults to 0
+    state?: MatchState; // defaults to "scheduled"
+    rosterAId?: string | null;
+    rosterBId?: string | null;
+    teamANote?: string | null;
+    teamBNote?: string | null;
+    vodUrl?: string | null;
+    scheduledAt?: Date | null;
+    playedAt?: Date | null;
 }
 ```
 
 Response type:
 
-```ts
-type Match = {
-    id: string;
-    createdAt: string;
-    groupId: string | null;
-    bracketId: string | null;
-    rosterAId: string | null;
-    rosterBId: string | null;
-    teamAScore: number;
-    teamBScore: number;
-    draws: number;
-    teamANote: string | null;
-    teamBNote: string | null;
-    state: MatchState;
-    playedAt: string | null;
-    scheduledAt: string | null;
-    vodUrl: string | null;
-    nextMatchId: string | null;
-    order: number;
-}
-
-type MatchState = 'scheduled' |'played' | 'walkover' | 'cancelled'
-```
-
----
-
-```
-GET /match
-```
-
-Returns matches, filtered by query parameters.
-
-All parameters are optional, and if multiple parameters are provided, they are combined with AND logic. They are as follows:
-
-- `rosterId`: string - filter matches where this roster is either rosterA or rosterB.
-- `divisionId`: string - filter matches in this division.
-- `seasonId`: string - filter matches in this season.
-- `isBracket`: boolean - if true, only return bracket matches. If false, only return group matches.
-- `state`: MatchState[] - filter matches in any of these states, delimited by comma. The filter can also be negated by prefixing the parameter with `!`, for example `state=!scheduled,cancelled` will return matches that are not scheduled or cancelled.
-- `page`: number - for pagination, zero-based.
-- `pageSize`: number - for pagination, number of items per page.
-
 Response type:
 
 ```ts
-type MatchResponse = {
-    results: Match[];
-    hasNextPage: boolean;
-}
-
 type Match = {
     id: string;
 	teamAScore: number;
@@ -276,7 +239,7 @@ type Match = {
 	nextMatchId: string | null;
     rosterA: MatchRoster | null;
     rosterB: MatchRoster | null;
-    // exactly one of these are be null
+    // exactly one of these are null
     group: Group | null,
     bracket: Bracket | null;
 }
@@ -316,4 +279,311 @@ type Season = {
 }
 
 type MatchState = 'scheduled' | 'played' | 'walkover' | 'cancelled';
+```
+
+```
+PATCH /match/[id]
+```
+
+Updates an existing group or bracket match. Requires an API key with moderator privileges or higher.
+
+Unset values are unchanged, `null` values are set to `null`.
+
+Request type:
+
+```ts
+type CreateMatchRequest = {
+    teamAScore?: number;
+    teamBScore?: number;
+    draws?: number;
+    state?: MatchState;
+    rosterAId?: string | null;
+    rosterBId?: string | null;
+    teamANote?: string | null;
+    teamBNote?: string | null;
+    vodUrl?: string | null;
+    scheduledAt?: Date | null;
+    playedAt?: Date | null;
+}
+```
+
+Response type:
+
+Response type:
+
+```ts
+type Match = {
+    id: string;
+	teamAScore: number;
+	teamBScore: number;
+	draws: number;
+	teamANote: string | null;
+	teamBNote: string | null;
+	state: MatchState;
+	playedAt: string | null; // ISO date string
+	scheduledAt: string | null; // ISO date string
+	vodUrl: string | null;
+	nextMatchId: string | null;
+    rosterA: MatchRoster | null;
+    rosterB: MatchRoster | null;
+    // exactly one of these are null
+    group: Group | null,
+    bracket: Bracket | null;
+}
+
+type MatchRoster = {
+    id: string;
+    name: string;
+    slug: string;
+}
+
+type Group = {
+    id: string;
+    name: string;
+    slug: string;
+    division: Division;
+}
+
+type Bracket = {
+    id: string;
+    name: string;
+    division: Division;
+}
+
+type Division = {
+    id: string;
+    name: string;
+    slug: string;
+    season: Season;
+}
+
+type Season = {
+    id: string;
+    name: string;
+    slug: string;
+    legacyRanks: boolean;
+    startedAt: string | null; // ISO date string
+}
+
+type MatchState = 'scheduled' | 'played' | 'walkover' | 'cancelled';
+```
+
+---
+
+```
+GET /match
+```
+
+Returns matches, filtered by query parameters.
+
+All parameters are optional, and if multiple parameters are provided, they are combined with AND logic. They are as follows:
+
+- `rosterId`: string - filter matches where this roster is either rosterA or rosterB.
+- `divisionId`: string - filter matches in this division.
+- `seasonId`: string - filter matches in this season.
+- `isBracket`: boolean - if true, only return bracket matches. If false, only return group matches.
+- `includeEmpty`: boolean - if not set to true, filters out matches without any rosters assigned.
+- `state`: MatchState[] - filter matches in any of these states, delimited by comma. The filter can also be negated by prefixing the parameter with `!`, for example `state=!scheduled,cancelled` will return matches that are not scheduled or cancelled.
+- `page`: number - for pagination, zero-based.
+- `pageSize`: number - for pagination, number of items per page.
+
+Response type:
+
+```ts
+type MatchResponse = {
+    results: Match[];
+    hasNextPage: boolean;
+}
+
+type Match = {
+    id: string;
+	teamAScore: number;
+	teamBScore: number;
+	draws: number;
+	teamANote: string | null;
+	teamBNote: string | null;
+	state: MatchState;
+	playedAt: string | null; // ISO date string
+	scheduledAt: string | null; // ISO date string
+	vodUrl: string | null;
+	nextMatchId: string | null;
+    rosterA: MatchRoster | null;
+    rosterB: MatchRoster | null;
+    // exactly one of these are null
+    group: Group | null,
+    bracket: Bracket | null;
+}
+
+type MatchRoster = {
+    id: string;
+    name: string;
+    slug: string;
+}
+
+type Group = {
+    id: string;
+    name: string;
+    slug: string;
+    division: Division;
+}
+
+type Bracket = {
+    id: string;
+    name: string;
+    division: Division;
+}
+
+type Division = {
+    id: string;
+    name: string;
+    slug: string;
+    season: Season;
+}
+
+type Season = {
+    id: string;
+    name: string;
+    slug: string;
+    legacyRanks: boolean;
+    startedAt: string | null; // ISO date string
+}
+
+type MatchState = 'scheduled' | 'played' | 'walkover' | 'cancelled';
+```
+
+---
+
+```
+GET /match/[id]
+```
+
+Returns a match by its ID.
+
+Response type:
+
+```ts
+type Match = {
+    id: string;
+	teamAScore: number;
+	teamBScore: number;
+	draws: number;
+	teamANote: string | null;
+	teamBNote: string | null;
+	state: MatchState;
+	playedAt: string | null; // ISO date string
+	scheduledAt: string | null; // ISO date string
+	vodUrl: string | null;
+	nextMatchId: string | null;
+    rosterA: MatchRoster | null;
+    rosterB: MatchRoster | null;
+    // exactly one of these are null
+    group: Group | null,
+    bracket: Bracket | null;
+}
+
+type MatchRoster = {
+    id: string;
+    name: string;
+    slug: string;
+}
+
+type Group = {
+    id: string;
+    name: string;
+    slug: string;
+    division: Division;
+}
+
+type Bracket = {
+    id: string;
+    name: string;
+    division: Division;
+}
+
+type Division = {
+    id: string;
+    name: string;
+    slug: string;
+    season: Season;
+}
+
+type Season = {
+    id: string;
+    name: string;
+    slug: string;
+    legacyRanks: boolean;
+    startedAt: string | null; // ISO date string
+}
+
+type MatchState = 'scheduled' | 'played' | 'walkover' | 'cancelled';
+```
+
+## `POST /checkin/[seasonId]/[discordId]`
+
+Checks in a Discord user by battletag for the season. Requires an API key with admin privileges or higher.
+
+Returns a 409 Conflict if the user was already checked in, or a 404 Not Found if no player with the battletag (case-insensitive) was found.
+
+Request type:
+
+```ts
+export type CheckinRequest = {
+	battletag: string;
+};
+```
+
+Response type:
+
+```ts
+export type Checkin = {
+	discordId: string;
+	checkedInAt: Date;
+	player: {
+		id: string;
+		battletag: string;
+		memberships: {
+			rank: Rank | null;
+			role: Role;
+			tier: number | null;
+			sr: number | null;
+			isCaptain: boolean;
+			registeredName: string | null;
+			roster: {
+				id: string;
+				name: string;
+				slug: string;
+			};
+		}[];
+	};
+};
+```
+
+## `GET /api/checkin/[seasonId]/[discordId]`
+
+Get a checked-in user by season and discord id. Requires an API key with admin privileges or higher.
+
+Response type:
+
+```ts
+export type Checkin = {
+	discordId: string;
+	checkedInAt: Date;
+	player: {
+		id: string;
+		battletag: string;
+		memberships: {
+			rank: Rank | null;
+			role: Role;
+			tier: number | null;
+			sr: number | null;
+			isCaptain: boolean;
+			registeredName: string | null;
+			roster: {
+				id: string;
+				name: string;
+				slug: string;
+			};
+		}[];
+	};
+};
 ```

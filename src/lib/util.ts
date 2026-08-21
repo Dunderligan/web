@@ -58,7 +58,7 @@ export function flattenDivision<S, D>(
 	return { season, division: division as D };
 }
 
-/** Flattens a nested group. ({ group: { division: { season } } } -> { group, division, season }) */
+/** Flattens a nested group. (`{ group: { division: { season } } } -> { group, division, season }`) */
 export function flattenGroup<S, D, G>(nestedGroup: NestedGroup<S, D, G>): FlattenedGroup<S, D, G> {
 	const { division: nestedDivision, ...group } = nestedGroup;
 	const { season, division } = flattenDivision(nestedDivision);
@@ -216,12 +216,16 @@ export function parseMatchQueryParams(searchParams: URLSearchParams): MatchQuery
 	const isBracketParam = searchParams.get('isBracket');
 	const isBracket = isBracketParam ? isBracketParam === 'true' : undefined;
 
+	// default to true
+	const includeEmpty = searchParams.get('includeEmpty') === 'true';
+
 	return {
 		rosterId: searchParams.get('rosterId') ?? undefined,
 		divisionId: searchParams.get('divisionId') ?? undefined,
 		seasonId: searchParams.get('seasonId') ?? undefined,
 		page: Number(searchParams.get('page') ?? 0),
 		isBracket,
+		includeEmpty,
 		pageSize,
 		state
 	};
@@ -266,4 +270,15 @@ export function compare(a: any, b: any): number {
 
 export function compareNullableStrings(a?: string | null, b?: string | null): number {
 	return compareNullable(a ?? null, b ?? null, (x, y) => x.localeCompare(y));
+}
+
+export const PLAYER_ROLES = [Role.DAMAGE, Role.TANK, Role.SUPPORT, Role.FLEX];
+export const ORGANIZATION_ROLES = [Role.COACH, Role.MANAGER];
+
+export function isPlayerRole(role: Role): boolean {
+	return PLAYER_ROLES.includes(role);
+}
+
+export function isOrganizationRole(role: Role): boolean {
+	return ORGANIZATION_ROLES.includes(role);
 }

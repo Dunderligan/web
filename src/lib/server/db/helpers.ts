@@ -1,7 +1,8 @@
 import { sql, eq } from 'drizzle-orm';
 import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
-import { schema } from '$lib/server/db';
+import { db, schema } from '$lib/server/db';
 import type { PgTransaction } from 'drizzle-orm/pg-core';
+import type { PlayerCheckin } from '$lib/types';
 
 // Helper queries and functions for database operations.
 
@@ -20,19 +21,25 @@ export const entityQuery = {
 } as const;
 
 /**
+ * Query for the base information about a season.
+ */
+export const nestedSeasonQuery = {
+	columns: {
+		legacyRanks: true,
+		startedAt: true,
+		spinoff: true,
+		checkinOpen: true,
+		...entityQuery.columns
+	}
+} as const;
+
+/**
  * Query for a division with the parent season nested.
  */
 export const nestedDivisionQuery = {
 	...entityQuery,
 	with: {
-		season: {
-			columns: {
-				legacyRanks: true,
-				startedAt: true,
-				spinoff: true,
-				...entityQuery.columns
-			}
-		}
+		season: nestedSeasonQuery
 	}
 } as const;
 
@@ -90,7 +97,12 @@ export const fullMatchColumns = {
 } as const;
 
 export const fullMatchQuery = {
-	columns: fullMatchColumns,
+	columns: {
+		...fullMatchColumns,
+		// The IDs are already included in the joined roster objects, don't query them twice
+		rosterAId: false,
+		rosterBId: false
+	},
 	orderBy: groupMatchOrder,
 	with: {
 		rosterA: matchRosterQuery,
@@ -99,8 +111,7 @@ export const fullMatchQuery = {
 } as const;
 
 export const fullMatchQueryWithContext = {
-	columns: fullMatchColumns,
-	orderBy: groupMatchOrder,
+	...fullMatchQuery,
 	with: {
 		...fullMatchQuery.with,
 		group: nestedGroupQuery,
@@ -116,7 +127,7 @@ export const finalMatchQuery = {
 	}
 } as const;
 
-export const memberQuery = {
+export const memberQueryWithoutPlayer = {
 	orderBy: (t: any) => sql`${rolesOrder(t.role)}, ${t.playerId} ASC`,
 	columns: {
 		isCaptain: true,
@@ -125,7 +136,11 @@ export const memberQuery = {
 		sr: true,
 		role: true,
 		registeredName: true
-	},
+	}
+} as const;
+
+export const memberQuery = {
+	...memberQueryWithoutPlayer,
 	with: {
 		player: {
 			columns: {
@@ -150,6 +165,18 @@ export function rolesOrder(column: any) {
 			ELSE 7
 		END
 	) ASC`;
+}
+
+export function rosterSeasonFilter(seasonId: string) {
+	return {
+		group: {
+			division: {
+				season: {
+					id: seasonId
+				}
+			}
+		}
+	};
 }
 
 /**
@@ -190,4 +217,25 @@ export async function findOrCreatePlayer(tx: Transaction, battletag: string) {
 
 		return newPlayer.id;
 	}
+}
+
+export async function retrievePlayerCheckins(
+	seasonId: string,
+	playerIds: string[]
+): Promise<Map<string, PlayerCheckin>> {
+	const checkins = await db.query.playerCheckin.findMany({
+		where: {
+			seasonId: seasonId,
+			playerId: {
+				in: playerIds
+			}
+		},
+		columns: {
+			playerId: true,
+			checkedInAt: true,
+			discordId: true
+		}
+	});
+
+	return new Map(checkins.map(({ playerId, ...data }) => [playerId, data]));
 }

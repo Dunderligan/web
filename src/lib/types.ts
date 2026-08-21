@@ -54,6 +54,7 @@ export enum Rank {
 	SILVER = 'silver',
 	GOLD = 'gold',
 	PLATINUM = 'platinum',
+	EMERALD = 'emerald',
 	DIAMOND = 'diamond',
 	MASTER = 'master',
 	GRANDMASTER = 'grandmaster',
@@ -371,4 +372,9 @@ export type Hero = {
 	name: string;
 	slug: string;
 	role: Role;
+};
+
+export type PlayerCheckin = {
+	discordId: string;
+	checkedInAt: Date;
 };

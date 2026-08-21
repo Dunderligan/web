@@ -27,7 +27,8 @@ export const season = pgTable(
 		legacyRanks: boolean().notNull().default(false),
 		legacySeeding: boolean().notNull().default(false),
 		hidden: boolean().notNull().default(false),
-		spinoff: boolean().notNull().default(false)
+		spinoff: boolean().notNull().default(false),
+		checkinOpen: boolean().notNull().default(false)
 	},
 	(t) => [index('season_name_gin_idx').using('gin', t.name.op('gin_trgm_ops'))]
 );
@@ -272,4 +273,19 @@ export const playerAlias = pgTable(
 		unique().on(t.name, t.playerId),
 		index('player_alias_name_gin_idx').using('gin', t.name.op('gin_trgm_ops'))
 	]
+);
+
+export const playerCheckin = pgTable(
+	'player_checkin',
+	{
+		playerId: uuid()
+			.notNull()
+			.references(() => player.id, { onDelete: 'cascade' }),
+		seasonId: uuid()
+			.notNull()
+			.references(() => season.id, { onDelete: 'cascade' }),
+		discordId: text().notNull(),
+		checkedInAt: timestamp().notNull().defaultNow()
+	},
+	(t) => [primaryKey({ columns: [t.playerId, t.seasonId] }), unique().on(t.discordId, t.seasonId)]
 );

@@ -22,6 +22,7 @@
 	import Note from '$lib/components/ui/Note.svelte';
 	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
 	import { isAdmin } from '$lib/authRole.js';
+	import AdminLink from '$lib/components/admin/AdminLink.svelte';
 
 	const { data } = $props();
 
@@ -60,6 +61,7 @@
 			legacySeeding: season.legacySeeding,
 			hidden: season.hidden,
 			spinoff: season.spinoff,
+			checkinOpen: season.checkinOpen,
 			registration
 		});
 	}
@@ -122,6 +124,16 @@
 </AdminCard>
 
 {#if isAdmin(data.user?.role)}
+	<AdminCard title="Inchecking">
+		<Label label="Incheckning öppen">
+			<Checkbox bind:checked={season.checkinOpen} onCheckedChange={saveCtx.setDirty} />
+		</Label>
+
+		{#if season.checkinOpen}
+			<AdminLink href="/admin/checkin/{season.id}" rounded>Visa överblick</AdminLink>
+		{/if}
+	</AdminCard>
+
 	<AdminCard title="Anmälan">
 		{#if registration}
 			<div class="space-y-2">

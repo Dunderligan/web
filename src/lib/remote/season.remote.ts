@@ -71,6 +71,7 @@ export const updateSeason = command(
 		legacySeeding: z.boolean(),
 		hidden: z.boolean(),
 		spinoff: z.boolean(),
+		checkinOpen: z.boolean(),
 		registration: z
 			.object({
 				url: z.url(),
