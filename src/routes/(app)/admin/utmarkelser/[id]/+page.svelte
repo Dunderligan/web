@@ -66,7 +66,7 @@
 		await confirmCtx.confirm({
 			title: 'Radera utmärkelse',
 			description: `Är du säker på att du vill radera ${awardType.name} och alla tilldelningar av den?`,
-			negative: true,
+			destructive: true,
 			action: async () => {
 				await deleteAwardType({ id: awardType.id });
 				await goto('/admin/utmarkelser');
@@ -80,7 +80,8 @@
 		await createPlayerAward({
 			awardTypeId: awardType.id,
 			playerId: selectedPlayerId,
-			divisionId: selectedDivisionId ?? null
+			divisionId: selectedDivisionId ?? null,
+			description: newDescription.length > 0 ? newDescription : null
 		});
 
 		await invalidate('admin:awards');
@@ -107,7 +108,7 @@
 		await confirmCtx.confirm({
 			title: 'Radera utmärkelse',
 			description: 'Är du säker på att du vill radera den här utmärkelsen?',
-			negative: true,
+			destructive: true,
 			action: async () => {
 				await deletePlayerAward({ id });
 				await invalidate('admin:awards');
@@ -129,16 +130,16 @@
 	]}
 />
 
-<AdminCard title="Vinnare">
+<AdminCard title="Tilldelningar">
 	{#if awards.length === 0}
 		<AdminEmptyNotice oncreateclick={() => (createOpen = true)}>
-			Denna utmärkelse har inga vinnare än.
+			Denna utmärkelse har inte tilldelats någon spelare än.
 		</AdminEmptyNotice>
 	{:else}
 		<Table
 			rows={awards}
 			key={(award) => award.id}
-			class="grid-cols-[1fr_1fr_1fr_100px]"
+			class="grid-cols-[1fr_1fr_1fr_auto]"
 			columns={[
 				{ label: 'Battletag' },
 				{ label: awardType.showDivision ? 'Säsong' : '', center: true },
@@ -147,25 +148,25 @@
 			]}
 		>
 			{#snippet row({ value: award })}
-				<div class="py-4 pl-6 font-semibold">
+				<div class="py-4 font-semibold">
 					<a href="/admin/spelare/{award.player.id}" class="hover:underline"
 						>{award.player.battletag}</a
 					>
 				</div>
 
-				<div class="justify-center text-center text-base">
+				<div class="justify-center text-base">
 					<a href="/admin/sasong/{award.division?.season.id}" class="hover:underline"
 						>{award.division?.season.name}</a
 					>
 				</div>
 
-				<div class="justify-center text-center text-base">
+				<div class="justify-center text-base">
 					<a href="/admin/division/{award.division?.id}" class="hover:underline"
 						>{award.division?.name}</a
 					>
 				</div>
 
-				<div class="justify-center gap-2 px-2">
+				<div class="justify-center gap-1 px-2">
 					<Button
 						icon="ph:pencil-simple"
 						kind="tertiary"
@@ -213,7 +214,7 @@
 	<Button
 		icon="ph:trash"
 		label="Radera utmärkelse"
-		kind="negative"
+		kind="destructive"
 		onclick={submitDeleteAwardType}
 	/>
 </AdminCard>
@@ -259,6 +260,14 @@
 			/>
 		</Label>
 	{/if}
+
+	<Label label="Motivering (valfri)" column>
+		<TextArea
+			bind:value={newDescription}
+			class="w-full"
+			placeholder="En motivering av varför denna spelare har tilldelats utmärkelsen..."
+		/>
+	</Label>
 </CreateDialog>
 
 <CreateDialog
@@ -268,7 +277,7 @@
 	createLabel="Spara"
 >
 	{#if editAward}
-		<Label label="Motivering" column>
+		<Label label="Motivering (valfri)" column>
 			<TextArea
 				bind:value={newDescription}
 				class="w-full"
