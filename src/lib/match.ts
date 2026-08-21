@@ -1,6 +1,5 @@
 import {
 	type LogicalMatch,
-	type MatchRoster,
 	type ResolvedMatch,
 	type MatchWithoutRosters,
 	MatchState,
@@ -80,8 +79,8 @@ export function isWinner(match: LogicalMatch, side: MatchSide): boolean {
 
 /** Returns the roster ID on the given side of a match, or null if not set. */
 export function matchRosterId(match: LogicalMatch, side?: MatchSide | null): string | null {
-	if (side === 'A') return match.rosterAId ?? null;
-	if (side === 'B') return match.rosterBId ?? null;
+	if (side === 'A') return match.rosterAId;
+	if (side === 'B') return match.rosterBId;
 	return null;
 }
 
@@ -132,6 +131,20 @@ export function createGroupMatch(groupId: string): UnresolvedMatch {
 	};
 }
 
+/**
+ * Converts a ResolvedMatch to a LogicalMatch by flatting the roster objects to their IDs.
+ */
+export function resolvedMatchToLogical(match: ResolvedMatch): LogicalMatch {
+	return {
+		rosterAId: match.rosterA?.id ?? null,
+		rosterBId: match.rosterB?.id ?? null,
+		teamAScore: match.teamAScore,
+		teamBScore: match.teamBScore,
+		draws: match.draws,
+		state: match.state
+	};
+}
+
 export function getRosterPlacement(
 	matches: ResolvedMatchWithContext[],
 	rosterId: string,
@@ -144,7 +157,7 @@ export function getRosterPlacement(
 			.at(0) ?? null;
 
 	if (!finalMatch) {
-		return { finalMatch, placement: null };
+		return { finalMatch: null, placement: null };
 	}
 
 	const round = finalMatch.round!;
@@ -154,15 +167,18 @@ export function getRosterPlacement(
 	}
 
 	if (round === 0) {
+		const logicalFinalMatch = resolvedMatchToLogical(finalMatch);
+
 		// played in the grand final
-		const winner = matchWinner(finalMatch);
+		const winner = matchWinner(logicalFinalMatch);
+		// grand final is undecided
 		if (!winner) return { finalMatch, placement: { best: 1, worst: 2 } };
 
-		const place = matchRosterId(finalMatch, winner) === rosterId ? 1 : 2;
+		const place = matchRosterId(logicalFinalMatch, winner) === rosterId ? 1 : 2;
 		return { finalMatch, placement: { best: place, worst: null } };
 	}
 
-	// since we didn't win (or play) the grand final, we lost the final match
+	// since we didn't win (or play) the grand final, we must have lost our final match
 
 	const best = Math.pow(2, round) + 1;
 	const worst = Math.min(Math.pow(2, round + 1), rosterCount);

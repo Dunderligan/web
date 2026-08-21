@@ -6,7 +6,8 @@
 		type MatchSide,
 		flipSide,
 		matchScore,
-		matchNote
+		matchNote,
+		resolvedMatchToLogical
 	} from '$lib/match';
 	import {
 		MatchState,
@@ -40,7 +41,8 @@
 
 	const prefs = PreferencesState.get();
 
-	const winner = $derived(matchWinner(match));
+	const logicalMatch = $derived(resolvedMatchToLogical(match));
+	const winner = $derived(matchWinner(logicalMatch));
 
 	// always show main roster on the left
 	const flipped = $derived(mainRosterId === match.rosterB?.id);
@@ -105,13 +107,13 @@
 				{@render spoilerButton({ class: 'h-full' })}
 			{:else}
 				<span class={[winner === leftSide && 'text-accent-600 dark:text-accent-500', 'font-bold']}
-					>{matchScore(match, leftSide)}
+					>{matchScore(logicalMatch, leftSide)}
 				</span>
 
 				<span class="font-bold">-</span>
 
 				<span class={[winner === rightSide && 'text-accent-600 dark:text-accent-500', 'font-bold']}
-					>{matchScore(match, rightSide)}</span
+					>{matchScore(logicalMatch, rightSide)}</span
 				>
 			{/if}
 		</div>
@@ -130,7 +132,7 @@
 	showSpoiler?: boolean;
 })}
 	{@const roster = matchRoster(match, side)}
-	{@const won = roster && isWinner(match, side)}
+	{@const won = roster && isWinner(logicalMatch, side)}
 	{@const note = matchNote(match, side)}
 
 	<div
@@ -177,7 +179,7 @@
 					'ml-auto text-3xl font-extrabold sm:hidden'
 				]}
 			>
-				{matchScore(match, side)}
+				{matchScore(logicalMatch, side)}
 			</div>
 		{/if}
 	</div>

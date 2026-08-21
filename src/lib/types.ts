@@ -195,8 +195,8 @@ export type MatchWithoutRosters = {
  * A match with roster IDs that have not been resolved to full roster objects.
  */
 export type UnresolvedMatch = MatchWithoutRosters & {
-	rosterAId?: string | null;
-	rosterBId?: string | null;
+	rosterAId: string | null;
+	rosterBId: string | null;
 };
 
 /**
@@ -210,13 +210,13 @@ export type UnresolvedMatchWithOrder = UnresolvedMatch & {
  * A full match with resolved roster objects.
  */
 export type ResolvedMatch = MatchWithoutRosters & {
-	rosterA?: MatchRoster | null;
-	rosterB?: MatchRoster | null;
+	rosterA: MatchRoster | null;
+	rosterB: MatchRoster | null;
 };
 
 export type ResolvedMatchWithSeeds = MatchWithoutRosters & {
-	rosterA?: MatchRosterWithSeed | null;
-	rosterB?: MatchRosterWithSeed | null;
+	rosterA: MatchRosterWithSeed | null;
+	rosterB: MatchRosterWithSeed | null;
 };
 
 /**
@@ -248,12 +248,12 @@ export type ResolvedMatchWithContext<G = NestedGroup, B = NestedBracket> = Resol
  * e.g., calculating seeds and generating brackets.
  */
 export type LogicalMatch = {
-	rosterAId?: string | null;
-	rosterBId?: string | null;
 	teamAScore: number;
 	teamBScore: number;
 	draws: number;
 	state: MatchState;
+	rosterAId: string | null;
+	rosterBId: string | null;
 };
 
 export type ButtonKind = 'primary' | 'secondary' | 'tertiary' | 'transparent' | 'destructive';
