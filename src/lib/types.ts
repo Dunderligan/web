@@ -72,8 +72,8 @@ export enum SocialPlatform {
 }
 
 export enum Role {
-	DAMAGE = 'damage',
 	TANK = 'tank',
+	DAMAGE = 'damage',
 	SUPPORT = 'support',
 	FLEX = 'flex',
 	COACH = 'coach',
