@@ -14,7 +14,8 @@ const relations = defineRelations(schema, (r) => ({
 			optional: false
 		}),
 		groups: r.many.group(),
-		brackets: r.many.bracket()
+		brackets: r.many.bracket(),
+		awards: r.many.playerAward()
 	},
 	group: {
 		division: r.one.division({
@@ -55,7 +56,27 @@ const relations = defineRelations(schema, (r) => ({
 		socials: r.many.playerSocial(),
 		aliases: r.many.playerAlias(),
 		signatureHeroes: r.many.signatureHero(),
+		awards: r.many.playerAward(),
 		checkins: r.many.playerCheckin()
+	},
+	awardType: {
+		awards: r.many.playerAward()
+	},
+	playerAward: {
+		awardType: r.one.awardType({
+			from: r.playerAward.awardTypeId,
+			to: r.awardType.id,
+			optional: false
+		}),
+		player: r.one.player({
+			from: r.playerAward.playerId,
+			to: r.player.id,
+			optional: false
+		}),
+		division: r.one.division({
+			from: r.playerAward.divisionId,
+			to: r.division.id
+		})
 	},
 	member: {
 		player: r.one.player({

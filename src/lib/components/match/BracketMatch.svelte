@@ -7,7 +7,8 @@
 		type MatchSide,
 		matchScore,
 		matchNote,
-		hasMatchScore
+		hasMatchScore,
+		resolvedMatchToLogical
 	} from '$lib/match';
 	import MatchInfoRow from './MatchInfoRow.svelte';
 	import Note from '../ui/Note.svelte';
@@ -34,7 +35,8 @@
 	// don't ask
 	const verticalLineHeight = $derived(40 * Math.pow(roundIndex, 2) - 42 * roundIndex + 82);
 
-	const showScore = $derived(hasMatchScore(match));
+	const logicalMatch = $derived(resolvedMatchToLogical(match));
+	const showScore = $derived(hasMatchScore(logicalMatch));
 </script>
 
 <div
@@ -64,8 +66,8 @@
 
 {#snippet side(side: MatchSide, classProp?: string)}
 	{@const roster = matchRoster(match, side)}
-	{@const won = isWinner(match, side)}
-	{@const score = matchScore(match, side)}
+	{@const won = isWinner(logicalMatch, side)}
+	{@const score = matchScore(logicalMatch, side)}
 	{@const note = matchNote(match, side)}
 
 	{@const href = `/lag/${roster?.slug}/${seasonSlug}`}

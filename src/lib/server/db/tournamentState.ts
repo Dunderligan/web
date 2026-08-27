@@ -1,4 +1,4 @@
-import { matchRoster, matchWinner } from '$lib/match';
+import { matchRoster, matchWinner, resolvedMatchToLogical } from '$lib/match';
 import type { TournamentState, BracketWinner, ResolvedMatch, NestedBracket } from '$lib/types';
 import { db } from '../db';
 import { divisionOrder, entityQuery, finalMatchQuery, nestedDivisionQuery } from './helpers';
@@ -61,18 +61,20 @@ export async function fetchTournamentState(): Promise<TournamentState | null> {
 	};
 }
 
-function aggregateWinners(brackets: (NestedBracket & { matches: ResolvedMatch[] })[]) {
+function aggregateWinners(
+	brackets: (NestedBracket & { matches: ResolvedMatch[] })[]
+): BracketWinner[] {
 	return brackets
-		.flatMap(({ matches, ...bracket }) =>
-			matches.map((final) => {
-				const winner = matchWinner(final);
+		.flatMap(({ matches: finalMatches, ...bracket }) =>
+			finalMatches.map((finalMatch) => {
+				const winner = matchWinner(resolvedMatchToLogical(finalMatch));
 
 				if (!winner) {
 					return null;
 				}
 
 				return {
-					roster: matchRoster(final, winner)!,
+					roster: matchRoster(finalMatch, winner)!,
 					bracket
 				};
 			})

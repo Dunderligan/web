@@ -89,6 +89,8 @@ export async function seed(db: PostgresJsDatabase<typeof schema>) {
 	const seedSchema = {
 		team: schema.team,
 		player: schema.player,
+		awardType: schema.awardType,
+		playerAward: schema.playerAward,
 		roster: schema.roster,
 		member: schema.member,
 		season: schema.season,

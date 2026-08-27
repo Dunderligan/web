@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db';
-import { entityQuery } from '$lib/server/db/helpers.js';
+import { entityQuery, fullMatchColumns } from '$lib/server/db/helpers.js';
 import { error } from '@sveltejs/kit';
 
 export const load = async ({ params }) => {

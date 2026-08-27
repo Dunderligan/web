@@ -5,6 +5,7 @@ import {
 	fullMatchQuery,
 	memberQuery,
 	nestedBracketQuery,
+	nestedDivisionQuery,
 	nestedGroupQuery
 } from '$lib/server/db/helpers';
 import { hiddenGroupFilter } from '$lib/server/db/hidden';
@@ -71,7 +72,17 @@ export const load = async ({ params, locals }) => {
 					}
 				}
 			},
-			aliases: true
+			aliases: true,
+			awards: {
+				columns: {
+					id: true,
+					description: true
+				},
+				with: {
+					awardType: true,
+					division: nestedDivisionQuery
+				}
+			}
 		}
 	});
 

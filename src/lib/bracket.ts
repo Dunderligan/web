@@ -172,7 +172,9 @@ function createMatch(order: number, round: number, nextMatchId?: string): Unreso
 		state: MatchState.SCHEDULED,
 		teamAScore: 0,
 		teamBScore: 0,
-		draws: 0
+		draws: 0,
+		rosterAId: null,
+		rosterBId: null
 	};
 }
 

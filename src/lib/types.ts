@@ -72,8 +72,8 @@ export enum SocialPlatform {
 }
 
 export enum Role {
-	DAMAGE = 'damage',
 	TANK = 'tank',
+	DAMAGE = 'damage',
 	SUPPORT = 'support',
 	FLEX = 'flex',
 	COACH = 'coach',
@@ -104,33 +104,40 @@ export enum SubmissionStatus {
  * See the $lib/server/db/helpers.ts file for the equivalent query definition.
  */
 export type BaseEntity = {
+	id: string;
 	name: string;
 	slug: string;
 };
 
+export type BaseSeason = BaseEntity & {
+	legacyRanks: boolean;
+	startedAt: Date;
+	spinoff: boolean;
+};
+
 // Definitions of nested entities used in various places throughout the app.
-export type NestedSeason<S = BaseEntity> = S;
-export type NestedDivision<S = BaseEntity, D = S> = D & {
+export type NestedSeason<S = BaseSeason> = S;
+export type NestedDivision<S = BaseSeason, D = BaseEntity> = D & {
 	season: S;
 };
-export type NestedGroup<S = BaseEntity, D = S, G = S> = G & {
+export type NestedGroup<S = BaseSeason, D = BaseEntity, G = BaseEntity> = G & {
 	division: NestedDivision<S, D>;
 };
 
-export type FlattenedSeason<S = BaseEntity> = {
+export type FlattenedSeason<S = BaseSeason> = {
 	season: S;
 };
-export type FlattenedDivision<S = BaseEntity, D = S> = {
+export type FlattenedDivision<S = BaseSeason, D = BaseEntity> = {
 	season: S;
 	division: D;
 };
-export type FlattenedGroup<S = BaseEntity, D = S, G = S> = {
+export type FlattenedGroup<S = BaseSeason, D = BaseEntity, G = BaseEntity> = {
 	season: S;
 	division: D;
 	group: G;
 };
 
-export type NestedBracket<S = BaseEntity, D = S> = {
+export type NestedBracket<S = BaseSeason, D = BaseEntity> = {
 	id: string;
 	name: string;
 	division: NestedDivision<S, D>;
@@ -194,8 +201,8 @@ export type MatchWithoutRosters = {
  * A match with roster IDs that have not been resolved to full roster objects.
  */
 export type UnresolvedMatch = MatchWithoutRosters & {
-	rosterAId?: string | null;
-	rosterBId?: string | null;
+	rosterAId: string | null;
+	rosterBId: string | null;
 };
 
 /**
@@ -209,13 +216,13 @@ export type UnresolvedMatchWithOrder = UnresolvedMatch & {
  * A full match with resolved roster objects.
  */
 export type ResolvedMatch = MatchWithoutRosters & {
-	rosterA?: MatchRoster | null;
-	rosterB?: MatchRoster | null;
+	rosterA: MatchRoster | null;
+	rosterB: MatchRoster | null;
 };
 
 export type ResolvedMatchWithSeeds = MatchWithoutRosters & {
-	rosterA?: MatchRosterWithSeed | null;
-	rosterB?: MatchRosterWithSeed | null;
+	rosterA: MatchRosterWithSeed | null;
+	rosterB: MatchRosterWithSeed | null;
 };
 
 /**
@@ -247,12 +254,12 @@ export type ResolvedMatchWithContext<G = NestedGroup, B = NestedBracket> = Resol
  * e.g., calculating seeds and generating brackets.
  */
 export type LogicalMatch = {
-	rosterAId?: string | null;
-	rosterBId?: string | null;
 	teamAScore: number;
 	teamBScore: number;
 	draws: number;
 	state: MatchState;
+	rosterAId: string | null;
+	rosterBId: string | null;
 };
 
 export type ButtonKind = 'primary' | 'secondary' | 'tertiary' | 'transparent' | 'destructive';
@@ -352,6 +359,19 @@ export type SearchItem = {
 	subtitle?: string | null;
 	image?: string | null;
 	type: 'player' | 'roster' | 'season';
+};
+
+export type PlayerAward = {
+	id: string;
+	division: NestedDivision | null;
+	description: string | null;
+};
+
+export type AwardType = {
+	id: string;
+	name: string;
+	showDivision: boolean;
+	imageUrl: string | null;
 };
 
 export type Hero = {
