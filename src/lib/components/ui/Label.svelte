@@ -18,8 +18,15 @@
 	class={[
 		classProp,
 		fullWidth ? 'w-full' : 'max-w-xl',
-		column ? 'flex-col items-start' : 'items-center',
-		flipped ? 'flex-row-reverse justify-end' : 'flex-row',
+		column ? 'items-start' : 'items-center',
+		flipped && 'justify-end',
+		column
+			? flipped
+				? 'flex-col-reverse'
+				: 'flex-col'
+			: flipped
+				? 'flex-row-reverse'
+				: 'flex-row',
 		'flex gap-2'
 	]}
 >

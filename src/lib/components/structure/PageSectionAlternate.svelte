@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { ClassValue } from '$lib/types';
 	import type { Snippet } from 'svelte';
+	import type { ClassValue } from 'svelte/elements';
 
 	type Style = 'muted' | 'accent' | 'neutral';
 

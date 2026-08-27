@@ -4,7 +4,7 @@
 	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import SaveToast from '$lib/components/admin/SaveToast.svelte';
-	import SubmissionsTable from '$lib/components/admin/SubmissionsTable.svelte';
+	import SubmissionsTable from '$lib/components/table/SubmissionsTable.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import DateInput from '$lib/components/ui/DateInput.svelte';
 	import InputField from '$lib/components/ui/InputField.svelte';

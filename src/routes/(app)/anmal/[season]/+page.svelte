@@ -105,11 +105,9 @@
 <PageSection class="space-y-8">
 	{#if data.userSubmissions.length > 0}
 		<Notice kind="warn">
-			<p>
-				Det ser ut som att du redan har skickat in en anmälan för denna säsong. För att redigera din
-				anmälan, gå till <Link href="/jag/anmalningar">Mina anmälningar</Link>, eller fortsätt här
-				för att anmäla ett nytt lag.
-			</p>
+			Det ser ut som att du redan har skickat in en anmälan för denna säsong. För att redigera din
+			anmälan, gå till <Link href="/jag/anmalningar">Mina anmälningar</Link>, eller fortsätt här för
+			att anmäla ett nytt lag.
 		</Notice>
 	{/if}
 
@@ -139,10 +137,8 @@
 				<p>Slutspelet börjar 7/4, finalerna spelas och <b>ligan avslutas senast 26/4</b></p> -->
 
 				<Notice kind="discord">
-					<p>
-						Mer information hittar du i Dunderligans <DiscordLink>Discordserver</DiscordLink>, som
-						dessutom är obligatorisk att gå med i för alla ligans deltagare.
-					</p>
+					Mer information hittar du i Dunderligans <DiscordLink>Discordserver</DiscordLink>, som
+					dessutom är obligatorisk att gå med i för alla ligans deltagare.
 				</Notice>
 			</div>
 		</AdminCard>
@@ -266,20 +262,17 @@
 					"Mina anmälningar".
 				</Notice>
 			{:else}
-				<Notice kind="warn">
-					<p>
-						Du är inte inloggad och kommer därför inte kunna redigera din anmälan senare.<br />Vi
-						rekommenderar att du loggar in med ditt Battle.net-konto innan du skickar in din
-						anmälan.
-					</p>
-
-					<Button
-						label="Logga in"
-						href="/api/login/battlenet?next={page.url.pathname}"
-						kind="transparent"
-						icon="ph:sign-in"
-						class="ml-auto shrink-0"
-					/>
+				<Notice
+					kind="warn"
+					button={{
+						label: 'Logga in',
+						href: `/api/login/battlenet?next=${page.url.pathname}`,
+						kind: 'transparent',
+						icon: 'ph:sign-in'
+					}}
+				>
+					Du är inte inloggad och kommer därför inte kunna redigera din anmälan senare.<br />Vi
+					rekommenderar att du loggar in med ditt Battle.net-konto innan du skickar in din anmälan.
 				</Notice>
 			{/if}
 

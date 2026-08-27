@@ -44,15 +44,14 @@
 	<Table
 		rows={shownUsers}
 		key={(user) => user.id}
-		class="grid-cols-[1fr_150px_200px]"
 		columns={[
-			{ label: 'Battletag' },
+			{ label: 'Battletag', width: '1fr' },
 			{ label: 'Roll', center: true, note: roleNote },
 			{ label: 'Första inloggning', center: true }
 		]}
 	>
 		{#snippet row({ value: user })}
-			<div class="py-4 pl-6 font-semibold">
+			<div class="font-semibold">
 				{user.battletag}
 			</div>
 

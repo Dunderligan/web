@@ -7,6 +7,7 @@
 	import { socials } from '$lib/socials';
 	import Dialog from '../ui/Dialog.svelte';
 	import Button from '../ui/Button.svelte';
+	import Link from '../ui/Link.svelte';
 
 	let emailDialogOpen = $state(false);
 
@@ -26,12 +27,12 @@
 			<p class="mt-4 text-gray-400">
 				Byggd av Bobbo med ❤️
 				<br />
-				Dunderligan är <a class="underline" href={socials.github}>öppen källkod</a>.
+				Dunderligan är <Link href={socials.github} openInNewTab>öppen källkod</Link>.
 				<br />
 				{#if commitHash}
 					<Icon icon="ph:git-commit" class="inline-block" />
-					<a href="https://github.com/Dunderligan/web/commit/{commitHash}" class="underline"
-						>{commitHash.slice(0, 7)}</a
+					<Link href="https://github.com/Dunderligan/web/commit/{commitHash}" openInNewTab
+						>{commitHash.slice(0, 7)}</Link
 					>
 				{:else}
 					Okänd version
@@ -42,10 +43,10 @@
 		<div class="flex w-full flex-col items-start gap-1">
 			<div class="mb-2 text-xl font-semibold text-white">Navigation</div>
 
-			<a href="/" class="text-lg hover:underline">Startsida</a>
-			<a href="/stallningar" class="text-lg hover:underline">Ställningar</a>
-			<a href="/arkiv" class="text-lg hover:underline">Arkiv</a>
-			<a href="/om" class="text-lg hover:underline">Om oss</a>
+			<Link href="/" class="text-lg hover:underline">Startsida</Link>
+			<Link href="/stallningar" class="text-lg hover:underline">Ställningar</Link>
+			<Link href="/arkiv" class="text-lg hover:underline">Arkiv</Link>
+			<Link href="/om" class="text-lg hover:underline">Om oss</Link>
 		</div>
 
 		<div class="flex w-full flex-col items-start">
@@ -82,8 +83,6 @@
 	]}
 >
 	{#snippet description()}
-		Du kan nå oss på <a href="mailto:dunderleagueow@gmail.com" class="underline">
-			dunderleagueow@gmail.com
-		</a>
+		Du kan nå oss på <Link href="mailto:dunderleagueow@gmail.com">dunderleagueow@gmail.com</Link>
 	{/snippet}
 </Dialog>

@@ -23,6 +23,7 @@
 	import { claimPlayer } from '$lib/remote/player.remote.js';
 	import { Role, type AwardType, type PlayerAward } from '$lib/types.js';
 	import { compareNullable, flattenGroup, formatDateTime, roleIcon } from '$lib/util';
+	import Link from '$lib/components/ui/Link.svelte';
 
 	let { data } = $props();
 
@@ -126,17 +127,18 @@
 <PageSection class="flex flex-col-reverse gap-10 md:flex-row">
 	<section class="shrink grow">
 		{#if !hasFullTag && canClaim}
-			<Notice kind="info" class="mb-6">
+			<Notice
+				kind="info"
+				class="mb-6"
+				button={{
+					label: 'Redigera',
+					icon: 'ph:pencil-simple',
+					kind: 'transparent',
+					onclick: onClaimClicked,
+					loading: claimLoading
+				}}
+			>
 				Är detta din profil?
-
-				<Button
-					label="Redigera"
-					icon="ph:pencil-simple"
-					kind="transparent"
-					class="ml-auto shrink-0"
-					onclick={onClaimClicked}
-					loading={claimLoading}
-				/>
 			</Notice>
 		{/if}
 
@@ -152,9 +154,9 @@
 
 			<p class="mb-8 text-lg font-semibold">
 				Spelade senast i
-				<a href="/lag/{roster.slug}/{season.slug}" class="text-accent-600 hover:underline">
+				<Link href="/lag/{roster.slug}/{season.slug}" colored>
 					{roster.name}, {season.name}
-				</a>
+				</Link>
 			</p>
 		{/if}
 
@@ -183,7 +185,7 @@
 			</div>
 
 			<Table
-				class="mt-2 grid-cols-[auto_auto_1fr_40px_70px] sm:grid-cols-[1fr_auto_170px_50px_160px]"
+				class="mt-2"
 				rows={filteredMemberships}
 				key={(value) => value.roster.id}
 				columns={[
@@ -199,24 +201,24 @@
 					{@const { division, season } = flattenGroup(roster.group)}
 					{@const href = `/lag/${roster.slug}/${season.slug}`}
 
-					<div class={[!registeredName && 'col-span-2', 'gap-2 px-4 py-1.5 font-semibold']}>
+					<div class={[!registeredName && 'col-span-2', 'gap-2 text-lg font-semibold']}>
 						<RosterLogo id={roster.id} class="size-12" {href} />
 
-						<a {href} class="hidden truncate hover:underline sm:inline">
+						<Link {href} class="hidden truncate sm:inline">
 							{roster.name}
-						</a>
+						</Link>
 					</div>
 
 					{#if registeredName}
-						<div class="justify-center text-center text-base">
+						<div class="justify-center text-center">
 							{registeredName.split('#')[0]}
 						</div>
 					{/if}
 
-					<div class="justify-center text-center text-base">
-						<a href="/stallningar/{season.slug}?div={division.slug}" class="hover:underline">
+					<div class="justify-center text-center">
+						<Link href="/stallningar/{season.slug}?div={division.slug}">
 							{division.name}, {season.name}
-						</a>
+						</Link>
 					</div>
 
 					<div class="justify-center gap-2 text-xl">
@@ -259,12 +261,9 @@
 					</div>
 
 					<div class="justify-center text-center text-base">
-						<a
-							href="/stallningar/{season.slug}?div={division.slug}&visa=slutspel"
-							class="hover:underline"
-						>
+						<Link href="/stallningar/{season.slug}?div={division.slug}&visa=slutspel">
 							{bracket?.name}, {season.name}
-						</a>
+						</Link>
 					</div>
 
 					<div>

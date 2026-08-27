@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { ClassValue } from '$lib/types';
 	import type { Snippet } from 'svelte';
 	import Icon from './Icon.svelte';
 	import Tooltip from './Tooltip.svelte';
+	import type { ClassValue } from 'svelte/elements';
 
 	type Props = {
 		class?: ClassValue;

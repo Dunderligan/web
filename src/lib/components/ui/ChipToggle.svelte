@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { ClassValue } from '$lib/types';
 	import { Button } from 'bits-ui';
 	import Chip from './Chip.svelte';
+	import type { ClassValue } from 'svelte/elements';
 
 	type Props = {
 		checked?: boolean;

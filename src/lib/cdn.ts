@@ -36,11 +36,8 @@ function submissionLogoKey(submissionId: string) {
 	return `submissions/${submissionId}.webp`;
 }
 
-function submissionLogoUrl(
-	submissionId: string,
-	{ width, height }: { width: number; height?: number }
-) {
-	return imageSrcUrl(submissionLogoKey(submissionId), { width, height });
+function awardLogoKey(awardTypeId: string) {
+	return `awards/${awardTypeId}.webp`;
 }
 
 export default {
@@ -49,5 +46,5 @@ export default {
 	rosterLogoKey,
 	rosterLogoUrl,
 	submissionLogoKey,
-	submissionLogoUrl
+	awardLogoKey
 };

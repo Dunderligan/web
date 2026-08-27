@@ -1,8 +1,9 @@
 <script lang="ts">
-	import type { ClassValue, DropdownItem } from '$lib/types';
+	import type { DropdownItem } from '$lib/types';
 	import { DropdownMenu } from 'bits-ui';
 	import type { Snippet } from 'svelte';
 	import Icon from './Icon.svelte';
+	import type { ClassValue } from 'svelte/elements';
 
 	type Props = {
 		items: DropdownItem[];

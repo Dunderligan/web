@@ -12,6 +12,7 @@
 	import { isModerator } from '$lib/authRole';
 	import type { DropdownItem } from '$lib/types';
 	import SearchDialog from './SearchDialog.svelte';
+	import Link from '../ui/Link.svelte';
 
 	type Props = {
 		alwaysWhiteTextAtTop?: boolean;
@@ -154,7 +155,7 @@
 			</a>
 
 			{#each links as { href, label } (href)}
-				<a class="hidden font-medium hover:underline md:block" {href}>{label}</a>
+				<Link class="hidden md:block" {href}>{label}</Link>
 			{/each}
 		</div>
 

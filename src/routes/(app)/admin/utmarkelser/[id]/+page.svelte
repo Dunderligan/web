@@ -26,16 +26,12 @@
 	import type { PlayerAward } from '$lib/types.js';
 	import TextArea from '$lib/components/ui/TextArea.svelte';
 	import ImageUpload from '$lib/components/admin/ImageUpload.svelte';
+	import Link from '$lib/components/ui/Link.svelte';
 
 	let { data } = $props();
 
-	let awardType = $state(data.awardType);
-	let awards = $state(data.awardType.awards);
-
-	$effect(() => {
-		awardType = data.awardType;
-		awards = data.awardType.awards;
-	});
+	let awardType = $derived(data.awardType);
+	let awards = $derived(awardType.awards);
 
 	SaveContext.set(new SaveContext({ save }));
 
@@ -139,34 +135,29 @@
 		<Table
 			rows={awards}
 			key={(award) => award.id}
-			class="grid-cols-[1fr_1fr_1fr_auto]"
 			columns={[
 				{ label: 'Battletag' },
 				{ label: awardType.showDivision ? 'Säsong' : '', center: true },
 				{ label: awardType.showDivision ? 'Division' : '', center: true },
-				{ label: '' }
+				{ width: 'min-content' }
 			]}
 		>
 			{#snippet row({ value: award })}
-				<div class="py-4 font-semibold">
-					<a href="/admin/spelare/{award.player.id}" class="hover:underline"
-						>{award.player.battletag}</a
-					>
+				<div class="font-semibold">
+					<Link href="/admin/spelare/{award.player.id}">{award.player.battletag}</Link>
 				</div>
 
-				<div class="justify-center text-base">
-					<a href="/admin/sasong/{award.division?.season.id}" class="hover:underline"
-						>{award.division?.season.name}</a
-					>
+				<div class="justify-center">
+					<Link href="/admin/sasong/{award.division?.season.id}">
+						{award.division?.season.name}
+					</Link>
 				</div>
 
-				<div class="justify-center text-base">
-					<a href="/admin/division/{award.division?.id}" class="hover:underline"
-						>{award.division?.name}</a
-					>
+				<div class="justify-center">
+					<Link href="/admin/division/{award.division?.id}">{award.division?.name}</Link>
 				</div>
 
-				<div class="justify-center gap-1 px-2">
+				<div class="justify-center gap-1">
 					<Button
 						icon="ph:pencil-simple"
 						kind="tertiary"

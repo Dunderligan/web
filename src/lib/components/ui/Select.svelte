@@ -4,7 +4,7 @@
 
 	import Icon from './Icon.svelte';
 	import type { Snippet } from 'svelte';
-	import type { ClassValue } from '$lib/types';
+	import type { ClassValue } from 'svelte/elements';
 
 	type LabelDecoration =
 		| {
@@ -86,12 +86,12 @@
 	{disabled}
 	{...restProps}
 >
-	<Select.Trigger class={[classProp, 'group field flex items-center overflow-hidden']}>
+	<Select.Trigger class={[classProp, 'group field flex items-center gap-2 overflow-hidden']}>
 		{#if selectedItem}
 			{@render renderedItemIcon(selectedItem.value)}
 		{/if}
 
-		<div class={[!label && !selectedLabel && 'opacity-80', 'shrink grow truncate text-left']}>
+		<div class={[!label && !selectedLabel && 'opacity-80', 'grow text-left']}>
 			{label ?? selectedLabel ?? placeholder}
 		</div>
 
@@ -118,7 +118,7 @@
 {#snippet viewport()}
 	<Select.Viewport>
 		{#if canClear && type === 'single' && selectedItem}
-			<Select.Item label="Rensa" value="__clear" class="floating-item">
+			<Select.Item label="Rensa" value="__clear" class="floating-item gap-2">
 				{@render icon('ph:backspace')}
 
 				<span>Rensa</span>
@@ -126,7 +126,7 @@
 		{/if}
 
 		{#each items as item, i (i + item.value)}
-			<Select.Item {...item} class="floating-item">
+			<Select.Item {...item} class="floating-item gap-2">
 				{#snippet children({ selected })}
 					{@render renderedItemIcon(item.value)}
 
@@ -152,5 +152,5 @@
 {/snippet}
 
 {#snippet icon(icon: string)}
-	<Icon {icon} class="mr-2 shrink-0 text-lg" />
+	<Icon {icon} class="shrink-0 text-lg" />
 {/snippet}

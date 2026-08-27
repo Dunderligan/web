@@ -61,7 +61,7 @@
 		{disabled}
 	>
 		{#snippet itemSnippet({ value })}
-			<Rank rank={{ rank: value as RankEnum, tier: 1 }} class="mr-2" hideLabel />
+			<Rank rank={{ rank: value as RankEnum, tier: 1 }} hideLabel />
 		{/snippet}
 	</Select>
 

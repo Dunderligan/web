@@ -3,10 +3,13 @@
 	import type { Snippet } from 'svelte';
 	import Note from '../ui/Note.svelte';
 
+	type Kind = 'neutral' | 'transparent';
+
 	type Column = {
-		label: string;
-		center?: boolean;
+		label?: string;
 		note?: string | Snippet;
+		center?: boolean;
+		width?: string;
 	};
 
 	type Props = {
@@ -15,30 +18,37 @@
 		row: Snippet<[{ value: T; index: number }]>;
 		key?: (value: T) => any;
 		class?: ClassValue;
-		noBackground?: boolean;
+		kind?: Kind;
 	};
 
-	let { columns, rows, row, key, class: classProp, noBackground }: Props = $props();
+	let { columns, rows, row, key, class: classProp, kind = 'neutral' }: Props = $props();
+
+	const gridTemplateColumns = $derived(columns.map((c) => c.width ?? 'auto').join(' '));
 </script>
 
 <div
 	class={[
 		classProp,
-		noBackground
-			? '*:border-b *:border-gray-200 dark:*:border-gray-800'
+		kind === 'transparent'
+			? '*:border-b *:border-gray-100 dark:*:border-gray-800'
 			: 'gap-y-1 *:bg-gray-100 dark:*:bg-gray-900',
-		'grid w-full overflow-hidden overflow-x-auto rounded-lg text-lg font-medium text-gray-700 *:flex *:items-center dark:text-gray-300'
+		'table-root grid w-full overflow-hidden overflow-x-auto rounded-lg font-medium text-gray-700 *:flex *:min-h-14 *:items-center *:px-4 *:py-1.5 dark:text-gray-300'
 	]}
+	style="grid-template-columns: {gridTemplateColumns};"
 >
-	{#each columns as { label, center = false, note }, i}
+	{#each columns as { label, center, note }, i}
 		<div
 			class={[
 				center && 'justify-center',
-				noBackground ? 'border-gray-300! dark:border-gray-700!' : 'bg-gray-50! dark:bg-gray-800!',
-				'flex items-center gap-1 py-2 text-base'
+				kind === 'transparent'
+					? 'border-gray-200! dark:border-gray-700!'
+					: 'bg-gray-50! dark:bg-gray-800!',
+				'table-header flex min-h-0! items-center gap-1 py-2 text-gray-600 dark:text-gray-400'
 			]}
 		>
-			{label}
+			{#if label}
+				{label}
+			{/if}
 
 			{#if note}
 				<Note content={note} class="hidden sm:block" />

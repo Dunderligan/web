@@ -2,16 +2,7 @@ import type { Snippet } from 'svelte';
 import type z from 'zod';
 import type { matchQueryParamsSchema } from './schemas';
 import type { ButtonRootProps, WithoutChildren } from 'bits-ui';
-
-/**
- * SvelteKit accepts these types in the class attribute, but does not expose the type definitions.
- * However, it is often useful to have them for typing class props to allow more flexibility over a simple `string`.
- *
- * This code is taken from the clsx library, which SvelteKit uses internally.
- */
-export type ClassDictionary = Record<string, any>;
-export type ClassArray = ClassValue[];
-export type ClassValue = ClassArray | ClassDictionary | string | null | undefined;
+import type { ClassValue } from 'svelte/elements';
 
 export type ListedSeason = {
 	id: string;

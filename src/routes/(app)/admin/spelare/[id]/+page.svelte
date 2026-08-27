@@ -20,6 +20,7 @@
 	import type { GameProfile } from '$lib/types.js';
 	import { capitalize, formatDateTime } from '$lib/util.js';
 	import Note from '$lib/components/ui/Note.svelte';
+	import Link from '$lib/components/ui/Link.svelte';
 
 	let { data } = $props();
 
@@ -237,12 +238,12 @@
 		{#each data.matchingProfiles as otherProfile (otherProfile.id)}
 			<div class="flex items-center gap-12">
 				<div>
-					<a
-						class="block text-lg font-semibold hover:underline"
+					<Link
+						class="block text-lg font-semibold"
 						href="/spelare/{otherProfile.battletag.replace('#', '-')}"
 					>
 						{otherProfile.battletag}
-					</a>
+					</Link>
 					<div class="font-medium">
 						{otherProfile.memberships.length} rosters
 					</div>

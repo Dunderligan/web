@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { ClassValue } from '$lib/types';
 	import { capitalize } from '$lib/util';
+	import type { ClassValue } from 'svelte/elements';
 	import Icon from './Icon.svelte';
 
 	type Props = {

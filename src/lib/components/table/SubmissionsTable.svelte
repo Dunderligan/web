@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { TeamSubmissionInfo } from '$lib/types';
 	import { formatDate } from '$lib/util';
-	import SubmissionChip from './SubmissionChip.svelte';
-	import Table from '../table/Table.svelte';
+	import SubmissionChip from '../admin/SubmissionChip.svelte';
+	import Table from './Table.svelte';
 	import Button from '../ui/Button.svelte';
 
 	type Props = {
@@ -13,6 +13,7 @@
 </script>
 
 <Table
+	kind="transparent"
 	rows={submissions}
 	columns={[
 		{ label: 'Lagnamn' },
@@ -22,8 +23,6 @@
 		{ label: 'Granskad', center: true },
 		{ label: '' }
 	]}
-	class="grid-cols-[auto_1fr_1fr_1fr_1fr_auto]"
-	noBackground
 >
 	{#snippet row({ value: submission })}
 		<div class="py-4 font-semibold">

@@ -3,6 +3,7 @@
 	import medal from '$lib/assets/images/medal.png';
 	import Icon from './Icon.svelte';
 	import { flattenDivision } from '$lib/util';
+	import Link from './Link.svelte';
 
 	type Props = {
 		type: AwardType;
@@ -71,12 +72,9 @@
 			{#if award.division}
 				{@const { division, season } = flattenDivision(award.division)}
 
-				<a
-					href="/stallningar/{season.slug}?div={division.slug}"
-					class="block max-w-max hover:underline"
-				>
+				<Link href="/stallningar/{season.slug}?div={division.slug}" class="block max-w-max">
 					{division.name}, {season.name}
-				</a>
+				</Link>
 			{/if}
 		{/each}
 

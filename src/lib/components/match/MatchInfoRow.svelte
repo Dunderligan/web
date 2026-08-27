@@ -1,12 +1,9 @@
 <script lang="ts">
-	import {
-		type ClassValue,
-		type NestedBracket,
-		type NestedGroup,
-		type MatchWithoutRosters
-	} from '$lib/types';
+	import { type NestedBracket, type NestedGroup, type MatchWithoutRosters } from '$lib/types';
 	import { capitalize, formatDate, formatDateTime } from '$lib/util';
+	import type { ClassValue } from 'svelte/elements';
 	import Icon from '../ui/Icon.svelte';
+	import Link from '../ui/Link.svelte';
 
 	type Props = {
 		match: MatchWithoutRosters;
@@ -87,9 +84,6 @@
 	{/if}
 
 	{#if match.vodUrl}
-		<a class="hover:underline" href={match.vodUrl} target="_blank" rel="noopener noreferrer">
-			<Icon icon="ph:arrow-square-out" />
-			VOD
-		</a>
+		<Link href={match.vodUrl} openInNewTab>VOD</Link>
 	{/if}
 </div>

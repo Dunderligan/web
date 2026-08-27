@@ -65,13 +65,6 @@
 		<div class="space-y-1 overflow-hidden rounded-lg">
 			<AdminLink href="/admin/anvandare">Hantera användare</AdminLink>
 			<AdminLink href="/admin/api-nycklar">Hantera API-nycklar</AdminLink>
-		</div>
-	</AdminCard>
-{/if}
-
-{#if isModerator(data.user?.role)}
-	<AdminCard>
-		<div class="space-y-1 overflow-hidden rounded-lg">
 			<AdminLink href="/admin/utmarkelser">Hantera utmärkelser</AdminLink>
 		</div>
 	</AdminCard>

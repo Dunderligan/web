@@ -5,10 +5,8 @@ import { eq } from 'drizzle-orm';
 import z from 'zod';
 import { roleGuard } from './auth.remote';
 import sharp from 'sharp';
-import { cdnImageSrc, s3AwardTypeImageKey } from '$lib/util';
-import { PutObjectCommand } from '@aws-sdk/client-s3';
-import { S3_BUCKET_NAME } from '$env/static/private';
-import S3 from '$lib/server/s3';
+import s3 from '$lib/server/s3';
+import cdn from '$lib/cdn';
 
 export const createAwardType = command(
 	z.object({
@@ -57,21 +55,11 @@ export const uploadAwardTypeImage = command(
 	async ({ id, image }) => {
 		await roleGuard(AuthRole.ADMIN);
 
-		const converted = await sharp(image).webp({ lossless: true }).toBuffer();
-		const key = s3AwardTypeImageKey(id);
+		const key = cdn.awardLogoKey(id);
 
-		const command = new PutObjectCommand({
-			Bucket: S3_BUCKET_NAME,
-			Key: key,
-			Body: converted,
-			ContentType: `image/webp`
-		});
+		const imageUrl = cdn.imageSrcUrl(key, { width: 256 });
 
-		await S3.send(command);
-
-		const imageUrl = cdnImageSrc(`/${key}`, { width: 256 });
-
-		console.log('Uploaded award type image to S3:', imageUrl);
+		await s3.uploadImage(image, cdn.awardLogoKey(id));
 
 		const [awardType] = await db
 			.update(schema.awardType)

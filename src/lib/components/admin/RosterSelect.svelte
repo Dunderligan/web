@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { RosterContext } from '$lib/state/rosters.svelte';
-	import type { ClassValue } from '$lib/types';
+	import type { ClassValue } from 'svelte/elements';
 	import Select from '../ui/Select.svelte';
 
 	type Props = {

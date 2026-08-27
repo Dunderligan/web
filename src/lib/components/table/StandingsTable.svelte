@@ -2,6 +2,7 @@
 	import type { TableScore } from '$lib/standings';
 	import type { Roster } from '$lib/types';
 	import Icon from '../ui/Icon.svelte';
+	import Link from '../ui/Link.svelte';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import Table from './Table.svelte';
 
@@ -36,21 +37,23 @@
 </script>
 
 <Table
+	{rows}
 	columns={[
 		{
 			label: '#',
-			center: true
+			center: true,
+			width: 'min-content'
 		},
 		{
-			label: 'Lag'
+			label: 'Lag',
+			width: '1fr'
 		},
 		{ label: 'Poäng', center: true, note: 'Antal vunna maps' },
 		{ label: 'W/L/D', center: true, note: 'Map record: Wins/Losses/Draws' },
 		{ label: 'Matcher', center: true }
 	]}
-	{rows}
 	key={(row) => (row === 'playoffLine' ? row : row.roster.id)}
-	class="max-w-2xl grid-cols-[40px_1fr_50px_60px_70px] sm:grid-cols-[50px_1fr_100px_110px_80px]"
+	class="max-w-2xl"
 >
 	{#snippet row({ index, value: row })}
 		{#if row === 'playoffLine'}
@@ -67,7 +70,7 @@
 
 			{@const href = `/lag/${roster.slug}/${seasonSlug}`}
 
-			<div class="relative justify-center font-semibold">
+			<div class="relative justify-center text-lg font-semibold">
 				{#if roster.resigned}
 					<Icon
 						icon="ph:minus-circle-fill"
@@ -79,21 +82,21 @@
 				{/if}
 			</div>
 
-			<div class="min-w-0 gap-2 py-1.5 font-semibold">
+			<div class="min-w-0 gap-2 py-1.5 text-lg font-semibold">
 				<RosterLogo id={roster.id} {href} class="size-12" />
 
-				<a {href} class="truncate hover:underline">{roster.name}</a>
+				<Link {href} class="truncate">{roster.name}</Link>
 			</div>
 
 			<div class="justify-center text-xl font-semibold">
 				{score.mapWins}
 			</div>
 
-			<div class="justify-center">
+			<div class="justify-center text-lg">
 				{score.mapWins}/{score.mapLosses}/{score.mapDraws}
 			</div>
 
-			<div class="justify-center">
+			<div class="justify-center text-lg">
 				{score.matchesPlayed}
 			</div>
 		{/if}

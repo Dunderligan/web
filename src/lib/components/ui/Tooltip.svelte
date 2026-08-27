@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { ClassValue } from '$lib/types';
 	import { Tooltip } from 'bits-ui';
 	import type { Snippet } from 'svelte';
+	import type { ClassValue } from 'svelte/elements';
 
 	type Props = {
 		content: Snippet;

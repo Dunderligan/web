@@ -1,5 +1,6 @@
 <script lang="ts">
-	import type { ChipColor, ClassValue } from '$lib/types';
+	import type { ChipColor } from '$lib/types';
+	import type { ClassValue } from 'svelte/elements';
 	import Icon from './Icon.svelte';
 
 	type Props = {

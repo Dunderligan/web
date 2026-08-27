@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Rank, type AnyRank, type ClassValue } from '$lib/types';
+	import { Rank, type AnyRank } from '$lib/types';
 	import { capitalize } from '$lib/util';
 	import { getRank, getTierLabel, isLegacyRank } from '$lib/rank';
 	import bronze from '$lib/assets/images/ranks/bronze.avif';
@@ -11,6 +11,7 @@
 	import master from '$lib/assets/images/ranks/master.avif';
 	import grandmaster from '$lib/assets/images/ranks/grandmaster.avif';
 	import champion from '$lib/assets/images/ranks/champion.avif';
+	import type { ClassValue } from 'svelte/elements';
 
 	type Props = {
 		class?: ClassValue;

@@ -258,7 +258,7 @@
 		</Label>
 
 		<Label label="Logotyp">
-			<ImageUpload src={cdn.submissionLogoUrl(submission.id, { width: 200 })} />
+			<ImageUpload src={cdn.imageSrcUrl(cdn.submissionLogoKey(submission.id), { width: 200 })} />
 		</Label>
 	</div>
 

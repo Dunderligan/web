@@ -1,15 +1,18 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import Icon from './Icon.svelte';
-	import type { ClassValue } from '$lib/types';
+	import type { ClassValue } from 'svelte/elements';
+	import type { ButtonProps } from '$lib/types';
+	import Button from './Button.svelte';
 
 	type Props = {
 		kind: 'info' | 'warn' | 'error' | 'discord';
+		button?: ButtonProps;
 		children?: Snippet;
 		class?: ClassValue;
 	};
 
-	let { kind, children, class: classProp }: Props = $props();
+	let { kind, button, children, class: classProp }: Props = $props();
 
 	const { icon, class: kindClass } = $derived(
 		{
@@ -42,5 +45,11 @@
 >
 	<Icon {icon} class="text-lg" />
 
-	{@render children?.()}
+	<div>
+		{@render children?.()}
+	</div>
+
+	{#if button}
+		<Button {...button} class={['ml-auto shrink-0', button.class]} />
+	{/if}
 </div>

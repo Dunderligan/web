@@ -10,7 +10,6 @@
 	import {
 		capitalize,
 		compareRoles,
-		formatDateTime,
 		isOrganizationRole,
 		isPlayerRole,
 		ORGANIZATION_ROLES,
@@ -26,7 +25,7 @@
 	import RankInput from '../ui/RankInput.svelte';
 	import { isLegacyRank } from '$lib/rank';
 	import Notice from '../ui/Notice.svelte';
-	import Icon from '../ui/Icon.svelte';
+	import Link from '../ui/Link.svelte';
 
 	type Props = {
 		legacyRanks: boolean;
@@ -57,9 +56,7 @@
 		minTeamCaptains,
 		maxTeamCaptains,
 		maxPlayersByRole,
-		invalid = $bindable(false),
-		showCheckins = false,
-		checkins = new Map()
+		invalid = $bindable(false)
 	}: Props = $props();
 
 	const saveCtx = SaveContext.get();
@@ -220,52 +217,36 @@
 
 <div>
 	<Table
+		kind="transparent"
 		rows={sortedMembers}
 		columns={[
-			...(showCheckins ? [{ label: 'Incheck', center: true }] : []),
-			{ label: 'Battletag' },
+			{ label: 'Battletag', width: '1fr' },
 			{ label: 'Kapten', center: true },
 			{ label: 'Roll', center: true },
 			{ label: 'Rank', center: true },
 			{ label: '', center: true }
 		]}
-		class={showCheckins
-			? 'grid-cols-[80px_1fr_80px_160px_250px_auto]'
-			: 'grid-cols-[1fr_80px_160px_250px_auto]'}
-		noBackground
 	>
 		{#snippet row({ value: member, index })}
-			<div class="px-6 py-4 font-semibold">
-				{#if showCheckins}
-					{@const checkin = member.player.id ? checkins.get(member.player.id) : null}
-
-					<div class="justify-center text-xl">
-						{#if checkin}
-							<Icon
-								icon="ph:check-circle-fill"
-								class="text-green-600"
-								title="Incheckad {formatDateTime(checkin.checkedInAt)}"
-							/>
-						{:else}
-							<Icon icon="ph:x-circle-fill" class="text-red-600" title="Inte incheckad" />
-						{/if}
-					</div>
-				{/if}
-
-				<svelte:element
-					this={memberLinks ? 'a' : 'div'}
-					href={memberLinks ? `/admin/spelare/${member.player.id}` : undefined}
-					class={[memberLinks && 'hover:underline']}
-				>
+			<div class="text-lg font-semibold">
+				{#snippet memberName()}
 					{#if member.registeredName}
 						{member.registeredName} <span class="font-medium">({member.player.battletag})</span>
 					{:else}
 						{member.player.battletag}
 					{/if}
-				</svelte:element>
+				{/snippet}
+
+				{#if memberLinks}
+					<Link href="/admin/spelare/{member.player.id}">
+						{@render memberName()}
+					</Link>
+				{:else}
+					{@render memberName()}
+				{/if}
 			</div>
 
-			<div class="justify-center gap-2 pr-2">
+			<div class="justify-center gap-2">
 				{@render captainCheckbox({
 					checked: member.isCaptain,
 					onCheckedChange: (newValue) => {
@@ -275,7 +256,7 @@
 				})}
 			</div>
 
-			<div class="pr-4 text-base">
+			<div>
 				{@render roleSelect({
 					role: member.role,
 					onRoleChange: (newRole) => {
@@ -293,7 +274,7 @@
 				})}
 			</div>
 
-			<div class="gap-2 pr-2 text-base">
+			<div class="gap-2">
 				{@render rankInput({
 					rank: getRank(member),
 					onValueChange: (newRank) => {
@@ -303,7 +284,7 @@
 				})}
 			</div>
 
-			<div class="pr-4">
+			<div>
 				<Button
 					title="Ta bort"
 					icon="ph:trash"

@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { ClassValue } from '$lib/types';
 	import placeholderTeam from '$lib/assets/images/placeholder-team.avif';
 	import cdn from '$lib/cdn';
+	import type { ClassValue } from 'svelte/elements';
 
 	type Props = {
 		id: string;

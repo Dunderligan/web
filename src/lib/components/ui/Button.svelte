@@ -26,7 +26,7 @@
 			tertiary:
 				'text-gray-600 font-medium not-disabled:hover:bg-gray-50 dark:text-gray-400 dark:not-disabled:hover:bg-gray-900',
 			transparent:
-				'text-accent-800 not-disabled:hover:bg-accent-100 dark:text-accent-300 dark:not-disabled:hover:bg-accent-900',
+				'text-accent-800 not-disabled:hover:bg-accent-100 dark:text-accent-300 dark:not-disabled:hover:bg-accent-950',
 			destructive:
 				'bg-red-700 not-disabled:hover:bg-red-600 font-semibold text-red-100 not-disabled:hover:text-white dark:bg-red-800 dark:not-disabled:hover:bg-red-700 dark:not-disabled:hover:text-white'
 		}[kind]

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import Notice from '../ui/Notice.svelte';
-	import Button from '../ui/Button.svelte';
 
 	type Props = {
 		children?: Snippet;
@@ -20,16 +19,16 @@
 	}: Props = $props();
 </script>
 
-<Notice kind="info">
+<Notice
+	kind="info"
+	button={hideCreateButton
+		? undefined
+		: {
+				icon: createButtonIcon,
+				label: createButtonLabel,
+				kind: 'transparent',
+				onclick: oncreateclick
+			}}
+>
 	{@render children?.()}
-
-	{#if !hideCreateButton}
-		<Button
-			icon={createButtonIcon}
-			label={createButtonLabel}
-			kind="transparent"
-			class="ml-auto shrink-0"
-			onclick={oncreateclick}
-		/>
-	{/if}
 </Notice>

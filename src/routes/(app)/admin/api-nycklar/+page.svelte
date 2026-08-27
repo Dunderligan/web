@@ -71,16 +71,15 @@
 		<Table
 			rows={keys}
 			key={(key) => key.id}
-			class="grid-cols-[1fr_150px_150px_100px]"
 			columns={[
-				{ label: 'Namn' },
+				{ label: 'Namn', width: '1fr' },
 				{ label: 'Skapad', center: true },
 				{ label: 'Användes senast', center: true },
 				{ label: '' }
 			]}
 		>
 			{#snippet row({ value: key })}
-				<div class="py-4 pl-6 text-lg font-semibold">
+				<div class="text-lg font-semibold">
 					{key.name}
 				</div>
 
@@ -92,7 +91,7 @@
 					{key.lastUsedAt ? formatDateTime(key.lastUsedAt) : 'Aldrig'}
 				</div>
 
-				<div class="justify-center gap-2">
+				<div class="justify-center">
 					<Button icon="ph:trash" kind="tertiary" onclick={() => ondelete(key.id)} />
 				</div>
 			{/snippet}

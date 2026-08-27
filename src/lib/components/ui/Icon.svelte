@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { ClassValue } from '$lib/types';
 	import 'iconify-icon';
+	import type { ClassValue } from 'svelte/elements';
 
 	type Props = {
 		icon: string;

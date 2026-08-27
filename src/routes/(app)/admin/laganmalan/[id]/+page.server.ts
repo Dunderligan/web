@@ -1,4 +1,5 @@
 import { isModerator } from '$lib/authRole.js';
+import { teamSubmissionSchema } from '$lib/schemas.js';
 import { db } from '$lib/server/db';
 import { entityQuery } from '$lib/server/db/helpers.js';
 import { error } from '@sveltejs/kit';
@@ -40,7 +41,15 @@ export const load = async ({ params, depends, locals }) => {
 		throw error(403, 'You are not the owner of this submission');
 	}
 
+	const parsedData = teamSubmissionSchema.safeParse(submission.data);
+	if (!parsedData.success) {
+		throw error(500, 'Submission data is invalid');
+	}
+
 	return {
-		submission
+		submission: {
+			...submission,
+			data: parsedData.data
+		}
 	};
 };

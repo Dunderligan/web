@@ -1,6 +1,6 @@
 import { command, getRequestEvent } from '$app/server';
 import { AuthRole, isAdmin } from '$lib/authRole';
-import { memberSchema } from '$lib/schemas';
+import { memberSchema, teamSubmissionSchema } from '$lib/schemas';
 import { db, schema } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
@@ -38,16 +38,11 @@ export const deleteRegistration = command(
 	}
 );
 
-const submissionSchema = z.object({
-	name: z.string().min(1).max(100),
-	members: z.array(memberSchema)
-});
-
 export const submitTeam = command(
 	z.object({
 		registrationId: z.uuid(),
 		logo: z.instanceof(ArrayBuffer),
-		data: submissionSchema
+		data: teamSubmissionSchema
 	}),
 	async ({ registrationId, logo, data }) => {
 		const { locals } = getRequestEvent();
@@ -112,7 +107,7 @@ async function validateUserAccess(submissionId: string): Promise<User> {
 export const editTeamSubmissionData = command(
 	z.object({
 		id: z.uuid(),
-		data: submissionSchema
+		data: teamSubmissionSchema
 	}),
 	async ({ id, data }) => {
 		const user = await validateUserAccess(id);
@@ -188,7 +183,7 @@ export const reviewTeamSubmission = command(
 
 		// TODO: send some notification to the submitter?
 
-		const data = submissionSchema.parse(submission.data);
+		const data = teamSubmissionSchema.parse(submission.data);
 
 		let rosterId = submission.approvedRosterId;
 		if (!rosterId) {

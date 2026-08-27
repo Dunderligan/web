@@ -9,12 +9,7 @@
 		matchNote,
 		resolvedMatchToLogical
 	} from '$lib/match';
-	import {
-		MatchState,
-		type ClassValue,
-		type MatchSize,
-		type ResolvedMatchWithContext
-	} from '$lib/types';
+	import { MatchState, type MatchSize, type ResolvedMatchWithContext } from '$lib/types';
 	import Icon from '../ui/Icon.svelte';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import MatchInfoRow from './MatchInfoRow.svelte';
@@ -22,6 +17,7 @@
 	import { shortenTeamName } from '$lib/util';
 	import Button from '../ui/Button.svelte';
 	import { PreferencesState } from '$lib/state/preferences.svelte';
+	import type { ClassValue } from 'svelte/elements';
 
 	type Props = {
 		match: ResolvedMatchWithContext;

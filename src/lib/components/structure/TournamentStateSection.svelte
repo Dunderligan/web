@@ -6,6 +6,7 @@
 	import Button from '../ui/Button.svelte';
 	import PageSectionAlternate from './PageSectionAlternate.svelte';
 	import { flattenDivision } from '$lib/util';
+	import Link from '../ui/Link.svelte';
 
 	type Props = {
 		state: TournamentState;
@@ -121,11 +122,9 @@
 		<RosterLogo id={roster.id} class="size-14" href={rosterHref} />
 		<div class="text-left">
 			<div class="font-medium text-gray-300">
-				Vinnare <a href={bracketHref} class="hover:underline">{bracket.name}</a>
+				Vinnare <Link href={bracketHref}>{bracket.name}</Link>
 			</div>
-			<a href={rosterHref} class="-mt-1 block text-xl font-semibold hover:underline"
-				>{roster.name}</a
-			>
+			<Link href={rosterHref} class="-mt-1 block text-xl font-semibold">{roster.name}</Link>
 		</div>
 
 		<Icon icon="ph:crown-simple-fill" class="mr-2 ml-auto text-2xl" />
