@@ -64,7 +64,6 @@
 	<AdminCard title="Övrigt">
 		<div class="space-y-1 overflow-hidden rounded-lg">
 			<AdminLink href="/admin/anvandare">Hantera användare</AdminLink>
-			<AdminLink href="/admin/api-nycklar">Hantera API-nycklar</AdminLink>
 			<AdminLink href="/admin/utmarkelser">Hantera utmärkelser</AdminLink>
 		</div>
 	</AdminCard>
