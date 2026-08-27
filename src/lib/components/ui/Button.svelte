@@ -11,6 +11,7 @@
 		class: classProp,
 		kind = 'primary',
 		href,
+		openInNewTab,
 		...props
 	}: ButtonProps = $props();
 
@@ -44,6 +45,7 @@
 	]}
 	{disabled}
 	href={disabled ? undefined : href}
+	{...href && openInNewTab ? { target: '_blank', rel: 'noopener noreferrer' } : {}}
 	{...props}
 >
 	{#if children}

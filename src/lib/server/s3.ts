@@ -22,19 +22,13 @@ const S3 = new S3Client({
 });
 
 /**
- * Converts an image to webp, optionally resized it, and uploads it to S3 with the given key.
+ * Uploads a webp image to S3.
  */
-async function uploadImage(
-	buffer: ArrayBuffer,
-	key: string,
-	opts?: { width?: number; height?: number }
-) {
-	const converted = await sharp(buffer).webp({ lossless: true }).resize(opts).toBuffer();
-
+async function uploadImage(buffer: Buffer, key: string) {
 	const command = new PutObjectCommand({
 		Bucket: S3_BUCKET_NAME,
 		Key: key,
-		Body: converted,
+		Body: buffer,
 		ContentType: `image/webp`
 	});
 

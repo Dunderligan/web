@@ -51,19 +51,20 @@
 
 	const type = $derived(restProps.type);
 
+	const selectedItems = $derived(
+		type === 'multiple'
+			? items.filter((item) => value?.includes(item.value))
+			: type === 'single'
+				? items.filter((item) => item.value === value)
+				: []
+	);
+
 	const selectedItem = $derived(
 		type === 'single' ? items.find((item) => item.value === value) : null
 	);
 
 	const selectedLabel = $derived(
-		type === 'single'
-			? items.find((item) => item.value === value)?.label
-			: mapEmptyToUndefined(
-					items
-						.filter((item) => value?.includes(item.value))
-						.map((item) => item.label)
-						.join(', ')
-				)
+		mapEmptyToUndefined(selectedItems.map((item) => item.label).join(', '))
 	);
 </script>
 
@@ -87,9 +88,9 @@
 	{...restProps}
 >
 	<Select.Trigger class={[classProp, 'group field flex items-center gap-2 overflow-hidden']}>
-		{#if selectedItem}
-			{@render renderedItemIcon(selectedItem.value)}
-		{/if}
+		{#each selectedItems as item (item.value)}
+			{@render renderedItemIcon(item.value)}
+		{/each}
 
 		<div class={[!label && !selectedLabel && 'opacity-80', 'grow text-left']}>
 			{label ?? selectedLabel ?? placeholder}

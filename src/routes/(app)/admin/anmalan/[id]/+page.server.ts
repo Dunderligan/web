@@ -9,9 +9,6 @@ export const load = async ({ params }) => {
 			submissions: {
 				columns: {
 					data: false
-				},
-				orderBy: {
-					createdAt: 'asc'
 				}
 			}
 		}

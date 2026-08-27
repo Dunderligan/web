@@ -11,6 +11,7 @@ import { SubmissionStatus } from '$lib/types';
 import { createRoster, editRoster } from './roster.remote';
 import s3 from '$lib/server/s3';
 import cdn from '$lib/cdn';
+import image from '$lib/server/image';
 
 export const updateRegistration = command(
 	z.object({
@@ -66,7 +67,7 @@ export const submitTeam = command(
 			})
 			.returning({ id: schema.teamSubmission.id });
 
-		await s3.uploadImage(logo, cdn.submissionLogoKey(submission.id));
+		await processAndUploadLogo(submission.id, logo);
 
 		return { submission };
 	}
@@ -133,7 +134,7 @@ export const editTeamSubmissionLogo = command(
 	async ({ id, logo }) => {
 		await validateUserAccess(id);
 
-		await s3.uploadImage(logo, cdn.submissionLogoKey(id));
+		await processAndUploadLogo(id, logo);
 	}
 );
 
@@ -234,4 +235,11 @@ async function applyReview(
 			approvedRosterId
 		})
 		.where(eq(schema.teamSubmission.id, submissionId));
+}
+
+async function processAndUploadLogo(submissionId: string, logo: ArrayBuffer) {
+	let buffer = await image.trim(Buffer.from(logo));
+	buffer = await image.convertToWebp(buffer);
+
+	await s3.uploadImage(buffer, cdn.submissionLogoKey(submissionId));
 }

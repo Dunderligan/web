@@ -130,7 +130,11 @@
 		</Label>
 
 		<Label label="Logotyp">
-			<RosterLogoUpload rosterId={roster.id} onUpload={() => (uploadedLogo = true)} />
+			<RosterLogoUpload
+				rosterName={roster.name}
+				rosterId={roster.id}
+				onUpload={() => (uploadedLogo = true)}
+			/>
 		</Label>
 
 		{#if uploadedLogo}

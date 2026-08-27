@@ -189,11 +189,11 @@
 		<Label label="Bild">
 			<ImageUpload
 				alt="Bild för utmärkelsen"
-				image={awardType.imageUrl}
+				src={awardType.imageUrl}
 				upload={async (buffer) => {
 					const result = await uploadAwardTypeImage({
 						id: awardType.id,
-						image: buffer
+						file: buffer
 					});
 
 					awardType = { ...awardType, ...result.awardType };

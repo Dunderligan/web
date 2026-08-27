@@ -8,9 +8,10 @@
 		label: string;
 		icon?: string;
 		class?: ClassValue;
+		hideLabel?: boolean;
 	};
 
-	let { color, label, icon, class: classProp }: Props = $props();
+	let { color, label, icon, class: classProp, hideLabel }: Props = $props();
 
 	const colorClass = $derived(
 		{
@@ -34,5 +35,7 @@
 		<Icon class="text-lg" {icon} />
 	{/if}
 
-	<span>{label}</span>
+	{#if !hideLabel}
+		<span>{label}</span>
+	{/if}
 </div>

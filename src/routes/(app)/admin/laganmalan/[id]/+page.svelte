@@ -13,7 +13,7 @@
 	import GroupSelect from '$lib/components/form/GroupSelect.svelte';
 	import EditableMembersTable from '$lib/components/table/EditableMembersTable.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
-	import ImageUpload from '$lib/components/ui/ImageUpload.svelte';
+	import ImageUpload from '$lib/components/form/ImageUpload.svelte';
 	import InputField from '$lib/components/ui/InputField.svelte';
 	import Label from '$lib/components/ui/Label.svelte';
 	import Notice from '$lib/components/ui/Notice.svelte';
@@ -160,8 +160,11 @@
 		</Label>
 
 		{#if submission.submittedBy}
-			<Label label="Skickades in av">
-				<span class="font-medium">{submission.submittedBy.battletag}</span>
+			<Label label="Anmäldes">
+				<span class="font-medium"
+					>{formatDateTime(submission.editedAt ?? submission.createdAt)} av {submission.submittedBy
+						.battletag}</span
+				>
 			</Label>
 		{/if}
 
@@ -255,7 +258,7 @@
 		</Label>
 
 		<Label label="Logotyp">
-			<ImageUpload src={cdn.imageSrcUrl(cdn.submissionLogoKey(submission.id), { width: 200 })} />
+			<ImageUpload alt="Laglogotyp" src={cdn.srcUrl(cdn.submissionLogoKey(submission.id))} />
 		</Label>
 	</div>
 

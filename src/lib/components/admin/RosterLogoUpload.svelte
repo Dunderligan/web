@@ -1,23 +1,25 @@
 <script lang="ts">
+	import cdn from '$lib/cdn';
 	import { uploadRosterLogo } from '$lib/remote/roster.remote';
-	import RosterLogo from '../ui/RosterLogo.svelte';
-	import ImageUpload from './ImageUpload.svelte';
+	import ImageUpload from '../form/ImageUpload.svelte';
 
 	type Props = {
+		rosterName?: string;
 		rosterId: string;
 		onUpload?: () => void;
 	};
 
-	let { rosterId, onUpload }: Props = $props();
+	let { rosterName, rosterId, onUpload }: Props = $props();
 
-	async function upload(buffer: ArrayBuffer) {
+	async function upload(file: File) {
+		const buffer = await file.arrayBuffer();
 		await uploadRosterLogo({ rosterId, file: buffer });
 		onUpload?.();
 	}
 </script>
 
-<ImageUpload alt="Roster logo" {upload}>
-	{#snippet image({ src, class: imgClass })}
-		<RosterLogo id={rosterId} class={imgClass} imgSize={128} {src} />
-	{/snippet}
-</ImageUpload>
+<ImageUpload
+	alt={rosterName ?? 'Roster logo'}
+	{upload}
+	src={cdn.srcUrl(cdn.rosterLogoKey(rosterId))}
+/>

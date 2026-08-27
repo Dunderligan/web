@@ -284,6 +284,22 @@ export type MatchListProps = {
 	matches: ResolvedMatchWithContext[];
 };
 
+export type CardProps = {
+	class?: ClassValue;
+	reverse?: boolean;
+	title: string;
+	image: string;
+	alt: string;
+	children?: Snippet;
+};
+
+export type PlaceholderProps = {
+	icon?: string;
+	text: string;
+	onclick?: () => void;
+	class?: ClassValue;
+};
+
 export type DropdownItem = {
 	label: string;
 	icon?: string;
@@ -328,6 +344,7 @@ export type ButtonProps = {
 	icon?: string;
 	kind?: ButtonKind;
 	loading?: boolean;
+	openInNewTab?: boolean;
 } & (
 	| { children: Snippet; label?: never; icon?: never }
 	| {

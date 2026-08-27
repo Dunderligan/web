@@ -4,9 +4,9 @@ import { db, schema } from '$lib/server/db';
 import { eq } from 'drizzle-orm';
 import z from 'zod';
 import { roleGuard } from './auth.remote';
-import sharp from 'sharp';
 import s3 from '$lib/server/s3';
 import cdn from '$lib/cdn';
+import image from '$lib/server/image';
 
 export const createAwardType = command(
 	z.object({
@@ -50,16 +50,17 @@ export const updateAwardType = command(
 export const uploadAwardTypeImage = command(
 	z.object({
 		id: z.uuid(),
-		image: z.instanceof(ArrayBuffer)
+		file: z.instanceof(ArrayBuffer)
 	}),
-	async ({ id, image }) => {
+	async ({ id, file }) => {
 		await roleGuard(AuthRole.ADMIN);
 
 		const key = cdn.awardLogoKey(id);
 
-		const imageUrl = cdn.imageSrcUrl(key, { width: 256 });
+		const buffer = await image.convertToWebp(Buffer.from(file));
+		await s3.uploadImage(buffer, key);
 
-		await s3.uploadImage(image, cdn.awardLogoKey(id));
+		const imageUrl = cdn.imageSrcUrl(key, { width: 256 });
 
 		const [awardType] = await db
 			.update(schema.awardType)

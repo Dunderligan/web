@@ -10,6 +10,7 @@ import { AuthRole } from '$lib/authRole';
 import { memberSchema, socialSchema } from '$lib/schemas';
 import s3 from '$lib/server/s3';
 import cdn from '$lib/cdn';
+import image from '$lib/server/image';
 
 /// Create a roster and add it to a group. If an associated teamId is not provided, a new team will be created.
 export const createRoster = command(
@@ -147,7 +148,8 @@ export const uploadRosterLogo = command(
 	async ({ rosterId, file }) => {
 		await roleGuard(AuthRole.ADMIN);
 
-		await s3.uploadImage(file, cdn.rosterLogoKey(rosterId));
+		const buffer = await image.convertToWebp(Buffer.from(file));
+		await s3.uploadImage(buffer, cdn.rosterLogoKey(rosterId));
 	}
 );
 

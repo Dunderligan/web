@@ -8,7 +8,8 @@ import {
 	type NestedGroup,
 	Role,
 	type SeasonState,
-	SocialPlatform
+	SocialPlatform,
+	SubmissionStatus
 } from './types';
 
 /** Returns a readable version of a SocialPlatform. */
@@ -272,4 +273,15 @@ export function isPlayerRole(role: Role): boolean {
 
 export function isOrganizationRole(role: Role): boolean {
 	return ORGANIZATION_ROLES.includes(role);
+}
+
+export function formatSubmissionStatus(status: SubmissionStatus): string {
+	switch (status) {
+		case SubmissionStatus.PENDING:
+			return 'Väntar';
+		case SubmissionStatus.APPROVED:
+			return 'Godkänd';
+		case SubmissionStatus.REJECTED:
+			return 'Nekad';
+	}
 }

@@ -14,10 +14,13 @@ function srcUrl(key: string) {
  *
  * This assumes Images is configured on top of the CDN domain (called zones by cloudflare).
  */
-function imageSrcUrl(key: string, { width, height }: { width: number; height?: number }) {
-	let filters = `format=auto,fit=scale-down,width=${width}`;
-	if (height) {
-		filters += `,height=${height}`;
+function imageSrcUrl(key: string, opts?: { width?: number; height?: number }) {
+	let filters = `format=auto,fit=scale-down`;
+	if (opts?.width) {
+		filters += `,width=${opts.width}`;
+	}
+	if (opts?.height) {
+		filters += `,height=${opts.height}`;
 	}
 
 	return srcUrl(`cdn-cgi/image/${filters}/${key}`);
@@ -28,8 +31,8 @@ function rosterLogoKey(rosterId: string) {
 	return `logos/${rosterId}.webp`;
 }
 
-function rosterLogoUrl(rosterId: string, { width, height }: { width: number; height?: number }) {
-	return imageSrcUrl(rosterLogoKey(rosterId), { width, height });
+function rosterLogoUrl(rosterId: string, opts?: { width?: number; height?: number }) {
+	return imageSrcUrl(rosterLogoKey(rosterId), opts);
 }
 
 function submissionLogoKey(submissionId: string) {

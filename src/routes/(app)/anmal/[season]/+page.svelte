@@ -11,7 +11,7 @@
 	import Checkbox from '$lib/components/ui/Checkbox.svelte';
 	import Dialog from '$lib/components/ui/Dialog.svelte';
 	import DiscordLink from '$lib/components/ui/DiscordLink.svelte';
-	import ImageUpload from '$lib/components/ui/ImageUpload.svelte';
+	import ImageUpload from '$lib/components/form/ImageUpload.svelte';
 	import InputField from '$lib/components/ui/InputField.svelte';
 	import Label from '$lib/components/ui/Label.svelte';
 	import Notice from '$lib/components/ui/Notice.svelte';
@@ -145,7 +145,7 @@
 				</Label>
 
 				<Label label="Logotyp">
-					<ImageUpload bind:file={logo} onFileChanged={saveCtx.setDirty} />
+					<ImageUpload alt="Laglogotyp" bind:file={logo} onFileChanged={saveCtx.setDirty} />
 				</Label>
 			{/if}
 		</AdminCard>
