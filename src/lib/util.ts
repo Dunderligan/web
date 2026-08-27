@@ -136,13 +136,25 @@ function isWithinWeek(a: Date, b: Date) {
 
 /** Formats a date in a readable way, without time. */
 export function formatDate(date: Date, extra?: any): string {
-	const isThisWeek = isWithinWeek(date, new Date());
 	const isCurrentYear = date.getFullYear() === new Date().getFullYear();
 
 	return date.toLocaleDateString('sv-SE', {
-		...(isThisWeek ? { weekday: 'long' } : { day: 'numeric', month: 'short' }),
+		day: 'numeric',
+		month: 'long',
 		// only show year if not current year
-		...(isCurrentYear ? {} : { year: 'numeric' }),
+		year: isCurrentYear ? undefined : 'numeric',
+		...extra
+	});
+}
+
+/** Formats a date in a concise, readable way, without time. */
+export function formatDateShort(date: Date, extra?: any): string {
+	const isThisWeek = isWithinWeek(date, new Date());
+
+	return formatDate(date, {
+		...(isThisWeek
+			? { day: null, month: null, weekday: 'long' }
+			: { day: 'numeric', month: 'short' }),
 		...extra
 	});
 }
@@ -150,6 +162,15 @@ export function formatDate(date: Date, extra?: any): string {
 /** Formats a date in a readable way, with time. */
 export function formatDateTime(date: Date, extra?: any): string {
 	return formatDate(date, {
+		hour: '2-digit',
+		minute: '2-digit',
+		...extra
+	});
+}
+
+/** Formats a date in a concise, readable way, with time. */
+export function formatDateTimeShort(date: Date, extra?: any): string {
+	return formatDateShort(date, {
 		hour: '2-digit',
 		minute: '2-digit',
 		...extra

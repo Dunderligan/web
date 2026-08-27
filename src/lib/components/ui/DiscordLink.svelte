@@ -6,4 +6,4 @@
 	let props: Omit<HTMLAnchorAttributes, 'href'> = $props();
 </script>
 
-<Link href={socials.discord} {...props} openInNewTab />
+<Link href={socials.discord} {...props} openInNewTab class="font-semibold" />

@@ -159,9 +159,9 @@
 			{/each}
 		</div>
 
-		<div class="flex items-center gap-4">
-			<Dropdown items={preferencesDropdownItems} class="flex items-center justify-center p-3">
-				<Icon icon="ph:gear" class="text-xl" />
+		<div class="flex items-center gap-2">
+			<Dropdown items={preferencesDropdownItems}>
+				<Button icon="ph:gear" kind="secondary" />
 			</Dropdown>
 
 			<Button icon="ph:magnifying-glass" kind="secondary" onclick={() => (searchOpen = true)} />

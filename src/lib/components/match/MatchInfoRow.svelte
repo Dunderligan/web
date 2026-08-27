@@ -1,6 +1,12 @@
 <script lang="ts">
 	import { type NestedBracket, type NestedGroup, type MatchWithoutRosters } from '$lib/types';
-	import { capitalize, formatDate, formatDateTime } from '$lib/util';
+	import {
+		capitalize,
+		formatDate,
+		formatDateShort,
+		formatDateTime,
+		formatDateTimeShort
+	} from '$lib/util';
 	import type { ClassValue } from 'svelte/elements';
 	import Icon from '../ui/Icon.svelte';
 	import Link from '../ui/Link.svelte';
@@ -31,11 +37,11 @@
 		{
 			played: {
 				icon: 'ph:check',
-				date: match.playedAt ? formatDate(match.playedAt) : 'Okänt datum'
+				date: match.playedAt ? formatDateShort(match.playedAt) : 'Okänt datum'
 			},
 			scheduled: {
 				icon: 'ph:calendar-blank',
-				date: match.scheduledAt ? formatDateTime(match.scheduledAt) : null
+				date: match.scheduledAt ? formatDateTimeShort(match.scheduledAt) : null
 			},
 			walkover: { icon: 'ph:flag', label: 'Walkover' },
 			cancelled: { icon: 'ph:x', label: 'Inställd' }
