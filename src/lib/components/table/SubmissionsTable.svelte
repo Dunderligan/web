@@ -16,7 +16,7 @@
 	kind="transparent"
 	rows={submissions}
 	columns={[
-		{ label: 'Lagnamn' },
+		{ label: 'Lagnamn', width: '1fr' },
 		{ label: 'Status', center: true },
 		{ label: 'Skapad', center: true },
 		{ label: 'Redigerad', center: true },

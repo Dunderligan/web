@@ -4,8 +4,10 @@
 	import { fly } from 'svelte/transition';
 	import { SaveContext } from '$lib/state/save.svelte';
 	import { Portal } from 'bits-ui';
+	import { ConfirmContext } from '$lib/state/confirm.svelte';
 
 	const context = SaveContext.get();
+	const confirmCtx = ConfirmContext.get();
 
 	type SaveState = 'default' | 'success' | 'error' | 'reset';
 
@@ -28,10 +30,13 @@
 
 	async function onsaveclick() {
 		try {
-			await context.save();
+			const confirmed = await context.save(confirmCtx);
+			if (!confirmed) return;
+
 			saveState = 'success';
 			hideAfter(1000);
-		} catch {
+		} catch (e) {
+			console.error('Error saving context:', e);
 			saveState = 'error';
 			hideAfter(2000);
 		}

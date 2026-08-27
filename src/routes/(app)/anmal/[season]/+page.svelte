@@ -106,8 +106,8 @@
 	{#if data.userSubmissions.length > 0}
 		<Notice kind="warn">
 			Det ser ut som att du redan har skickat in en anmälan för denna säsong. För att redigera din
-			anmälan, gå till <Link href="/jag/anmalningar">Mina anmälningar</Link>, eller fortsätt här för
-			att anmäla ett nytt lag.
+			anmälan, gå till <Link class="font-semibold" href="/jag/anmalningar">Mina anmälningar</Link>,
+			eller fortsätt här för att anmäla ett nytt lag.
 		</Notice>
 	{/if}
 
@@ -125,16 +125,6 @@
 					<b>Anmälningsperioden</b> för {season.name} är {formatDate(data.registration.openDate)} till
 					{formatDate(data.registration.closeDate)}.
 				</p>
-
-				<!-- <p>
-					Ligastart 7/3
-					<br />
-					Grundserien avslutas 5/4
-					<br />
-					Varje lag förväntas däremellan spela fyra matcher för att placera sig inför slutspelet.
-				</p>
-
-				<p>Slutspelet börjar 7/4, finalerna spelas och <b>ligan avslutas senast 26/4</b></p> -->
 
 				<Notice kind="discord">
 					Mer information hittar du i Dunderligans <DiscordLink>Discordserver</DiscordLink>, som
@@ -329,7 +319,7 @@
 		<p>
 			Tänk på att samtliga medlemmar måste vara anslutna i <br />
 			<DiscordLink>Discordservern</DiscordLink> innan säsongen drar igång. Därför är det nu ett bra tillfälle
-			att gå med själv samt sprida ordet till dina lagkamrater.
+			att gå med själv, samt sprida ordet till dina lagkamrater.
 		</p>
 	{/snippet}
 </Dialog>

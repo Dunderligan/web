@@ -22,14 +22,14 @@
 </script>
 
 <a
-	class={[classProp, colored && 'text-accent-700 dark:text-accent-500', 'group ml-0.5']}
+	class={[classProp, colored && 'text-accent-700 dark:text-accent-500', 'group']}
 	rel={isExternal ? 'noopener noreferrer' : undefined}
 	target={openInNewTab ? '_blank' : undefined}
 	{href}
 	{...rest}
 >
 	{#if isExternal || openInNewTab}
-		<Icon icon={openInNewTab ? 'ph:arrow-square-out' : 'ph:link-simple'} class="text-base" />
+		<Icon icon={openInNewTab ? 'ph:arrow-square-out' : 'ph:link-simple'} class="ml-0.5 text-base" />
 	{/if}
 
 	<span class="group-hover:underline">{@render children?.()}</span>

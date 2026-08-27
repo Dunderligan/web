@@ -98,9 +98,6 @@ export const createApiKey = command(
 		name: z.string().nonempty()
 	}),
 	async ({ name }) => {
-		// only admins can create API keys for now
-		await roleGuard(AuthRole.ADMIN);
-
 		const { locals } = getRequestEvent();
 
 		const { key, token } = await apiToken.createKey(name, locals.user!.id);
@@ -116,9 +113,6 @@ export const deleteApiKey = command(
 		id: z.uuid()
 	}),
 	async ({ id }) => {
-		// only admins can delete API keys for now
-		await roleGuard(AuthRole.ADMIN);
-
 		const { locals } = getRequestEvent();
 
 		await apiToken.deleteKey(id, locals.user!.id);

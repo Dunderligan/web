@@ -75,7 +75,7 @@
 				{ label: 'Namn', width: '1fr' },
 				{ label: 'Skapad', center: true },
 				{ label: 'Användes senast', center: true },
-				{ label: '' }
+				{}
 			]}
 		>
 			{#snippet row({ value: key })}
@@ -131,7 +131,7 @@
 	]}
 >
 	<div
-		class="rounded-md bg-gray-100 p-4 text-center font-mono text-xl text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+		class="rounded-md bg-gray-100 p-4 text-center font-mono text-lg text-gray-700 dark:bg-gray-800 dark:text-gray-300"
 	>
 		{tokenValue}
 	</div>

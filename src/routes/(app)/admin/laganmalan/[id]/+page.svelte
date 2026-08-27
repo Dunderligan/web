@@ -34,12 +34,26 @@
 	const season = $derived(registration.season);
 
 	ConfirmContext.set(new ConfirmContext());
-	SaveContext.set(new SaveContext({ save: onSaveClicked }));
+
+	const userIsAdmin = $derived(isAdmin(page.data.user?.role));
+
+	SaveContext.set(
+		new SaveContext({
+			save,
+			confirmSave: () =>
+				!userIsAdmin && submission.status === SubmissionStatus.APPROVED
+					? {
+							title: 'Spara ändringar',
+							description:
+								'Är du säker på att du vill spara dina ändringar? Ändringarna kommer att behöva granskas på nytt.'
+						}
+					: null
+		})
+	);
 
 	const confirmCtx = ConfirmContext.get();
 	const saveCtx = SaveContext.get();
 
-	const userIsAdmin = $derived(isAdmin(page.data.user?.role));
 	const registrationOpen = $derived(Date.now() < registration.closeDate.getTime());
 	const canEdit = $derived(userIsAdmin || registrationOpen);
 
@@ -64,22 +78,6 @@
 				} else {
 					await goto(`/jag/mina-anmalningar`);
 				}
-			}
-		});
-	}
-
-	async function onSaveClicked() {
-		if (userIsAdmin) {
-			await save();
-			return;
-		}
-
-		confirmCtx.confirm({
-			title: 'Spara ändringar',
-			description:
-				'Är du säker på att du vill spara dina ändringar? Ändringarna kommer att behöva granskas på nytt.',
-			action: async () => {
-				await save();
 			}
 		});
 	}
@@ -210,19 +208,18 @@
 	{:else if submission.status === SubmissionStatus.APPROVED && registrationOpen}
 		<Notice kind="info">
 			Din nuvarande anmälan har blivit godkänd och tilldelats en plats i säsongen. Du kan
-			fortfarande redigera din anmälan och skicka in den på nytt för granskning, men laget kommer då
-			att behöva granskas på nytt.
+			fortfarande redigera din anmälan, men laget kommer då att behöva granskas på nytt.
 		</Notice>
 	{:else if submission.approvedRosterId}
 		{#if submission.status === SubmissionStatus.PENDING}
 			<Notice kind="info">
-				Laget har tilldelats en plats i säsongen, men anmälan har sedan dess uppdaterats och behöver
+				Laget har tilldelats en plats i säsongen, men anmälan har sedan dess redigerats och behöver
 				granskas på nytt.
 			</Notice>
 		{:else if submission.status === SubmissionStatus.REJECTED}
 			<Notice kind="info">
-				Laget har tidigare blivit godkänt och tilldelats en plats i säsongen, men anmälan har sen
-				dess upddaterats och nekats på nytt.
+				Laget har tidigare blivit godkänt och tilldelats en plats i säsongen, men anmälan har sedan
+				dess redigerats och nekats på nytt.
 			</Notice>
 		{/if}
 	{:else if submission.status === SubmissionStatus.REJECTED && registrationOpen}

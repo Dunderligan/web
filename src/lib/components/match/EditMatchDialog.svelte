@@ -60,7 +60,7 @@
 	buttons={[
 		{
 			label: 'Klar',
-			icon: 'ph:check',
+			icon: 'ph:check-circle',
 			onclick: () => rosterCtx.stopMatchEdit()
 		}
 	]}

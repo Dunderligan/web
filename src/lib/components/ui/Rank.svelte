@@ -2,15 +2,15 @@
 	import { Rank, type AnyRank } from '$lib/types';
 	import { capitalize } from '$lib/util';
 	import { getRank, getTierLabel, isLegacyRank } from '$lib/rank';
-	import bronze from '$lib/assets/images/ranks/bronze.avif';
-	import silver from '$lib/assets/images/ranks/silver.avif';
-	import gold from '$lib/assets/images/ranks/gold.avif';
-	import platinum from '$lib/assets/images/ranks/platinum.avif';
-	import emerald from '$lib/assets/images/ranks/emerald.avif';
-	import diamond from '$lib/assets/images/ranks/diamond.avif';
-	import master from '$lib/assets/images/ranks/master.avif';
-	import grandmaster from '$lib/assets/images/ranks/grandmaster.avif';
-	import champion from '$lib/assets/images/ranks/champion.avif';
+	import bronze from '$lib/assets/images/ranks/bronze.png';
+	import silver from '$lib/assets/images/ranks/silver.png';
+	import gold from '$lib/assets/images/ranks/gold.png';
+	import platinum from '$lib/assets/images/ranks/platinum.png';
+	import emerald from '$lib/assets/images/ranks/emerald.png';
+	import diamond from '$lib/assets/images/ranks/diamond.png';
+	import master from '$lib/assets/images/ranks/master.png';
+	import grandmaster from '$lib/assets/images/ranks/grandmaster.png';
+	import champion from '$lib/assets/images/ranks/champion.png';
 	import type { ClassValue } from 'svelte/elements';
 
 	type Props = {
@@ -44,7 +44,7 @@
 		src={imgSrc}
 		alt={rank}
 		title={capitalize(rank)}
-		class={[classProp, !hideLabel && 'mr-1', 'inline size-7']}
+		class={[classProp, !hideLabel && 'mr-1', 'inline aspect-auto w-6']}
 	/>
 
 	{#if !hideLabel}

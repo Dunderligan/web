@@ -1,7 +1,10 @@
 import { beforeNavigate, invalidateAll } from '$app/navigation';
+import { ConfirmContext, type ConfirmData } from './confirm.svelte';
 import { defineContext } from './util';
 
 const { get, set } = defineContext<SaveContext>('$_save_state');
+
+type ConfirmDataFn = () => Omit<ConfirmData, 'action'> | null | undefined;
 
 /**
  * Context for managing save state on a page.
@@ -27,6 +30,7 @@ export class SaveContext {
 
 	private saveAction?: () => Promise<void>;
 	private discardAction: () => Promise<void>;
+	private confirmSave?: ConfirmDataFn;
 
 	autoSave = $state(false);
 
@@ -39,9 +43,11 @@ export class SaveContext {
 		discard?: () => Promise<void>;
 		autoSave?: boolean;
 		href?: string;
+		confirmSave?: ConfirmDataFn;
 	}) {
 		this.saveAction = options?.save;
 		this.discardAction = options?.discard ?? invalidateAll;
+		this.confirmSave = options?.confirmSave;
 
 		this.autoSave = options?.autoSave ?? false;
 		this.href = options?.href;
@@ -67,12 +73,19 @@ export class SaveContext {
 		}
 	};
 
-	save = async () => {
+	save = async (confirmContext?: ConfirmContext): Promise<boolean> => {
+		const confirm = this.confirmSave?.();
+		if (confirm && confirmContext) {
+			const confimed = await confirmContext.confirm(confirm);
+			if (!confimed) return false;
+		}
+
 		try {
 			this.saving = true;
 			await this.saveAction?.();
 
 			this.isDirty = false;
+			return true;
 		} finally {
 			this.saving = false;
 		}
