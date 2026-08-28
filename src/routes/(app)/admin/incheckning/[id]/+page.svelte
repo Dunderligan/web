@@ -2,7 +2,7 @@
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import AdminRosterList from '$lib/components/admin/AdminRosterList.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
-	import ChipToggle from '$lib/components/ui/ChipToggle.svelte';
+	import ChipToggle from '$lib/components/form/ChipToggle.svelte';
 	import Progress from '$lib/components/ui/Progress.svelte';
 
 	const { data } = $props();

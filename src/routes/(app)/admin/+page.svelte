@@ -4,12 +4,12 @@
 	import AdminLink from '$lib/components/admin/AdminLink.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
-	import InputField from '$lib/components/ui/InputField.svelte';
-	import Label from '$lib/components/ui/Label.svelte';
+	import InputField from '$lib/components/form/InputField.svelte';
+	import Label from '$lib/components/form/Label.svelte';
 	import { SaveContext } from '$lib/state/save.svelte';
 	import DateInput from '$lib/components/ui/DateInput.svelte';
 	import { createSeason } from '$lib/remote/season.remote';
-	import Checkbox from '$lib/components/ui/Checkbox.svelte';
+	import Checkbox from '$lib/components/form/Checkbox.svelte';
 	import { isAdmin, isModerator } from '$lib/authRole.js';
 	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
 

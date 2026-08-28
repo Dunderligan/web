@@ -4,13 +4,13 @@
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import SaveToast from '$lib/components/admin/SaveToast.svelte';
 	import Table from '$lib/components/table/Table.svelte';
-	import Select from '$lib/components/ui/Select.svelte';
+	import Select from '$lib/components/form/Select.svelte';
 	import { updateUsers } from '$lib/remote/auth.remote';
 	import { SaveContext } from '$lib/state/save.svelte';
 	import { formatDate } from '$lib/util';
 	import { page } from '$app/state';
-	import InputField from '$lib/components/ui/InputField.svelte';
-	import Label from '$lib/components/ui/Label.svelte';
+	import InputField from '$lib/components/form/InputField.svelte';
+	import Label from '$lib/components/form/Label.svelte';
 
 	let { data } = $props();
 

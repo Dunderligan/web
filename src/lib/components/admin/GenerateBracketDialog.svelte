@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { generateBracket } from '$lib/remote/bracket.remote';
-	import Checkbox from '../ui/Checkbox.svelte';
-	import InputField from '../ui/InputField.svelte';
-	import Label from '../ui/Label.svelte';
+	import Checkbox from '../form/Checkbox.svelte';
+	import InputField from '../form/InputField.svelte';
+	import Label from '../form/Label.svelte';
 	import Note from '../ui/Note.svelte';
-	import Select from '../ui/Select.svelte';
+	import Select from '../form/Select.svelte';
 	import CreateDialog from './CreateDialog.svelte';
 
 	type Props = {

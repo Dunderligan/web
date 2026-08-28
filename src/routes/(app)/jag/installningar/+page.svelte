@@ -10,8 +10,8 @@
 	import Table from '$lib/components/table/Table.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Dialog from '$lib/components/ui/Dialog.svelte';
-	import InputField from '$lib/components/ui/InputField.svelte';
-	import Label from '$lib/components/ui/Label.svelte';
+	import InputField from '$lib/components/form/InputField.svelte';
+	import Label from '$lib/components/form/Label.svelte';
 	import { deleteAccount } from '$lib/remote/account.remote';
 	import { createApiKey, deleteApiKey } from '$lib/remote/auth.remote.js';
 	import { ConfirmContext } from '$lib/state/confirm.svelte';

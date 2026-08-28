@@ -5,8 +5,8 @@
 	import AdminLink from '$lib/components/admin/AdminLink.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
-	import InputField from '$lib/components/ui/InputField.svelte';
-	import Label from '$lib/components/ui/Label.svelte';
+	import InputField from '$lib/components/form/InputField.svelte';
+	import Label from '$lib/components/form/Label.svelte';
 	import RosterLogoUpload from '$lib/components/admin/RosterLogoUpload.svelte';
 	import SaveToast from '$lib/components/admin/SaveToast.svelte';
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
@@ -16,7 +16,7 @@
 	import { deleteRoster, editRoster, mergeTeams, moveRoster } from '$lib/remote/roster.remote';
 	import EditableMembersTable from '$lib/components/table/EditableMembersTable.svelte';
 	import Notice from '$lib/components/ui/Notice.svelte';
-	import Checkbox from '$lib/components/ui/Checkbox.svelte';
+	import Checkbox from '$lib/components/form/Checkbox.svelte';
 	import { AuthRole, checkPermission } from '$lib/authRole';
 	import AdminSocials from '$lib/components/admin/AdminSocials.svelte';
 	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
@@ -134,15 +134,15 @@
 				kind="transparent"
 				rows={roster.members}
 				columns={[
-					{ label: 'Spelare', width: '1fr' },
+					{ label: 'Spelare' },
 					{ label: 'Incheckad', center: true },
-					{ label: 'Åtgärder', center: true }
+					{ label: 'Åtgärder', center: true, width: 'max-content' }
 				]}
 			>
 				{#snippet row({ value: member })}
 					{@const checkin = data.checkins.get(member.player.id)}
 
-					<div class="py-3 font-semibold">{member.player.battletag}</div>
+					<div class="py-3 text-lg font-semibold">{member.player.battletag}</div>
 
 					<div class="justify-center text-xl">
 						{#if checkin}

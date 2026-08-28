@@ -10,13 +10,13 @@
 		roleIcon
 	} from '$lib/util';
 	import Button from '../ui/Button.svelte';
-	import Checkbox from '../ui/Checkbox.svelte';
-	import InputField from '../ui/InputField.svelte';
-	import Select from '../ui/Select.svelte';
+	import Checkbox from '../form/Checkbox.svelte';
+	import InputField from '../form/InputField.svelte';
+	import Select from '../form/Select.svelte';
 	import Table from './Table.svelte';
 	import CreateDialog from '../admin/CreateDialog.svelte';
-	import Label from '../ui/Label.svelte';
-	import RankInput from '../ui/RankInput.svelte';
+	import Label from '../form/Label.svelte';
+	import RankInput from '../form/RankInput.svelte';
 	import { isLegacyRank } from '$lib/rank';
 	import Notice from '../ui/Notice.svelte';
 	import Link from '../ui/Link.svelte';

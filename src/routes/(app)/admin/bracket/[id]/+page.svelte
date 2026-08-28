@@ -5,8 +5,8 @@
 	import Button from '$lib/components/ui/Button.svelte';
 	import EditableMatch from '$lib/components/match/EditableMatch.svelte';
 	import EditMatchDialog from '$lib/components/match/EditMatchDialog.svelte';
-	import InputField from '$lib/components/ui/InputField.svelte';
-	import Label from '$lib/components/ui/Label.svelte';
+	import InputField from '$lib/components/form/InputField.svelte';
+	import Label from '$lib/components/form/Label.svelte';
 	import SaveToast from '$lib/components/admin/SaveToast.svelte';
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
 	import { RosterContext } from '$lib/state/rosters.svelte';

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { HTMLInputAttributes } from 'svelte/elements';
-	import Icon from './Icon.svelte';
+	import Icon from '../ui/Icon.svelte';
 
 	type Props = {
 		icon?: string;

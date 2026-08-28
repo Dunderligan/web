@@ -8,12 +8,12 @@
 	import PageSection from '$lib/components/structure/PageSection.svelte';
 	import EditableMembersTable from '$lib/components/table/EditableMembersTable.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
-	import Checkbox from '$lib/components/ui/Checkbox.svelte';
+	import Checkbox from '$lib/components/form/Checkbox.svelte';
 	import Dialog from '$lib/components/ui/Dialog.svelte';
 	import DiscordLink from '$lib/components/ui/DiscordLink.svelte';
 	import ImageUpload from '$lib/components/form/ImageUpload.svelte';
-	import InputField from '$lib/components/ui/InputField.svelte';
-	import Label from '$lib/components/ui/Label.svelte';
+	import InputField from '$lib/components/form/InputField.svelte';
+	import Label from '$lib/components/form/Label.svelte';
 	import Notice from '$lib/components/ui/Notice.svelte';
 	import { submitTeam } from '$lib/remote/registration.remote.js';
 	import { SaveContext } from '$lib/state/save.svelte.js';

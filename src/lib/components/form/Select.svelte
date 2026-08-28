@@ -2,7 +2,7 @@
 	import { mapEmptyToUndefined } from '$lib/util';
 	import { Select, type WithoutChildren } from 'bits-ui';
 
-	import Icon from './Icon.svelte';
+	import Icon from '../ui/Icon.svelte';
 	import type { Snippet } from 'svelte';
 	import type { ClassValue } from 'svelte/elements';
 

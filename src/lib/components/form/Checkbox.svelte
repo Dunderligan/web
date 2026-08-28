@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Checkbox, type WithoutChildrenOrChild } from 'bits-ui';
-	import Icon from './Icon.svelte';
+	import Icon from '../ui/Icon.svelte';
 
 	type Props = {} & WithoutChildrenOrChild<Checkbox.RootProps>;
 

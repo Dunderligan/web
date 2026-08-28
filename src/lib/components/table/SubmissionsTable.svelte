@@ -4,8 +4,8 @@
 	import SubmissionChip from '../admin/SubmissionChip.svelte';
 	import Table from './Table.svelte';
 	import Button from '../ui/Button.svelte';
-	import Label from '../ui/Label.svelte';
-	import Select from '../ui/Select.svelte';
+	import Label from '../form/Label.svelte';
+	import Select from '../form/Select.svelte';
 
 	type Props = {
 		submissions: TeamSubmissionInfo[];

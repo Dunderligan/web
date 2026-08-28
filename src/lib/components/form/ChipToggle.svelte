@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Button } from 'bits-ui';
-	import Chip from './Chip.svelte';
+	import Chip from '../ui/Chip.svelte';
 	import type { ClassValue } from 'svelte/elements';
 
 	type Props = {

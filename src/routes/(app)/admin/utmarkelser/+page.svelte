@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { isAdmin, isModerator } from '$lib/authRole';
+	import { isAdmin } from '$lib/authRole';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
 	import AdminLink from '$lib/components/admin/AdminLink.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
-	import Checkbox from '$lib/components/ui/Checkbox.svelte';
-	import InputField from '$lib/components/ui/InputField.svelte';
-	import Label from '$lib/components/ui/Label.svelte';
+	import Checkbox from '$lib/components/form/Checkbox.svelte';
+	import InputField from '$lib/components/form/InputField.svelte';
+	import Label from '$lib/components/form/Label.svelte';
 	import Note from '$lib/components/ui/Note.svelte';
 	import { createAwardType } from '$lib/remote/award.remote';
 	import { SaveContext } from '$lib/state/save.svelte';

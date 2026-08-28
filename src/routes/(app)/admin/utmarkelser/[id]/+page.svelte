@@ -9,10 +9,10 @@
 	import SaveToast from '$lib/components/admin/SaveToast.svelte';
 	import Table from '$lib/components/table/Table.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
-	import Checkbox from '$lib/components/ui/Checkbox.svelte';
-	import InputField from '$lib/components/ui/InputField.svelte';
-	import Label from '$lib/components/ui/Label.svelte';
-	import Select from '$lib/components/ui/Select.svelte';
+	import Checkbox from '$lib/components/form/Checkbox.svelte';
+	import InputField from '$lib/components/form/InputField.svelte';
+	import Label from '$lib/components/form/Label.svelte';
+	import Select from '$lib/components/form/Select.svelte';
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
 	import { SaveContext } from '$lib/state/save.svelte';
 	import {
@@ -24,8 +24,8 @@
 		uploadAwardTypeImage
 	} from '$lib/remote/award.remote';
 	import type { PlayerAward } from '$lib/types.js';
-	import TextArea from '$lib/components/ui/TextArea.svelte';
-	import ImageUpload from '$lib/components/admin/ImageUpload.svelte';
+	import TextArea from '$lib/components/form/TextArea.svelte';
+	import ImageUpload from '$lib/components/form/ImageUpload.svelte';
 	import Link from '$lib/components/ui/Link.svelte';
 
 	let { data } = $props();
@@ -189,11 +189,11 @@
 		<Label label="Bild">
 			<ImageUpload
 				alt="Bild för utmärkelsen"
-				src={awardType.imageUrl}
-				upload={async (buffer) => {
+				src={awardType.imageUrl ?? undefined}
+				upload={async (file) => {
 					const result = await uploadAwardTypeImage({
 						id: awardType.id,
-						file: buffer
+						file: await file.arrayBuffer()
 					});
 
 					awardType = { ...awardType, ...result.awardType };

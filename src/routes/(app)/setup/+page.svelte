@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { goto, invalidateAll } from '$app/navigation';
 	import Meta from '$lib/components/structure/Meta.svelte';
-	import PageHeader from '$lib/components/structure/PageHeader.svelte';
 	import PageSection from '$lib/components/structure/PageSection.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
-	import InputField from '$lib/components/ui/InputField.svelte';
-	import Label from '$lib/components/ui/Label.svelte';
+	import InputField from '$lib/components/form/InputField.svelte';
+	import Label from '$lib/components/form/Label.svelte';
 	import { createSuperAdmin } from '$lib/remote/auth.remote';
 
 	let battletag = $state('');

@@ -2,14 +2,14 @@
 	import { RosterContext } from '$lib/state/rosters.svelte';
 	import { SaveContext } from '$lib/state/save.svelte';
 	import Dialog from '../ui/Dialog.svelte';
-	import InputField from '../ui/InputField.svelte';
-	import Label from '../ui/Label.svelte';
+	import InputField from '../form/InputField.svelte';
+	import Label from '../form/Label.svelte';
 	import RosterSelect from '../admin/RosterSelect.svelte';
 	import DateInput from '../ui/DateInput.svelte';
 	import { Accordion } from 'bits-ui';
 	import Icon from '../ui/Icon.svelte';
 	import { MatchState } from '$lib/types';
-	import Select from '../ui/Select.svelte';
+	import Select from '../form/Select.svelte';
 
 	const rosterCtx = RosterContext.get();
 	const saveCtx = SaveContext.get();

@@ -5,15 +5,15 @@
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
-	import InputField from '$lib/components/ui/InputField.svelte';
-	import Label from '$lib/components/ui/Label.svelte';
+	import InputField from '$lib/components/form/InputField.svelte';
+	import Label from '$lib/components/form/Label.svelte';
 	import SaveToast from '$lib/components/admin/SaveToast.svelte';
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
 	import { SaveContext } from '$lib/state/save.svelte';
 	import DateInput from '$lib/components/ui/DateInput.svelte';
 	import { createDivision } from '$lib/remote/division.remote';
 	import { createRegistration, deleteSeason, updateSeason } from '$lib/remote/season.remote';
-	import Checkbox from '$lib/components/ui/Checkbox.svelte';
+	import Checkbox from '$lib/components/form/Checkbox.svelte';
 	import Note from '$lib/components/ui/Note.svelte';
 	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
 	import { isAdmin } from '$lib/authRole.js';

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { RemoteQuery } from '@sveltejs/kit';
 	import Dialog from '../ui/Dialog.svelte';
-	import InputField from '../ui/InputField.svelte';
+	import InputField from '../form/InputField.svelte';
 	import type { SearchItem } from '$lib/types';
 	import SearchItemLink from '../admin/SearchItemLink.svelte';
 	import Placeholder from '../ui/Placeholder.svelte';

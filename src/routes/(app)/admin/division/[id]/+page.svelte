@@ -4,14 +4,14 @@
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
-	import InputField from '$lib/components/ui/InputField.svelte';
-	import Label from '$lib/components/ui/Label.svelte';
+	import InputField from '$lib/components/form/InputField.svelte';
+	import Label from '$lib/components/form/Label.svelte';
 	import SaveToast from '$lib/components/admin/SaveToast.svelte';
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
 	import { SaveContext } from '$lib/state/save.svelte';
 	import { createGroup } from '$lib/remote/group.remote';
 	import { deleteDivision, updateDivision } from '$lib/remote/division.remote';
-	import Checkbox from '$lib/components/ui/Checkbox.svelte';
+	import Checkbox from '$lib/components/form/Checkbox.svelte';
 	import GenerateBracketDialog from '$lib/components/admin/GenerateBracketDialog.svelte';
 	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
 	import { isAdmin } from '$lib/authRole';

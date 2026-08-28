@@ -14,8 +14,8 @@
 	import EditableMembersTable from '$lib/components/table/EditableMembersTable.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import ImageUpload from '$lib/components/form/ImageUpload.svelte';
-	import InputField from '$lib/components/ui/InputField.svelte';
-	import Label from '$lib/components/ui/Label.svelte';
+	import InputField from '$lib/components/form/InputField.svelte';
+	import Label from '$lib/components/form/Label.svelte';
 	import Notice from '$lib/components/ui/Notice.svelte';
 	import {
 		deleteTeamSubmission,

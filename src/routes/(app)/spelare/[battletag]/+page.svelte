@@ -10,7 +10,7 @@
 	import PageSection from '$lib/components/structure/PageSection.svelte';
 	import Table from '$lib/components/table/Table.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
-	import ChipToggle from '$lib/components/ui/ChipToggle.svelte';
+	import ChipToggle from '$lib/components/form/ChipToggle.svelte';
 	import HeroPortrait from '$lib/components/ui/HeroPortrait.svelte';
 	import Icon from '$lib/components/ui/Icon.svelte';
 	import Notice from '$lib/components/ui/Notice.svelte';

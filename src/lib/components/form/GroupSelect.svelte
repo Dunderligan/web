@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getDivisionsBySeason } from '$lib/remote/season.remote';
-	import Select from '../ui/Select.svelte';
+	import Select from '../form/Select.svelte';
 
 	type Props = {
 		seasonId: string;

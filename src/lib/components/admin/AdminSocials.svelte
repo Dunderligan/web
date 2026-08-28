@@ -4,9 +4,9 @@
 	import { formatSocialPlatform, socialMediaPlatformDomains } from '$lib/util';
 	import Button from '../ui/Button.svelte';
 	import Icon from '../ui/Icon.svelte';
-	import InputField from '../ui/InputField.svelte';
-	import Label from '../ui/Label.svelte';
-	import Select from '../ui/Select.svelte';
+	import InputField from '../form/InputField.svelte';
+	import Label from '../form/Label.svelte';
+	import Select from '../form/Select.svelte';
 	import AdminCard from './AdminCard.svelte';
 	import AdminEmptyNotice from './AdminEmptyNotice.svelte';
 	import CreateDialog from './CreateDialog.svelte';
