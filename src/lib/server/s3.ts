@@ -10,7 +10,6 @@ import {
 	PutObjectCommand,
 	S3Client
 } from '@aws-sdk/client-s3';
-import sharp from 'sharp';
 
 const S3 = new S3Client({
 	region: 'auto',
