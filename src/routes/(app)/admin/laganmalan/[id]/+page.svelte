@@ -159,20 +159,28 @@
 			<SubmissionChip status={submission.status} />
 		</Label>
 
-		{#if submission.submittedBy}
-			<Label label="Anmäldes">
-				<span class="font-medium"
-					>{formatDateTime(submission.editedAt ?? submission.createdAt)} av {submission.submittedBy
-						.battletag}</span
-				>
-			</Label>
-		{/if}
+		<Label label="Anmäldes">
+			<span class="font-medium"
+				>{formatDateTime(submission.createdAt)}
+				{#if submission.submittedBy}
+					av {submission.submittedBy.battletag}
+				{/if}
+			</span>
+		</Label>
 
 		<Label label="Granskades senast">
 			{#if submission.reviewedAt && submission.reviewedBy}
 				<span class="font-medium"
 					>{formatDateTime(submission.reviewedAt)} av {submission.reviewedBy.battletag}
 				</span>
+			{:else}
+				-
+			{/if}
+		</Label>
+
+		<Label label="Redigerades senast">
+			{#if submission.editedAt}
+				<span class="font-medium">{formatDateTime(submission.editedAt)} </span>
 			{:else}
 				-
 			{/if}
