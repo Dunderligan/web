@@ -35,7 +35,6 @@ export class SaveContext {
 	autoSave = $state(false);
 
 	// the href to return to after saving/discarding
-	// TODO: currently not used?
 	href?: string;
 
 	constructor(options?: {

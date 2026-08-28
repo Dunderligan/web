@@ -9,21 +9,21 @@
 	import Label from '$lib/components/ui/Label.svelte';
 	import RosterLogoUpload from '$lib/components/admin/RosterLogoUpload.svelte';
 	import SaveToast from '$lib/components/admin/SaveToast.svelte';
-	import Select from '$lib/components/ui/Select.svelte';
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
 	import { SaveContext } from '$lib/state/save.svelte';
-	import { Rank, Role } from '$lib/types';
 	import { flattenGroup } from '$lib/util';
 	import TeamSelect from '$lib/components/admin/TeamSelect.svelte';
 	import { deleteRoster, editRoster, mergeTeams, moveRoster } from '$lib/remote/roster.remote';
 	import EditableMembersTable from '$lib/components/table/EditableMembersTable.svelte';
 	import Notice from '$lib/components/ui/Notice.svelte';
-	import { getDivisionsBySeason } from '$lib/remote/season.remote';
 	import Checkbox from '$lib/components/ui/Checkbox.svelte';
 	import { AuthRole, checkPermission } from '$lib/authRole';
 	import AdminSocials from '$lib/components/admin/AdminSocials.svelte';
 	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
 	import GroupSelect from '$lib/components/form/GroupSelect.svelte';
+	import Table from '$lib/components/table/Table.svelte';
+	import Icon from '$lib/components/ui/Icon.svelte';
+	import { deleteCheckin } from '$lib/remote/checkin.remote.js';
 
 	let { data } = $props();
 
@@ -95,6 +95,18 @@
 
 		changeGroupOpen = false;
 	}
+
+	async function onCheckinRevokeClick(battletag: string, discordId: string) {
+		await confirm.confirm({
+			title: 'Ta bort incheckning',
+			description: `Är du säker på att du vill ta bort incheckningen för <b>${battletag}</b>? Spelaren kommer behöva checka in igen.`,
+			destructive: true,
+			action: async () => {
+				await deleteCheckin({ seasonId: season.id, discordId });
+				await invalidateAll();
+			}
+		});
+	}
 </script>
 
 <Breadcrumbs
@@ -112,12 +124,56 @@
 		legacyRanks={season.legacyRanks}
 		disabled={!isAdmin}
 		memberLinks
-		showCheckins={season.checkinOpen}
-		checkins={data.checkins}
 	/>
 </AdminCard>
 
 {#if isAdmin}
+	{#if season.checkinOpen}
+		<AdminCard title="Incheckning">
+			<Table
+				kind="transparent"
+				rows={roster.members}
+				columns={[
+					{ label: 'Spelare', width: '1fr' },
+					{ label: 'Incheckad', center: true },
+					{ label: 'Åtgärder', center: true }
+				]}
+			>
+				{#snippet row({ value: member })}
+					{@const checkin = data.checkins.get(member.player.id)}
+
+					<div class="py-3 font-semibold">{member.player.battletag}</div>
+
+					<div class="justify-center text-xl">
+						{#if checkin}
+							<Icon icon="ph:check-circle-fill" class="text-green-600" />
+						{:else}
+							<Icon icon="ph:x-circle-fill" class="text-red-600" />
+						{/if}
+					</div>
+
+					<div class="gap-2">
+						{#if checkin}
+							<Button
+								icon="ph:arrow-square-out"
+								label="Visa på discord"
+								kind="secondary"
+								href="https://discord.com/users/{checkin.discordId}"
+								openInNewTab
+							/>
+
+							<Button
+								icon="ph:link-break"
+								kind="secondary"
+								onclick={() => onCheckinRevokeClick(member.player.battletag, checkin.discordId)}
+							/>
+						{/if}
+					</div>
+				{/snippet}
+			</Table>
+		</AdminCard>
+	{/if}
+
 	<AdminSocials emptyText="Detta lag har inga länkar." bind:socials={team.socials} />
 
 	<AdminCard title="Inställningar">

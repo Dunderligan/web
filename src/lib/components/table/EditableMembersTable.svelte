@@ -1,12 +1,6 @@
 <script lang="ts">
 	import { SaveContext } from '$lib/state/save.svelte';
-	import {
-		type AnyRank,
-		type Member,
-		type PlayerCheckin,
-		Rank as RankEnum,
-		Role
-	} from '$lib/types';
+	import { type AnyRank, type Member, Rank as RankEnum, Role } from '$lib/types';
 	import {
 		capitalize,
 		compareRoles,
@@ -40,8 +34,6 @@
 		maxTeamCaptains?: number;
 		maxPlayersByRole?: { [role in Role]?: number };
 		invalid?: boolean;
-		showCheckins?: boolean;
-		checkins?: Map<string, PlayerCheckin>;
 	};
 
 	let {
