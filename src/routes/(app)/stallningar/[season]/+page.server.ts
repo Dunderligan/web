@@ -13,23 +13,11 @@ export const load = async ({ params, locals }) => {
 			slug: params.season,
 			hidden: hiddenSeasonFilter(locals.user)
 		},
-		columns: {
-			name: true,
-			slug: true,
-			startedAt: true,
-			endedAt: true,
-			legacySeeding: true,
-			spinoff: true
-		},
 		with: {
 			divisions: {
 				orderBy: (t) => divisionOrder(t.name),
 				columns: {
-					id: true,
-					name: true,
-					slug: true,
-					playoffLine: true,
-					groupwiseStandings: true
+					seasonId: false
 				},
 				with: {
 					brackets: {

@@ -50,7 +50,7 @@
 		{ label: 'Skapad', center: true },
 		{ label: 'Redigerad', center: true },
 		{ label: 'Granskad', center: true },
-		{ label: '' }
+		{}
 	]}
 	placeholder={{
 		icon: 'ph:magnifying-glass',
@@ -58,7 +58,7 @@
 	}}
 >
 	{#snippet row({ value: submission })}
-		<div class="py-4 font-semibold">
+		<div class="py-4 text-lg font-semibold">
 			{submission.name}
 		</div>
 

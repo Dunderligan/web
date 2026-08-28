@@ -11,8 +11,6 @@
 		score: TableScore;
 	};
 
-	type Row = TableEntry | 'playoffLine';
-
 	type Props = {
 		standings: TableEntry[];
 		playoffLine: number | null;
@@ -20,24 +18,10 @@
 	};
 
 	let { standings, playoffLine, seasonSlug }: Props = $props();
-
-	const rows = $derived.by(() => {
-		if (!playoffLine) return standings;
-
-		const rowsWithLine: Row[] = [];
-		standings.forEach((entry, index) => {
-			rowsWithLine.push(entry);
-			if (index === playoffLine! - 1) {
-				rowsWithLine.push('playoffLine');
-			}
-		});
-
-		return rowsWithLine;
-	});
 </script>
 
 <Table
-	{rows}
+	rows={standings}
 	columns={[
 		{
 			label: '#',
@@ -52,53 +36,61 @@
 		{ label: 'W/L/D', center: true, note: 'Map record: Wins/Losses/Draws' },
 		{ label: 'Matcher', center: true }
 	]}
-	key={(row) => (row === 'playoffLine' ? row : row.roster.id)}
+	key={(row) => row.roster.id}
 	class="max-w-2xl"
 >
 	{#snippet row({ index, value: row })}
-		{#if row === 'playoffLine'}
-			<div class="my-2.5 border-t-2 border-dashed border-red-600"></div>
-			<div class="my-2.5 border-t-2 border-dashed border-red-600"></div>
-			<div class="justify-center bg-transparent! text-sm text-red-600">Playoffs</div>
-			<div class="my-2.5 border-t-2 border-dashed border-red-600"></div>
-			<div class="my-2.5 border-t-2 border-dashed border-red-600"></div>
-		{:else}
-			{@const { roster, score } = row}
+		{@const { roster, score } = row}
 
-			{@const isAfterLine = playoffLine && index > playoffLine}
-			{@const seed = isAfterLine ? index : index + 1}
+		{@const isAfterLine = playoffLine && index > playoffLine}
+		{@const seed = isAfterLine ? index : index + 1}
 
-			{@const href = `/lag/${roster.slug}/${seasonSlug}`}
+		{@const href = `/lag/${roster.slug}/${seasonSlug}`}
 
-			<div class="relative justify-center text-lg font-semibold">
-				{#if roster.resigned}
-					<Icon
-						icon="ph:minus-circle-fill"
-						title="Laget fullföljde inte säsongen"
-						class="text-xl text-yellow-600"
-					/>
-				{:else}
-					{seed}
-				{/if}
-			</div>
+		<div class="relative justify-center text-lg font-semibold">
+			{#if roster.resigned}
+				<Icon
+					icon="ph:minus-circle-fill"
+					title="Laget fullföljde inte säsongen"
+					class="text-xl text-yellow-600"
+				/>
+			{:else}
+				{seed}
+			{/if}
 
-			<div class="min-w-0 gap-2 py-1.5 text-lg font-semibold">
-				<RosterLogo id={roster.id} {href} class="size-12" />
+			{@render line(index)}
+		</div>
 
-				<Link {href} class="truncate">{roster.name}</Link>
-			</div>
+		<div class="relative gap-2 text-lg font-semibold">
+			<RosterLogo id={roster.id} {href} class="size-12" />
 
-			<div class="justify-center text-xl font-semibold">
-				{score.mapWins}
-			</div>
+			<Link {href} class="truncate">{roster.name}</Link>
 
-			<div class="justify-center text-lg">
-				{score.mapWins}/{score.mapLosses}/{score.mapDraws}
-			</div>
+			{@render line(index)}
+		</div>
 
-			<div class="justify-center text-lg">
-				{score.matchesPlayed}
-			</div>
-		{/if}
+		<div class="relative justify-center text-xl font-semibold">
+			{score.mapWins}
+
+			{@render line(index)}
+		</div>
+
+		<div class="relative justify-center text-lg">
+			{score.mapWins}/{score.mapLosses}/{score.mapDraws}
+
+			{@render line(index)}
+		</div>
+
+		<div class="relative justify-center text-lg">
+			{score.matchesPlayed}
+
+			{@render line(index)}
+		</div>
 	{/snippet}
 </Table>
+
+{#snippet line(index: number)}
+	{#if index + 1 === playoffLine}
+		<div class="absolute -bottom-1 w-full border-b-2 border-dashed border-red-500"></div>
+	{/if}
+{/snippet}
