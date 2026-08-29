@@ -17,7 +17,7 @@
 	import EditableMembersTable from '$lib/components/table/EditableMembersTable.svelte';
 	import Notice from '$lib/components/ui/Notice.svelte';
 	import Checkbox from '$lib/components/form/Checkbox.svelte';
-	import { AuthRole, checkPermission } from '$lib/authRole';
+	import { AuthRole, checkPermission } from '$lib/auth-role.js';
 	import AdminSocials from '$lib/components/admin/AdminSocials.svelte';
 	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
 	import GroupSelect from '$lib/components/form/GroupSelect.svelte';

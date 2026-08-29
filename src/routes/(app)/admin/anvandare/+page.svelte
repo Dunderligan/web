@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { AuthRole, canPromoteTo, formatRole as formatAuthRole } from '$lib/authRole';
+	import { AuthRole, canPromoteTo, formatRole as formatAuthRole } from '$lib/auth-role.js';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import SaveToast from '$lib/components/admin/SaveToast.svelte';

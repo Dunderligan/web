@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { isAdmin } from '$lib/authRole';
+	import { isAdmin } from '$lib/auth-role.js';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
 	import AdminLink from '$lib/components/admin/AdminLink.svelte';

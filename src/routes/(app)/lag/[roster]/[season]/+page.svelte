@@ -12,7 +12,7 @@
 	import Meta from '$lib/components/structure/Meta.svelte';
 	import { MatchState } from '$lib/types';
 	import { averageLegacyRank, averageRank } from '$lib/rank';
-	import { isModerator } from '$lib/authRole';
+	import { isModerator } from '$lib/auth-role.js';
 	import Field from '$lib/components/structure/Field.svelte';
 	import Placement from '$lib/components/ui/Placement.svelte';
 	import cdn from '$lib/cdn.js';

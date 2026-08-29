@@ -1,7 +1,7 @@
 import { command } from '$app/server';
 import z from 'zod';
 import { roleGuard } from './auth.remote';
-import { AuthRole } from '$lib/authRole';
+import { AuthRole } from '$lib/auth-role';
 import { db, schema } from '$lib/server/db';
 import { and, eq } from 'drizzle-orm';
 

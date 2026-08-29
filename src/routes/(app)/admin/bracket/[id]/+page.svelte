@@ -15,7 +15,7 @@
 	import { buildBracketRounds } from '$lib/bracket.js';
 	import { deleteBracket, updateBracket } from '$lib/remote/bracket.remote';
 	import { matchRosterId, matchWinner } from '$lib/match.js';
-	import { isAdmin } from '$lib/authRole.js';
+	import { isAdmin } from '$lib/auth-role.js';
 	const { data } = $props();
 
 	const bracket = $state(data.bracket);

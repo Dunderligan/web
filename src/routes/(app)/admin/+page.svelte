@@ -10,7 +10,7 @@
 	import DateInput from '$lib/components/ui/DateInput.svelte';
 	import { createSeason } from '$lib/remote/season.remote';
 	import Checkbox from '$lib/components/form/Checkbox.svelte';
-	import { isAdmin, isModerator } from '$lib/authRole.js';
+	import { isAdmin, isModerator } from '$lib/auth-role.js';
 	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
 
 	let { data } = $props();

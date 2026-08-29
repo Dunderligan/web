@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { canEditUserPage } from '$lib/authRole.js';
+	import { canEditUserPage } from '$lib/auth-role.js';
 	import AwardCard from '$lib/components/ui/AwardCard.svelte';
 	import Match from '$lib/components/match/Match.svelte';
 	import Field from '$lib/components/structure/Field.svelte';

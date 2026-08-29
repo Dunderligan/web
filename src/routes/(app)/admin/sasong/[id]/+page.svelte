@@ -16,7 +16,7 @@
 	import Checkbox from '$lib/components/form/Checkbox.svelte';
 	import Note from '$lib/components/ui/Note.svelte';
 	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
-	import { isAdmin } from '$lib/authRole.js';
+	import { isAdmin } from '$lib/auth-role.js';
 	import AdminLink from '$lib/components/admin/AdminLink.svelte';
 	import Chip from '$lib/components/ui/Chip.svelte';
 

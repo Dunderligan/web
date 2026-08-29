@@ -1,4 +1,4 @@
-import { canEditUserPage, isModerator } from '$lib/authRole.js';
+import { canEditUserPage, isModerator } from '$lib/auth-role.js';
 import { db } from '$lib/server/db';
 import overwatch from '$lib/server/overwatch.js';
 import { error } from '@sveltejs/kit';

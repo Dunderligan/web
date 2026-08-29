@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/state';
-	import { formatRole } from '$lib/authRole';
+	import { formatRole } from '$lib/auth-role.js';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
 	import ConfirmDialog from '$lib/components/admin/ConfirmDialog.svelte';

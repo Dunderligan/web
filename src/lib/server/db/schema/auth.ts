@@ -1,6 +1,6 @@
 import { integer, pgEnum, pgTable, text, timestamp, unique, uuid } from 'drizzle-orm/pg-core';
 import { enumToPgEnum } from './util';
-import { AuthRole } from '../../../authRole';
+import { AuthRole } from '../../../auth-role';
 
 export const authRole = pgEnum('auth_role', enumToPgEnum(AuthRole));
 

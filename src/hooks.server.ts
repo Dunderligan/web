@@ -2,8 +2,8 @@ import { error, type Handle, type ServerInit } from '@sveltejs/kit';
 import session from '$lib/server/session';
 import { sequence } from '@sveltejs/kit/hooks';
 import { initDb } from '$lib/server/db';
-import { isModerator } from '$lib/authRole';
-import apiToken from '$lib/server/apiToken';
+import { isModerator } from '$lib/auth-role';
+import apiToken from '$lib/server/api-token';
 
 const handleAuth: Handle = async ({ event, resolve }) => {
 	event.locals.user = null;

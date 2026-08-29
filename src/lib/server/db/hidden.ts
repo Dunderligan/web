@@ -1,4 +1,4 @@
-import { isAdmin } from '$lib/authRole';
+import { isAdmin } from '$lib/auth-role';
 import type { User } from './schema/auth';
 
 export function canSeeHiddenSeasons(user?: User | null) {

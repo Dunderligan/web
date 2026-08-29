@@ -64,6 +64,14 @@
 			Inga lag har anmält sig än. När lag skickar in sina anmälningar kommer de att visas här.
 		</AdminEmptyNotice>
 	{/if}
+
+	<Button
+		icon="ph:download-simple"
+		label="Exportera som CSV"
+		kind="secondary"
+		href="/api/registration/export/{registration.id}.csv"
+		class="mt-2"
+	/>
 </AdminCard>
 
 <AdminCard title="Inställningar">

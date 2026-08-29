@@ -6,7 +6,7 @@ import { toSlug } from '$lib/util';
 import { eq } from 'drizzle-orm';
 import z from 'zod';
 import { roleGuard } from './auth.remote';
-import { AuthRole } from '$lib/authRole';
+import { AuthRole } from '$lib/auth-role';
 import { memberSchema, socialSchema } from '$lib/schemas';
 import s3 from '$lib/server/s3';
 import cdn from '$lib/cdn';

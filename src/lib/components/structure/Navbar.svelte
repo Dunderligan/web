@@ -9,7 +9,7 @@
 	import Dropdown from '../ui/Dropdown.svelte';
 	import logo from '$lib/assets/images/logo.webp';
 	import { onMount } from 'svelte';
-	import { isModerator } from '$lib/authRole';
+	import { isModerator } from '$lib/auth-role';
 	import type { DropdownItem } from '$lib/types';
 	import SearchDialog from './SearchDialog.svelte';
 	import Link from '../ui/Link.svelte';

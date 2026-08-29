@@ -3,7 +3,7 @@
 	import AdminEmptyNotice from './AdminEmptyNotice.svelte';
 	import AdminLink from './AdminLink.svelte';
 	import Button from '../ui/Button.svelte';
-	import { isAdmin } from '$lib/authRole';
+	import { isAdmin } from '$lib/auth-role';
 	import { page } from '$app/state';
 
 	type Props<T> = {

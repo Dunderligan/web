@@ -1,4 +1,4 @@
-import { isModerator } from '$lib/authRole.js';
+import { isModerator } from '$lib/auth-role.js';
 import { teamSubmissionSchema } from '$lib/schemas.js';
 import { db } from '$lib/server/db';
 import { entityQuery } from '$lib/server/db/helpers.js';

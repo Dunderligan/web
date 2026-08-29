@@ -1,4 +1,4 @@
-import { AuthRole } from '$lib/authRole.js';
+import { AuthRole } from '$lib/auth-role.js';
 import { roleGuard } from '$lib/remote/auth.remote.js';
 import { queryMatches } from '$lib/remote/match.remote.js';
 import { matchSchema } from '$lib/schemas.js';

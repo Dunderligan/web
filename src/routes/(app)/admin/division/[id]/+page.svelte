@@ -14,7 +14,7 @@
 	import Checkbox from '$lib/components/form/Checkbox.svelte';
 	import GenerateBracketDialog from '$lib/components/admin/GenerateBracketDialog.svelte';
 	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
-	import { isAdmin } from '$lib/authRole';
+	import { isAdmin } from '$lib/auth-role.js';
 
 	const { data } = $props();
 

@@ -1,5 +1,5 @@
 import { command, getRequestEvent, query } from '$app/server';
-import { AuthRole, canEditUserPage, isModerator } from '$lib/authRole';
+import { AuthRole, canEditUserPage, isModerator } from '$lib/auth-role';
 import { socialSchema } from '$lib/schemas';
 import { db, schema } from '$lib/server/db';
 import { type Transaction } from '$lib/server/db/helpers';

@@ -19,7 +19,7 @@
 	import { createGroupMatch, isInMatch } from '$lib/match.js';
 	import RosterSelect from '$lib/components/admin/RosterSelect.svelte';
 	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
-	import { isAdmin } from '$lib/authRole.js';
+	import { isAdmin } from '$lib/auth-role.js';
 	import Progress from '$lib/components/ui/Progress.svelte';
 	import AdminRosterList from '$lib/components/admin/AdminRosterList.svelte';
 

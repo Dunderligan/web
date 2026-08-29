@@ -1,5 +1,5 @@
-import { command, getRequestEvent } from '$app/server';
-import { AuthRole, isAdmin } from '$lib/authRole';
+import { command, getRequestEvent, query } from '$app/server';
+import { AuthRole, isAdmin } from '$lib/auth-role';
 import { memberSchema, teamSubmissionSchema } from '$lib/schemas';
 import { db, schema } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
@@ -7,11 +7,13 @@ import { eq } from 'drizzle-orm';
 import z from 'zod';
 import { roleGuard } from './auth.remote';
 import type { User } from '$lib/server/db/schema/auth';
-import { SubmissionStatus } from '$lib/types';
+import { SubmissionStatus, type TeamSubmission } from '$lib/types';
 import { createRoster, editRoster } from './roster.remote';
 import s3 from '$lib/server/s3';
 import cdn from '$lib/cdn';
 import image from '$lib/server/image';
+import submissionExport from '$lib/server/submission-export';
+import { entityQuery } from '$lib/server/db/helpers';
 
 export const updateRegistration = command(
 	z.object({
@@ -217,6 +219,40 @@ export const reviewTeamSubmission = command(
 		await s3.copyFile(cdn.submissionLogoKey(submissionId), cdn.rosterLogoKey(rosterId));
 
 		return { roster: { id: rosterId } };
+	}
+);
+
+export const exportTeamSubmissionCsv = query(
+	z.object({
+		registrationId: z.uuid()
+	}),
+	async ({ registrationId }) => {
+		await roleGuard(AuthRole.ADMIN);
+
+		const registration = await db.query.registration.findFirst({
+			where: { id: registrationId },
+			columns: {},
+			with: {
+				submissions: true,
+				season: entityQuery
+			}
+		});
+
+		if (!registration) {
+			throw error(404, 'Team submission not found');
+		}
+
+		const teams: TeamSubmission[] = registration.submissions.map(({ data, ...info }) => {
+			return {
+				info,
+				data: teamSubmissionSchema.parse(data)
+			};
+		});
+
+		return {
+			season: registration.season,
+			content: submissionExport.exportTeamSubmission(teams)
+		};
 	}
 );
 

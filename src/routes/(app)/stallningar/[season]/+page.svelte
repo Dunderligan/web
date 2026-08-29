@@ -14,9 +14,7 @@
 	import MatchList from '$lib/components/match/MatchList.svelte';
 	import { goto } from '$app/navigation';
 	import Meta from '$lib/components/structure/Meta.svelte';
-	import { isModerator } from '$lib/authRole';
-	import Note from '$lib/components/ui/Note.svelte';
-	import Icon from '$lib/components/ui/Icon.svelte';
+	import { isModerator } from '$lib/auth-role.js';
 	import Chip from '$lib/components/ui/Chip.svelte';
 
 	let { data } = $props();

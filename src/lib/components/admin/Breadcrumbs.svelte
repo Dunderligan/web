@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { isModerator } from '$lib/authRole';
+	import { isModerator } from '$lib/auth-role';
 	import { SaveContext } from '$lib/state/save.svelte';
 	import Icon from '../ui/Icon.svelte';
 

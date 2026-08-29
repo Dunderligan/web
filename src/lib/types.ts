@@ -388,6 +388,11 @@ export type Hero = {
 	role: Role;
 };
 
+export type TeamSubmission = {
+	data: TeamSubmissionData;
+	info: TeamSubmissionInfo;
+};
+
 export type TeamSubmissionData = {
 	name: string;
 	members: Member[];

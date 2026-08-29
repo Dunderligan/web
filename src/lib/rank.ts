@@ -77,6 +77,16 @@ export function averageLegacyRank(ranks: NullableLegacyRank[]): LegacyRank | nul
 	return { sr: Math.round(total / nonNullCount) };
 }
 
+/**
+ * Formats a rank for display.
+ *
+ * For full ranks, this is the rank and tier (e.g. "gold 3").
+ * For legacy ranks, this is the rank and SR in 'k' format (e.g. "gold 2.5k").
+ */
+export function formatRank(rank: AnyRank): string {
+	return `${getRank(rank)} ${getTierLabel(rank)}`;
+}
+
 /** Returns the rank component of a full rank or legacy rank (bronze, silver, gold, e.t.c.). */
 export function getRank(rank: AnyRank): Rank {
 	if (isLegacyRank(rank)) {
@@ -107,8 +117,7 @@ export function getTierLabel(rank: AnyRank): string {
 
 /** Returns whether the given rank is a legacy rank. */
 export function isLegacyRank(rank: AnyRank): rank is LegacyRank {
-	if ('sr' in rank) {
-		return true;
-	}
-	return false;
+	if (!('sr' in rank)) return false;
+	if (rank.sr === null && 'rank' in rank) return false;
+	return true;
 }

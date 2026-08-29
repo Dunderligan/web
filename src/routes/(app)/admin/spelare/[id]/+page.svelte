@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
-	import { isModerator } from '$lib/authRole';
+	import { isModerator } from '$lib/auth-role.js';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
 	import AdminSocials from '$lib/components/admin/AdminSocials.svelte';

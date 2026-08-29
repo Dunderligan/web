@@ -1,5 +1,5 @@
 import { command } from '$app/server';
-import { AuthRole } from '$lib/authRole';
+import { AuthRole } from '$lib/auth-role';
 import { db, schema } from '$lib/server/db';
 import { eq } from 'drizzle-orm';
 import z from 'zod';

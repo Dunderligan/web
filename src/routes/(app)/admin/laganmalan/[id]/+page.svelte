@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto, invalidate } from '$app/navigation';
 	import { page } from '$app/state';
-	import { isAdmin } from '$lib/authRole';
+	import { isAdmin } from '$lib/auth-role.js';
 	import cdn from '$lib/cdn.js';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import AdminLink from '$lib/components/admin/AdminLink.svelte';

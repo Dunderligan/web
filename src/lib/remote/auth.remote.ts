@@ -1,6 +1,6 @@
 import { command, getRequestEvent, query } from '$app/server';
-import { AuthRole, canPromoteTo, checkPermission } from '$lib/authRole';
-import apiToken from '$lib/server/apiToken';
+import { AuthRole, canPromoteTo, checkPermission } from '$lib/auth-role';
+import apiToken from '$lib/server/api-token';
 import { db, schema } from '$lib/server/db';
 import session from '$lib/server/session';
 import { error } from '@sveltejs/kit';
