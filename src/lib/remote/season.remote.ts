@@ -102,13 +102,18 @@ export const getDivisionsBySeason = query(
 		await roleGuard(AuthRole.ADMIN);
 
 		const divisions = await db.query.division.findMany({
+			...entityQuery,
 			where: {
 				seasonId
 			},
 			orderBy: (t) => divisionOrder(t.name),
-			...entityQuery,
 			with: {
-				groups: entityQuery
+				groups: {
+					...entityQuery,
+					orderBy: {
+						name: 'asc'
+					}
+				}
 			}
 		});
 
