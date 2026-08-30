@@ -71,6 +71,7 @@
 		kind="secondary"
 		href="/api/registration/export/{registration.id}.csv"
 		class="mt-2"
+		download
 	/>
 </AdminCard>
 
