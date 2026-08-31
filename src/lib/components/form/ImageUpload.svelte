@@ -7,11 +7,12 @@
 		alt: string;
 		file?: File;
 		src?: string;
+		hideOpenButton?: boolean;
 		upload?: (file: File) => Promise<void>;
 		onFileChanged?: (file: File) => void;
 	};
 
-	let { alt, file = $bindable(), src, upload, onFileChanged }: Props = $props();
+	let { alt, file = $bindable(), src, hideOpenButton, upload, onFileChanged }: Props = $props();
 
 	let files: FileList | null = $state(null);
 	let loading = $state(false);
@@ -79,7 +80,7 @@
 		/>
 	</label>
 
-	{#if resolvedSrc}
+	{#if !hideOpenButton && resolvedSrc}
 		<Button
 			icon="ph:arrow-square-out"
 			label="Öppna i ny flik"

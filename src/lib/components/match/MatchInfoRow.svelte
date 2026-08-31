@@ -1,12 +1,6 @@
 <script lang="ts">
 	import { type NestedBracket, type NestedGroup, type MatchWithoutRosters } from '$lib/types';
-	import {
-		capitalize,
-		formatDate,
-		formatDateShort,
-		formatDateTime,
-		formatDateTimeShort
-	} from '$lib/util';
+	import { capitalize, formatDateShort, formatDateTimeShort } from '$lib/util';
 	import type { ClassValue } from 'svelte/elements';
 	import Icon from '../ui/Icon.svelte';
 	import Link from '../ui/Link.svelte';
@@ -79,14 +73,13 @@
 	{/if}
 
 	{#if division && !hideDivision}
-		<a
+		<Link
 			href="/stallningar/{division.season.slug}?div={division.slug}&visa={bracket
 				? 'slutspel'
 				: 'gruppspel'}"
-			class="hover:underline"
 		>
 			{bracket?.name ?? division.name}
-		</a>
+		</Link>
 	{/if}
 
 	{#if match.vodUrl}

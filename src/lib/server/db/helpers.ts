@@ -179,8 +179,18 @@ export function rosterSeasonFilter(seasonId: string) {
 	};
 }
 
+export function isNull(isNull: boolean | null | undefined) {
+	if (isNull === true) {
+		return { isNull: true as true };
+	} else if (isNull === false) {
+		return { isNotNull: true as true };
+	} else {
+		return {};
+	}
+}
+
 /**
- * An sql ordering that puts "Dunderligan" first, then alphabetically by the provided column.
+ * An SQL ordering that puts "Dunderligan" and "Dunderserien" first, then alphabetically by the provided column.
  *
  * Used for sorting divisions and brackets.
  */

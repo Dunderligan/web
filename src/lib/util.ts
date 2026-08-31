@@ -196,8 +196,8 @@ export function parseMatchQueryParams(searchParams: URLSearchParams): MatchQuery
 	const pageSizeParam = searchParams.get('pageSize');
 	const pageSize = pageSizeParam ? Number(pageSizeParam) : undefined;
 
-	const isBracketParam = searchParams.get('isBracket');
-	const isBracket = isBracketParam ? isBracketParam === 'true' : undefined;
+	const isBracket = parseBooleanParam(searchParams.get('isBracket'));
+	const hasDate = parseBooleanParam(searchParams.get('hasDate'));
 
 	// default to true
 	const includeEmpty = searchParams.get('includeEmpty') === 'true';
@@ -208,10 +208,18 @@ export function parseMatchQueryParams(searchParams: URLSearchParams): MatchQuery
 		seasonId: searchParams.get('seasonId') ?? undefined,
 		page: Number(searchParams.get('page') ?? 0),
 		isBracket,
+		hasDate,
 		includeEmpty,
 		pageSize,
 		state
 	};
+}
+
+function parseBooleanParam(param: string | null): boolean | undefined {
+	if (param === null) return undefined;
+	if (param === 'true') return true;
+	if (param === 'false') return false;
+	return undefined;
 }
 
 function parseMatchStateParam(param: string): MatchState[] {

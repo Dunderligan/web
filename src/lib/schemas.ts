@@ -34,6 +34,7 @@ export const matchQueryParamsSchema = z.object({
 	seasonId: z.uuid().optional(),
 	state: z.array(z.enum(MatchState)).optional(),
 	isBracket: z.boolean().optional(),
+	hasDate: z.boolean().optional(),
 	includeEmpty: z.boolean().default(false),
 	page: z.number().min(0).default(0),
 	pageSize: z.number().min(1).optional()

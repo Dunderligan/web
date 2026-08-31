@@ -67,7 +67,7 @@
 			icon="ph:arrow-right"
 			label="Anmäl ditt lag"
 			kind="secondary"
-			class="mt-12 text-lg"
+			class="mt-12 text-lg shadow-md"
 			href="/anmal/{season.slug}"
 		/>
 	{:else if tournamentState.status === 'upcoming'}

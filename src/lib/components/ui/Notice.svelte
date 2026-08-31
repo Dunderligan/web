@@ -26,7 +26,7 @@
 			},
 			error: {
 				icon: 'ph:x-circle',
-				class: 'bg-red-50 text-red-800 dark:bg-red-950/70 dark:text-red-200'
+				class: 'bg-red-50 text-red-800 dark:bg-red-950/70 dark:text-red-100'
 			},
 			discord: {
 				icon: 'ph:discord-logo',

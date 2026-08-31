@@ -63,7 +63,10 @@
 	const hasMaxPlayers = $derived(maxPlayers !== undefined && players.length >= maxPlayers);
 	const hasTooFewPlayers = $derived(minPlayers !== undefined && players.length < minPlayers);
 
-	const teamCaptains = $derived(members.filter((member) => member.isCaptain));
+	const teamCaptains = $derived(
+		// only count player captains towards the min/max counts
+		members.filter((member) => isPlayerRole(member.role) && member.isCaptain)
+	);
 	const hasMaxTeamCaptains = $derived(
 		maxTeamCaptains !== undefined && teamCaptains.length >= maxTeamCaptains
 	);
@@ -310,7 +313,7 @@
 
 	{#if hasTooFewCaptains}
 		<Notice kind="error" class="mt-2">
-			Ditt lag måste ha minst {minTeamCaptains} lagkapten{(minTeamCaptains ?? 0 > 1) ? 'er' : ''}.
+			Ditt lag måste ha minst {minTeamCaptains} lagkapten{((minTeamCaptains ?? 0) > 1) ? 'er' : ''}.
 		</Notice>
 	{/if}
 

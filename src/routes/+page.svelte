@@ -66,16 +66,16 @@
 		<div class="grow">
 			<MatchList
 				title="Senaste matcherna"
-				matches={data.matches.latest}
-				hideIfEmpty
+				matches={data.matches.latest.results}
 				matchArchiveParams="state=played"
+				hideIfEmpty
 			/>
 		</div>
 
 		<div class="shrink-0 px-2">
 			<MatchList
 				title="Kommande matcher"
-				matches={data.matches.upcoming}
+				matches={data.matches.upcoming.results}
 				matchArchiveParams="state=scheduled"
 				size="sm"
 			/>

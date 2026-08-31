@@ -145,7 +145,12 @@
 				</Label>
 
 				<Label label="Logotyp">
-					<ImageUpload alt="Laglogotyp" bind:file={logo} onFileChanged={saveCtx.setDirty} />
+					<ImageUpload
+						alt="Laglogotyp"
+						bind:file={logo}
+						onFileChanged={saveCtx.setDirty}
+						hideOpenButton
+					/>
 				</Label>
 			{/if}
 		</AdminCard>

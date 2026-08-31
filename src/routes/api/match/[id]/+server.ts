@@ -1,4 +1,4 @@
-import { AuthRole } from '$lib/authRole';
+import { AuthRole } from '$lib/auth-role';
 import { roleGuard } from '$lib/remote/auth.remote';
 import { matchSchema } from '$lib/schemas';
 import { db, schema } from '$lib/server/db';

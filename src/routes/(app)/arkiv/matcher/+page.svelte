@@ -34,6 +34,10 @@
 			subtitle += 'matcher';
 		}
 
+		if (data.params.hasDate) {
+			subtitle += ' med datum';
+		}
+
 		subtitle += `.`;
 
 		return subtitle;

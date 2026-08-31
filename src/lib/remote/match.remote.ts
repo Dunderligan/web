@@ -1,12 +1,23 @@
 import { getRequestEvent, query } from '$app/server';
 import { matchQueryParamsSchema } from '$lib/schemas';
 import { db } from '$lib/server/db';
-import { fullMatchQueryWithContext } from '$lib/server/db/helpers';
+import { fullMatchQueryWithContext, isNull } from '$lib/server/db/helpers';
 import { hiddenMatchFilter } from '$lib/server/db/hidden';
+import { MatchState } from '$lib/types';
 
 export const queryMatches = query(
 	matchQueryParamsSchema,
-	async ({ rosterId, divisionId, seasonId, state, isBracket, includeEmpty, page, pageSize }) => {
+	async ({
+		rosterId,
+		divisionId,
+		seasonId,
+		state,
+		isBracket,
+		hasDate,
+		includeEmpty,
+		page,
+		pageSize
+	}) => {
 		const { locals } = getRequestEvent();
 
 		const results = await db.query.match.findMany({
@@ -35,6 +46,28 @@ export const queryMatches = query(
 								}
 							]
 						: []),
+					// check match date filters
+					// the date we want to check depends on the match state, so we need to check all three cases
+					{
+						OR: [
+							{
+								// if scheduled, check if it has a scheduled date
+								state: MatchState.SCHEDULED,
+								scheduledAt: isNull(hasDate === true ? false : undefined)
+							},
+							{
+								// if played, check if it has a played date
+								state: MatchState.PLAYED,
+								playedAt: isNull(hasDate === true ? false : undefined)
+							},
+							{
+								// otherwise, ignore the date and always include the match (however it can still be filtered out by the state filter below)
+								state: {
+									notIn: [MatchState.SCHEDULED, MatchState.PLAYED]
+								}
+							}
+						]
+					},
 					{
 						// check if our target roster is involved in the match
 						// if rosterId is undefined, this will always be true
@@ -73,17 +106,7 @@ export const queryMatches = query(
 						}
 					}
 				],
-				// drizzle does not allow isNotNull: false or isNull: false, so we need to split them
-				...(isBracket === true && {
-					bracketId: {
-						isNotNull: true
-					}
-				}),
-				...(isBracket === false && {
-					bracketId: {
-						isNull: true
-					}
-				}),
+				bracketId: isNull(!isBracket),
 				...(state && {
 					state: {
 						in: state
