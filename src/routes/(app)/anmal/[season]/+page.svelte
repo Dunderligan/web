@@ -106,8 +106,9 @@
 	{#if data.userSubmissions.length > 0}
 		<Notice kind="warn">
 			Det ser ut som att du redan har skickat in en anmälan för denna säsong. För att redigera din
-			anmälan, gå till <Link class="font-semibold" href="/jag/anmalningar">Mina anmälningar</Link>,
-			eller fortsätt här för att anmäla ett nytt lag.
+			anmälan, gå till <Link class="font-semibold" href="/jag/installningar"
+				>Kontoinställningar</Link
+			>, eller fortsätt här för att anmäla ett nytt lag.
 		</Notice>
 	{/if}
 
@@ -254,7 +255,7 @@
 					Du kommer att kunna redigera din anmälan fram tills den stänger på {formatDate(
 						data.registration.closeDate
 					)}. Detta gör du genom att klicka på ditt användarnamn uppe i högra hörnet och sedan på
-					"Mina anmälningar".
+					"Inställningar". Där hittar du en lista över alla dina anmälningar och kan redigera dem.
 				</Notice>
 			{:else}
 				<Notice
@@ -316,7 +317,7 @@
 
 		{#if loggedIn}
 			<p>
-				Du hittar din anmälan under "Mina anmälningar", som du når genom att klicka på ditt
+				Du hittar din anmälan under "Inställningar", vilket du når genom att klicka på ditt
 				användarnamn uppe i högra hörnet.
 			</p>
 		{/if}

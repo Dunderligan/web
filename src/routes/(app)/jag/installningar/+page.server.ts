@@ -6,7 +6,7 @@ export const load = async ({ locals }) => {
 		throw error(401);
 	}
 
-	const apiKeys = await db.query.apiKey.findMany({
+	const apiKeysQuery = db.query.apiKey.findMany({
 		where: {
 			userId: locals.user.id
 		},
@@ -15,7 +15,22 @@ export const load = async ({ locals }) => {
 		}
 	});
 
+	const submissionsQuery = db.query.teamSubmission.findMany({
+		where: {
+			submittedById: locals.user?.id
+		},
+		columns: {
+			data: false
+		},
+		orderBy: {
+			createdAt: 'desc'
+		}
+	});
+
+	const [apiKeys, submissions] = await Promise.all([apiKeysQuery, submissionsQuery]);
+
 	return {
-		apiKeys
+		apiKeys,
+		submissions
 	};
 };

@@ -94,15 +94,9 @@
 		},
 		{
 			type: 'button',
-			icon: 'ph:file-text',
-			label: 'Mina anmälningar',
-			href: `/jag/anmalningar`
-		},
-		{
-			type: 'button',
 			icon: 'ph:gear',
 			label: 'Inställningar',
-			href: '/jag/installningar'
+			href: `/jag/installningar`
 		},
 		{
 			type: 'button',

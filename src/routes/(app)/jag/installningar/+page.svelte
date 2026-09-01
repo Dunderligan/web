@@ -16,6 +16,9 @@
 	import { createApiKey, deleteApiKey } from '$lib/remote/auth.remote.js';
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
 	import { formatDate, formatDateTime } from '$lib/util';
+	import SubmissionsTable from '$lib/components/table/SubmissionsTable.svelte';
+	import Select from '$lib/components/form/Select.svelte';
+	import Meta from '$lib/components/structure/Meta.svelte';
 
 	let { data } = $props();
 
@@ -75,6 +78,8 @@
 	}
 </script>
 
+<Meta title="Inställningar" description="Hantera dina kontoinställningar." />
+
 <PageSection class="space-y-8">
 	{#if user}
 		<AdminCard title="Kontoinformation">
@@ -91,6 +96,12 @@
 					<InputField value={formatDate(user.createdAt)} readonly />
 				</Label>
 			</div>
+		</AdminCard>
+	{/if}
+
+	{#if data.submissions.length > 0}
+		<AdminCard title="Laganmälningar">
+			<SubmissionsTable submissions={data.submissions} />
 		</AdminCard>
 	{/if}
 

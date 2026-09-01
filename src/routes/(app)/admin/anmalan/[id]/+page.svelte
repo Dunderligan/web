@@ -12,6 +12,9 @@
 	import { deleteRegistration, updateRegistration } from '$lib/remote/registration.remote.js';
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
 	import { SaveContext } from '$lib/state/save.svelte.js';
+	import Select from '$lib/components/form/Select.svelte';
+	import { SubmissionStatus } from '$lib/types.js';
+	import { formatSubmissionStatus } from '$lib/util.js';
 
 	const { data } = $props();
 
@@ -22,6 +25,14 @@
 
 	const confirmCtx = ConfirmContext.get();
 	const saveCtx = SaveContext.get();
+
+	let shownStatuses = $state([SubmissionStatus.PENDING]);
+
+	const shownSubmissions = $derived(
+		registration.submissions.filter(
+			(submission) => shownStatuses.length === 0 || shownStatuses.includes(submission.status)
+		)
+	);
 
 	async function onDeleteClicked() {
 		await confirmCtx.confirm({
@@ -58,7 +69,20 @@
 
 <AdminCard title="Laganmälningar">
 	{#if registration.submissions.length > 0}
-		<SubmissionsTable submissions={registration.submissions} />
+		<Label label="Filtrera efter status">
+			<Select
+				type="multiple"
+				class="grow"
+				bind:value={shownStatuses}
+				placeholder="Välj status..."
+				items={Object.values(SubmissionStatus).map((status) => ({
+					value: status,
+					label: formatSubmissionStatus(status)
+				}))}
+			/>
+		</Label>
+
+		<SubmissionsTable submissions={shownSubmissions} />
 	{:else}
 		<AdminEmptyNotice hideCreateButton>
 			Inga lag har anmält sig än. När lag skickar in sina anmälningar kommer de att visas här.

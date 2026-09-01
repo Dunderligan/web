@@ -18,7 +18,6 @@
 	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
 	import { isAdmin } from '$lib/auth-role.js';
 	import AdminLink from '$lib/components/admin/AdminLink.svelte';
-	import Chip from '$lib/components/ui/Chip.svelte';
 
 	const { data } = $props();
 
@@ -99,17 +98,7 @@
 </AdminCard>
 
 {#if isAdmin(data.user?.role)}
-	<AdminCard title="Incheckning">
-		<Label label="Incheckning öppen">
-			<Checkbox bind:checked={season.checkinOpen} onCheckedChange={saveCtx.setDirty} />
-		</Label>
-
-		{#if season.checkinOpen}
-			<AdminLink href="/admin/incheckning/{season.id}" rounded>Visa överblick</AdminLink>
-		{/if}
-	</AdminCard>
-
-	<AdminCard title="Anmälan">
+	<AdminCard title="Anmälan och incheckning">
 		{#if registration}
 			<div class="overflow-hidden rounded-lg">
 				<AdminLink href="/admin/anmalan/{registration.id}">Hantera anmälan</AdminLink>
@@ -118,6 +107,14 @@
 			<AdminEmptyNotice oncreateclick={() => (createRegistrationOpen = true)}
 				>Säsongen har inget anmälningsformulär.</AdminEmptyNotice
 			>
+		{/if}
+
+		<Label label="Incheckning öppen">
+			<Checkbox bind:checked={season.checkinOpen} onCheckedChange={saveCtx.setDirty} />
+		</Label>
+
+		{#if season.checkinOpen}
+			<AdminLink href="/admin/incheckning/{season.id}" rounded>Hantera incheckning</AdminLink>
 		{/if}
 	</AdminCard>
 
