@@ -1,4 +1,4 @@
-import { AuthRole, checkPermission } from '$lib/authRole';
+import { AuthRole, checkPermission } from '$lib/auth-role';
 import { db } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
 

@@ -16,6 +16,12 @@ export const load = async ({ params }) => {
 		},
 		with: {
 			members: memberQuery,
+			submission: {
+				columns: {
+					id: true,
+					reviewedAt: true
+				}
+			},
 			team: {
 				with: {
 					socials: true,

@@ -55,5 +55,6 @@ export const memberSchema = z.object({
 
 export const teamSubmissionSchema = z.object({
 	name: z.string().min(1).max(100),
+	captainDiscordUsername: z.string().min(1).max(100),
 	members: z.array(memberSchema)
 });

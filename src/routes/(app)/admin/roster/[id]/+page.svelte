@@ -11,7 +11,7 @@
 	import SaveToast from '$lib/components/admin/SaveToast.svelte';
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
 	import { SaveContext } from '$lib/state/save.svelte';
-	import { flattenGroup } from '$lib/util';
+	import { flattenGroup, formatDateTime } from '$lib/util';
 	import TeamSelect from '$lib/components/admin/TeamSelect.svelte';
 	import { deleteRoster, editRoster, mergeTeams, moveRoster } from '$lib/remote/roster.remote';
 	import EditableMembersTable from '$lib/components/table/EditableMembersTable.svelte';
@@ -211,6 +211,20 @@
 		</div>
 	</AdminCard>
 
+	{#if roster.submission}
+		<AdminCard title="Anmälan">
+			{#if roster.submission.reviewedAt}
+				<Label label="Granskades senast">
+					<span class="font-medium">{formatDateTime(roster.submission.reviewedAt)}</span>
+				</Label>
+			{/if}
+
+			<div class="space-y-1 overflow-hidden rounded-lg">
+				<AdminLink href="/admin/laganmalan/{roster.submission.id}">Redigera anmälan</AdminLink>
+			</div></AdminCard
+		>
+	{/if}
+
 	<AdminCard title="Länkade rosters">
 		{#if team.rosters.length > 1}
 			<div class="space-y-1 overflow-hidden rounded-lg">
@@ -249,8 +263,7 @@
 	disabled={!linkTeamId}
 >
 	{#snippet description()}
-		Välj vilket lag du vill länka {roster.name} till. Tänk på att det inte går att länka två rosters
-		från samma säsong.
+		Välj vilket lag du vill länka {roster.name} till. Det går inte att länka två rosters i samma säsong.
 	{/snippet}
 
 	<Label label="Lag">

@@ -51,7 +51,7 @@
 
 	async function load() {
 		submission = await get<TeamSubmissionData>(storageKey).then(
-			(data) => data ?? { name: '', members: [] }
+			(data) => data ?? { name: '', members: [], captainDiscordUsername: '' }
 		);
 		logo = await get(logoStorageKey);
 	}
@@ -67,6 +67,7 @@
 		await set(logoStorageKey, null);
 		submission = {
 			name: '',
+			captainDiscordUsername: '',
 			members: []
 		};
 	}
@@ -151,6 +152,15 @@
 						bind:file={logo}
 						onFileChanged={saveCtx.setDirty}
 						hideOpenButton
+					/>
+				</Label>
+
+				<Label label="Kaptenens Discord-användarnamn">
+					<InputField
+						type="text"
+						placeholder="Användarnamn (inte visningsnamn)..."
+						bind:value={submission.captainDiscordUsername}
+						onchange={saveCtx.setDirty}
 					/>
 				</Label>
 			{/if}
@@ -281,7 +291,10 @@
 					label="Skicka in anmälan"
 					kind="primary"
 					icon="ph:paper-plane-tilt"
-					disabled={!acceptedRules || invalidMembers || submission.name.trim().length === 0}
+					disabled={!acceptedRules ||
+						invalidMembers ||
+						!submission.name.trim() ||
+						!submission.captainDiscordUsername.trim()}
 					loading={submitting}
 					onclick={submit}
 				/>

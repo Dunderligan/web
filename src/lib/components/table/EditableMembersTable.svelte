@@ -81,7 +81,7 @@
 
 	let newPlayerOpen = $state(false);
 	let newPlayerBattletag = $state('');
-	let newPlayerRole = $state(Role.DAMAGE);
+	let newPlayerRole = $state(Role.TANK);
 	let newPlayerRank: AnyRank | null = $state(defaultRank());
 	let newPlayerCaptain = $state(false);
 
@@ -313,7 +313,7 @@
 
 	{#if hasTooFewCaptains}
 		<Notice kind="error" class="mt-2">
-			Ditt lag måste ha minst {minTeamCaptains} lagkapten{((minTeamCaptains ?? 0) > 1) ? 'er' : ''}.
+			Ditt lag måste ha minst {minTeamCaptains} lagkapten{(minTeamCaptains ?? 0) > 1 ? 'er' : ''}.
 		</Notice>
 	{/if}
 

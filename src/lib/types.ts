@@ -395,6 +395,7 @@ export type TeamSubmission = {
 
 export type TeamSubmissionData = {
 	name: string;
+	captainDiscordUsername: string;
 	members: Member[];
 };
 

@@ -268,6 +268,14 @@
 		<Label label="Logotyp">
 			<ImageUpload alt="Laglogotyp" src={cdn.srcUrl(cdn.submissionLogoKey(submission.id))} />
 		</Label>
+
+		<Label label="Lagkaptens Discord-användarnamn">
+			<InputField
+				bind:value={submission.data.captainDiscordUsername}
+				oninput={saveCtx.setDirty}
+				disabled={!canEdit}
+			/>
+		</Label>
 	</div>
 
 	<Button icon="ph:trash" label="Radera anmälan" kind="destructive" onclick={onDeleteClicked} />
