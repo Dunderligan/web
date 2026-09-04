@@ -10,7 +10,8 @@ import {
 	timestamp,
 	type AnyPgColumn,
 	check,
-	index
+	index,
+	jsonb
 } from 'drizzle-orm/pg-core';
 import { enumToPgEnum } from './util';
 import { and, isNotNull, isNull, or, sql } from 'drizzle-orm';
@@ -23,7 +24,6 @@ import {
 	SubmissionStatus
 } from '../../../types';
 import { user } from './auth';
-import { jsonb } from 'drizzle-orm/cockroach-core';
 
 export const season = pgTable(
 	'season',

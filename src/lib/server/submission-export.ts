@@ -8,6 +8,7 @@ import { capitalize, formatSubmissionStatus } from '$lib/util';
  * The CSV contains the following columns:
  * - Team name
  * - Submission status
+ * - Captain's Discord username
  * - Created at
  * - Edited at
  * - Reviewed at
@@ -25,6 +26,7 @@ function exportTeamSubmission(submissions: TeamSubmission[]): string {
 	const header = joinCsvRow([
 		'Namn',
 		'Status',
+		'Lagkaptenens Discord-användarnamn',
 		'Skapad',
 		'Redigerad',
 		'Granskad',
@@ -47,6 +49,7 @@ function createTeamRow({ info, data }: TeamSubmission, maxPlayerCount: number): 
 	return joinCsvRow([
 		data.name,
 		formatSubmissionStatus(info.status),
+		data.captainDiscordUsername,
 		info.createdAt.toISOString(),
 		info.editedAt?.toISOString(),
 		info.reviewedAt?.toISOString(),

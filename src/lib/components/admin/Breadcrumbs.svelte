@@ -33,24 +33,25 @@
 	{#each crumbs as { label, href }, i}
 		{@const isLast = i == crumbs.length - 1}
 
-		<!-- for non-moderators, only show the current page -->
-		{#if userIsModerator || isLast}
+		{#if isLast}
+			<Icon class={[!isLast && 'hidden sm:block', 'text-xl']} icon="ph:caret-right" />
+
+			<span class="font-semibold text-gray-900 dark:text-white">{label}</span>
+			<!-- for non-moderators, only show the current page -->
+		{:else if userIsModerator}
 			<Icon class={[!isLast && 'hidden sm:block', 'text-xl']} icon="ph:caret-right" />
 
 			<a
 				{href}
-				class={[
-					isLast
-						? 'font-bold text-accent-600 hover:text-accent-700 hover:underline dark:hover:text-accent-500'
-						: 'hidden font-medium hover:text-gray-700 hover:underline sm:block dark:hover:text-gray-300'
-				]}>{label}</a
+				class="hidden font-medium hover:text-gray-700 hover:underline sm:block dark:hover:text-gray-300"
+				>{label}</a
 			>
 		{/if}
 	{/each}
 
 	{#if saveCtx && saveCtx.href}
 		<a
-			class="ml-2 text-sm font-medium hover:text-accent-700 hover:underline dark:hover:text-accent-500"
+			class="ml-2 text-sm font-medium hover:text-gray-700 hover:underline dark:hover:text-gray-300"
 			href={saveCtx.href}
 		>
 			<Icon icon="ph:link-simple" />
