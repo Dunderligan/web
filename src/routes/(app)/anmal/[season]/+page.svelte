@@ -104,18 +104,17 @@
 <PageHeader title="Anmälan" subtitle={season.name} />
 
 <PageSection class="space-y-8">
-	{#if data.userSubmissions.length > 0}
-		<Notice kind="warn">
-			Det ser ut som att du redan har skickat in en anmälan för denna säsong. För att redigera din
-			anmälan, gå till <Link class="font-semibold" href="/jag/installningar"
-				>Kontoinställningar</Link
-			>, eller fortsätt här för att anmäla ett nytt lag.
-		</Notice>
-	{/if}
-
 	{#if closed}
-		<Notice kind="warn">Anmälan för denna säsong är stängd.</Notice>
+		<Notice kind="error">Anmälan för denna säsong är stängd.</Notice>
 	{:else}
+		{#if data.userSubmissions.length > 0}
+			<Notice kind="warn">
+				Det ser ut som att du redan har skickat in en anmälan för denna säsong. För att redigera din
+				anmälan, gå till <Link class="font-semibold" href="/jag/anmalningar">Mina anmälningar</Link
+				>, eller fortsätt här för att anmäla ett nytt lag.
+			</Notice>
+		{/if}
+
 		<AdminCard>
 			<div class="space-y-4 text-lg font-medium">
 				<p>
