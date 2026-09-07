@@ -261,10 +261,10 @@
 		<AdminCard title="Slutför">
 			{#if page.data.user}
 				<Notice kind="info">
-					Du kommer att kunna redigera din anmälan fram tills den stänger på {formatDate(
+					Du kommer att kunna redigera din anmälan fram tills den stänger {formatDate(
 						data.registration.closeDate
 					)}. Detta gör du genom att klicka på ditt användarnamn uppe i högra hörnet och sedan på
-					"Inställningar". Där hittar du en lista över alla dina anmälningar och kan redigera dem.
+					"Inställningar".
 				</Notice>
 			{:else}
 				<Notice
