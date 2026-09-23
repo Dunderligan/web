@@ -1,7 +1,7 @@
 {
   "version": "8",
   "dialect": "postgres",
-  "id": "cbaa6d0c-e837-4cc9-86eb-ae1f5f143a86",
+  "id": "baac4f92-6010-483a-87e3-745bf38a02fd",
   "prevIds": [
     "fc55a19d-859c-470f-aa37-3855c03e5259"
   ],
@@ -76,6 +76,16 @@
         "bluesky"
       ],
       "name": "social_platform",
+      "entityType": "enums",
+      "schema": "public"
+    },
+    {
+      "values": [
+        "pending",
+        "approved",
+        "rejected"
+      ],
+      "name": "submission_status",
       "entityType": "enums",
       "schema": "public"
     },
@@ -202,6 +212,12 @@
     {
       "isRlsEnabled": false,
       "name": "team_social",
+      "entityType": "tables",
+      "schema": "public"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "team_submission",
       "entityType": "tables",
       "schema": "public"
     },
@@ -1298,19 +1314,6 @@
       "table": "registration"
     },
     {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "url",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "registration"
-    },
-    {
       "type": "timestamp",
       "typeSchema": null,
       "notNull": true,
@@ -1332,6 +1335,32 @@
       "generated": null,
       "identity": null,
       "name": "close_date",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "registration"
+    },
+    {
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "5",
+      "generated": null,
+      "identity": null,
+      "name": "max_players",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "registration"
+    },
+    {
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "5",
+      "generated": null,
+      "identity": null,
+      "name": "min_players",
       "entityType": "columns",
       "schema": "public",
       "table": "registration"
@@ -1634,6 +1663,149 @@
       "entityType": "columns",
       "schema": "public",
       "table": "team_social"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "gen_random_uuid()",
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "team_submission"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "registration_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "team_submission"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "submitted_by_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "team_submission"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "approved_roster_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "team_submission"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "name",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "team_submission"
+    },
+    {
+      "type": "jsonb",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "data",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "team_submission"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "team_submission"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "edited_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "team_submission"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "reviewed_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "team_submission"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "reviewed_by_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "team_submission"
+    },
+    {
+      "type": "submission_status",
+      "typeSchema": "public",
+      "notNull": true,
+      "dimensions": 0,
+      "default": "'pending'",
+      "generated": null,
+      "identity": null,
+      "name": "status",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "team_submission"
     },
     {
       "nameExplicit": true,
@@ -2205,6 +2377,74 @@
       "table": "team_social"
     },
     {
+      "nameExplicit": false,
+      "columns": [
+        "registration_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "registration",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "team_submission_registration_id_registration_id_fkey",
+      "entityType": "fks",
+      "schema": "public",
+      "table": "team_submission"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "submitted_by_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "user",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "SET NULL",
+      "name": "team_submission_submitted_by_id_user_id_fkey",
+      "entityType": "fks",
+      "schema": "public",
+      "table": "team_submission"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "approved_roster_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "roster",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "SET NULL",
+      "name": "team_submission_approved_roster_id_roster_id_fkey",
+      "entityType": "fks",
+      "schema": "public",
+      "table": "team_submission"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "reviewed_by_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "user",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "SET NULL",
+      "name": "team_submission_reviewed_by_id_user_id_fkey",
+      "entityType": "fks",
+      "schema": "public",
+      "table": "team_submission"
+    },
+    {
       "columns": [
         "player_id",
         "roster_id"
@@ -2418,6 +2658,16 @@
       "entityType": "pks"
     },
     {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "team_submission_pkey",
+      "schema": "public",
+      "table": "team_submission",
+      "entityType": "pks"
+    },
+    {
       "nameExplicit": false,
       "columns": [
         "user_id",
@@ -2590,7 +2840,7 @@
       "entityType": "uniques"
     },
     {
-      "value": "((\"group_id\" is null or \"bracket_id\" is null) and (\"group_id\" is not null or \"bracket_id\" is not null))",
+      "value": "((not \"group_id\" is not null or not \"bracket_id\" is not null) and (\"group_id\" is not null or \"bracket_id\" is not null))",
       "name": "group_xor_bracket",
       "entityType": "checks",
       "schema": "public",
