@@ -2,6 +2,7 @@ import { AuthRole } from '$lib/auth-role.js';
 import { roleGuard } from '$lib/remote/auth.remote.js';
 import { db, schema } from '$lib/server/db';
 import {
+	findPlayer,
 	matchRosterQuery,
 	memberQueryWithoutPlayer,
 	rosterSeasonFilter
@@ -63,23 +64,10 @@ export const POST = async ({ params, request }) => {
 		error(400);
 	}
 
-	const [player, ...rest] = await db.query.player.findMany({
-		where: {
-			battletag: {
-				ilike: body.data.battletag
-			}
-		},
-		columns: {
-			id: true
-		}
-	});
+	const player = await findPlayer(body.data.battletag);
 
 	if (!player) {
 		error(404, 'Player not found');
-	}
-
-	if (rest.length > 0) {
-		error(400, 'Multiple matching players found');
 	}
 
 	const [checkin] = await db

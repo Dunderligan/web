@@ -111,7 +111,13 @@ async function updateMembers(tx: Transaction, rosterId: string, members: Member[
 	const memberInserts = await Promise.all(
 		members.map(async ({ player, ...member }) => {
 			// if they already have an associated id, use that
-			const playerId = player.id ?? (await findOrCreatePlayer(tx, player.battletag));
+			let playerId: string;
+			if (player.id) {
+				playerId = player.id;
+			} else {
+				const foundPlayer = await findOrCreatePlayer(tx, player.battletag);
+				playerId = foundPlayer.id;
+			}
 
 			return {
 				playerId,

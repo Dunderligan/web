@@ -204,28 +204,47 @@ export function divisionOrder(column: any) {
 	) ASC`;
 }
 
-export async function findOrCreatePlayer(tx: Transaction, battletag: string) {
+export async function findPlayer(battletag: string) {
 	const name = battletag.split('#')[0];
 
-	const [existingPlayer] = await tx
-		.select()
+	// first match only player names, case-insensitively
+	const matchingPlayers = await db
+		.select({
+			id: schema.player.id,
+			battletag: schema.player.battletag
+		})
 		.from(schema.player)
-		.where(eq(sql<string>`SPLIT_PART(${schema.player.battletag}, '#', 1)`, name));
+		.where(eq(sql`SPLIT_PART(${schema.player.battletag}, '#', 1)::citext`, name));
 
-	if (existingPlayer) {
-		if (name !== battletag && !existingPlayer.battletag.includes('#')) {
-			// if we got a number tag and the existing player doesn't, store the new one
-			await tx
-				.update(schema.player)
-				.set({ battletag })
-				.where(eq(schema.player.id, existingPlayer.id));
-		}
+	if (matchingPlayers.length == 0) {
+		return null;
+	}
 
-		return existingPlayer.id;
+	if (battletag.includes('#')) {
+		const exactMatch = matchingPlayers.find(
+			(match) => match.battletag.toLowerCase() === battletag.toLowerCase()
+		);
+
+		return exactMatch ?? null;
+	} else if (matchingPlayers.length === 1) {
+		// if we don't have a discriminator, but there's only one matching name,
+		// we don't care about the discriminator and just return that player
+		return matchingPlayers[0];
+	} else {
+		// multiple players with the same name but no discriminator provided;
+		// we can't determine which one the user meant
+		return null;
+	}
+}
+
+export async function findOrCreatePlayer(tx: Transaction, battletag: string) {
+	const existingPlayerId = await findPlayer(battletag);
+	if (existingPlayerId) {
+		return existingPlayerId;
 	} else {
 		const [newPlayer] = await tx.insert(schema.player).values({ battletag }).returning();
 
-		return newPlayer.id;
+		return { id: newPlayer.id, battletag };
 	}
 }
 

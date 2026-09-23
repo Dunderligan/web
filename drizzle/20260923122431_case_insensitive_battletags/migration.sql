@@ -1,0 +1,2 @@
+CREATE EXTENSION IF NOT EXISTS citext;
+ALTER TABLE "player" ALTER COLUMN "battletag" SET DATA TYPE citext;

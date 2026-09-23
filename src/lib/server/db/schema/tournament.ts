@@ -24,6 +24,7 @@ import {
 	SubmissionStatus
 } from '../../../types';
 import { user } from './auth';
+import { citext } from '../custom-types';
 
 export const season = pgTable(
 	'season',
@@ -129,7 +130,7 @@ export const player = pgTable(
 	'player',
 	{
 		id: uuid().primaryKey().defaultRandom(),
-		battletag: text().notNull().unique(),
+		battletag: citext().notNull().unique(),
 		pronouns: text(),
 		description: text(),
 		overwatchProfileSlug: text()
