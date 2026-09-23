@@ -1,4 +1,4 @@
-import { and, isNotNull, isNull, or, type SQL } from 'drizzle-orm';
+import { and, not, or, type SQL } from 'drizzle-orm';
 
 /**
  * Convert a TypeScript enum to a Postgres enum representation.
@@ -12,5 +12,5 @@ export function enumToPgEnum<T extends Record<string, any>>(
 
 export function xor(a: SQL<unknown>, b: SQL<unknown>): SQL<unknown> {
 	// first-order conjunctive normal form btw 😎
-	return and(or(isNotNull(a), isNotNull(b)), or(isNull(a), isNull(b)))!;
+	return and(or(not(a), not(b)), or(a, b))!;
 }

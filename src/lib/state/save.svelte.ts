@@ -84,9 +84,9 @@ export class SaveContext {
 			await this.saveAction?.();
 
 			this.isDirty = false;
-			return true;
 		} finally {
 			this.saving = false;
+			return true;
 		}
 	};
 

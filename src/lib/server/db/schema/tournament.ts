@@ -13,7 +13,7 @@ import {
 	index,
 	jsonb
 } from 'drizzle-orm/pg-core';
-import { enumToPgEnum } from './util';
+import { enumToPgEnum, xor } from './util';
 import { and, isNotNull, isNull, or, sql } from 'drizzle-orm';
 import {
 	MatchState,
@@ -196,8 +196,9 @@ export const match = pgTable(
 	'match',
 	{
 		id: uuid().primaryKey().defaultRandom(),
-		/** The match's group. Must be set for group-stage matches, null otherwise. */
+		/** If the match is a group match, a reference to the group. Otherwise, must be null. */
 		groupId: uuid().references(() => group.id, { onDelete: 'cascade' }),
+		/** If the match is a bracket match, a reference to the bracket. Otherwise, must be null. */
 		bracketId: uuid().references(() => bracket.id, { onDelete: 'cascade' }),
 		rosterAId: uuid().references(() => roster.id, { onDelete: 'set null' }),
 		rosterBId: uuid().references(() => roster.id, { onDelete: 'set null' }),
@@ -220,13 +221,8 @@ export const match = pgTable(
 		round: integer()
 	},
 	(t) => [
-		check(
-			'group_xor_bracket',
-			and(
-				or(isNull(t.groupId), isNull(t.bracketId)),
-				or(isNotNull(t.groupId), isNotNull(t.bracketId))
-			)!
-		)
+		// Make sure exactly one of groupId or bracketId is set.
+		check('group_xor_bracket', xor(isNotNull(t.groupId), isNotNull(t.bracketId)))
 	]
 );
 

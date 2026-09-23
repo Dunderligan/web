@@ -110,7 +110,8 @@
 		{#if data.userSubmissions.length > 0}
 			<Notice kind="warn">
 				Det ser ut som att du redan har skickat in en anmälan för denna säsong. För att redigera din
-				anmälan, gå till <Link class="font-semibold" href="/jag/anmalningar">Mina anmälningar</Link
+				anmälan, gå till <Link class="font-semibold" href="/jag/installningar"
+					>Kontoinställningar</Link
 				>, eller fortsätt här för att anmäla ett nytt lag.
 			</Notice>
 		{/if}
