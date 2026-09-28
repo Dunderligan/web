@@ -49,6 +49,7 @@
 			{ label: 'Roll', center: true, note: roleNote },
 			{ label: 'Första inloggning', center: true }
 		]}
+		kind="transparent"
 	>
 		{#snippet row({ value: user })}
 			<div class="font-semibold">
