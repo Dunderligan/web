@@ -87,6 +87,9 @@ async function queryLatestSeason() {
 		orderBy: {
 			startedAt: 'desc'
 		},
+		where: {
+			spinoff: false
+		},
 		columns: {
 			startedAt: true,
 			endedAt: true,
