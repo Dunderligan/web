@@ -52,11 +52,7 @@
 							'fixed left-[50%] z-40 w-full max-w-[calc(100%-1rem)] translate-x-[-50%] space-y-2 overflow-y-auto rounded-xl bg-white p-8 text-gray-600 shadow-xl dark:border dark:border-gray-800 dark:bg-gray-950 dark:text-gray-300'
 						]}
 						transition:fade={{ duration: 25 }}
-						onkeydown={(evt) => {
-							if (evt.key === 'Enter') {
-								onsubmit?.();
-							}
-						}}
+						{onsubmit}
 						{...props}
 					>
 						<Dialog.Title

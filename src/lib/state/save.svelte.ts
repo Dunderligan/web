@@ -84,9 +84,12 @@ export class SaveContext {
 			await this.saveAction?.();
 
 			this.isDirty = false;
-		} finally {
+
 			this.saving = false;
 			return true;
+		} catch (e) {
+			this.saving = false;
+			throw e;
 		}
 	};
 

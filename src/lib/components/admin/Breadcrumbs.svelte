@@ -36,14 +36,14 @@
 		{#if isLast}
 			<Icon class={[!isLast && 'hidden sm:block', 'text-xl']} icon="ph:caret-right" />
 
-			<span class="font-semibold text-gray-900 dark:text-white">{label}</span>
+			<span class="truncate font-semibold text-gray-900 dark:text-white">{label}</span>
 			<!-- for non-moderators, only show the current page -->
 		{:else if userIsModerator}
 			<Icon class={[!isLast && 'hidden sm:block', 'text-xl']} icon="ph:caret-right" />
 
 			<a
 				{href}
-				class="hidden font-medium hover:text-gray-700 hover:underline sm:block dark:hover:text-gray-300"
+				class="hidden font-medium text-nowrap hover:text-gray-700 hover:underline sm:block dark:hover:text-gray-300"
 				>{label}</a
 			>
 		{/if}
@@ -51,7 +51,7 @@
 
 	{#if saveCtx && saveCtx.href}
 		<a
-			class="ml-2 text-sm font-medium hover:text-gray-700 hover:underline dark:hover:text-gray-300"
+			class="ml-2 text-sm font-medium text-nowrap hover:text-gray-700 hover:underline dark:hover:text-gray-300"
 			href={saveCtx.href}
 		>
 			<Icon icon="ph:link-simple" />

@@ -8,7 +8,8 @@ export const load = async ({ locals }) => {
 			startedAt: 'desc'
 		},
 		where: {
-			hidden: hiddenSeasonFilter(locals.user)
+			hidden: hiddenSeasonFilter(locals.user),
+			spinoff: false
 		},
 		columns: {
 			slug: true

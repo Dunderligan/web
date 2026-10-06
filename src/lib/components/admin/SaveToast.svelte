@@ -12,6 +12,7 @@
 	type SaveState = 'default' | 'success' | 'error' | 'reset';
 
 	let saveState: SaveState = $state('default');
+	let errorMessage: string | null = $state(null);
 
 	const isShown = $derived(saveState !== 'default' || context.isDirty);
 
@@ -22,7 +23,7 @@
 			case 'success':
 				return 'Sparat!';
 			case 'error':
-				return 'Kunde inte spara dina ändringar!';
+				return 'Kunde inte spara dina ändringar: ' + errorMessage;
 			case 'reset':
 				return 'Återställde dina ändringar.';
 		}
@@ -37,6 +38,22 @@
 			hideAfter(1000);
 		} catch (e) {
 			console.error('Error saving context:', e);
+
+			if (e instanceof Error) {
+				errorMessage = e.message;
+			} else if (
+				e &&
+				typeof e === 'object' &&
+				'body' in e &&
+				typeof e.body === 'object' &&
+				e.body &&
+				'message' in e.body
+			) {
+				errorMessage = String(e.body.message);
+			} else {
+				errorMessage = String(e);
+			}
+
 			saveState = 'error';
 			hideAfter(2000);
 		}

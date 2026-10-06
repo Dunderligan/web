@@ -222,7 +222,7 @@
 			{ label: '', center: true }
 		]}
 	>
-		{#snippet row({ value: member, index })}
+		{#snippet row({ value: member })}
 			<div class="text-lg font-semibold">
 				{#snippet memberName()}
 					{#if member.registeredName}
@@ -285,6 +285,9 @@
 					icon="ph:trash"
 					kind="tertiary"
 					onclick={() => {
+						// the table uses sortedMembers which means the indicies
+						// don't line up with the original members array
+						const index = members.findIndex((m) => m === member);
 						members.splice(index, 1);
 						saveCtx.setDirty();
 					}}

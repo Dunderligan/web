@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { GameProfile } from '$lib/types';
 	import Button from './Button.svelte';
-	import Icon from './Icon.svelte';
 
 	type Props = {
 		name: string;

@@ -2,8 +2,7 @@
 	import type { ClassValue } from 'svelte/elements';
 	import type { Snippet } from 'svelte';
 	import Note from '../ui/Note.svelte';
-	import type { CardProps, PlaceholderProps } from '$lib/types';
-	import Card from '../structure/Card.svelte';
+	import type { PlaceholderProps } from '$lib/types';
 	import Placeholder from '../ui/Placeholder.svelte';
 
 	type Kind = 'neutral' | 'transparent';
@@ -52,7 +51,7 @@
 		]}
 		style="grid-template-columns: {gridTemplateColumns};"
 	>
-		{#each columns as { label, center, note }, i}
+		{#each columns as { label, center, note }}
 			<div
 				class={[
 					center && 'justify-center',
