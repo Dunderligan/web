@@ -29,7 +29,7 @@
 			transparent:
 				'text-accent-800 not-disabled:hover:bg-accent-100 dark:text-accent-300 dark:not-disabled:hover:bg-accent-950',
 			destructive:
-				'bg-red-700 not-disabled:hover:bg-red-600 font-semibold text-red-100 not-disabled:hover:text-white dark:bg-red-800 dark:not-disabled:hover:bg-red-700 dark:not-disabled:hover:text-white'
+				'bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-100 not-disabled:hover:bg-red-200/80 font-semibold dark:not-disabled:hover:bg-red-900/80'
 		}[kind]
 	);
 </script>
