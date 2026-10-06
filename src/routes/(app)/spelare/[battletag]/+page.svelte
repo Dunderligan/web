@@ -188,7 +188,7 @@
 				rows={filteredMemberships}
 				key={(value) => value.roster.id}
 				columns={[
-					{ label: 'Lag', width: 'min-content' },
+					{ label: 'Lag', width: '1fr' },
 					{ label: 'Säsong' },
 					{ label: 'Roll', center: true },
 					{ label: 'Rank' }
