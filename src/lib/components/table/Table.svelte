@@ -57,7 +57,7 @@
 					center && 'justify-center',
 					kind === 'transparent'
 						? 'border-gray-200! dark:border-gray-700!'
-						: 'bg-gray-50! dark:bg-gray-800!',
+						: 'bg-gray-50! dark:bg-gray-900/50!',
 					'table-header flex min-h-0! items-center gap-1 py-2 text-gray-600 dark:text-gray-400'
 				]}
 			>

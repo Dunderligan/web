@@ -6,6 +6,7 @@
 	type Props = HTMLAnchorAttributes & {
 		openInNewTab?: boolean;
 		colored?: boolean;
+		hideExternalIcon?: boolean;
 	};
 
 	let {
@@ -14,6 +15,7 @@
 		openInNewTab: openInNewTabProp,
 		colored,
 		href,
+		hideExternalIcon,
 		...rest
 	}: Props = $props();
 
@@ -28,7 +30,7 @@
 	{href}
 	{...rest}
 >
-	{#if isExternal || openInNewTab}
+	{#if (isExternal || openInNewTab) && !hideExternalIcon}
 		<Icon icon={openInNewTab ? 'ph:arrow-square-out' : 'ph:link-simple'} class="ml-0.5 text-base" />
 	{/if}
 

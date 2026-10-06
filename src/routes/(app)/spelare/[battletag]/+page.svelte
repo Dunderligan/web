@@ -238,8 +238,8 @@
 				key={(value) => value.roster.id}
 				columns={[
 					{ label: 'Placering' },
-					{ label: 'Säsong', center: true },
-					{ label: 'Resultat', center: true, width: 'max-content' }
+					{ label: 'Säsong', width: '1fr' },
+					{ label: 'Resultat', center: true, width: '1fr' }
 				]}
 			>
 				{#snippet row({ value: achievement })}
@@ -253,7 +253,7 @@
 						{/if}
 					</div>
 
-					<div class="justify-center text-center text-base">
+					<div class="text-base">
 						<Link href="/stallningar/{season.slug}?div={division.slug}&visa=slutspel">
 							{bracket?.name},<wbr />
 							{season.name}
