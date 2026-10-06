@@ -25,7 +25,12 @@
 		<div class={[large ? 'text-5xl font-extrabold sm:text-6xl' : 'text-lg font-semibold']}>
 			{name}
 		</div>
-		<div class={[large && 'mt-1 text-lg font-semibold text-gray-600 dark:text-gray-400']}>
+		<div
+			class={[
+				'text-gray-600 dark:text-gray-400',
+				large ? 'mt-1 text-lg font-semibold ' : 'font-medium'
+			]}
+		>
 			{profile?.title}
 		</div>
 	</div>

@@ -44,7 +44,7 @@
 		src={imgSrc}
 		alt={rank}
 		title={capitalize(rank)}
-		class={[classProp, !hideLabel && 'mr-1', 'inline aspect-auto w-7']}
+		class={[classProp, !hideLabel && 'mr-0.5', 'inline aspect-auto w-7']}
 	/>
 
 	{#if !hideLabel}

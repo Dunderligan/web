@@ -80,7 +80,6 @@
 	);
 
 	const lastMembership = $derived(sortedMemberships.at(0));
-	const anyRegisteredNames = $derived(memberships.some((m) => m.registeredName));
 
 	const name = $derived(data.player.battletag.split('#')[0]);
 	const hasFullTag = $derived(data.player.battletag.includes('#'));
@@ -189,19 +188,18 @@
 				rows={filteredMemberships}
 				key={(value) => value.roster.id}
 				columns={[
-					{ label: 'Lag' },
-					{ label: anyRegisteredNames ? 'Spelade som' : '', center: true },
-					{ label: 'Säsong', center: true },
+					{ label: 'Lag', width: 'min-content' },
+					{ label: 'Säsong' },
 					{ label: 'Roll', center: true },
 					{ label: 'Rank' }
 				]}
 			>
 				{#snippet row({ value: membership })}
-					{@const { roster, role, rank, tier, sr, registeredName } = membership}
+					{@const { roster, role, rank, tier, sr } = membership}
 					{@const { division, season } = flattenGroup(roster.group)}
 					{@const href = `/lag/${roster.slug}/${season.slug}`}
 
-					<div class={[!registeredName && 'col-span-2', 'gap-2 text-lg font-semibold']}>
+					<div class="gap-2 text-lg font-semibold">
 						<RosterLogo id={roster.id} class="size-12" {href} />
 
 						<Link {href} class="hidden truncate sm:inline">
@@ -209,15 +207,10 @@
 						</Link>
 					</div>
 
-					{#if registeredName}
-						<div class="justify-center text-center">
-							{registeredName.split('#')[0]}
-						</div>
-					{/if}
-
-					<div class="justify-center text-center">
+					<div>
 						<Link href="/stallningar/{season.slug}?div={division.slug}">
-							{division.name}, {season.name}
+							{division.name},<wbr />
+							{season.name}
 						</Link>
 					</div>
 
@@ -225,7 +218,7 @@
 						<Icon icon={roleIcon(role)} title={role} />
 					</div>
 
-					<div class="text-base">
+					<div>
 						{#if rank && tier}
 							<Rank rank={{ rank, tier }} collapse />
 						{:else if sr}

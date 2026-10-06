@@ -17,7 +17,7 @@ export const load = async ({ locals }) => {
 	});
 
 	if (!latestSeason) {
-		error(404);
+		throw error(404, 'No seasons found');
 	}
 
 	redirect(302, `/stallningar/${latestSeason.slug}`);
