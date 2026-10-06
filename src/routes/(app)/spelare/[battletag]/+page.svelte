@@ -239,7 +239,7 @@
 				columns={[
 					{ label: 'Placering' },
 					{ label: 'Säsong', width: '1fr' },
-					{ label: 'Resultat', center: true, width: '1fr' }
+					{ label: 'Resultat', center: true }
 				]}
 			>
 				{#snippet row({ value: achievement })}
