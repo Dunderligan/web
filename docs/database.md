@@ -30,13 +30,18 @@ The project uses both Drizzle's standard query builder and the relational API. R
 
 Whenever you make changes to the schema during development, use `pnpm db:push` to easily sync the schema to the database.
 
-When you're ready to commit your changes, generate a new SQL migration with:
+When you're ready to commit your changes, pull from the dev branch and generate a new SQL migration with:
 
 ```bash
 pnpm db:generate --name [name]
 ```
 
-This will create a new SQL migration file in `drizzle/migrations/` which will be ran against the production database on deploy. You can also try them out locally with:
+This will create a new SQL migration file in `drizzle/migrations/` which will be ran against the production database on deploy.
+
+> [!IMPORTANT]
+> Make sure to **always** pull in changes from the dev branch when creating migrations. Drizzle does not handle migration forking/joining well, so migrations need to happen in a linear line unlike Git branches.
+
+You can also try them out locally with:
 
 ```bash
 pnpm db:migrate
