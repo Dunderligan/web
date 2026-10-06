@@ -2,22 +2,111 @@ import type { GameProfile, GameProfileEntry, GameProfileEntryWithDate } from '$l
 import { env } from '$env/dynamic/private';
 import { createClient } from 'redis';
 
+type CacheRow = { date: string } & ({ profiles: GameProfile[] } | { error: string });
+
 interface Cache {
 	get(key: string): Promise<CacheRow | null>;
 	set(key: string, value: CacheRow): Promise<void>;
 	delete(key: string): Promise<void>;
 }
 
-let cache: Cache;
+class OverwatchProfiles {
+	#cache: Cache;
+	#refreshInterval: number;
 
-if (env.REDIS_URL) {
-	cache = await connectRedis();
-} else {
-	console.warn('REDIS_URL not set, using in-memory cache for Overwatch profile info.');
-	cache = createInMemoryCache();
+	constructor(cache: Cache, refreshInterval: number) {
+		this.#cache = cache;
+		this.#refreshInterval = refreshInterval;
+	}
+
+	/**
+	 * Looks up a player's Overwatch profile, using the cache when available.
+	 * Stale entries are returned immediately and refreshed in the background.
+	 */
+	async getProfile(battletag: string, slug: string | null): Promise<GameProfileEntryWithDate> {
+		let cached = await this.#cache.get(battletag);
+
+		if (cached) {
+			const age = Date.now() - new Date(cached.date).getTime();
+
+			if (age > this.#refreshInterval) {
+				// Refresh in the background, but return the stale entry for now.
+				this.#searchProfilesAndCache(battletag);
+			}
+		} else {
+			cached = await this.#searchProfilesAndCache(battletag);
+		}
+
+		return { ...this.#mapCacheToProfile(cached, slug), date: cached.date };
+	}
+
+	/** Removes a player's cached profile, forcing a fresh lookup on the next request. */
+	async invalidateCache(battletag: string): Promise<void> {
+		await this.#cache.delete(battletag);
+	}
+
+	async #searchProfilesAndCache(battletag: string): Promise<CacheRow> {
+		const cacheRow = await this.#searchProfiles(battletag);
+		await this.#cache.set(battletag, cacheRow);
+		return cacheRow;
+	}
+
+	#mapCacheToProfile(entry: CacheRow, slug: string | null): GameProfileEntry {
+		if ('error' in entry) {
+			return { status: 'error', error: entry.error };
+		}
+
+		if (entry.profiles.length === 0) {
+			return { status: 'missing' };
+		}
+
+		if (entry.profiles.length > 1) {
+			if (!slug) {
+				return { status: 'ambiguous', candidates: entry.profiles };
+			}
+
+			const match = entry.profiles.find((candidate) => candidate.slug === slug);
+			if (!match) {
+				return { status: 'missing' };
+			}
+
+			return { status: 'found', profile: match };
+		}
+
+		const profile = entry.profiles[0];
+		if (slug && profile.slug !== slug) {
+			return { status: 'missing' };
+		}
+
+		return { status: 'found', profile };
+	}
+
+	async #searchProfiles(battletag: string): Promise<CacheRow> {
+		const name = battletag.split('#')[0];
+		const date = new Date().toISOString();
+
+		let response: Response;
+		try {
+			response = await fetch(
+				`https://overwatch.blizzard.com/en-us/search/account-by-name/${name}/`
+			);
+		} catch (error) {
+			console.error('Error fetching Overwatch profile:', error);
+			return { error: 'Failed to fetch profile', date: new Date().toISOString() };
+		}
+
+		if (!response.ok) {
+			return { error: `${response.status} ${response.statusText}`, date };
+		}
+
+		const data = await response.json();
+		return { profiles: data.map((obj: any) => this.#mapApiProfile(obj)), date };
+	}
+
+	#mapApiProfile(obj: any): GameProfile {
+		return { avatarUrl: obj.avatar, name: obj.name, title: obj.title?.en_US, slug: obj.url };
+	}
 }
-
-const REFRESH_INTERVAL = 1000 * 60 * 60 * 24; // 24 hours
 
 async function connectRedis(): Promise<Cache> {
 	const redis = createClient({ url: env.REDIS_URL });
@@ -54,90 +143,18 @@ function createInMemoryCache(): Cache {
 	};
 }
 
-async function getProfileWithCache(
-	battletag: string,
-	slug: string | null
-): Promise<GameProfileEntryWithDate> {
-	let cached = await cache.get(battletag);
-	if (cached) {
-		const age = Date.now() - new Date(cached.date).getTime();
+/** How long a cached profile is considered fresh before it is refreshed in the background. */
+const REFRESH_INTERVAL = 1000 * 60 * 60 * 24; // 24 hours
 
-		if (age > REFRESH_INTERVAL) {
-			// refresh in background
-			searchProfilesAndCache(battletag);
-		}
-	} else {
-		cached = await searchProfilesAndCache(battletag);
-	}
+let cache: Cache;
 
-	const entry = mapCacheToProfile(cached, slug);
-	return { ...entry, date: cached.date };
+if (env.REDIS_URL) {
+	cache = await connectRedis();
+} else {
+	console.warn('REDIS_URL not set, using in-memory cache for Overwatch profile info.');
+	cache = createInMemoryCache();
 }
 
-function mapCacheToProfile(entry: CacheRow, slug: string | null): GameProfileEntry {
-	if ('error' in entry) {
-		return { status: 'error', error: entry.error };
-	}
+const overwatch = new OverwatchProfiles(cache, REFRESH_INTERVAL);
 
-	if (entry.profiles.length === 0) {
-		return { status: 'missing' };
-	}
-
-	if (entry.profiles.length > 1) {
-		if (!slug) {
-			return { status: 'ambiguous', candidates: entry.profiles };
-		}
-
-		const match = entry.profiles.find((c) => c.slug === slug);
-		if (!match) {
-			return { status: 'missing' };
-		}
-
-		return { status: 'found', profile: match };
-	}
-
-	const profile = entry.profiles[0];
-	if (slug && profile.slug !== slug) {
-		return { status: 'missing' };
-	}
-
-	return { status: 'found', profile };
-}
-
-type CacheRow = { date: string } & ({ profiles: GameProfile[] } | { error: string });
-
-async function searchProfilesAndCache(battletag: string): Promise<CacheRow> {
-	const cacheRow = await searchProfiles(battletag);
-	await cache.set(battletag, cacheRow);
-	return cacheRow;
-}
-
-async function searchProfiles(battletag: string): Promise<CacheRow> {
-	const name = battletag.split('#')[0];
-	const date = new Date().toISOString();
-
-	let response: Response;
-	try {
-		response = await fetch(`https://overwatch.blizzard.com/en-us/search/account-by-name/${name}/`);
-	} catch (error) {
-		console.error('Error fetching Overwatch profile:', error);
-		return { error: 'Failed to fetch profile', date: new Date().toISOString() };
-	}
-
-	if (!response.ok) {
-		return { error: `${response.status} ${response.statusText}`, date };
-	}
-
-	const data = await response.json();
-	return { profiles: data.map(mapApiProfile), date };
-}
-
-function mapApiProfile(obj: any): GameProfile {
-	return { avatarUrl: obj.avatar, name: obj.name, title: obj.title?.en_US, slug: obj.url };
-}
-
-async function invalidateCache(battletag: string) {
-	await cache.delete(battletag);
-}
-
-export default { getProfile: getProfileWithCache, invalidateCache };
+export default overwatch;

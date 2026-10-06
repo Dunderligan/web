@@ -8,7 +8,7 @@ import { createBracket } from '$lib/bracket';
 import { error } from '@sveltejs/kit';
 import { sortBySeed } from '$lib/standings';
 import { MatchState, type UnresolvedMatchWithOrder } from '$lib/types';
-import { fullMatchColumns, matchRosterQuery } from '$lib/server/db/helpers';
+import { fullMatchColumns, rosterQuery } from '$lib/server/db/helpers';
 import { AuthRole } from '$lib/auth-role';
 
 export const generateBracket = command(
@@ -121,7 +121,7 @@ async function fetchDivision(divisionId: string) {
 			groups: {
 				columns: {},
 				with: {
-					rosters: matchRosterQuery,
+					rosters: rosterQuery,
 					matches: {
 						where: {
 							state: {

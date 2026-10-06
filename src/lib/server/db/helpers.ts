@@ -23,7 +23,7 @@ export const entityQuery = {
 /**
  * Query for the base information about a season.
  */
-export const nestedSeasonQuery = {
+export const seasonQuery = {
 	columns: {
 		legacyRanks: true,
 		startedAt: true,
@@ -39,7 +39,7 @@ export const nestedSeasonQuery = {
 export const nestedDivisionQuery = {
 	...entityQuery,
 	with: {
-		season: nestedSeasonQuery
+		season: seasonQuery
 	}
 } as const;
 
@@ -69,7 +69,12 @@ export const nestedBracketQuery = {
 /**
  * Query for the base information about a roster participating in matches.
  */
-export const matchRosterQuery = entityQuery;
+export const rosterQuery = {
+	columns: {
+		resigned: true,
+		...entityQuery.columns
+	}
+} as const;
 
 /**
  * Default ordering for matches within a group.
@@ -105,8 +110,8 @@ export const fullMatchQuery = {
 	},
 	orderBy: groupMatchOrder,
 	with: {
-		rosterA: matchRosterQuery,
-		rosterB: matchRosterQuery
+		rosterA: rosterQuery,
+		rosterB: rosterQuery
 	}
 } as const;
 

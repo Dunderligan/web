@@ -3,7 +3,7 @@ import { roleGuard } from '$lib/remote/auth.remote.js';
 import { db, schema } from '$lib/server/db';
 import {
 	findPlayer,
-	matchRosterQuery,
+	rosterQuery,
 	memberQueryWithoutPlayer,
 	rosterSeasonFilter
 } from '$lib/server/db/helpers.js';
@@ -34,7 +34,7 @@ export const GET = async ({ params }) => {
 					memberships: {
 						...memberQueryWithoutPlayer,
 						with: {
-							roster: matchRosterQuery
+							roster: rosterQuery
 						},
 						where: {
 							roster: rosterSeasonFilter(seasonId)
