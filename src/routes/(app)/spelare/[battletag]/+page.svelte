@@ -239,7 +239,7 @@
 				columns={[
 					{ label: 'Placering' },
 					{ label: 'Säsong', center: true },
-					{ label: 'Resultat', center: true }
+					{ label: 'Resultat', center: true, width: 'max-content' }
 				]}
 			>
 				{#snippet row({ value: achievement })}
@@ -255,7 +255,8 @@
 
 					<div class="justify-center text-center text-base">
 						<Link href="/stallningar/{season.slug}?div={division.slug}&visa=slutspel">
-							{bracket?.name}, {season.name}
+							{bracket?.name},<wbr />
+							{season.name}
 						</Link>
 					</div>
 
