@@ -209,7 +209,12 @@ export function divisionOrder(column: any) {
 	) ASC`;
 }
 
-export async function findPlayer(battletag: string) {
+export type FindPlayerResult =
+	| { type: 'found'; player: { id: string; battletag: string } }
+	| { type: 'ambiguous'; matches: { id: string; battletag: string }[] }
+	| { type: 'missing' };
+
+export async function findPlayer(battletag: string): Promise<FindPlayerResult> {
 	const name = battletag.split('#')[0];
 
 	// first match only player names, case-insensitively
@@ -222,7 +227,7 @@ export async function findPlayer(battletag: string) {
 		.where(eq(sql`SPLIT_PART(${schema.player.battletag}, '#', 1)::citext`, name));
 
 	if (matchingPlayers.length == 0) {
-		return null;
+		return { type: 'missing' };
 	}
 
 	if (battletag.includes('#')) {
@@ -230,26 +235,39 @@ export async function findPlayer(battletag: string) {
 			(match) => match.battletag.toLowerCase() === battletag.toLowerCase()
 		);
 
-		return exactMatch ?? null;
+		if (exactMatch) {
+			return { type: 'found', player: exactMatch };
+		}
+
+		return { type: 'missing' };
 	} else if (matchingPlayers.length === 1) {
 		// if we don't have a discriminator, but there's only one matching name,
 		// we don't care about the discriminator and just return that player
-		return matchingPlayers[0];
+		return { type: 'found', player: matchingPlayers[0] };
 	} else {
+		console.log('multiple players with the same name but no discriminator provided');
 		// multiple players with the same name but no discriminator provided;
 		// we can't determine which one the user meant
-		return null;
+		return { type: 'ambiguous', matches: matchingPlayers };
 	}
 }
 
-export async function findOrCreatePlayer(tx: Transaction, battletag: string) {
-	const existingPlayerId = await findPlayer(battletag);
-	if (existingPlayerId) {
-		return existingPlayerId;
-	} else {
-		const [newPlayer] = await tx.insert(schema.player).values({ battletag }).returning();
+export async function findOrCreatePlayer(
+	tx: Transaction,
+	battletag: string
+): Promise<{ id: string; battletag: string }> {
+	const findResult = await findPlayer(battletag);
+	switch (findResult.type) {
+		case 'found':
+			return findResult.player;
+		case 'ambiguous':
+			throw new Error(
+				`Multiple players found with the name "${battletag.split('#')[0]}". Please specify the full battletag.`
+			);
+		case 'missing':
+			const [newPlayer] = await tx.insert(schema.player).values({ battletag }).returning();
 
-		return { id: newPlayer.id, battletag };
+			return { id: newPlayer.id, battletag };
 	}
 }
 

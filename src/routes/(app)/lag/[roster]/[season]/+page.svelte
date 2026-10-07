@@ -70,7 +70,7 @@
 	<RosterLogo id={roster.id} class="size-40" imgSize={256} />
 
 	<div>
-		<h1 class="text-center font-display text-5xl font-extrabold sm:text-left sm:text-6xl">
+		<h1 class="font-display text-5xl font-extrabold sm:text-left sm:text-6xl">
 			{roster.name}
 		</h1>
 		<div
