@@ -12,6 +12,7 @@
 	} from '$lib/match';
 	import MatchInfoRow from './MatchInfoRow.svelte';
 	import Note from '../ui/Note.svelte';
+	import { resolve } from '$app/paths';
 
 	type State = 'visible' | 'invisible' | 'hidden';
 
@@ -70,8 +71,6 @@
 	{@const score = matchScore(logicalMatch, side)}
 	{@const note = matchNote(match, side)}
 
-	{@const href = `/lag/${roster?.slug}/${seasonSlug}`}
-
 	{@const bgClass = showScore
 		? won
 			? 'bg-gray-200 dark:bg-gray-800'
@@ -92,6 +91,8 @@
 		]}
 	>
 		{#if roster}
+			{@const href = resolve(`/lag/${roster.slug}/${seasonSlug}`)}
+
 			<div
 				class={[
 					seedBgClass,

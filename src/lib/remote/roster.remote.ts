@@ -1,6 +1,6 @@
 import { command } from '$app/server';
 import { db, schema } from '$lib/server/db';
-import { findOrCreatePlayer, type Transaction } from '$lib/server/db/helpers';
+import { lookupOrCreatePlayer, type Transaction } from '$lib/server/db/helpers';
 import { type Member, type Social } from '$lib/types';
 import { toSlug } from '$lib/util';
 import { eq } from 'drizzle-orm';
@@ -115,7 +115,7 @@ async function updateMembers(tx: Transaction, rosterId: string, members: Member[
 			if (player.id) {
 				playerId = player.id;
 			} else {
-				const foundPlayer = await findOrCreatePlayer(tx, player.battletag);
+				const foundPlayer = await lookupOrCreatePlayer(tx, player.battletag);
 				playerId = foundPlayer.id;
 			}
 

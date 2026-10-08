@@ -24,6 +24,7 @@
 	import { Role, type AwardType, type PlayerAward } from '$lib/types.js';
 	import { compareNullable, flattenGroup, formatDateTime, roleIcon } from '$lib/util';
 	import Link from '$lib/components/ui/Link.svelte';
+	import { resolve } from '$app/paths';
 
 	let { data } = $props();
 
@@ -40,6 +41,7 @@
 	);
 
 	const awardsByType = $derived.by(() => {
+		// eslint-disable-next-line svelte/prefer-svelte-reactivity
 		const map = new Map<string, [AwardType, PlayerAward[]]>();
 
 		for (const award of data.player.awards) {
@@ -53,8 +55,8 @@
 			}
 		}
 
-		for (const [_, awards] of map) {
-			awards[1].sort((a, b) =>
+		for (const awardType of map.values()) {
+			awardType[1].sort((a, b) =>
 				compareNullable(b.division?.season.startedAt, a.division?.season.startedAt)
 			);
 		}
@@ -102,7 +104,7 @@
 				battletag: data.player.battletag
 			});
 
-			await goto(`/admin/spelare/${id}`);
+			await goto(resolve(`/admin/spelare/${id}`));
 		} finally {
 			claimLoading = false;
 		}
@@ -197,7 +199,7 @@
 				{#snippet row({ value: membership })}
 					{@const { roster, role, rank, tier, sr } = membership}
 					{@const { division, season } = flattenGroup(roster.group)}
-					{@const href = `/lag/${roster.slug}/${season.slug}`}
+					{@const href = resolve(`/lag/${roster.slug}/${season.slug}`)}
 
 					<div class="gap-2 text-lg font-semibold">
 						<RosterLogo id={roster.id} class="size-12" {href} />
@@ -278,7 +280,7 @@
 			<Subheading class="mt-10">Utmärkelser</Subheading>
 
 			<div class="mt-4 space-y-4">
-				{#each awardsByType as [type, awards]}
+				{#each awardsByType as [type, awards] (type.id)}
 					<AwardCard {type} {awards} />
 				{/each}
 			</div>
@@ -330,7 +332,7 @@
 		{#if data.player.signatureHeroes.length > 0}
 			<Field title="Signaturhjältar">
 				<div class="mt-1 flex flex-wrap gap-1">
-					{#each data.player.signatureHeroes as { hero }}
+					{#each data.player.signatureHeroes as { hero } (hero.id)}
 						<HeroPortrait {hero} size="sm" />
 					{/each}
 				</div>
@@ -344,7 +346,7 @@
 					{data.player.battletag}
 				</div>
 
-				{#each data.player.aliases as alias}
+				{#each data.player.aliases as alias (alias.id)}
 					<div>
 						{alias.name}
 					</div>

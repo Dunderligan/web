@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
@@ -44,7 +45,7 @@
 					id: registration.id
 				});
 
-				await goto(`/admin/sasong/${season.id}`);
+				await goto(resolve(`/admin/sasong/${season.id}`));
 			}
 		});
 	}

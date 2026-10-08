@@ -51,7 +51,7 @@
 		]}
 		style="grid-template-columns: {gridTemplateColumns};"
 	>
-		{#each columns as { label, center, note }}
+		{#each columns as { label, center, note }, i (i)}
 			<div
 				class={[
 					center && 'justify-center',

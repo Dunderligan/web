@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { AwardType, PlayerAward } from '$lib/types';
 	import medal from '$lib/assets/images/medal.png';
-	import Icon from './Icon.svelte';
 	import { flattenDivision } from '$lib/util';
 	import Link from './Link.svelte';
 

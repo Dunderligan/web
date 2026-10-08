@@ -24,7 +24,7 @@
 			<p class="text-lg">Dunderligan</p>
 
 			<div class="mt-2 grid w-max grid-cols-6 gap-x-3 gap-y-3 md:grid-cols-3">
-				{#each Object.entries(socials) as [platform, href]}
+				{#each Object.entries(socials) as [platform, href] (platform)}
 					<TeamSocial {platform} {href} class="text-2xl" />
 				{/each}
 			</div>

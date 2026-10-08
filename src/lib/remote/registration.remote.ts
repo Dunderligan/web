@@ -1,6 +1,6 @@
 import { command, getRequestEvent, query } from '$app/server';
 import { AuthRole, isAdmin } from '$lib/auth-role';
-import { memberSchema, teamSubmissionSchema } from '$lib/schemas';
+import { teamSubmissionSchema } from '$lib/schemas';
 import { db, schema } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';

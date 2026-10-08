@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { generateBracket } from '$lib/remote/bracket.remote';
 	import Checkbox from '../form/Checkbox.svelte';
 	import InputField from '../form/InputField.svelte';
@@ -31,7 +32,7 @@
 		});
 
 		open = false;
-		await goto(`/admin/bracket/${bracket.id}`);
+		await goto(resolve(`/admin/bracket/${bracket.id}`));
 	}
 </script>
 

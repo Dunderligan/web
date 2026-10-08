@@ -4,11 +4,11 @@
 	import Button from '../ui/Button.svelte';
 	import { page } from '$app/state';
 	import { invalidateAll } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { logout } from '$lib/remote/auth.remote';
 	import { PreferencesState } from '$lib/state/preferences.svelte';
 	import Dropdown from '../ui/Dropdown.svelte';
 	import logo from '$lib/assets/images/logo.webp';
-	import { onMount } from 'svelte';
 	import { isModerator } from '$lib/auth-role';
 	import type { DropdownItem } from '$lib/types';
 	import SearchDialog from './SearchDialog.svelte';
@@ -144,7 +144,7 @@
 >
 	<div class="mx-auto flex h-full max-w-4xl items-center justify-between gap-2">
 		<div class="flex items-center gap-12 font-display">
-			<a href="/" class="mr-8 shrink-0">
+			<a href={resolve('/')} class="mr-8 shrink-0">
 				<img src={logo} alt="Dunderligan logotyp" class="size-12" />
 			</a>
 

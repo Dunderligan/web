@@ -1,6 +1,19 @@
 import type { GameProfile, GameProfileEntry, GameProfileEntryWithDate } from '$lib/types';
 import { env } from '$env/dynamic/private';
 import { createClient } from 'redis';
+import z from 'zod';
+
+const apiProfileSchema = z.object({
+	isPublic: z.boolean(),
+	lastUpdated: z.number(),
+	namecard: z.url(),
+	avatar: z.url(),
+	title: z.record(z.string(), z.string()).nullable(),
+	url: z.string(),
+	name: z.string()
+});
+
+type ApiProfile = z.infer<typeof apiProfileSchema>;
 
 type CacheRow = { date: string } & ({ profiles: GameProfile[] } | { error: string });
 
@@ -85,26 +98,33 @@ class OverwatchProfiles {
 		const name = battletag.split('#')[0];
 		const date = new Date().toISOString();
 
-		let response: Response;
 		try {
-			response = await fetch(
+			const response = await fetch(
 				`https://overwatch.blizzard.com/en-us/search/account-by-name/${name}/`
 			);
+
+			if (!response.ok) {
+				return { error: `${response.status} ${response.statusText}`, date };
+			}
+
+			const content = await response.json();
+
+			const result: ApiProfile[] = apiProfileSchema.array().parse(content);
+			const mappedProfiles = result.map((obj) => this.#mapApiProfile(obj));
+			return { profiles: mappedProfiles, date };
 		} catch (error) {
 			console.error('Error fetching Overwatch profile:', error);
 			return { error: 'Failed to fetch profile', date: new Date().toISOString() };
 		}
-
-		if (!response.ok) {
-			return { error: `${response.status} ${response.statusText}`, date };
-		}
-
-		const data = await response.json();
-		return { profiles: data.map((obj: any) => this.#mapApiProfile(obj)), date };
 	}
 
-	#mapApiProfile(obj: any): GameProfile {
-		return { avatarUrl: obj.avatar, name: obj.name, title: obj.title?.en_US, slug: obj.url };
+	#mapApiProfile(profile: ApiProfile): GameProfile {
+		return {
+			avatarUrl: profile.avatar,
+			name: profile.name,
+			title: profile.title?.en_US ?? null,
+			slug: profile.url
+		};
 	}
 }
 

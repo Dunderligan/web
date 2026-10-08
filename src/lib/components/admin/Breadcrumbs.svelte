@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { resolve } from '$app/paths';
 	import { isModerator } from '$lib/auth-role';
 	import { SaveContext } from '$lib/state/save.svelte';
 	import Icon from '../ui/Icon.svelte';
@@ -23,14 +24,14 @@
 <div class="flex h-8 items-center gap-4 font-display text-lg text-gray-600 dark:text-gray-400">
 	{#if userIsModerator}
 		<a
-			href="/admin"
+			href={resolve('/admin')}
 			class="flex items-center justify-center text-xl hover:text-gray-700 dark:hover:text-gray-300"
 		>
 			<Icon icon="ph:house" />
 		</a>
 	{/if}
 
-	{#each crumbs as { label, href }, i}
+	{#each crumbs as { label, href }, i (href)}
 		{@const isLast = i == crumbs.length - 1}
 
 		{#if isLast}

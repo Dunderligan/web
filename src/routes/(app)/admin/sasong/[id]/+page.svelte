@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
@@ -39,53 +40,43 @@
 	async function submitNewDivision() {
 		const { division } = await createDivision({
 			name: newDivisionName,
-			seasonId: season.id
+			seasonId: data.season.id
 		});
 
-		await goto(`/admin/division/${division.id}`);
+		await goto(resolve(`/admin/division/${division.id}`));
 	}
 
 	async function save() {
-		await updateSeason({
-			id: season.id,
-			name: season.name,
-			startedAt: season.startedAt,
-			endedAt: season.endedAt,
-			legacyRanks: season.legacyRanks,
-			legacySeeding: season.legacySeeding,
-			hidden: season.hidden,
-			spinoff: season.spinoff,
-			checkinOpen: season.checkinOpen
-		});
+		await updateSeason(data.season);
 	}
 
 	async function onDeleteClicked() {
 		await confirmCtx.confirm({
 			title: 'Radera säsong',
-			description: `Är du säker på att du vill radera ${season.name}?`,
+			description: `Är du säker på att du vill radera ${data.season.name}?`,
 			destructive: true,
 			action: async () => {
 				await deleteSeason({
-					id: season.id
+					id: data.season.id
 				});
 
-				await goto('/admin');
+				await goto(resolve('/admin'));
 			}
 		});
 	}
 
 	async function submitCreateRegistation() {
 		const { registration } = await createRegistration({
-			seasonId: season.id,
+			seasonId: data.season.id,
 			openDate: newRegistrationStart,
 			closeDate: newRegistrationEnd
 		});
 
-		await goto(`/admin/anmalan/${registration.id}`);
+		await goto(resolve(`/admin/anmalan/${registration.id}`));
 	}
 </script>
 
-<Breadcrumbs crumbs={[{ label: season.name, href: `/admin/sasong/${season.id}` }]} />
+<Breadcrumbs crumbs={[{ label: data.season.name, href: `/admin/sasong/${data.season.id}` }]} />
 
 <AdminCard title="Divisioner">
 	<AdminLinkList
@@ -98,7 +89,7 @@
 </AdminCard>
 
 {#if isAdmin(data.user?.role)}
-	<AdminCard title="Anmälan och incheckning">
+	<AdminCard title="Anmälan">
 		{#if registration}
 			<div class="overflow-hidden rounded-lg">
 				<AdminLink href="/admin/anmalan/{registration.id}">Hantera anmälan</AdminLink>
@@ -108,7 +99,9 @@
 				>Säsongen har inget anmälningsformulär.</AdminEmptyNotice
 			>
 		{/if}
+	</AdminCard>
 
+	<AdminCard title="Incheckning">
 		<Label label="Incheckning öppen">
 			<Checkbox bind:checked={season.checkinOpen} onCheckedChange={saveCtx.setDirty} />
 		</Label>

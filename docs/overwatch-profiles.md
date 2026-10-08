@@ -20,7 +20,7 @@ Here is a sample response from the endpoint:
 		"title": {
 			"en_US": "Stalwart Hero",
 			"es_MX": "Heroísmo leal",
-            // ...
+			// ...
 			"th_TH": "ฮีโร่ผู้แข็งแกร่ง"
 		},
 		"url": "d84ba28181708fe0bba121a9d5%7C4d8123f4f89b5a5ac17c11b741c967e8",
@@ -35,7 +35,7 @@ Here is a sample response from the endpoint:
 		"url": "d86b82a18150afe0bba122a7d4%7C42cd1def09165470e6c28dd5f9f77981",
 		"name": "JUNKRAT"
 	}
-    // ...
+	// ...
 ]
 ```
 

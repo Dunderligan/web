@@ -23,11 +23,13 @@
 	const openInNewTab = $derived(openInNewTabProp === undefined ? isExternal : openInNewTabProp);
 </script>
 
+<!-- This component handles both internal and external links, while resolve only handles internal links -->
+<!-- eslint-disable svelte/no-navigation-without-resolve -->
 <a
-	class={[classProp, colored && 'text-accent-700 dark:text-accent-500', 'group']}
-	rel={isExternal ? 'noopener noreferrer' : undefined}
-	target={openInNewTab ? '_blank' : undefined}
 	{href}
+	class={[classProp, colored && 'text-accent-700 dark:text-accent-500', 'group']}
+	rel={isExternal ? 'noopener noreferrer external' : undefined}
+	target={openInNewTab ? '_blank' : undefined}
 	{...rest}
 >
 	{#if (isExternal || openInNewTab) && !hideExternalIcon}

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { isAdmin } from '$lib/auth-role.js';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
@@ -32,7 +33,7 @@
 			showDivision: newShowDivision
 		});
 
-		await goto(`/admin/utmarkelser/${awardType.id}`);
+		await goto(resolve(`/admin/utmarkelser/${awardType.id}`));
 	}
 </script>
 

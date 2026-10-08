@@ -73,5 +73,5 @@ New contributions are always welcome! Just make sure to follow these:
 
 - Adhere to the tournament code of conduct ([discord message link](https://discord.com/channels/631178408268660756/1077717324049690765/1345763447589044284))
 - Make sure to target the `dev` branch with your pull request **(important!)**
-- Please contact Dunderligan management if you wish to make larger changes 
+- Please contact Dunderligan management if you wish to make larger changes
 - Prefer to split larger PRs into smaller chunks

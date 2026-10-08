@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto, invalidateAll } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import Meta from '$lib/components/structure/Meta.svelte';
 	import PageSection from '$lib/components/structure/PageSection.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
@@ -15,7 +16,7 @@
 		try {
 			await createSuperAdmin({ battletag });
 			await invalidateAll();
-			await goto('/admin');
+			await goto(resolve('/admin'));
 		} finally {
 			loading = false;
 		}

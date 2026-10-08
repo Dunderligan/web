@@ -16,6 +16,7 @@
 	import Meta from '$lib/components/structure/Meta.svelte';
 	import { isModerator } from '$lib/auth-role.js';
 	import Chip from '$lib/components/ui/Chip.svelte';
+	import { resolve } from '$app/paths';
 
 	let { data } = $props();
 
@@ -56,9 +57,9 @@
 		}
 
 		if (mode === 'group' && !hasGroupStage) {
-			goto(`?div=${division.slug}&visa=slutspel`, { replaceState: true });
+			goto(resolve(`/?div=${division.slug}&visa=slutspel`), { replaceState: true });
 		} else if (mode === 'bracket' && !hasPlayoffs) {
-			goto(`?div=${division.slug}&visa=gruppspel`, { replaceState: true });
+			goto(resolve(`/?div=${division.slug}&visa=gruppspel`), { replaceState: true });
 		}
 	});
 
@@ -180,7 +181,7 @@
 	</div>
 
 	{#if mode === 'group'}
-		{#each division.tables as table}
+		{#each division.tables as table (table.id)}
 			{@const resolvedStandings = table.standings.map(({ rosterId, score }) => ({
 				roster: resolveRoster(rosterId)!,
 				score

@@ -1,11 +1,9 @@
 <script lang="ts">
-	import { SubmissionStatus, type TeamSubmissionInfo } from '$lib/types';
-	import { formatDate, formatSubmissionStatus } from '$lib/util';
+	import type { TeamSubmissionInfo } from '$lib/types';
+	import { formatDate } from '$lib/util';
 	import SubmissionChip from '../admin/SubmissionChip.svelte';
 	import Table from './Table.svelte';
 	import Button from '../ui/Button.svelte';
-	import Label from '../form/Label.svelte';
-	import Select from '../form/Select.svelte';
 
 	type Props = {
 		submissions: TeamSubmissionInfo[];
@@ -50,7 +48,7 @@
 			<SubmissionChip status={submission.status} />
 		</div>
 
-		{#each [submission.createdAt, submission.editedAt, submission.reviewedAt] as date}
+		{#each [submission.createdAt, submission.editedAt, submission.reviewedAt] as date, i (i)}
 			<div class="justify-center">
 				{date ? formatDate(date) : '-'}
 			</div>

@@ -37,7 +37,7 @@
 					b.checkedInPercent - a.checkedInPercent || a.roster.name.localeCompare(b.roster.name)
 				);
 			})
-			.map(({ roster, checkedInPercent: _ }) => roster)
+			.map(({ roster }) => roster)
 	);
 </script>
 

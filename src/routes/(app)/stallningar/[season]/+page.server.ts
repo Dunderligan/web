@@ -78,6 +78,7 @@ export const load = async ({ params, locals }) => {
 			let groupings;
 			if (division.groupwiseStandings) {
 				groupings = groups.map((group) => ({
+					id: group.id,
 					title: group.name,
 					matches: group.matches,
 					rosters: group.rosters,
@@ -86,6 +87,7 @@ export const load = async ({ params, locals }) => {
 			} else {
 				groupings = [
 					{
+						id: division.id,
 						title: null,
 						matches: divisionMatches,
 						rosters,

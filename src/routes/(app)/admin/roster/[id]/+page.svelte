@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto, invalidateAll } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
 	import AdminLink from '$lib/components/admin/AdminLink.svelte';
@@ -73,7 +74,7 @@
 					id: roster.id
 				});
 
-				await goto(`/admin/grupp/${group.id}`);
+				await goto(resolve(`/admin/grupp/${group.id}`));
 			}
 		});
 	}

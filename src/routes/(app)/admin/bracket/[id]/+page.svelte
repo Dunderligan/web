@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
@@ -16,11 +17,12 @@
 	import { deleteBracket, updateBracket } from '$lib/remote/bracket.remote';
 	import { matchRosterId, matchWinner } from '$lib/match.js';
 	import { isAdmin } from '$lib/auth-role.js';
+
 	const { data } = $props();
 
-	const bracket = $state(data.bracket);
-	const division = $state(data.division);
-	const season = $state(division.season);
+	const bracket = $derived(data.bracket);
+	const division = $derived(data.division);
+	const season = $derived(division.season);
 
 	RosterContext.set(new RosterContext(data.rosters));
 	SaveContext.set(
@@ -33,7 +35,7 @@
 	const saveCtx = SaveContext.get();
 	const confirmCtx = ConfirmContext.get();
 
-	let rounds: UnresolvedMatchWithOrder[][] = $state([]);
+	let rounds: UnresolvedMatchWithOrder[][] = $derived(buildBracketRounds(bracket.matches));
 
 	async function onDeleteClicked() {
 		await confirmCtx.confirm({
@@ -45,7 +47,7 @@
 					id: bracket.id
 				});
 
-				await goto(`/admin/division/${division.id}`);
+				await goto(resolve(`/admin/division/${division.id}`));
 			}
 		});
 	}
@@ -57,10 +59,6 @@
 			matches: bracket.matches
 		});
 	}
-
-	$effect(() => {
-		rounds = buildBracketRounds(bracket.matches);
-	});
 
 	$effect(() => {
 		// propagate winners to the next round
@@ -93,7 +91,7 @@
 
 <AdminCard title="Bracket">
 	<div class="flex w-full items-stretch gap-4">
-		{#each rounds as round, i}
+		{#each rounds as round, i (i)}
 			<div class="flex w-full flex-col justify-around gap-4">
 				{#each round as match (match.id)}
 					<EditableMatch {match} canDelete={false} canEditRosters={i === 0} />

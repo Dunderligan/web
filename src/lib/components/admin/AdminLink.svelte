@@ -1,9 +1,10 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import Icon from '../ui/Icon.svelte';
+	import type { ResolvedPathname } from '$app/types';
 
 	type Props = {
-		href: string;
+		href: ResolvedPathname;
 		onclick?: () => void;
 		highlighted?: boolean;
 		disabled?: boolean;

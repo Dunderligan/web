@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto, invalidate } from '$app/navigation';
-	import { isModerator } from '$lib/auth-role.js';
+	import { resolve } from '$app/paths';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
@@ -65,7 +65,7 @@
 			destructive: true,
 			action: async () => {
 				await deleteAwardType({ id: awardType.id });
-				await goto('/admin/utmarkelser');
+				await goto(resolve('/admin/utmarkelser'));
 			}
 		});
 	}

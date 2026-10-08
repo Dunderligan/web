@@ -11,13 +11,14 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
-		"lint": "prettier --check .",
+		"lint": "prettier --check . && eslint .",
 		"db:push": "drizzle-kit push",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
 		"db:studio": "drizzle-kit studio"
 	},
 	"devDependencies": {
+		"@eslint/js": "^10.0.1",
 		"@oslojs/crypto": "^1.0.1",
 		"@oslojs/encoding": "^1.1.0",
 		"@prgm/sveltekit-progress-bar": "^3.0.2",
@@ -27,6 +28,10 @@
 		"@tailwindcss/vite": "^4.1.18",
 		"@types/node": "^22.19.7",
 		"drizzle-kit": "1.0.0-beta.2-ec83fa8",
+		"eslint": "^10.4.1",
+		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-svelte": "^3.19.0",
+		"globals": "^17.6.0",
 		"prettier": "^3.6.2",
 		"prettier-plugin-svelte": "^3.4.0",
 		"prettier-plugin-tailwindcss": "^0.6.14",
@@ -34,6 +39,7 @@
 		"svelte-check": "^4.3.5",
 		"tailwindcss": "^4.1.18",
 		"typescript": "^5.9.3",
+		"typescript-eslint": "^8.60.1",
 		"vite": "^8.0.0"
 	},
 	"dependencies": {

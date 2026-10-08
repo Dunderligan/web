@@ -43,7 +43,7 @@
 		return subtitle;
 	});
 
-	function queryParamHref(param: string, value: any) {
+	function queryParamHref(param: string, value: string | undefined | null) {
 		const url = new URL(page.url);
 		if (value === null || value === undefined) {
 			url.searchParams.delete(param);
@@ -71,7 +71,7 @@
 				kind="secondary"
 				icon="ph:arrow-left"
 				label="Föregående sida"
-				href={queryParamHref('page', data.params.page - 1)}
+				href={queryParamHref('page', String(data.params.page - 1))}
 				data-sveltekit-noscroll
 			/>
 
@@ -97,7 +97,7 @@
 		kind="secondary"
 		icon="ph:arrow-right"
 		label="Nästa sida"
-		href={queryParamHref('page', data.params.page + 1)}
+		href={queryParamHref('page', String(data.params.page + 1))}
 		{disabled}
 		data-sveltekit-noscroll
 	/>

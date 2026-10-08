@@ -5,6 +5,7 @@
 	import Link from '../ui/Link.svelte';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import Table from './Table.svelte';
+	import { resolve } from '$app/paths';
 
 	type TableEntry = {
 		roster: Roster;
@@ -45,7 +46,7 @@
 		{@const isAfterLine = playoffLine && index > playoffLine}
 		{@const seed = isAfterLine ? index : index + 1}
 
-		{@const href = `/lag/${roster.slug}/${seasonSlug}`}
+		{@const href = resolve(`/lag/${roster.slug}/${seasonSlug}`)}
 
 		<div class="relative justify-center text-lg font-semibold">
 			{#if roster.resigned}

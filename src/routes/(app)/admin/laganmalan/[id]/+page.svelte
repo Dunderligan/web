@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto, invalidate } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { isAdmin } from '$lib/auth-role.js';
 	import cdn from '$lib/cdn.js';
@@ -74,9 +75,9 @@
 					id: submission.id
 				});
 				if (userIsAdmin) {
-					await goto(`/admin/anmalan/${registration.id}`);
+					await goto(resolve(`/admin/anmalan/${registration.id}`));
 				} else {
-					await goto(`/jag/mina-anmalningar`);
+					await goto(resolve(`/jag/installningar`));
 				}
 			}
 		});

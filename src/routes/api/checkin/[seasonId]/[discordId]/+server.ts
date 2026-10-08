@@ -2,7 +2,7 @@ import { AuthRole } from '$lib/auth-role.js';
 import { roleGuard } from '$lib/remote/auth.remote.js';
 import { db, schema } from '$lib/server/db';
 import {
-	findPlayer,
+	lookupPlayer,
 	rosterQuery,
 	memberQueryWithoutPlayer,
 	rosterSeasonFilter
@@ -64,10 +64,17 @@ export const POST = async ({ params, request }) => {
 		error(400);
 	}
 
-	const player = await findPlayer(body.data.battletag);
+	const result = await lookupPlayer(body.data.battletag);
 
-	if (!player) {
-		error(404, 'Player not found');
+	let player;
+	switch (result.type) {
+		case 'found':
+			player = result.player;
+			break;
+		case 'missing':
+			throw error(404, 'Player not found');
+		case 'ambiguous':
+			throw error(400, 'Ambiguous player name, please provide a full battletag');
 	}
 
 	const [checkin] = await db

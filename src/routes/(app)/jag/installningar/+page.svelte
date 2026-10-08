@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto, invalidateAll } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { formatRole } from '$lib/auth-role.js';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
@@ -17,7 +18,6 @@
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
 	import { formatDate, formatDateTime } from '$lib/util';
 	import SubmissionsTable from '$lib/components/table/SubmissionsTable.svelte';
-	import Select from '$lib/components/form/Select.svelte';
 	import Meta from '$lib/components/structure/Meta.svelte';
 
 	let { data } = $props();
@@ -35,7 +35,7 @@
 			destructive: true,
 			action: async () => {
 				await deleteAccount();
-				await goto('/');
+				await goto(resolve('/'));
 				await invalidateAll();
 			}
 		});

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { ResolvedPathname } from '$app/types';
 	import placeholderTeam from '$lib/assets/images/placeholder-team.avif';
 	import cdn from '$lib/cdn';
 	import type { ClassValue } from 'svelte/elements';
@@ -8,7 +9,7 @@
 		class?: ClassValue;
 		imgSize?: number;
 		src?: string | null;
-		href?: string | null;
+		href?: ResolvedPathname | null;
 	};
 
 	let { id, class: classProp, imgSize = 64, src: srcOverride, href }: Props = $props();

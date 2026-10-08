@@ -62,7 +62,7 @@ export function calculateStandings(
 
 	computeMatchResults(matches, map);
 
-	for (const [_, roster] of map) {
+	for (const roster of map.values()) {
 		roster.record.opponentMapRecordSum = sumOpponentMapRecord(roster, map);
 	}
 
@@ -118,9 +118,9 @@ function computeMatchResults(matches: LogicalMatch[], graph: Map<string, TableSc
 			continue;
 		}
 
-		let teamAScore = match.teamAScore ?? 0;
-		let teamBScore = match.teamBScore ?? 0;
-		let draws = match.draws ?? 0;
+		const teamAScore = match.teamAScore ?? 0;
+		const teamBScore = match.teamBScore ?? 0;
+		const draws = match.draws ?? 0;
 
 		if (teamAScore > teamBScore) {
 			teamA.record.wonAgainst.add(match.rosterBId);
@@ -249,7 +249,7 @@ function highestAndLowestLostTo(
 	let lowestLostTo: number | null = null;
 
 	for (let i = 0; i < sortedScores.length; i++) {
-		const [rosterId, _] = sortedScores[i];
+		const [rosterId] = sortedScores[i];
 
 		if (roster.record.wonAgainst.has(rosterId) && highestBeaten === null) {
 			highestBeaten = i;

@@ -1,11 +1,10 @@
-
 <img src="./assets/banner.png" width="100%" style="margin: 30px 0" />
 
 # web
 
 Dunderligan's official website, [dunderligan.se](https://dunderligan.se). The site houses information about the tournament, teams and their players, as well as current and historial standings, match records and brackets, with more to come!
 
-It's a full-stack app built using SvelteKit, Tailwind and Drizzle ORM. For technical documentation, see [./docs/](./docs/overview.md). 
+It's a full-stack app built using SvelteKit, Tailwind and Drizzle ORM. For technical documentation, see [./docs/](./docs/overview.md).
 
 You can find the staging version at [dev.dunderligan.se](https://dev.dunderligan.se).
 

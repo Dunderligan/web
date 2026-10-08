@@ -110,7 +110,7 @@
 		</AdminEmptyNotice>
 	{:else}
 		<div class="space-y-1.5 py-1">
-			{#each player.aliases as alias, i}
+			{#each player.aliases as alias, i (i)}
 				<div class="flex max-w-xl items-center gap-2">
 					<InputField value={alias.name} maxlength={20} oninput={saveCtx.setDirty} />
 
@@ -140,7 +140,7 @@
 		</AdminEmptyNotice>
 	{:else}
 		<div class="space-y-1.5 py-1">
-			{#each player.signatureHeroes as { hero }, i}
+			{#each player.signatureHeroes as { hero }, i (hero.id)}
 				<div class="flex items-center gap-2">
 					<HeroPortrait {hero} size="sm" />
 

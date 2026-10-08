@@ -76,7 +76,7 @@
 
 						{#if buttons}
 							<div class="flex items-center justify-end gap-2 pt-2">
-								{#each buttons as button}
+								{#each buttons as button (button.label)}
 									<Button {...button} />
 								{/each}
 							</div>

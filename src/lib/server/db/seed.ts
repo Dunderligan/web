@@ -103,15 +103,15 @@ export async function seed(db: PostgresJsDatabase<typeof schema>) {
 
 	await reset(db, seedSchema);
 
-	let [season] = await db
+	const [season] = await db
 		.insert(schema.season)
 		.values({ name: 'Test Säsong', slug: 'test-sasong', startedAt: new Date() })
 		.returning();
 
-	let divisions = await Promise.all(
+	const divisions = await Promise.all(
 		Array.from({ length: 3 }).map(async (_, i) => {
-			let name = `Division ${i + 1}`;
-			let slug = `${i + 1}`;
+			const name = `Division ${i + 1}`;
+			const slug = `${i + 1}`;
 
 			const res = await db
 				.insert(schema.division)
@@ -126,11 +126,11 @@ export async function seed(db: PostgresJsDatabase<typeof schema>) {
 		})
 	);
 
-	let groups = await Promise.all(
+	const groups = await Promise.all(
 		divisions.flatMap((division) =>
 			Array.from({ length: 2 }).map(async (_, i) => {
-				let slug = String.fromCharCode(65 + i);
-				let name = `Grupp ${slug}`;
+				const slug = String.fromCharCode(65 + i);
+				const name = `Grupp ${slug}`;
 
 				const res = await db
 					.insert(schema.group)
@@ -146,19 +146,19 @@ export async function seed(db: PostgresJsDatabase<typeof schema>) {
 		)
 	);
 
-	let teams = await Promise.all(
+	const teams = await Promise.all(
 		Array.from({ length: groups.length * 4 }).map(() =>
 			db.insert(schema.team).values({}).returning()
 		)
 	);
 
-	let rosters = await Promise.all(
+	const rosters = await Promise.all(
 		teams.map(async (team, i) => {
-			let name = generateTeamName();
-			let slug = name.toLowerCase().replaceAll(' ', '-').replaceAll('#', '');
-			let groupIndex = i % groups.length;
+			const name = generateTeamName();
+			const slug = name.toLowerCase().replaceAll(' ', '-').replaceAll('#', '');
+			const groupIndex = i % groups.length;
 
-			let result = await db
+			const result = await db
 				.insert(schema.roster)
 				.values({
 					name,
@@ -172,11 +172,11 @@ export async function seed(db: PostgresJsDatabase<typeof schema>) {
 		})
 	);
 
-	let players = await Promise.all(
+	const players = await Promise.all(
 		Array.from({ length: teams.length * 6 }).map(async () => {
-			let battletag = `Spelare#${rand()}`;
+			const battletag = `Spelare#${rand()}`;
 
-			let result = await db
+			const result = await db
 				.insert(schema.player)
 				.values({
 					battletag
@@ -189,7 +189,7 @@ export async function seed(db: PostgresJsDatabase<typeof schema>) {
 
 	await Promise.all(
 		players.map(async (player, i) => {
-			let rank = [
+			const rank = [
 				Rank.BRONZE,
 				Rank.SILVER,
 				Rank.GOLD,
@@ -199,14 +199,14 @@ export async function seed(db: PostgresJsDatabase<typeof schema>) {
 				Rank.GRANDMASTER,
 				Rank.CHAMPION
 			][Math.floor(Math.random() * 8)];
-			let tier = Math.floor(Math.random() * 5) + 1;
+			const tier = Math.floor(Math.random() * 5) + 1;
 
-			let rosterIndex = i % rosters.length;
-			let roster = rosters[rosterIndex];
+			const rosterIndex = i % rosters.length;
+			const roster = rosters[rosterIndex];
 
-			let memberIndex = Math.floor(i / rosters.length);
-			let isCaptain = memberIndex % 6 === 0;
-			let role = [Role.DAMAGE, Role.SUPPORT, Role.FLEX, Role.TANK][memberIndex % 4];
+			const memberIndex = Math.floor(i / rosters.length);
+			const isCaptain = memberIndex % 6 === 0;
+			const role = [Role.DAMAGE, Role.SUPPORT, Role.FLEX, Role.TANK][memberIndex % 4];
 
 			await db.insert(schema.member).values({
 				playerId: player.id,
@@ -221,12 +221,12 @@ export async function seed(db: PostgresJsDatabase<typeof schema>) {
 
 	await Promise.all(
 		groups.map(async (group) => {
-			let groupRosters = rosters.filter((roster) => roster.groupId === group.id);
+			const groupRosters = rosters.filter((roster) => roster.groupId === group.id);
 
 			for (let i = 0; i < groupRosters.length; i++) {
 				for (let j = i + 1; j < groupRosters.length; j++) {
-					let teamAScore = Math.floor(Math.random() * 4);
-					let teamBScore = 3 - teamAScore;
+					const teamAScore = Math.floor(Math.random() * 4);
+					const teamBScore = 3 - teamAScore;
 
 					await db.insert(schema.match).values({
 						groupId: group.id,

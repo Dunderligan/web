@@ -143,6 +143,7 @@
 						placeholder="Ett fräsigt lagnamn..."
 						bind:value={submission.name}
 						onchange={saveCtx.setDirty}
+						maxlength={50}
 					/>
 				</Label>
 
@@ -161,6 +162,7 @@
 						placeholder="Användarnamn (inte visningsnamn)..."
 						bind:value={submission.captainDiscordUsername}
 						onchange={saveCtx.setDirty}
+						maxlength={32}
 					/>
 				</Label>
 			{/if}

@@ -30,7 +30,9 @@ export class SaveContext {
 
 	private saveAction?: () => Promise<void>;
 	private discardAction: () => Promise<void>;
+
 	private confirmSave?: ConfirmDataFn;
+	private confirmContext?: ConfirmContext;
 
 	autoSave = $state(false);
 
@@ -50,6 +52,8 @@ export class SaveContext {
 
 		this.autoSave = options?.autoSave ?? false;
 		this.href = options?.href;
+
+		this.confirmContext = ConfirmContext.get();
 
 		beforeNavigate(({ cancel }) => {
 			if (!this.isDirty) return;
@@ -72,11 +76,17 @@ export class SaveContext {
 		}
 	};
 
-	save = async (confirmContext?: ConfirmContext): Promise<boolean> => {
+	save = async (): Promise<boolean> => {
 		const confirm = this.confirmSave?.();
-		if (confirm && confirmContext) {
-			const confimed = await confirmContext.confirm(confirm);
-			if (!confimed) return false;
+		if (confirm) {
+			if (this.confirmContext) {
+				const confimed = await this.confirmContext.confirm(confirm);
+				if (!confimed) return false;
+			} else {
+				console.warn(
+					'SaveContext is missing a ConfirmContext, but confirmSave was provided. The confirmation dialog will be skipped.'
+				);
+			}
 		}
 
 		try {
@@ -84,13 +94,13 @@ export class SaveContext {
 			await this.saveAction?.();
 
 			this.isDirty = false;
-
+		} catch (error) {
 			this.saving = false;
-			return true;
-		} catch (e) {
-			this.saving = false;
-			throw e;
+			throw error;
 		}
+
+		this.saving = false;
+		return true;
 	};
 
 	discard = async () => {

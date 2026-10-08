@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import AdminLink from '$lib/components/admin/AdminLink.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
@@ -10,7 +11,7 @@
 	import DateInput from '$lib/components/ui/DateInput.svelte';
 	import { createSeason } from '$lib/remote/season.remote';
 	import Checkbox from '$lib/components/form/Checkbox.svelte';
-	import { isAdmin, isModerator } from '$lib/auth-role.js';
+	import { isAdmin } from '$lib/auth-role.js';
 	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
 
 	let { data } = $props();
@@ -35,7 +36,7 @@
 			hidden
 		});
 
-		await goto(`/admin/sasong/${season.id}`);
+		await goto(resolve(`/admin/sasong/${season.id}`));
 	}
 
 	function resetNewSeason() {

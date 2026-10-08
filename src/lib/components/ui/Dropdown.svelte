@@ -21,7 +21,7 @@
 		{@render children?.()}
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content class="floating">
-		{#each items as item}
+		{#each items as item (item.label)}
 			{#if !item.hidden}
 				{#if item.type === 'button'}
 					<DropdownMenu.Item class="floating-item">

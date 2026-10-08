@@ -14,11 +14,7 @@
 		onValueChange?: (player: PlayerOption | null) => void;
 	};
 
-	let {
-		value = $bindable(),
-		disabled = false,
-		onValueChange
-	}: Props = $props();
+	let { value = $bindable(), disabled = false, onValueChange }: Props = $props();
 
 	let searchQuery = $state('');
 	let items: { label: string; value: string }[] = $state([]);

@@ -1,7 +1,7 @@
 import { sql, eq } from 'drizzle-orm';
 import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 import { db, schema } from '$lib/server/db';
-import type { PgTransaction } from 'drizzle-orm/pg-core';
+import type { PgColumn, PgTransaction } from 'drizzle-orm/pg-core';
 import type { PlayerCheckin } from '$lib/types';
 
 // Helper queries and functions for database operations.
@@ -133,6 +133,7 @@ export const finalMatchQuery = {
 } as const;
 
 export const memberQueryWithoutPlayer = {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	orderBy: (t: any) => sql`${rolesOrder(t.role)}, ${t.playerId} ASC`,
 	columns: {
 		isCaptain: true,
@@ -158,7 +159,7 @@ export const memberQuery = {
 
 export type Transaction = PgTransaction<PostgresJsQueryResultHKT, typeof schema>;
 
-export function rolesOrder(column: any) {
+export function rolesOrder(column: PgColumn) {
 	return sql`(
 		CASE ${column}
 			WHEN 'tank' THEN 1
@@ -186,9 +187,9 @@ export function rosterSeasonFilter(seasonId: string) {
 
 export function isNull(isNull: boolean | null | undefined) {
 	if (isNull === true) {
-		return { isNull: true as true };
+		return { isNull: true as const };
 	} else if (isNull === false) {
-		return { isNotNull: true as true };
+		return { isNotNull: true as const };
 	} else {
 		return {};
 	}
@@ -199,7 +200,7 @@ export function isNull(isNull: boolean | null | undefined) {
  *
  * Used for sorting divisions and brackets.
  */
-export function divisionOrder(column: any) {
+export function divisionOrder(column: PgColumn) {
 	return sql`(
 		CASE ${column}
 			WHEN 'Dunderligan' THEN '0'
@@ -214,7 +215,7 @@ export type FindPlayerResult =
 	| { type: 'ambiguous'; matches: { id: string; battletag: string }[] }
 	| { type: 'missing' };
 
-export async function findPlayer(battletag: string): Promise<FindPlayerResult> {
+export async function lookupPlayer(battletag: string): Promise<FindPlayerResult> {
 	const name = battletag.split('#')[0];
 
 	// first match only player names, case-insensitively
@@ -252,11 +253,11 @@ export async function findPlayer(battletag: string): Promise<FindPlayerResult> {
 	}
 }
 
-export async function findOrCreatePlayer(
+export async function lookupOrCreatePlayer(
 	tx: Transaction,
 	battletag: string
 ): Promise<{ id: string; battletag: string }> {
-	const findResult = await findPlayer(battletag);
+	const findResult = await lookupPlayer(battletag);
 	switch (findResult.type) {
 		case 'found':
 			return findResult.player;
@@ -265,10 +266,11 @@ export async function findOrCreatePlayer(
 				`Multiple players found with the name "${battletag.split('#')[0]}". Please specify the full battletag.`
 			);
 		case 'missing':
-			const [newPlayer] = await tx.insert(schema.player).values({ battletag }).returning();
-
-			return { id: newPlayer.id, battletag };
+			break;
 	}
+
+	const [newPlayer] = await tx.insert(schema.player).values({ battletag }).returning();
+	return { id: newPlayer.id, battletag };
 }
 
 export async function retrievePlayerCheckins(

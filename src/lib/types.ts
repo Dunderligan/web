@@ -3,6 +3,7 @@ import type z from 'zod';
 import type { matchQueryParamsSchema } from './schemas';
 import type { ButtonRootProps, WithoutChildren } from 'bits-ui';
 import type { ClassValue } from 'svelte/elements';
+import type { ResolvedPathname } from '$app/types';
 
 export type ListedSeason = {
 	id: string;
@@ -305,7 +306,7 @@ export type DropdownItem = {
 	icon?: string;
 	hidden?: boolean;
 } & (
-	| { type: 'button'; href?: string; onclick?: () => void }
+	| { type: 'button'; href?: string | ResolvedPathname; onclick?: () => void }
 	| { type: 'checkbox'; checked: boolean; onchange: (value: boolean) => void }
 );
 
@@ -362,7 +363,7 @@ export type ButtonProps = {
 
 export type SearchItem = {
 	id: string;
-	href: string;
+	href: ResolvedPathname;
 	name: string;
 	subtitle?: string | null;
 	image?: string | null;

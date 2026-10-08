@@ -36,7 +36,7 @@ export function hiddenMatchFilter(user?: User | null) {
 				OR: [
 					{
 						groupId: {
-							isNull: true as true
+							isNull: true as const
 						}
 					},
 					{
@@ -48,7 +48,7 @@ export function hiddenMatchFilter(user?: User | null) {
 				OR: [
 					{
 						bracketId: {
-							isNull: true as true
+							isNull: true as const
 						}
 					},
 					{

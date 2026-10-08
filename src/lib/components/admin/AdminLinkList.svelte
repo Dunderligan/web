@@ -5,11 +5,12 @@
 	import Button from '../ui/Button.svelte';
 	import { isAdmin } from '$lib/auth-role';
 	import { page } from '$app/state';
+	import type { ResolvedPathname } from '$app/types';
 
 	type Props<T> = {
 		items: T[];
 		itemKey?: (item: T) => string;
-		linkHref: (item: T) => string;
+		linkHref: (item: T) => ResolvedPathname;
 		linkLabel?: (item: T) => string;
 		linkContent?: Snippet<[{ item: T }]>;
 		emptyText: string;

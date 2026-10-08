@@ -110,11 +110,12 @@ export function compareMatchDates(a: MatchWithoutRosters, b: MatchWithoutRosters
 /**
  * Creates a new, unresolved and scheduled match with default values for a group.
  */
-export function createGroupMatch(groupId: string): UnresolvedMatch {
+export function createGroupMatch(groupId: string): Required<UnresolvedMatch> {
 	return {
 		id: uuidv4(),
 		groupId,
 		bracketId: null,
+		divisionId: null,
 		rosterAId: null,
 		rosterBId: null,
 		teamAScore: 0,

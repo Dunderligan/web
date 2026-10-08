@@ -34,12 +34,12 @@ export const queryMatches = query(
 									OR: [
 										{
 											rosterAId: {
-												isNotNull: true as true
+												isNotNull: true as const
 											}
 										},
 										{
 											rosterBId: {
-												isNotNull: true as true
+												isNotNull: true as const
 											}
 										}
 									]

@@ -15,6 +15,7 @@
 	import MatchInfoRow from './MatchInfoRow.svelte';
 	import MatchNote from '../ui/Note.svelte';
 	import { shortenTeamName } from '$lib/util';
+	import { resolve } from '$app/paths';
 	import Button from '../ui/Button.svelte';
 	import { PreferencesState } from '$lib/state/preferences.svelte';
 	import type { ClassValue } from 'svelte/elements';
@@ -138,7 +139,7 @@
 		]}
 	>
 		{#if roster}
-			{@const href = `/lag/${roster.slug}/${seasonSlug}`}
+			{@const href = resolve(`/lag/${roster.slug}/${seasonSlug}`)}
 
 			<RosterLogo
 				id={roster.id}

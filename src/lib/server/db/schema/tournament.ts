@@ -14,7 +14,7 @@ import {
 	jsonb
 } from 'drizzle-orm/pg-core';
 import { enumToPgEnum, xor } from './util';
-import { and, isNotNull, isNull, or, sql } from 'drizzle-orm';
+import { isNotNull, isNull, or, sql } from 'drizzle-orm';
 import {
 	MatchState,
 	MatchType,
