@@ -44,7 +44,7 @@
 <Breadcrumbs
 	crumbs={[
 		{ label: season.name, href: `/admin/sasong/${season.id}` },
-		{ label: 'Incheckning', href: `/admin/checkin/${season.id}` }
+		{ label: 'Incheckning', href: `/admin/incheckning/${season.id}` }
 	]}
 />
 

@@ -48,6 +48,7 @@
 		minTeamCaptains,
 		maxTeamCaptains,
 		maxPlayersByRole,
+		// eslint-disable-next-line no-useless-assignment
 		invalid = $bindable(false)
 	}: Props = $props();
 

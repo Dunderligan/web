@@ -47,7 +47,6 @@
 		if (values.length === 0) return;
 
 		// href is already a resolved pathname
-		// eslint-disable-next-line svelte/no-navigation-without-resolve
 		await goto(values[0].href);
 		reset();
 		open = false;

@@ -102,6 +102,7 @@ export const createApiKey = command(
 
 		const { key, token } = await apiToken.createKey(name, locals.user!.id);
 
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { tokenHash, ...sanitizedKey } = key;
 
 		return { key: sanitizedKey, token };

@@ -1,4 +1,5 @@
 import { beforeNavigate, invalidateAll } from '$app/navigation';
+import type { ResolvedPathname } from '$app/types';
 import { ConfirmContext, type ConfirmData } from './confirm.svelte';
 import { defineContext } from './util';
 
@@ -37,13 +38,13 @@ export class SaveContext {
 	autoSave = $state(false);
 
 	// the href to return to after saving/discarding
-	href?: string;
+	href?: ResolvedPathname;
 
 	constructor(options?: {
 		save?: () => Promise<void>;
 		discard?: () => Promise<void>;
 		autoSave?: boolean;
-		href?: string;
+		href?: ResolvedPathname;
 		confirmSave?: ConfirmDataFn;
 	}) {
 		this.saveAction = options?.save;

@@ -13,6 +13,7 @@
 	import type { DropdownItem } from '$lib/types';
 	import SearchDialog from './SearchDialog.svelte';
 	import Link from '../ui/Link.svelte';
+	import type { ResolvedPathname } from '$app/types';
 
 	type Props = {
 		alwaysWhiteTextAtTop?: boolean;
@@ -20,7 +21,12 @@
 
 	let { alwaysWhiteTextAtTop }: Props = $props();
 
-	const links = [
+	type NavLink = {
+		href: ResolvedPathname;
+		label: string;
+	};
+
+	const links: NavLink[] = [
 		{
 			href: '/stallningar',
 			label: 'Ställningar'
@@ -48,7 +54,10 @@
 
 	const user = $derived(page.data.user);
 
-	const loginHref = $derived(`/api/login/battlenet?next=${page.url.pathname}`);
+	const loginHref = $derived.by(() => {
+		const next = encodeURIComponent(page.url.pathname);
+		return resolve(`/api/login/battlenet?next=${next}`);
+	});
 
 	const hamburgerLinks = $derived.by(() => {
 		if (user) return links;

@@ -21,12 +21,14 @@
 	import { capitalize, formatDateTime } from '$lib/util.js';
 	import Note from '$lib/components/ui/Note.svelte';
 	import Link from '$lib/components/ui/Link.svelte';
+	import { resolve } from '$app/paths';
 
 	let { data } = $props();
 
 	let player = $state(data.player);
+
 	const slug = $derived(player.battletag.replace('#', '-'));
-	const href = $derived(`/spelare/${slug}`);
+	const href = $derived(resolve(`/spelare/${slug}`));
 
 	SaveContext.set(new SaveContext({ save, href }));
 

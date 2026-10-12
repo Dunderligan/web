@@ -18,7 +18,7 @@
 		columns: Column[];
 		rows: T[];
 		row: Snippet<[{ value: T; index: number }]>;
-		key?: (value: T) => any;
+		key?: (value: T) => string | number;
 		class?: ClassValue;
 		kind?: Kind;
 		placeholder?: PlaceholderProps;
