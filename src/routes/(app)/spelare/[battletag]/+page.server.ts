@@ -1,4 +1,4 @@
-import { getRosterPlacement } from '$lib/match';
+import { getFinalMatch, getRosterPlacement } from '$lib/match';
 import { db, schema } from '$lib/server/db';
 import {
 	entityQuery,
@@ -108,11 +108,9 @@ export const load = async ({ params, locals }) => {
 	const memberships = player.memberships.map(({ roster, ...membership }) => {
 		const rosterCount = rosterCountByDivision.get(roster.group.division.id) ?? 0;
 
-		const { finalMatch, placement } = getRosterPlacement(
-			[...roster.matchesAsA, ...roster.matchesAsB],
-			roster.id,
-			rosterCount
-		);
+		const finalMatch = getFinalMatch([...roster.matchesAsA, ...roster.matchesAsB]);
+
+		const placement = getRosterPlacement(roster.id, rosterCount, finalMatch);
 
 		return {
 			...membership,

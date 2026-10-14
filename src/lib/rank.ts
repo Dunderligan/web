@@ -35,6 +35,10 @@ export function averageRank(ranks: NullableFullRank[]): FullRank | null {
 		total += rankToNum({ rank, tier });
 	}
 
+	if (nonNullCount === 0) {
+		return null;
+	}
+
 	return numToRank(total / nonNullCount);
 }
 
@@ -74,6 +78,10 @@ export function averageLegacyRank(ranks: NullableLegacyRank[]): LegacyRank | nul
 		total += sr;
 	}
 
+	if (nonNullCount === 0) {
+		return null;
+	}
+
 	return { sr: Math.round(total / nonNullCount) };
 }
 
@@ -108,6 +116,8 @@ export function getRank(rank: AnyRank): Rank {
  */
 export function getTierLabel(rank: AnyRank): string {
 	if (isLegacyRank(rank)) {
+		if (rank.sr === 0) return '0';
+
 		// round to nearest 100th with one decimal place
 		return `${Math.round(rank.sr / 100) / 10.0}k`;
 	} else {

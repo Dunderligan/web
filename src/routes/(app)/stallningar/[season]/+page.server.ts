@@ -97,7 +97,9 @@ export const load = async ({ params, locals }) => {
 			}
 
 			const tables = groupings.map(({ matches, rosters, ...table }) => {
-				const standings = calculateStandings(rosters, matches, season.legacySeeding);
+				const standings = calculateStandings(rosters, matches, {
+					legacy: season.legacySeeding
+				});
 
 				return {
 					...table,

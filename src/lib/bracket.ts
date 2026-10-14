@@ -2,6 +2,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { type UnresolvedMatchWithOrder, type LogicalMatch, MatchState } from './types';
 import { isMatchBetween } from './match';
 
+type BracketOptions = {
+	avoidPreviousMatchups: boolean;
+};
+
 /** Returns the minimum number of rounds needed in a bracket to accommodate a number of teams. */
 export function minBracketRounds(teamCount: number): number {
 	if (teamCount < 2) {
@@ -20,33 +24,14 @@ export function createBracket<R extends { id: string }, M extends LogicalMatch>(
 	rosters: R[],
 	matches: M[],
 	roundCount: number,
-	options: { avoidPreviousMatches?: boolean } = {
-		avoidPreviousMatches: true
+	options: BracketOptions = {
+		avoidPreviousMatchups: true
 	}
 ): UnresolvedMatchWithOrder[][] {
 	const slots = Math.pow(2, roundCount);
 	let emptySlots = slots - rosters.length;
 
-	const rounds = [];
-	let order = 0;
-
-	// create the final match
-	rounds.push([createMatch(order++, 0)]);
-
-	// create matches in reverse order
-	for (let i = 1; i < roundCount; i++) {
-		const round = [];
-
-		for (const nextMatch of rounds[i - 1]) {
-			const matchA = createMatch(order++, i, nextMatch.id);
-			const matchB = createMatch(order++, i, nextMatch.id);
-
-			round.push(matchA);
-			round.push(matchB);
-		}
-
-		rounds.push(round);
-	}
+	const rounds = createMatchRounds(roundCount);
 
 	// don't mutate the original rosters array
 	rosters = [...rosters];
@@ -93,7 +78,7 @@ export function createBracket<R extends { id: string }, M extends LogicalMatch>(
 
 			// if they have played each other in the group stage, skip
 			if (
-				options.avoidPreviousMatches &&
+				options.avoidPreviousMatchups &&
 				matches.some((match) => isMatchBetween(match, rosterA.id, otherRoster.id))
 			) {
 				continue;
@@ -118,6 +103,30 @@ export function createBracket<R extends { id: string }, M extends LogicalMatch>(
 	}
 
 	return rounds.reverse();
+}
+
+function createMatchRounds(roundCount: number) {
+	const rounds = [];
+	let order = 0;
+
+	// create the final match
+	rounds.push([createMatch(order++, 0)]);
+
+	// create matches in reverse order
+	for (let i = 1; i < roundCount; i++) {
+		const round = [];
+
+		for (const nextMatch of rounds[i - 1]) {
+			const matchA = createMatch(order++, i, nextMatch.id);
+			const matchB = createMatch(order++, i, nextMatch.id);
+
+			round.push(matchA);
+			round.push(matchB);
+		}
+
+		rounds.push(round);
+	}
+	return rounds;
 }
 
 /** Get the order of which matches in the first round of the bracket should be visited.

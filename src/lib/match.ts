@@ -146,25 +146,29 @@ export function resolvedMatchToLogical(match: ResolvedMatch): LogicalMatch {
 	};
 }
 
-export function getRosterPlacement(
-	matches: ResolvedMatchWithContext[],
-	rosterId: string,
-	rosterCount: number
-): { finalMatch: ResolvedMatchWithContext | null; placement: Placement | null } {
-	const finalMatch =
+export function getFinalMatch(
+	matches: ResolvedMatchWithContext[]
+): ResolvedMatchWithContext | null {
+	return (
 		matches
 			.filter((match) => match.round != null)
 			.sort((a, b) => a.round! - b.round!)
-			.at(0) ?? null;
+			.at(0) ?? null
+	);
+}
 
-	if (!finalMatch) {
-		return { finalMatch: null, placement: null };
-	}
+export function getRosterPlacement(
+	rosterId: string,
+	rosterCount: number,
+	finalMatch: ResolvedMatchWithContext | null
+): Placement | null {
+	if (!finalMatch || finalMatch.round == null) return null;
 
-	const round = finalMatch.round!;
+	const round = finalMatch.round;
+	const worst = Math.min(Math.pow(2, round + 1), rosterCount);
 
 	if (finalMatch.state === MatchState.SCHEDULED) {
-		return { finalMatch, placement: null };
+		return { best: 1, worst };
 	}
 
 	if (round === 0) {
@@ -173,16 +177,15 @@ export function getRosterPlacement(
 		// played in the grand final
 		const winner = matchWinner(logicalFinalMatch);
 		// grand final is undecided
-		if (!winner) return { finalMatch, placement: { best: 1, worst: 2 } };
+		if (!winner) return { best: 1, worst: 2 };
 
 		const place = matchRosterId(logicalFinalMatch, winner) === rosterId ? 1 : 2;
-		return { finalMatch, placement: { best: place, worst: null } };
+		return { best: place, worst: place };
 	}
 
 	// since we didn't win (or play) the grand final, we must have lost our final match
 
 	const best = Math.pow(2, round) + 1;
-	const worst = Math.min(Math.pow(2, round + 1), rosterCount);
 
-	return { finalMatch, placement: { best, worst } };
+	return { best, worst };
 }

@@ -6,7 +6,7 @@ import { matchSchema } from '$lib/schemas';
 import { roleGuard } from './auth.remote';
 import { createBracket } from '$lib/bracket';
 import { error } from '@sveltejs/kit';
-import { sortBySeed } from '$lib/standings';
+import { sortBySeed, type SeedOptions } from '$lib/standings';
 import { MatchState, type UnresolvedMatchWithOrder } from '$lib/types';
 import { fullMatchColumns, rosterQuery } from '$lib/server/db/helpers';
 import { AuthRole } from '$lib/auth-role';
@@ -16,21 +16,25 @@ export const generateBracket = command(
 		name: z.string(),
 		divisionId: z.uuid(),
 		roundCount: z.number(),
-		avoidPreviousMatches: z.boolean(),
+		avoidPreviousMatchups: z.boolean(),
 		flipStandings: z.boolean()
 	}),
-	async ({ name, divisionId, roundCount, avoidPreviousMatches, flipStandings }) => {
+	async ({ name, divisionId, roundCount, avoidPreviousMatchups, flipStandings }) => {
 		await roleGuard(AuthRole.ADMIN);
 
-		const { groups, groupwiseStandings } = await fetchDivision(divisionId);
+		const { groups, groupwiseStandings, season } = await fetchDivision(divisionId);
 
 		const rosters = groups.flatMap((group) => group.rosters);
 		const groupMatches = groups.flatMap((group) => group.matches);
 
+		const seedOptions: SeedOptions = {
+			legacy: season.legacySeeding
+		};
+
 		let qualifying;
 		if (!groupwiseStandings) {
 			// combine all groups and pick the highest seeded teams
-			sortBySeed(rosters, groupMatches, false);
+			sortBySeed(rosters, groupMatches, seedOptions);
 			qualifying = rosters;
 
 			if (flipStandings) {
@@ -44,7 +48,7 @@ export const generateBracket = command(
 
 			for (const group of groups) {
 				// seed each group individually
-				sortBySeed(group.rosters, group.matches, false);
+				sortBySeed(group.rosters, group.matches, seedOptions);
 
 				if (flipStandings) {
 					group.rosters.reverse();
@@ -64,11 +68,11 @@ export const generateBracket = command(
 			}
 
 			// finally sort by overall seed by combining all groups again
-			sortBySeed(qualifying, groupMatches, false);
+			sortBySeed(qualifying, groupMatches, seedOptions);
 		}
 
 		const rounds = createBracket(qualifying, groupMatches, roundCount, {
-			avoidPreviousMatches
+			avoidPreviousMatchups
 		});
 
 		const bracket = await insertBracket(name, divisionId, rounds);
@@ -118,6 +122,11 @@ async function fetchDivision(divisionId: string) {
 			groupwiseStandings: true
 		},
 		with: {
+			season: {
+				columns: {
+					legacySeeding: true
+				}
+			},
 			groups: {
 				columns: {},
 				with: {

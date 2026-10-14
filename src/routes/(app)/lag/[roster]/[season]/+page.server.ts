@@ -7,7 +7,7 @@ import {
 import { hiddenGroupFilter } from '$lib/server/db/hidden.js';
 import { db, schema } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
-import { compareMatchDates, getRosterPlacement } from '$lib/match.js';
+import { compareMatchDates, getFinalMatch, getRosterPlacement } from '$lib/match.js';
 import { and, eq, not, sql } from 'drizzle-orm';
 
 export const load = async ({ params, locals }) => {
@@ -66,7 +66,9 @@ export const load = async ({ params, locals }) => {
 	);
 
 	const rosterCount = await getRosterCount(rosterInfo.group.division.id);
-	const { placement } = getRosterPlacement(matches, roster.id, rosterCount);
+
+	const finalMatch = getFinalMatch(matches);
+	const placement = getRosterPlacement(roster.id, rosterCount, finalMatch);
 
 	return { roster: { ...roster, ...rosterInfo }, matches, placement };
 };

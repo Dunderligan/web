@@ -14,6 +14,11 @@ export const GET = async ({ params }) => {
 			groupwiseStandings: true
 		},
 		with: {
+			season: {
+				columns: {
+					legacySeeding: true
+				}
+			},
 			groups: {
 				columns: {
 					name: true
@@ -41,7 +46,9 @@ export const GET = async ({ params }) => {
 	}
 
 	const tables = groupings.map((grouping) => {
-		const standings = calculateStandings(grouping.rosters, grouping.matches, false);
+		const standings = calculateStandings(grouping.rosters, grouping.matches, {
+			legacy: division.season.legacySeeding
+		});
 
 		const resolvedStandings = standings.map(({ rosterId, score }) => {
 			const roster = grouping.rosters.find((roster) => roster.id === rosterId)!;

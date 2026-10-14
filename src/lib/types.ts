@@ -260,7 +260,9 @@ export type BracketWinner = {
 	bracket: NestedBracket;
 };
 
-export type TournamentState = { season: BaseEntity & { startedAt: Date | null } } & (
+export type TournamentState = {
+	season: BaseEntity & { startedAt: Date | null };
+} & (
 	| { status: 'ongoing' } // active season
 	| { status: 'offseason'; winners: BracketWinner[] } // season has ended before next registration is published
 	| { status: 'upcoming'; registrationOpensAt: Date | null } // before registration opens
@@ -328,7 +330,7 @@ export type ChipColor = 'gray' | 'yellow' | 'green' | 'accent';
 
 export type Placement = {
 	best: number;
-	worst: number | null;
+	worst: number;
 };
 
 export type SearchItem = {

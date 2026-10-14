@@ -19,7 +19,7 @@
 
 	let name = $derived(divisionName);
 	let roundCount = $state(2);
-	let avoidPreviousMatches = $state(true);
+	let avoidPreviousMatchups = $state(true);
 	let flipStandings = $state(false);
 
 	async function submit() {
@@ -27,7 +27,7 @@
 			name,
 			divisionId,
 			roundCount: roundCount,
-			avoidPreviousMatches,
+			avoidPreviousMatchups,
 			flipStandings
 		});
 
@@ -59,7 +59,7 @@
 	</Label>
 
 	<Label label="Undvik tidigare möten">
-		<Checkbox bind:checked={avoidPreviousMatches} />
+		<Checkbox bind:checked={avoidPreviousMatchups} />
 	</Label>
 
 	<Label label="Invertera seeding">
