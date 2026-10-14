@@ -23,10 +23,16 @@
 
 	const { data } = $props();
 
-	const division = $derived(data.group.division);
+	// eslint-disable-next-line svelte/prefer-writable-derived
+	let group = $state(data.group);
+	const division = $derived(group.division);
 	const season = $derived(division.season);
 
-	RosterContext.set(new RosterContext(data.group.rosters));
+	$effect(() => {
+		group = data.group;
+	});
+
+	RosterContext.set(new RosterContext(group.rosters));
 	SaveContext.set(
 		new SaveContext({
 			save,
@@ -45,7 +51,7 @@
 	const userIsAdmin = $derived(isAdmin(data.user?.role));
 
 	const shownMatchIndicies = $derived(
-		data.group.matches
+		group.matches
 			.map((match, index) => ({ match, index }))
 			.filter(({ match }) => {
 				if (!rosterFilter) return true;
@@ -56,30 +62,30 @@
 
 	async function save() {
 		await updateGroup({
-			id: data.group.id,
-			name: data.group.name,
-			matches: data.group.matches
+			id: group.id,
+			name: group.name,
+			matches: group.matches
 		});
 	}
 
 	async function submitDelete() {
 		await confirmCtx.confirm({
 			title: 'Radera grupp',
-			description: `Är du säker på att du vill radera ${data.group.name} i ${data.group.division.name}, ${data.group.division.season.name} <b>tillsammans med ${data.group.rosters.length} rosters</b>?`,
+			description: `Är du säker på att du vill radera ${group.name} i ${group.division.name}, ${group.division.season.name} <b>tillsammans med ${group.rosters.length} rosters</b>?`,
 			destructive: true,
 			action: async () => {
 				await deleteGroup({
-					id: data.group.id
+					id: group.id
 				});
 
-				await goto(resolve(`/admin/division/${data.group.division.id}`));
+				await goto(resolve(`/admin/division/${group.division.id}`));
 			}
 		});
 	}
 
 	async function submitNewRoster(name: string, teamId?: string) {
 		const { roster } = await createRoster({
-			groupId: data.group.id,
+			groupId: group.id,
 			name: name,
 			teamId
 		});
@@ -88,10 +94,10 @@
 	}
 
 	function addMatchAndEdit() {
-		const match = createGroupMatch(data.group.id);
+		const match = createGroupMatch(group.id);
 
-		data.group.matches.unshift(match);
-		rosterCtx.editMatch(data.group.matches[0]);
+		group.matches.unshift(match);
+		rosterCtx.editMatch(group.matches[0]);
 		saveCtx.setDirty();
 	}
 </script>
@@ -102,13 +108,13 @@
 	crumbs={[
 		{ label: season.name, href: `/admin/sasong/${season.id}` },
 		{ label: division.name, href: `/admin/division/${division.id}` },
-		{ label: data.group.name, href: `/admin/grupp/${data.group.id}` }
+		{ label: group.name, href: `/admin/grupp/${group.id}` }
 	]}
 />
 
 <AdminCard title="Lag">
 	<AdminRosterList
-		rosters={data.group.rosters}
+		rosters={group.rosters}
 		emptyText="Denna grupp har inga lag!"
 		oncreateclick={() => (addRosterOpen = true)}
 		showCheckins={season.checkinOpen}
@@ -117,7 +123,7 @@
 </AdminCard>
 
 <AdminCard title="Gruppspel">
-	{#if data.group.matches.length === 0}
+	{#if group.matches.length === 0}
 		<AdminEmptyNotice oncreateclick={addMatchAndEdit} hideCreateButton={!userIsAdmin}>
 			Denna grupp har inga matcher.
 		</AdminEmptyNotice>
@@ -127,13 +133,13 @@
 		</Label>
 
 		<div class="grid grid-cols-1 gap-2 overflow-hidden rounded-lg md:grid-cols-2">
-			{#each shownMatchIndicies as matchIndex (data.group.matches[matchIndex].id)}
-				{@const match = data.group.matches[matchIndex]}
+			{#each shownMatchIndicies as matchIndex (group.matches[matchIndex].id)}
+				{@const match = group.matches[matchIndex]}
 
 				<EditableMatch
 					{match}
 					ondelete={() => {
-						data.group.matches.splice(matchIndex, 1);
+						group.matches.splice(matchIndex, 1);
 						saveCtx.setDirty();
 					}}
 				/>
@@ -149,7 +155,7 @@
 {#if userIsAdmin}
 	<AdminCard title="Inställningar">
 		<Label label="Namn">
-			<InputField bind:value={data.group.name} oninput={saveCtx.setDirty} />
+			<InputField bind:value={group.name} oninput={saveCtx.setDirty} />
 		</Label>
 
 		<Button icon="ph:trash" label="Radera grupp" kind="destructive" onclick={submitDelete} />

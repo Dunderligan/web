@@ -47,7 +47,7 @@
 	}
 
 	async function save() {
-		await updateSeason(data.season);
+		await updateSeason(season);
 	}
 
 	async function onDeleteClicked() {
