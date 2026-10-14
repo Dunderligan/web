@@ -82,7 +82,7 @@
 	</div>
 
 	{#if (division && !hideDivision) || match.vodUrl}
-		<span class="-mx-1.5 text-base">•</span>
+		<span class="-mx-2 text-base">—</span>
 	{/if}
 
 	{#if division && !hideDivision}
@@ -96,6 +96,6 @@
 	{/if}
 
 	{#if match.vodUrl}
-		<Link href={match.vodUrl} openInNewTab>VOD</Link>
+		<Link externalHref={match.vodUrl} openInNewTab>VOD</Link>
 	{/if}
 </div>

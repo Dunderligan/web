@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { socials } from '$lib/socials';
-	import type { HTMLAnchorAttributes } from 'svelte/elements';
 	import Link from './Link.svelte';
+	import type { ComponentProps } from 'svelte';
 
-	let props: Omit<HTMLAnchorAttributes, 'href'> = $props();
+	let props: Omit<ComponentProps<typeof Link>, 'href' | 'externalHref'> = $props();
 </script>
 
-<Link href={socials.discord} {...props} openInNewTab class="font-semibold" />
+<Link externalHref={socials.discord} {...props} openInNewTab class="font-semibold" />

@@ -15,7 +15,7 @@
 
 <Tooltip.Root>
 	<Tooltip.Trigger
-		class={[classProp, underline && 'border-b border-dashed border-gray-800 dark:border-gray-300']}
+		class={[classProp, underline && 'border-b border-dashed border-gray-700 dark:border-gray-400']}
 	>
 		{@render children()}
 	</Tooltip.Trigger>

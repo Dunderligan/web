@@ -1,8 +1,7 @@
 <script lang="ts" generics="T">
 	import type { ClassValue } from 'svelte/elements';
-	import type { Snippet } from 'svelte';
+	import type { ComponentProps, Snippet } from 'svelte';
 	import Note from '../ui/Note.svelte';
-	import type { PlaceholderProps } from '$lib/types';
 	import Placeholder from '../ui/Placeholder.svelte';
 
 	type Kind = 'neutral' | 'transparent';
@@ -21,7 +20,7 @@
 		key?: (value: T) => string | number;
 		class?: ClassValue;
 		kind?: Kind;
-		placeholder?: PlaceholderProps;
+		placeholder?: ComponentProps<typeof Placeholder>;
 	};
 
 	let {

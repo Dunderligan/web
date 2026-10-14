@@ -1,7 +1,6 @@
 import type { Snippet } from 'svelte';
 import type z from 'zod';
 import type { matchQueryParamsSchema } from './schemas';
-import type { ButtonRootProps, WithoutChildren } from 'bits-ui';
 import type { ClassValue } from 'svelte/elements';
 import type { ResolvedPathname } from '$app/types';
 
@@ -254,8 +253,6 @@ export type LogicalMatch = {
 	rosterBId: string | null;
 };
 
-export type ButtonKind = 'primary' | 'secondary' | 'tertiary' | 'transparent' | 'destructive';
-
 export type SeasonState = 'upcoming' | 'ongoing' | 'ended';
 
 export type BracketWinner = {
@@ -292,13 +289,6 @@ export type CardProps = {
 	image: string;
 	alt: string;
 	children?: Snippet;
-};
-
-export type PlaceholderProps = {
-	icon?: string;
-	text: string;
-	onclick?: () => void;
-	class?: ClassValue;
 };
 
 export type DropdownItem = {
@@ -340,26 +330,6 @@ export type Placement = {
 	best: number;
 	worst: number | null;
 };
-
-export type ButtonProps = {
-	icon?: string;
-	kind?: ButtonKind;
-	loading?: boolean;
-	openInNewTab?: boolean;
-} & (
-	| { children: Snippet; label?: never; icon?: never }
-	| {
-			children?: never;
-			label: string;
-			icon?: string;
-	  }
-	| {
-			children?: never;
-			label?: never;
-			icon: string;
-	  }
-) &
-	WithoutChildren<ButtonRootProps>;
 
 export type SearchItem = {
 	id: string;

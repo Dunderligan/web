@@ -84,6 +84,10 @@
 		-webkit-appearance: none;
 		margin: 0;
 	}
+
+	b {
+		font-weight: 600;
+	}
 }
 
 /*

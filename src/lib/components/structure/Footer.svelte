@@ -30,12 +30,12 @@
 			</div>
 
 			<p class="mt-2">
-				Dunderligan är<br /><Link href={socials.github} openInNewTab>öppen källkod</Link>.
+				Dunderligan är<br /><Link externalHref={socials.github} openInNewTab>öppen källkod</Link>.
 				<br />
 				{#if commitHash}
 					<Icon icon="ph:git-commit" class="inline-block" />
 					<Link
-						href="https://github.com/Dunderligan/web/commit/{commitHash}"
+						externalHref="https://github.com/Dunderligan/web/commit/{commitHash}"
 						openInNewTab
 						hideExternalIcon>{commitHash.slice(0, 7)}</Link
 					>
@@ -93,6 +93,8 @@
 	]}
 >
 	{#snippet description()}
-		Du kan nå oss på <Link href="mailto:dunderleagueow@gmail.com">dunderleagueow@gmail.com</Link>
+		Du kan nå oss på <Link externalHref="mailto:dunderleagueow@gmail.com"
+			>dunderleagueow@gmail.com</Link
+		>
 	{/snippet}
 </Dialog>

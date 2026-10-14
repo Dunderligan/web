@@ -1,22 +1,38 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import Icon from './Icon.svelte';
-	import type { ButtonProps } from '$lib/types';
+	import type { ButtonRootProps, WithoutChildren } from 'bits-ui';
+
+	type ButtonKind = 'primary' | 'secondary' | 'tertiary' | 'transparent' | 'destructive';
+
+	type Content =
+		| { children: Snippet; label?: never; icon?: never }
+		| { children?: never; label: string; icon?: string }
+		| { children?: never; label?: never; icon: string };
+
+	type Props = {
+		kind?: ButtonKind;
+		loading?: boolean;
+		openInNewTab?: boolean;
+	} & Content &
+		WithoutChildren<ButtonRootProps>;
 
 	let {
-		icon: iconProp,
 		children,
+		label,
+		icon,
 		loading,
 		disabled: disabledProp,
-		label,
 		class: classProp,
 		kind = 'primary',
 		href,
 		openInNewTab,
 		...props
-	}: ButtonProps = $props();
+	}: Props = $props();
 
 	const disabled = $derived(disabledProp || loading);
-	const icon = $derived(loading ? 'ph:spinner' : iconProp);
+
+	const resolvedIcon = $derived(loading ? 'ph:spinner' : icon);
 
 	const typeClass = $derived(
 		{
@@ -51,8 +67,8 @@
 	{#if children}
 		{@render children()}
 	{:else}
-		{#if icon}
-			<Icon {icon} class={[loading && 'animate-spin', 'text-lg']} />
+		{#if resolvedIcon}
+			<Icon icon={resolvedIcon} class={[loading && 'animate-spin', 'text-lg']} />
 		{/if}
 
 		{label}

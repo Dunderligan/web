@@ -1,13 +1,12 @@
 <script lang="ts">
-	import type { Snippet } from 'svelte';
+	import type { ComponentProps, Snippet } from 'svelte';
 	import Icon from './Icon.svelte';
 	import type { ClassValue } from 'svelte/elements';
-	import type { ButtonProps } from '$lib/types';
 	import Button from './Button.svelte';
 
 	type Props = {
 		kind: 'info' | 'warn' | 'error' | 'discord';
-		button?: ButtonProps;
+		button?: ComponentProps<typeof Button>;
 		children?: Snippet;
 		class?: ClassValue;
 	};

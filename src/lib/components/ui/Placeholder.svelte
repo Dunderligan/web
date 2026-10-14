@@ -1,8 +1,15 @@
 <script lang="ts">
-	import type { PlaceholderProps } from '$lib/types';
+	import type { ClassValue } from 'svelte/elements';
 	import Icon from './Icon.svelte';
 
-	let { icon, text, class: classProp, ...rest }: PlaceholderProps = $props();
+	type Props = {
+		icon?: string;
+		text: string;
+		onclick?: () => void;
+		class?: ClassValue;
+	};
+
+	let { icon, text, class: classProp, ...rest }: Props = $props();
 </script>
 
 <div

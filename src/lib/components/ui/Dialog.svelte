@@ -1,15 +1,14 @@
 <script lang="ts">
 	import { Dialog, type DialogRootProps } from 'bits-ui';
 	import { fade } from 'svelte/transition';
-	import type { ButtonProps } from '$lib/types';
 	import Button from './Button.svelte';
-	import type { Snippet } from 'svelte';
+	import type { ComponentProps, Snippet } from 'svelte';
 
 	type Position = 'center' | 'top';
 
 	type Props = {
 		title: string;
-		buttons?: ButtonProps[];
+		buttons?: ComponentProps<typeof Button>[];
 		description?: string | Snippet;
 		wide?: boolean;
 		position?: Position;

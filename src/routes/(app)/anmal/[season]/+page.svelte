@@ -17,7 +17,7 @@
 	import Notice from '$lib/components/ui/Notice.svelte';
 	import { submitTeam } from '$lib/remote/registration.remote.js';
 	import { SaveContext } from '$lib/state/save.svelte.js';
-	import { Role, type ButtonKind, type TeamSubmissionData } from '$lib/types.js';
+	import { Role, type TeamSubmissionData } from '$lib/types.js';
 	import { formatDate } from '$lib/util';
 	import { onMount } from 'svelte';
 	import { get, set } from 'idb-keyval';
@@ -320,7 +320,7 @@
 					{
 						label: 'Till anmälan',
 						href: `/admin/laganmalan/${createdId}`,
-						kind: 'primary' as ButtonKind,
+						kind: 'primary' as const,
 						icon: 'ph:arrow-right'
 					}
 				]
