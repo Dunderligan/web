@@ -2,7 +2,7 @@
 	import type { TeamSubmissionInfo } from '$lib/types';
 	import { formatDate } from '$lib/util';
 	import SubmissionChip from '../admin/SubmissionChip.svelte';
-	import Table from './Table.svelte';
+	import NewTable from './NewTable.svelte';
 	import Button from '../ui/Button.svelte';
 
 	type Props = {
@@ -23,44 +23,49 @@
 	}
 </script>
 
-<Table
+{#snippet nameCell(submission: TeamSubmissionInfo)}
+	{submission.name}
+{/snippet}
+
+{#snippet statusCell(submission: TeamSubmissionInfo)}
+	<SubmissionChip status={submission.status} />
+{/snippet}
+
+{#snippet actionCell(submission: TeamSubmissionInfo)}
+	<Button
+		icon="ph:arrow-right"
+		label="Hantera"
+		kind="tertiary"
+		href="/admin/laganmalan/{submission.id}"
+	/>
+{/snippet}
+
+<NewTable
 	kind="transparent"
 	rows={shownSubmissions}
+	key={(submission) => submission.id}
 	columns={[
-		{ label: 'Lagnamn', width: '1fr' },
-		{ label: 'Status', center: true },
-		{ label: 'Skapad', center: true },
-		{ label: 'Redigerad', center: true },
-		{ label: 'Granskad', center: true },
-		{}
+		{ label: 'Lagnamn', snippet: nameCell, class: 'text-lg font-semibold' },
+		{ label: 'Status', snippet: statusCell, center: true },
+		{
+			label: 'Skapad',
+			content: (submission) => (submission.createdAt ? formatDate(submission.createdAt) : '-'),
+			center: true
+		},
+		{
+			label: 'Redigerad',
+			content: (submission) => (submission.editedAt ? formatDate(submission.editedAt) : '-'),
+			center: true
+		},
+		{
+			label: 'Granskad',
+			content: (submission) => (submission.reviewedAt ? formatDate(submission.reviewedAt) : '-'),
+			center: true
+		},
+		{ snippet: actionCell }
 	]}
 	placeholder={{
 		icon: 'ph:magnifying-glass',
 		text: 'Inga anmälningar att visa'
 	}}
->
-	{#snippet row({ value: submission })}
-		<div class="py-4 text-lg font-semibold">
-			{submission.name}
-		</div>
-
-		<div class="justify-center">
-			<SubmissionChip status={submission.status} />
-		</div>
-
-		{#each [submission.createdAt, submission.editedAt, submission.reviewedAt] as date, i (i)}
-			<div class="justify-center">
-				{date ? formatDate(date) : '-'}
-			</div>
-		{/each}
-
-		<div>
-			<Button
-				icon="ph:arrow-right"
-				label="Hantera"
-				kind="tertiary"
-				href="/admin/laganmalan/{submission.id}"
-			/>
-		</div>
-	{/snippet}
-</Table>
+/>

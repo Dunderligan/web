@@ -30,7 +30,7 @@
 	SaveContext.set(
 		new SaveContext({
 			save,
-			href: `/stallningar/${season.slug}?div=${division.slug}&visa=gruppspel`
+			href: () => `/stallningar/${season.slug}?div=${division.slug}&visa=gruppspel`
 		})
 	);
 

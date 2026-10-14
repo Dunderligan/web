@@ -28,9 +28,8 @@
 	let player = $state(data.player);
 
 	const slug = $derived(player.battletag.replace('#', '-'));
-	const href = $derived(resolve(`/spelare/${slug}`));
 
-	SaveContext.set(new SaveContext({ save, href }));
+	SaveContext.set(new SaveContext({ save, href: () => resolve(`/spelare/${slug}`) }));
 
 	const saveCtx = SaveContext.get();
 

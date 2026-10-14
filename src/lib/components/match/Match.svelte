@@ -70,7 +70,7 @@
 <div
 	class={[
 		size === 'xs' ? 'py-2.5' : 'py-3',
-		'relative rounded-lg bg-gray-100 px-6 dark:bg-gray-900'
+		'relative shrink-0 rounded-lg bg-gray-100 px-6 dark:bg-gray-900'
 	]}
 >
 	{#if size !== 'xs'}
@@ -149,7 +149,7 @@
 
 			<a
 				{href}
-				class={[size === 'sm' && 'shrink-0', 'truncate text-lg font-semibold hover:underline']}
+				class={[size === 'sm' ? 'shrink-0' : 'truncate', 'text-lg font-semibold hover:underline']}
 			>
 				{size === 'md' ? roster.name : shortenTeamName(roster.name)}
 			</a>

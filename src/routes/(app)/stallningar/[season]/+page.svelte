@@ -165,7 +165,7 @@
 </PageHeader>
 
 <PageSection>
-	<div class="mb-4 max-w-2xl space-y-1.5">
+	<div class="mb-4 max-w-2xl space-y-1">
 		{#if divisions.length > 1}
 			<Tabs
 				selected={division.id}

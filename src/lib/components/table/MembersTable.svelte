@@ -4,7 +4,7 @@
 	import { capitalize, roleIcon } from '$lib/util';
 	import Icon from '../ui/Icon.svelte';
 	import Rank from '../ui/Rank.svelte';
-	import Table from './Table.svelte';
+	import NewTable from './NewTable.svelte';
 	import Link from '../ui/Link.svelte';
 
 	type Props = {
@@ -15,44 +15,46 @@
 	let { members, class: classProp }: Props = $props();
 </script>
 
-<Table
+{#snippet roleCell({ role }: Member)}
+	<Icon class="text-xl" icon={roleIcon(role)} title={capitalize(role)} />
+{/snippet}
+
+{#snippet battletagCell({ player, isCaptain, registeredName }: Member)}
+	{@const shownName =
+		registeredName ?? (isCaptain ? player.battletag : player.battletag.split('#')[0])}
+
+	<Link
+		class="text-lg font-semibold"
+		href="/spelare/{player.battletag.replace('#', '-')}"
+		title={player.battletag}>{shownName}</Link
+	>
+
+	{#if isCaptain}
+		<Icon icon="ph:crown-simple" class="ml-2" title="Lagkapten" />
+	{/if}
+{/snippet}
+
+{#snippet rankCell({ rank, tier, sr }: Member)}
+	{#if rank && tier}
+		<Rank rank={{ rank, tier }} collapse />
+	{:else if sr}
+		<Rank rank={{ sr }} collapse />
+	{/if}
+{/snippet}
+
+<NewTable
 	columns={[
-		{ label: 'Roll', center: true, width: 'min-content' },
+		{ label: 'Roll', snippet: roleCell, center: true },
 		{
-			label: 'Battletag'
+			label: 'Battletag',
+			snippet: battletagCell
 		},
 		{
-			label: 'Rank'
+			label: 'Rank',
+			snippet: rankCell
 		}
 	]}
 	rows={members}
 	key={(member) => member.player.battletag}
 	class={classProp}
->
-	{#snippet row({ value: { player, role, rank, sr, tier, isCaptain, registeredName } })}
-		{@const shownName =
-			registeredName ?? (isCaptain ? player.battletag : player.battletag.split('#')[0])}
-
-		<div class="justify-center text-xl">
-			<Icon icon={roleIcon(role)} title={capitalize(role)} />
-		</div>
-
-		<div class="text-lg font-semibold">
-			<Link href="/spelare/{player.battletag.replace('#', '-')}" title={player.battletag}
-				>{shownName}</Link
-			>
-
-			{#if isCaptain}
-				<Icon icon="ph:crown-simple" class="mb-0.5 ml-2" title="Lagkapten" />
-			{/if}
-		</div>
-
-		<div>
-			{#if rank && tier}
-				<Rank rank={{ rank, tier }} collapse />
-			{:else if sr}
-				<Rank rank={{ sr }} collapse />
-			{/if}
-		</div>
-	{/snippet}
-</Table>
+/>

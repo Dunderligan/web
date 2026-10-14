@@ -7,7 +7,7 @@
 	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
 	import PlayerSelect from '$lib/components/admin/PlayerSelect.svelte';
 	import SaveToast from '$lib/components/admin/SaveToast.svelte';
-	import Table from '$lib/components/table/Table.svelte';
+	import NewTable from '$lib/components/table/NewTable.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Checkbox from '$lib/components/form/Checkbox.svelte';
 	import InputField from '$lib/components/form/InputField.svelte';
@@ -24,6 +24,10 @@
 		uploadAwardTypeImage
 	} from '$lib/remote/award.remote';
 	import type { PlayerAward } from '$lib/types.js';
+
+	type AwardRow = PlayerAward & {
+		player: { id: string; battletag: string };
+	};
 	import TextArea from '$lib/components/form/TextArea.svelte';
 	import ImageUpload from '$lib/components/form/ImageUpload.svelte';
 	import Link from '$lib/components/ui/Link.svelte';
@@ -132,45 +136,43 @@
 			Denna utmärkelse har inte tilldelats någon spelare än.
 		</AdminEmptyNotice>
 	{:else}
-		<Table
+		{#snippet battletagCell(award: AwardRow)}
+			<Link href="/admin/spelare/{award.player.id}">{award.player.battletag}</Link>
+		{/snippet}
+
+		{#snippet seasonCell(award: AwardRow)}
+			<Link href="/admin/sasong/{award.division?.season.id}">
+				{award.division?.season.name}
+			</Link>
+		{/snippet}
+
+		{#snippet divisionCell(award: AwardRow)}
+			<Link href="/admin/division/{award.division?.id}">{award.division?.name}</Link>
+		{/snippet}
+
+		{#snippet actionsCell(award: AwardRow)}
+			<Button
+				icon="ph:pencil-simple"
+				kind="tertiary"
+				onclick={() => {
+					editAward = award;
+					newDescription = award.description ?? '';
+					editOpen = true;
+				}}
+			/>
+			<Button icon="ph:trash" kind="tertiary" onclick={() => deleteAward(award.id)} />
+		{/snippet}
+
+		<NewTable
 			rows={awards}
 			key={(award) => award.id}
 			columns={[
-				{ label: 'Battletag' },
-				{ label: awardType.showDivision ? 'Säsong' : '', center: true },
-				{ label: awardType.showDivision ? 'Division' : '', center: true },
-				{ width: 'min-content' }
+				{ label: 'Battletag', snippet: battletagCell, class: 'font-semibold' },
+				{ label: awardType.showDivision ? 'Säsong' : '', snippet: seasonCell, center: true },
+				{ label: awardType.showDivision ? 'Division' : '', snippet: divisionCell, center: true },
+				{ snippet: actionsCell, center: true, class: 'gap-1' }
 			]}
-		>
-			{#snippet row({ value: award })}
-				<div class="font-semibold">
-					<Link href="/admin/spelare/{award.player.id}">{award.player.battletag}</Link>
-				</div>
-
-				<div class="justify-center">
-					<Link href="/admin/sasong/{award.division?.season.id}">
-						{award.division?.season.name}
-					</Link>
-				</div>
-
-				<div class="justify-center">
-					<Link href="/admin/division/{award.division?.id}">{award.division?.name}</Link>
-				</div>
-
-				<div class="justify-center gap-1">
-					<Button
-						icon="ph:pencil-simple"
-						kind="tertiary"
-						onclick={() => {
-							editAward = award;
-							newDescription = award.description ?? '';
-							editOpen = true;
-						}}
-					/>
-					<Button icon="ph:trash" kind="tertiary" onclick={() => deleteAward(award.id)} />
-				</div>
-			{/snippet}
-		</Table>
+		/>
 
 		<Button icon="ph:plus" onclick={() => (createOpen = true)} />
 	{/if}

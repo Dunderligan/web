@@ -66,21 +66,21 @@ export const POST = async ({ params, request }) => {
 
 	const result = await lookupPlayer(body.data.battletag);
 
-	let player;
 	switch (result.type) {
-		case 'found':
-			player = result.player;
-			break;
+		case 'ambiguous':
+			throw error(400, 'Ambiguous battletag, please specify a unique battletag');
+
 		case 'missing':
 			throw error(404, 'Player not found');
-		case 'ambiguous':
-			throw error(400, 'Ambiguous player name, please provide a full battletag');
+
+		case 'found':
+			break;
 	}
 
 	const [checkin] = await db
 		.insert(schema.playerCheckin)
 		.values({
-			playerId: player.id,
+			playerId: result.player.id,
 			seasonId: params.seasonId,
 			discordId: params.discordId
 		})

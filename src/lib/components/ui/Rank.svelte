@@ -39,18 +39,20 @@
 	);
 </script>
 
-<div>
+<div class="inline-flex items-center gap-1.5">
 	<img
 		src={imgSrc}
 		alt={rank}
 		title={capitalize(rank)}
-		class={[classProp, !hideLabel && 'mr-0.5', 'inline aspect-auto w-7']}
+		class={[classProp, 'inline aspect-auto w-7 shrink-0']}
 	/>
 
-	{#if !hideLabel}
-		{#if !isLegacyRank(fullRank)}
-			<span class={[collapse && 'hidden sm:inline']}>{capitalize(rank)}</span>
+	<span>
+		{#if !hideLabel}
+			{#if !isLegacyRank(fullRank)}
+				<span class={[collapse && 'hidden sm:inline']}>{capitalize(rank)}</span>
+			{/if}
+			<span>{getTierLabel(fullRank)}</span>
 		{/if}
-		<span>{getTierLabel(fullRank)}</span>
-	{/if}
+	</span>
 </div>

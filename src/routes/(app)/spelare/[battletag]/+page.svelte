@@ -8,7 +8,7 @@
 	import Meta from '$lib/components/structure/Meta.svelte';
 	import PageHeader from '$lib/components/structure/PageHeader.svelte';
 	import PageSection from '$lib/components/structure/PageSection.svelte';
-	import Table from '$lib/components/table/Table.svelte';
+	import NewTable from '$lib/components/table/NewTable.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import ChipToggle from '$lib/components/form/ChipToggle.svelte';
 	import HeroPortrait from '$lib/components/ui/HeroPortrait.svelte';
@@ -21,10 +21,28 @@
 	import Subheading from '$lib/components/ui/Subheading.svelte';
 	import TeamSocial from '$lib/components/ui/TeamSocial.svelte';
 	import { claimPlayer } from '$lib/remote/player.remote.js';
-	import { Role, type AwardType, type PlayerAward } from '$lib/types.js';
+	import {
+		Role,
+		type AwardType,
+		type Member,
+		type Placement as PlacementType,
+		type PlayerAward,
+		type ResolvedMatchWithContext,
+		type RosterWithGroup
+	} from '$lib/types.js';
 	import { compareNullable, flattenGroup, formatDateTime, roleIcon } from '$lib/util';
 	import Link from '$lib/components/ui/Link.svelte';
 	import { resolve } from '$app/paths';
+
+	type MembershipRow = Pick<Member, 'role' | 'rank' | 'tier' | 'sr'> & {
+		roster: RosterWithGroup;
+	};
+
+	type AchievementRow = {
+		roster: RosterWithGroup;
+		placement: PlacementType | null;
+		finalMatch: ResolvedMatchWithContext | null;
+	};
 
 	let { data } = $props();
 
@@ -115,6 +133,68 @@
 	}
 </script>
 
+{#snippet teamCell(membership: MembershipRow)}
+	{@const { roster } = membership}
+	{@const { season } = flattenGroup(roster.group)}
+	{@const href = resolve(`/lag/${roster.slug}/${season.slug}`)}
+
+	<RosterLogo id={roster.id} class="size-12" {href} />
+
+	<Link {href} class="hidden truncate sm:inline">
+		{roster.name}
+	</Link>
+{/snippet}
+
+{#snippet seasonCell(membership: MembershipRow)}
+	{@const { roster } = membership}
+	{@const { division, season } = flattenGroup(roster.group)}
+
+	<Link href="/stallningar/{season.slug}?div={division.slug}">
+		{division.name},<wbr />
+		{season.name}
+	</Link>
+{/snippet}
+
+{#snippet roleCell(membership: MembershipRow)}
+	<Icon icon={roleIcon(membership.role)} title={membership.role} />
+{/snippet}
+
+{#snippet rankCell(membership: MembershipRow)}
+	{@const { rank, tier, sr } = membership}
+
+	{#if rank && tier}
+		<Rank rank={{ rank, tier }} collapse />
+	{:else if sr}
+		<Rank rank={{ sr }} collapse />
+	{/if}
+{/snippet}
+
+{#snippet placementCell(achievement: AchievementRow)}
+	{#if achievement.placement}
+		<Placement {...achievement.placement} />
+	{/if}
+{/snippet}
+
+{#snippet achievementSeasonCell(achievement: AchievementRow)}
+	{@const { roster, finalMatch } = achievement}
+	{@const { season, division } = flattenGroup(roster.group)}
+	{@const bracket = finalMatch?.bracket}
+
+	<Link href="/stallningar/{season.slug}?div={division.slug}&visa=slutspel">
+		{bracket?.name},<wbr />
+		{season.name}
+	</Link>
+{/snippet}
+
+{#snippet resultCell(achievement: AchievementRow)}
+	{@const { roster, finalMatch } = achievement}
+	{@const { season } = flattenGroup(roster.group)}
+
+	{#if finalMatch}
+		<Match match={finalMatch} seasonSlug={season.slug} mainRosterId={roster.id} size="xs" />
+	{/if}
+{/snippet}
+
 <Meta
 	title={name}
 	description={data.player.description ?? `Se information om spelaren ${name} i Dunderligan.`}
@@ -185,95 +265,32 @@
 				{/if}
 			</div>
 
-			<Table
+			<NewTable
 				class="mt-2"
 				rows={filteredMemberships}
 				key={(value) => value.roster.id}
 				columns={[
-					{ label: 'Lag', width: '1fr' },
-					{ label: 'Säsong' },
-					{ label: 'Roll', center: true },
-					{ label: 'Rank' }
+					{ label: 'Lag', snippet: teamCell, class: 'gap-2 text-lg font-semibold' },
+					{ label: 'Säsong', snippet: seasonCell },
+					{ label: 'Roll', snippet: roleCell, center: true, class: 'gap-2 text-xl' },
+					{ label: 'Rank', snippet: rankCell }
 				]}
-			>
-				{#snippet row({ value: membership })}
-					{@const { roster, role, rank, tier, sr } = membership}
-					{@const { division, season } = flattenGroup(roster.group)}
-					{@const href = resolve(`/lag/${roster.slug}/${season.slug}`)}
-
-					<div class="gap-2 text-lg font-semibold">
-						<RosterLogo id={roster.id} class="size-12" {href} />
-
-						<Link {href} class="hidden truncate sm:inline">
-							{roster.name}
-						</Link>
-					</div>
-
-					<div>
-						<Link href="/stallningar/{season.slug}?div={division.slug}">
-							{division.name},<wbr />
-							{season.name}
-						</Link>
-					</div>
-
-					<div class="justify-center gap-2 text-xl">
-						<Icon icon={roleIcon(role)} title={role} />
-					</div>
-
-					<div>
-						{#if rank && tier}
-							<Rank rank={{ rank, tier }} collapse />
-						{:else if sr}
-							<Rank rank={{ sr }} collapse />
-						{/if}
-					</div>
-				{/snippet}
-			</Table>
+			/>
 		{/if}
 
 		{#if achievements.length > 0}
 			<Subheading class="mt-10">Bedrifter</Subheading>
 
-			<Table
-				class="mt-4 grid-cols-[auto_1fr_auto]"
+			<NewTable
+				class="mt-4"
 				rows={achievements}
 				key={(value) => value.roster.id}
 				columns={[
-					{ label: 'Placering' },
-					{ label: 'Säsong', width: '1fr' },
-					{ label: 'Resultat', center: true }
+					{ label: 'Placering', snippet: placementCell },
+					{ label: 'Säsong', snippet: achievementSeasonCell, class: 'text-base' },
+					{ label: 'Resultat', snippet: resultCell, center: true }
 				]}
-			>
-				{#snippet row({ value: achievement })}
-					{@const { roster, placement, finalMatch } = achievement}
-					{@const { season, division } = flattenGroup(roster.group)}
-					{@const bracket = finalMatch?.bracket}
-
-					<div class="px-4">
-						{#if placement}
-							<Placement {...placement} />
-						{/if}
-					</div>
-
-					<div class="text-base">
-						<Link href="/stallningar/{season.slug}?div={division.slug}&visa=slutspel">
-							{bracket?.name},<wbr />
-							{season.name}
-						</Link>
-					</div>
-
-					<div>
-						{#if finalMatch}
-							<Match
-								match={finalMatch}
-								seasonSlug={season.slug}
-								mainRosterId={roster.id}
-								size="xs"
-							/>
-						{/if}
-					</div>
-				{/snippet}
-			</Table>
+			/>
 		{/if}
 
 		{#if data.player.awards.length > 0}

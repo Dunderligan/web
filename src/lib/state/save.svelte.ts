@@ -38,13 +38,13 @@ export class SaveContext {
 	autoSave = $state(false);
 
 	// the href to return to after saving/discarding
-	href?: ResolvedPathname;
+	href?: () => ResolvedPathname;
 
 	constructor(options?: {
 		save?: () => Promise<void>;
 		discard?: () => Promise<void>;
 		autoSave?: boolean;
-		href?: ResolvedPathname;
+		href?: () => ResolvedPathname;
 		confirmSave?: ConfirmDataFn;
 	}) {
 		this.saveAction = options?.save;

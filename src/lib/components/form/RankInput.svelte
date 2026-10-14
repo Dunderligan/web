@@ -41,7 +41,7 @@
 {:else}
 	<Select
 		type="single"
-		class="grow"
+		class="mr-2 grow"
 		{canClear}
 		bind:value={
 			() => rank.rank as string,

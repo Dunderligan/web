@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { type NestedBracket, type NestedGroup, type MatchWithoutRosters } from '$lib/types';
-	import { capitalize, formatDateShort, formatDateTimeShort } from '$lib/util';
+	import { capitalize, formatDateShort, formatDateTime, formatDateTimeShort } from '$lib/util';
 	import type { ClassValue } from 'svelte/elements';
 	import Icon from '../ui/Icon.svelte';
 	import Link from '../ui/Link.svelte';
+	import Tooltip from '../ui/Tooltip.svelte';
 
 	type Props = {
 		match: MatchWithoutRosters;
@@ -27,15 +28,16 @@
 
 	const division = $derived(group ? group.division : bracket ? bracket.division : null);
 
-	const { icon, label, date } = $derived(
+	const { icon, label, date, showTime } = $derived(
 		{
 			played: {
 				icon: 'ph:check',
-				date: match.playedAt ? formatDateShort(match.playedAt) : 'Okänt datum'
+				date: match.playedAt ? match.playedAt : 'Okänt datum'
 			},
 			scheduled: {
 				icon: 'ph:calendar-blank',
-				date: match.scheduledAt ? formatDateTimeShort(match.scheduledAt) : null
+				date: match.scheduledAt ? match.scheduledAt : null,
+				showTime: true
 			},
 			walkover: { icon: 'ph:flag', label: 'Walkover' },
 			cancelled: { icon: 'ph:x', label: 'Inställd' }
@@ -64,7 +66,18 @@
 		{/if}
 
 		{#if date}
-			{date}
+			{#if typeof date === 'string'}
+				{date}
+			{:else}
+				<Tooltip underline>
+					{#snippet content()}
+						<p class="text-center text-lg">
+							{formatDateTime(date)}
+						</p>
+					{/snippet}
+					{showTime ? formatDateTimeShort(date) : formatDateShort(date)}
+				</Tooltip>
+			{/if}
 		{/if}
 	</div>
 

@@ -3,7 +3,7 @@
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import SaveToast from '$lib/components/admin/SaveToast.svelte';
-	import Table from '$lib/components/table/Table.svelte';
+	import NewTable from '$lib/components/table/NewTable.svelte';
 	import Select from '$lib/components/form/Select.svelte';
 	import { updateUsers } from '$lib/remote/auth.remote';
 	import { SaveContext } from '$lib/state/save.svelte';
@@ -11,6 +11,13 @@
 	import { page } from '$app/state';
 	import InputField from '$lib/components/form/InputField.svelte';
 	import Label from '$lib/components/form/Label.svelte';
+
+	type UserRow = {
+		id: string;
+		battletag: string;
+		role: AuthRole;
+		createdAt: Date;
+	};
 
 	let { data } = $props();
 
@@ -34,6 +41,21 @@
 	}
 </script>
 
+{#snippet roleCell(user: UserRow)}
+	<Select
+		type="single"
+		class="grow"
+		bind:value={user.role}
+		onValueChange={saveCtx.setDirty}
+		disabled={!canPromoteTo(currentUser?.role, user.role)}
+		items={Object.values(AuthRole).map((role) => ({
+			label: formatAuthRole(role),
+			disabled: !canPromoteTo(currentUser?.role, role),
+			value: role
+		}))}
+	/>
+{/snippet}
+
 <Breadcrumbs crumbs={[{ label: 'Användare', href: '/admin/anvandare' }]} />
 
 <AdminCard title="Hantera användare">
@@ -41,41 +63,16 @@
 		<InputField bind:value={search} placeholder="Skriv battletag..." />
 	</Label>
 
-	<Table
+	<NewTable
 		rows={shownUsers}
 		key={(user) => user.id}
 		columns={[
-			{ label: 'Battletag', width: '1fr' },
-			{ label: 'Roll', center: true, note: roleNote },
-			{ label: 'Första inloggning', center: true }
+			{ label: 'Battletag', content: (user) => user.battletag, class: 'font-semibold' },
+			{ label: 'Roll', snippet: roleCell, center: true, tooltip: roleNote },
+			{ label: 'Första inloggning', content: (user) => formatDate(user.createdAt), center: true }
 		]}
 		kind="transparent"
-	>
-		{#snippet row({ value: user })}
-			<div class="font-semibold">
-				{user.battletag}
-			</div>
-
-			<div>
-				<Select
-					type="single"
-					class="grow"
-					bind:value={user.role}
-					onValueChange={saveCtx.setDirty}
-					items={Object.values(AuthRole).map((role) => ({
-						label: formatAuthRole(role),
-						disabled: !canPromoteTo(currentUser?.role, role),
-						value: role
-					}))}
-					disabled={!canPromoteTo(currentUser?.role, user.role)}
-				/>
-			</div>
-
-			<div class="justify-center">
-				{formatDate(user.createdAt)}
-			</div>
-		{/snippet}
-	</Table>
+	/>
 </AdminCard>
 
 <SaveToast />

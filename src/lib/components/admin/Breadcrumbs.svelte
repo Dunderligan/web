@@ -54,7 +54,7 @@
 	{#if saveCtx && saveCtx.href}
 		<a
 			class="ml-2 text-sm font-medium text-nowrap hover:text-gray-700 hover:underline dark:hover:text-gray-300"
-			href={saveCtx.href}
+			href={saveCtx.href()}
 		>
 			<Icon icon="ph:link-simple" />
 			Visa</a

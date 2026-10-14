@@ -25,7 +25,7 @@
 	const season = $state(data.season);
 	let registration = $state(season.registration);
 
-	SaveContext.set(new SaveContext({ save, href: `/stallningar/${season.slug}` }));
+	SaveContext.set(new SaveContext({ save, href: () => `/stallningar/${season.slug}` }));
 
 	const confirmCtx = ConfirmContext.get();
 	const saveCtx = SaveContext.get();

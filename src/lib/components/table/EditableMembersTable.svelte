@@ -13,7 +13,7 @@
 	import Checkbox from '../form/Checkbox.svelte';
 	import InputField from '../form/InputField.svelte';
 	import Select from '../form/Select.svelte';
-	import Table from './Table.svelte';
+	import NewTable from './NewTable.svelte';
 	import CreateDialog from '../admin/CreateDialog.svelte';
 	import Label from '../form/Label.svelte';
 	import RankInput from '../form/RankInput.svelte';
@@ -211,92 +211,91 @@
 	}
 </script>
 
+{#snippet battletagCell(member: Member)}
+	{#snippet memberName()}
+		{#if member.registeredName}
+			{member.registeredName} <span class="font-medium">({member.player.battletag})</span>
+		{:else}
+			{member.player.battletag}
+		{/if}
+	{/snippet}
+
+	{#if memberLinks}
+		<Link href="/admin/spelare/{member.player.id}">
+			{@render memberName()}
+		</Link>
+	{:else}
+		{@render memberName()}
+	{/if}
+{/snippet}
+
+{#snippet captainCell(member: Member)}
+	{@render captainCheckbox({
+		checked: member.isCaptain,
+		onCheckedChange: (newValue) => {
+			member.isCaptain = newValue;
+			saveCtx.setDirty();
+		}
+	})}
+{/snippet}
+
+{#snippet roleCell(member: Member)}
+	{@render roleSelect({
+		role: member.role,
+		onRoleChange: (newRole) => {
+			member.role = newRole;
+			if (forceRanks) {
+				if (isOrganizationRole(newRole)) {
+					setRank(member, null);
+				} else if (!getRank(member)) {
+					setRank(member, defaultRank());
+				}
+			}
+			saveCtx.setDirty();
+		},
+		disableFilledRoles: true
+	})}
+{/snippet}
+
+{#snippet rankCell(member: Member)}
+	{@render rankInput({
+		rank: getRank(member),
+		onValueChange: (newRank) => {
+			setRank(member, newRank);
+			saveCtx.setDirty();
+		}
+	})}
+{/snippet}
+
+{#snippet removeCell(member: Member)}
+	<Button
+		title="Ta bort"
+		icon="ph:trash"
+		kind="tertiary"
+		onclick={() => {
+			// the table uses sortedMembers which means the indicies
+			// don't line up with the original members array
+			const index = members.findIndex((m) => m === member);
+			members.splice(index, 1);
+			saveCtx.setDirty();
+		}}
+		{disabled}
+	/>
+{/snippet}
+
 <div>
-	<Table
+	<NewTable
 		kind="transparent"
 		rows={sortedMembers}
+		key={(member) => member.player.battletag}
 		columns={[
-			{ label: 'Battletag', width: '1fr' },
-			{ label: 'Kapten', center: true },
-			{ label: 'Roll', center: true },
-			{ label: 'Rank', center: true },
-			{ label: '', center: true }
+			{ label: 'Battletag', snippet: battletagCell, class: 'text-lg font-semibold' },
+			{ label: 'Kapten', snippet: captainCell, center: true },
+			{ label: 'Roll', snippet: roleCell, center: true },
+			{ label: 'Rank', snippet: rankCell, center: true },
+			{ snippet: removeCell, center: true }
 		]}
-	>
-		{#snippet row({ value: member })}
-			<div class="text-lg font-semibold">
-				{#snippet memberName()}
-					{#if member.registeredName}
-						{member.registeredName} <span class="font-medium">({member.player.battletag})</span>
-					{:else}
-						{member.player.battletag}
-					{/if}
-				{/snippet}
-
-				{#if memberLinks}
-					<Link href="/admin/spelare/{member.player.id}">
-						{@render memberName()}
-					</Link>
-				{:else}
-					{@render memberName()}
-				{/if}
-			</div>
-
-			<div class="justify-center gap-2">
-				{@render captainCheckbox({
-					checked: member.isCaptain,
-					onCheckedChange: (newValue) => {
-						member.isCaptain = newValue;
-						saveCtx.setDirty();
-					}
-				})}
-			</div>
-
-			<div>
-				{@render roleSelect({
-					role: member.role,
-					onRoleChange: (newRole) => {
-						member.role = newRole;
-						if (forceRanks) {
-							if (isOrganizationRole(newRole)) {
-								setRank(member, null);
-							} else if (!getRank(member)) {
-								setRank(member, defaultRank());
-							}
-						}
-						saveCtx.setDirty();
-					},
-					disableFilledRoles: true
-				})}
-			</div>
-
-			<div class="gap-2">
-				{@render rankInput({
-					rank: getRank(member),
-					onValueChange: (newRank) => {
-						setRank(member, newRank);
-						saveCtx.setDirty();
-					}
-				})}
-			</div>
-
-			<div>
-				<Button
-					title="Ta bort"
-					icon="ph:trash"
-					kind="tertiary"
-					onclick={() => {
-						// the table uses sortedMembers which means the indicies
-						// don't line up with the original members array
-						const index = members.findIndex((m) => m === member);
-						members.splice(index, 1);
-						saveCtx.setDirty();
-					}}
-					{disabled}
-				/>
-			</div>
-		{/snippet}
-	</Table>
+	/>
 
 	{#if !disabled}
 		<Button

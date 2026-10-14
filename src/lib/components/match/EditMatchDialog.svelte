@@ -64,9 +64,13 @@
 			onclick: () => rosterCtx.stopMatchEdit()
 		}
 	]}
-	onOpenChange={(state) => {
-		if (!state) {
+	onOpenChange={(newOpen) => {
+		if (!newOpen) {
 			rosterCtx.stopMatchEdit();
+			if (match) {
+				match.teamAScore = match.teamAScore ?? 0;
+				match.teamBScore = match.teamBScore ?? 0;
+			}
 		}
 	}}
 >

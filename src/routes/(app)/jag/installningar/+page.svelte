@@ -8,7 +8,7 @@
 	import ConfirmDialog from '$lib/components/admin/ConfirmDialog.svelte';
 	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
 	import PageSection from '$lib/components/structure/PageSection.svelte';
-	import Table from '$lib/components/table/Table.svelte';
+	import NewTable from '$lib/components/table/NewTable.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Dialog from '$lib/components/ui/Dialog.svelte';
 	import InputField from '$lib/components/form/InputField.svelte';
@@ -115,34 +115,24 @@
 		{/snippet}
 
 		{#if apiKeys.length > 0}
-			<Table
+			{#snippet deleteCell(key: { id: string })}
+				<Button icon="ph:trash" kind="tertiary" onclick={() => ondelete(key.id)} />
+			{/snippet}
+
+			<NewTable
 				rows={apiKeys}
 				key={(key) => key.id}
 				columns={[
-					{ label: 'Namn', width: '1fr' },
-					{ label: 'Skapad', center: true },
-					{ label: 'Användes senast', center: true },
-					{}
+					{ label: 'Namn', content: (key) => key.name, class: 'text-lg font-semibold' },
+					{ label: 'Skapad', content: (key) => formatDate(key.createdAt), center: true },
+					{
+						label: 'Användes senast',
+						content: (key) => (key.lastUsedAt ? formatDateTime(key.lastUsedAt) : 'Aldrig'),
+						center: true
+					},
+					{ snippet: deleteCell, center: true }
 				]}
-			>
-				{#snippet row({ value: key })}
-					<div class="text-lg font-semibold">
-						{key.name}
-					</div>
-
-					<div class="justify-center">
-						{formatDate(key.createdAt)}
-					</div>
-
-					<div class="justify-center">
-						{key.lastUsedAt ? formatDateTime(key.lastUsedAt) : 'Aldrig'}
-					</div>
-
-					<div class="justify-center">
-						<Button icon="ph:trash" kind="tertiary" onclick={() => ondelete(key.id)} />
-					</div>
-				{/snippet}
-			</Table>
+			/>
 
 			<Button icon="ph:plus" onclick={() => (createOpen = true)} />
 		{:else}

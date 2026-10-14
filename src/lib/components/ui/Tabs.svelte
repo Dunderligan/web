@@ -28,7 +28,7 @@
 	}: Props = $props();
 </script>
 
-<div class={[classProp, 'flex items-stretch gap-1 overflow-x-auto rounded-lg']}>
+<div class={[classProp, 'flex items-stretch gap-1 overflow-x-auto']}>
 	{#each items as { label, value, icon, href, disabled } (value)}
 		{@const isSelected = selected === value}
 		{@const renderedIcon = icon && isSelected && fillIcons ? `${icon}-fill` : icon}
@@ -45,12 +45,15 @@
 				onitemclick?.(value);
 			}}
 			class={[
-				'flex grow basis-0 items-center justify-center gap-2 px-4 py-2.5 whitespace-nowrap',
-				disabled
-					? 'bg-gray-200 font-semibold text-gray-500 dark:bg-gray-800 dark:text-gray-400'
-					: isSelected
-						? 'cursor-default bg-accent-600 font-bold text-white'
-						: 'bg-accent-200 font-semibold text-accent-800 hover:bg-accent-300 hover:text-accent-900 dark:bg-accent-900 dark:text-accent-300 dark:hover:bg-accent-800 dark:hover:text-accent-200'
+				'flex grow basis-0 items-center justify-center gap-2 px-4 py-2.5 font-semibold whitespace-nowrap first:rounded-l-lg last:rounded-r-lg',
+				disabled && 'cursor-not-allowed opacity-50',
+				isSelected
+					? 'cursor-default bg-accent-600 text-white dark:bg-accent-700'
+					: [
+							!disabled &&
+								'hover:bg-accent-300 hover:text-accent-900 dark:hover:bg-accent-900 dark:hover:text-accent-200',
+							'bg-accent-200 text-accent-800 dark:bg-accent-950 dark:text-accent-300 '
+						]
 			]}
 		>
 			{#if renderedIcon}

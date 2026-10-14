@@ -20,22 +20,29 @@
 
 	const { data } = $props();
 
-	const bracket = $derived(data.bracket);
-	const division = $derived(data.division);
-	const season = $derived(division.season);
+	const bracket = $state(data.bracket);
+	const division = $state(data.division);
+	const season = $state(division.season);
 
 	RosterContext.set(new RosterContext(data.rosters));
 	SaveContext.set(
 		new SaveContext({
 			save,
-			href: `/stallningar/${season.slug}?div=${division.slug}&visa=slutspel`
+			href: () => `/stallningar/${season.slug}?div=${division.slug}&visa=slutspel`
 		})
 	);
 
 	const saveCtx = SaveContext.get();
 	const confirmCtx = ConfirmContext.get();
 
-	let rounds: UnresolvedMatchWithOrder[][] = $derived(buildBracketRounds(bracket.matches));
+	// we need deep reactivity here to make sure the matches are
+	// actually edited, not just local copies in `rounds`
+	// eslint-disable-next-line svelte/prefer-writable-derived
+	let rounds: UnresolvedMatchWithOrder[][] = $state([]);
+
+	$effect(() => {
+		rounds = buildBracketRounds(bracket.matches);
+	});
 
 	async function onDeleteClicked() {
 		await confirmCtx.confirm({
