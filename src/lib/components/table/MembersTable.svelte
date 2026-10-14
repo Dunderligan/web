@@ -17,14 +17,15 @@
 
 <Table
 	columns={[
-		{ label: 'Roll', snippet: roleCell, center: true },
+		{ label: 'Roll', snippet: roleCell, center: true, width: '4rem' },
 		{
 			label: 'Battletag',
 			snippet: battletagCell
 		},
 		{
 			label: 'Rank',
-			snippet: rankCell
+			snippet: rankCell,
+			width: '14rem'
 		}
 	]}
 	rows={members}

@@ -24,28 +24,31 @@
 <Table
 	rows={standings}
 	columns={[
-		{ label: '#', snippet: seedCell, center: true, class: 'font-semibold text-lg' },
+		{ label: '#', snippet: seedCell, center: true, class: 'font-semibold text-lg', width: '3rem' },
 		{ label: 'Lag', snippet: teamCell, class: 'font-semibold text-lg' },
 		{
 			label: 'Poäng',
 			content: ({ score }) => score.mapWins,
 			center: true,
 			tooltip: 'Antal vunna kartor',
-			class: 'font-semibold text-xl'
+			class: 'font-semibold text-xl',
+			width: '6rem'
 		},
 		{
 			label: 'W/L/D',
 			content: ({ score }) => `${score.mapWins}/${score.mapLosses}/${score.mapDraws}`,
 			center: true,
 			tooltip: 'Antal vunna/förlorade/oavgjorda kartor',
-			class: 'text-lg'
+			class: 'text-lg',
+			width: '5rem'
 		},
 		{
 			label: 'Matcher',
 			content: ({ score }) => score.matchesPlayed,
 			center: true,
 			tooltip: 'Antal spelade matcher',
-			class: 'text-lg'
+			class: 'text-lg',
+			width: '5rem'
 		}
 	]}
 	key={(row) => row.roster.id}

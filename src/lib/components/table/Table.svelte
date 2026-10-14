@@ -40,7 +40,7 @@
 			class={[
 				classProp,
 				fixedLayout ? 'table-fixed' : 'table-auto',
-				'border-spacing-x- w-full min-w-xl border-separate border-spacing-y-0.75 overflow-hidden rounded-lg font-medium'
+				'border-spacing-x- w-full min-w-lg border-separate border-spacing-y-0.75 overflow-hidden rounded-lg font-medium'
 			]}
 		>
 			<colgroup>
