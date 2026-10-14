@@ -60,7 +60,7 @@ Open up http://localhost:5173/setup in a browser, where the website will ask you
 
 ### Formatting
 
-The project uses [Prettier](https://prettier.io/) for code formatting. **Always format your code before contributing.** This can be done via your editor (for example with the Prettier VSCode extension), or by running `pnpm format`.
+The project uses [Oxfmt](https://oxc.rs/docs/guide/usage/formatter.html) for code formatting. **Always format your code before contributing.** This can be done via your editor (for example with the Oxc VSCode extension), or by running `pnpm format`.
 
 ### Next steps
 

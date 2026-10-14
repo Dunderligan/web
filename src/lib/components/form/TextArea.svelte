@@ -20,8 +20,7 @@
 		}}
 		bind:value
 		{maxlength}
-		{...props}
-	></textarea>
+		{...props}></textarea>
 
 	<div class="absolute right-3 bottom-1 text-sm text-gray-500 dark:text-gray-400">
 		<span>{length}</span>{#if maxlength}<span>/{maxlength}</span>{/if}

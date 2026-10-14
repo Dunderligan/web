@@ -8,7 +8,7 @@ All user-facing text is in Swedish, while code, comments and docs are in English
 - `pnpm install`
 - `pnpm dev` - Vite dev server on port 5173
 - `pnpm check` - type check, always run before finishing
-- `pnpm format` - Prettier write; `pnpm lint` - Prettier check + ESLint
+- `pnpm format` - Oxfmt write; `pnpm lint` - Oxfmt check + ESLint
 - `pnpm db:push` - sync Drizzle schema to database
 - `pnpm db:generate --name <snake_case>` - generate a migration (make sure to pull from main first)
 - `pnpm db:migrate` - run migrations; don't run this on a DB managed by `db:push`

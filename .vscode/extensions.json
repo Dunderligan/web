@@ -2,7 +2,7 @@
 	"recommendations": [
 		"svelte.svelte-vscode",
 		"dbaeumer.vscode-eslint",
-		"esbenp.prettier-vscode",
+		"oxc.oxc-vscode",
 		"tailwindlabs.tailwindcss-intellisense"
 	]
 }
