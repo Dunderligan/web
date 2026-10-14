@@ -9,6 +9,7 @@ All user-facing text is in Swedish, while code, comments and docs are in English
 - `pnpm dev` - Vite dev server on port 5173
 - `pnpm check` - type check, always run before finishing
 - `pnpm format` - Oxfmt write; `pnpm lint` - Oxfmt check + ESLint
+- `pnpm test` - run unit tests (Vitest); `pnpm test:watch` - watch mode
 - `pnpm db:push` - sync Drizzle schema to database
 - `pnpm db:generate --name <snake_case>` - generate a migration (make sure to pull from main first)
 - `pnpm db:migrate` - run migrations; don't run this on a DB managed by `db:push`
@@ -28,4 +29,5 @@ All user-facing text is in Swedish, while code, comments and docs are in English
 - `src/lib/server/db/schema/`: Drizzle schema, split by domain
 - `src/lib/components/{ui,admin,form,match,table,structure}/`
 - `src/lib/state/*.svelte.ts`: rune- and context-based client stores
+- Unit tests are colocated with the code they cover (`src/lib/**/*.test.ts`); config lives in `vitest.config.ts`
 - `docs/`: technical docs; update the relevant file when behavior changes

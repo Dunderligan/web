@@ -41,3 +41,6 @@ jobs:
       # Needs the `.svelte-kit` output that the typecheck step generates.
       - name: Lint
         run: pnpm lint
+
+      - name: Test
+        run: pnpm test
