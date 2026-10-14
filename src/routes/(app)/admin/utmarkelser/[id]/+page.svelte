@@ -7,7 +7,7 @@
 	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
 	import PlayerSelect from '$lib/components/admin/PlayerSelect.svelte';
 	import SaveToast from '$lib/components/admin/SaveToast.svelte';
-	import NewTable from '$lib/components/table/NewTable.svelte';
+	import Table from '$lib/components/table/Table.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Checkbox from '$lib/components/form/Checkbox.svelte';
 	import InputField from '$lib/components/form/InputField.svelte';
@@ -136,6 +136,17 @@
 			Denna utmärkelse har inte tilldelats någon spelare än.
 		</AdminEmptyNotice>
 	{:else}
+		<Table
+			rows={awards}
+			key={(award) => award.id}
+			columns={[
+				{ label: 'Battletag', snippet: battletagCell, class: 'font-semibold' },
+				{ label: awardType.showDivision ? 'Säsong' : '', snippet: seasonCell, center: true },
+				{ label: awardType.showDivision ? 'Division' : '', snippet: divisionCell, center: true },
+				{ snippet: actionsCell, center: true, class: 'gap-1' }
+			]}
+		/>
+
 		{#snippet battletagCell(award: AwardRow)}
 			<Link href="/admin/spelare/{award.player.id}">{award.player.battletag}</Link>
 		{/snippet}
@@ -162,17 +173,6 @@
 			/>
 			<Button icon="ph:trash" kind="tertiary" onclick={() => deleteAward(award.id)} />
 		{/snippet}
-
-		<NewTable
-			rows={awards}
-			key={(award) => award.id}
-			columns={[
-				{ label: 'Battletag', snippet: battletagCell, class: 'font-semibold' },
-				{ label: awardType.showDivision ? 'Säsong' : '', snippet: seasonCell, center: true },
-				{ label: awardType.showDivision ? 'Division' : '', snippet: divisionCell, center: true },
-				{ snippet: actionsCell, center: true, class: 'gap-1' }
-			]}
-		/>
 
 		<Button icon="ph:plus" onclick={() => (createOpen = true)} />
 	{/if}

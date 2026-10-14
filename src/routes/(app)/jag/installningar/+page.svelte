@@ -8,7 +8,7 @@
 	import ConfirmDialog from '$lib/components/admin/ConfirmDialog.svelte';
 	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
 	import PageSection from '$lib/components/structure/PageSection.svelte';
-	import NewTable from '$lib/components/table/NewTable.svelte';
+	import Table from '$lib/components/table/Table.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Dialog from '$lib/components/ui/Dialog.svelte';
 	import InputField from '$lib/components/form/InputField.svelte';
@@ -115,11 +115,7 @@
 		{/snippet}
 
 		{#if apiKeys.length > 0}
-			{#snippet deleteCell(key: { id: string })}
-				<Button icon="ph:trash" kind="tertiary" onclick={() => ondelete(key.id)} />
-			{/snippet}
-
-			<NewTable
+			<Table
 				rows={apiKeys}
 				key={(key) => key.id}
 				columns={[
@@ -133,6 +129,10 @@
 					{ snippet: deleteCell, center: true }
 				]}
 			/>
+
+			{#snippet deleteCell(key: { id: string })}
+				<Button icon="ph:trash" kind="tertiary" onclick={() => ondelete(key.id)} />
+			{/snippet}
 
 			<Button icon="ph:plus" onclick={() => (createOpen = true)} />
 		{:else}

@@ -8,7 +8,7 @@
 	import Meta from '$lib/components/structure/Meta.svelte';
 	import PageHeader from '$lib/components/structure/PageHeader.svelte';
 	import PageSection from '$lib/components/structure/PageSection.svelte';
-	import NewTable from '$lib/components/table/NewTable.svelte';
+	import Table from '$lib/components/table/Table.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import ChipToggle from '$lib/components/form/ChipToggle.svelte';
 	import HeroPortrait from '$lib/components/ui/HeroPortrait.svelte';
@@ -133,68 +133,6 @@
 	}
 </script>
 
-{#snippet teamCell(membership: MembershipRow)}
-	{@const { roster } = membership}
-	{@const { season } = flattenGroup(roster.group)}
-	{@const href = resolve(`/lag/${roster.slug}/${season.slug}`)}
-
-	<RosterLogo id={roster.id} class="size-12" {href} />
-
-	<Link {href} class="hidden truncate sm:inline">
-		{roster.name}
-	</Link>
-{/snippet}
-
-{#snippet seasonCell(membership: MembershipRow)}
-	{@const { roster } = membership}
-	{@const { division, season } = flattenGroup(roster.group)}
-
-	<Link href="/stallningar/{season.slug}?div={division.slug}">
-		{division.name},<wbr />
-		{season.name}
-	</Link>
-{/snippet}
-
-{#snippet roleCell(membership: MembershipRow)}
-	<Icon icon={roleIcon(membership.role)} title={membership.role} />
-{/snippet}
-
-{#snippet rankCell(membership: MembershipRow)}
-	{@const { rank, tier, sr } = membership}
-
-	{#if rank && tier}
-		<Rank rank={{ rank, tier }} collapse />
-	{:else if sr}
-		<Rank rank={{ sr }} collapse />
-	{/if}
-{/snippet}
-
-{#snippet placementCell(achievement: AchievementRow)}
-	{#if achievement.placement}
-		<Placement {...achievement.placement} />
-	{/if}
-{/snippet}
-
-{#snippet achievementSeasonCell(achievement: AchievementRow)}
-	{@const { roster, finalMatch } = achievement}
-	{@const { season, division } = flattenGroup(roster.group)}
-	{@const bracket = finalMatch?.bracket}
-
-	<Link href="/stallningar/{season.slug}?div={division.slug}&visa=slutspel">
-		{bracket?.name},<wbr />
-		{season.name}
-	</Link>
-{/snippet}
-
-{#snippet resultCell(achievement: AchievementRow)}
-	{@const { roster, finalMatch } = achievement}
-	{@const { season } = flattenGroup(roster.group)}
-
-	{#if finalMatch}
-		<Match match={finalMatch} seasonSlug={season.slug} mainRosterId={roster.id} size="xs" />
-	{/if}
-{/snippet}
-
 <Meta
 	title={name}
 	description={data.player.description ?? `Se information om spelaren ${name} i Dunderligan.`}
@@ -265,7 +203,7 @@
 				{/if}
 			</div>
 
-			<NewTable
+			<Table
 				class="mt-2"
 				rows={filteredMemberships}
 				key={(value) => value.roster.id}
@@ -276,12 +214,48 @@
 					{ label: 'Rank', snippet: rankCell }
 				]}
 			/>
+
+			{#snippet teamCell(membership: MembershipRow)}
+				{@const { roster } = membership}
+				{@const { season } = flattenGroup(roster.group)}
+				{@const href = resolve(`/lag/${roster.slug}/${season.slug}`)}
+
+				<RosterLogo id={roster.id} class="size-12" {href} />
+
+				<Link {href} class="hidden truncate sm:inline">
+					{roster.name}
+				</Link>
+			{/snippet}
+
+			{#snippet seasonCell(membership: MembershipRow)}
+				{@const { roster } = membership}
+				{@const { division, season } = flattenGroup(roster.group)}
+
+				<Link href="/stallningar/{season.slug}?div={division.slug}">
+					{division.name},<wbr />
+					{season.name}
+				</Link>
+			{/snippet}
+
+			{#snippet roleCell(membership: MembershipRow)}
+				<Icon icon={roleIcon(membership.role)} title={membership.role} />
+			{/snippet}
+
+			{#snippet rankCell(membership: MembershipRow)}
+				{@const { rank, tier, sr } = membership}
+
+				{#if rank && tier}
+					<Rank rank={{ rank, tier }} collapse />
+				{:else if sr}
+					<Rank rank={{ sr }} collapse />
+				{/if}
+			{/snippet}
 		{/if}
 
 		{#if achievements.length > 0}
 			<Subheading class="mt-10">Bedrifter</Subheading>
 
-			<NewTable
+			<Table
 				class="mt-4"
 				rows={achievements}
 				key={(value) => value.roster.id}
@@ -291,6 +265,32 @@
 					{ label: 'Resultat', snippet: resultCell, center: true }
 				]}
 			/>
+
+			{#snippet placementCell(achievement: AchievementRow)}
+				{#if achievement.placement}
+					<Placement {...achievement.placement} />
+				{/if}
+			{/snippet}
+
+			{#snippet achievementSeasonCell(achievement: AchievementRow)}
+				{@const { roster, finalMatch } = achievement}
+				{@const { season, division } = flattenGroup(roster.group)}
+				{@const bracket = finalMatch?.bracket}
+
+				<Link href="/stallningar/{season.slug}?div={division.slug}&visa=slutspel">
+					{bracket?.name},<wbr />
+					{season.name}
+				</Link>
+			{/snippet}
+
+			{#snippet resultCell(achievement: AchievementRow)}
+				{@const { roster, finalMatch } = achievement}
+				{@const { season } = flattenGroup(roster.group)}
+
+				{#if finalMatch}
+					<Match match={finalMatch} seasonSlug={season.slug} mainRosterId={roster.id} size="xs" />
+				{/if}
+			{/snippet}
 		{/if}
 
 		{#if data.player.awards.length > 0}

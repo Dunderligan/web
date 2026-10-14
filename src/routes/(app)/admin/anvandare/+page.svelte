@@ -3,7 +3,7 @@
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import SaveToast from '$lib/components/admin/SaveToast.svelte';
-	import NewTable from '$lib/components/table/NewTable.svelte';
+	import Table from '$lib/components/table/Table.svelte';
 	import Select from '$lib/components/form/Select.svelte';
 	import { updateUsers } from '$lib/remote/auth.remote';
 	import { SaveContext } from '$lib/state/save.svelte';
@@ -41,6 +41,25 @@
 	}
 </script>
 
+<Breadcrumbs crumbs={[{ label: 'Användare', href: '/admin/anvandare' }]} />
+
+<AdminCard title="Hantera användare">
+	<Label label="Filtrera användare">
+		<InputField bind:value={search} placeholder="Skriv battletag..." />
+	</Label>
+
+	<Table
+		rows={shownUsers}
+		key={(user) => user.id}
+		columns={[
+			{ label: 'Battletag', content: (user) => user.battletag, class: 'font-semibold' },
+			{ label: 'Roll', snippet: roleCell, center: true, tooltip: roleNote },
+			{ label: 'Första inloggning', content: (user) => formatDate(user.createdAt), center: true }
+		]}
+		kind="transparent"
+	/>
+</AdminCard>
+
 {#snippet roleCell(user: UserRow)}
 	<Select
 		type="single"
@@ -55,25 +74,6 @@
 		}))}
 	/>
 {/snippet}
-
-<Breadcrumbs crumbs={[{ label: 'Användare', href: '/admin/anvandare' }]} />
-
-<AdminCard title="Hantera användare">
-	<Label label="Filtrera användare">
-		<InputField bind:value={search} placeholder="Skriv battletag..." />
-	</Label>
-
-	<NewTable
-		rows={shownUsers}
-		key={(user) => user.id}
-		columns={[
-			{ label: 'Battletag', content: (user) => user.battletag, class: 'font-semibold' },
-			{ label: 'Roll', snippet: roleCell, center: true, tooltip: roleNote },
-			{ label: 'Första inloggning', content: (user) => formatDate(user.createdAt), center: true }
-		]}
-		kind="transparent"
-	/>
-</AdminCard>
 
 <SaveToast />
 

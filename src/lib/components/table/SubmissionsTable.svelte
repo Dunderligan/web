@@ -2,7 +2,7 @@
 	import type { TeamSubmissionInfo } from '$lib/types';
 	import { formatDate } from '$lib/util';
 	import SubmissionChip from '../admin/SubmissionChip.svelte';
-	import NewTable from './NewTable.svelte';
+	import Table from './Table.svelte';
 	import Button from '../ui/Button.svelte';
 
 	type Props = {
@@ -23,24 +23,7 @@
 	}
 </script>
 
-{#snippet nameCell(submission: TeamSubmissionInfo)}
-	{submission.name}
-{/snippet}
-
-{#snippet statusCell(submission: TeamSubmissionInfo)}
-	<SubmissionChip status={submission.status} />
-{/snippet}
-
-{#snippet actionCell(submission: TeamSubmissionInfo)}
-	<Button
-		icon="ph:arrow-right"
-		label="Hantera"
-		kind="tertiary"
-		href="/admin/laganmalan/{submission.id}"
-	/>
-{/snippet}
-
-<NewTable
+<Table
 	kind="transparent"
 	rows={shownSubmissions}
 	key={(submission) => submission.id}
@@ -69,3 +52,20 @@
 		text: 'Inga anmälningar att visa'
 	}}
 />
+
+{#snippet nameCell(submission: TeamSubmissionInfo)}
+	{submission.name}
+{/snippet}
+
+{#snippet statusCell(submission: TeamSubmissionInfo)}
+	<SubmissionChip status={submission.status} />
+{/snippet}
+
+{#snippet actionCell(submission: TeamSubmissionInfo)}
+	<Button
+		icon="ph:arrow-right"
+		label="Hantera"
+		kind="tertiary"
+		href="/admin/laganmalan/{submission.id}"
+	/>
+{/snippet}

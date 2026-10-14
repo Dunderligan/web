@@ -4,7 +4,7 @@
 	import Icon from '../ui/Icon.svelte';
 	import Link from '../ui/Link.svelte';
 	import RosterLogo from '../ui/RosterLogo.svelte';
-	import NewTable from './NewTable.svelte';
+	import Table from './Table.svelte';
 	import { resolve } from '$app/paths';
 
 	type TableEntry = {
@@ -20,6 +20,37 @@
 
 	let { standings, playoffLine, seasonSlug }: Props = $props();
 </script>
+
+<Table
+	rows={standings}
+	columns={[
+		{ label: '#', snippet: seedCell, center: true, class: 'font-semibold text-lg' },
+		{ label: 'Lag', snippet: teamCell, class: 'font-semibold text-lg' },
+		{
+			label: 'Poäng',
+			content: ({ score }) => score.mapWins,
+			center: true,
+			tooltip: 'Antal vunna kartor',
+			class: 'font-semibold text-xl'
+		},
+		{
+			label: 'W/L/D',
+			content: ({ score }) => `${score.mapWins}/${score.mapLosses}/${score.mapDraws}`,
+			center: true,
+			tooltip: 'Antal vunna/förlorade/oavgjorda kartor',
+			class: 'text-lg'
+		},
+		{
+			label: 'Matcher',
+			content: ({ score }) => score.matchesPlayed,
+			center: true,
+			tooltip: 'Antal spelade matcher',
+			class: 'text-lg'
+		}
+	]}
+	key={(row) => row.roster.id}
+	class="max-w-2xl"
+/>
 
 {#snippet line(index: number)}
 	{#if index + 1 === playoffLine}
@@ -51,34 +82,3 @@
 
 	{@render line(index)}
 {/snippet}
-
-<NewTable
-	rows={standings}
-	columns={[
-		{ label: '#', snippet: seedCell, center: true, class: 'font-semibold text-lg' },
-		{ label: 'Lag', snippet: teamCell, class: 'font-semibold text-lg' },
-		{
-			label: 'Poäng',
-			content: ({ score }) => score.mapWins,
-			center: true,
-			tooltip: 'Antal vunna kartor',
-			class: 'font-semibold text-xl'
-		},
-		{
-			label: 'W/L/D',
-			content: ({ score }) => `${score.mapWins}/${score.mapLosses}/${score.mapDraws}`,
-			center: true,
-			tooltip: 'Antal vunna/förlorade/oavgjorda kartor',
-			class: 'text-lg'
-		},
-		{
-			label: 'Matcher',
-			content: ({ score }) => score.matchesPlayed,
-			center: true,
-			tooltip: 'Antal spelade matcher',
-			class: 'text-lg'
-		}
-	]}
-	key={(row) => row.roster.id}
-	class="max-w-2xl"
-/>

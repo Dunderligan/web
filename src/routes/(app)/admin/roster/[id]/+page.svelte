@@ -22,7 +22,7 @@
 	import AdminSocials from '$lib/components/admin/AdminSocials.svelte';
 	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
 	import GroupSelect from '$lib/components/form/GroupSelect.svelte';
-	import NewTable from '$lib/components/table/NewTable.svelte';
+	import Table from '$lib/components/table/Table.svelte';
 	import Icon from '$lib/components/ui/Icon.svelte';
 	import { deleteCheckin } from '$lib/remote/checkin.remote.js';
 
@@ -114,40 +114,6 @@
 	}
 </script>
 
-{#snippet playerCell(member: CheckinMember)}
-	{member.player.battletag}
-{/snippet}
-
-{#snippet checkinCell(member: CheckinMember)}
-	{@const checkin = data.checkins.get(member.player.id)}
-
-	{#if checkin}
-		<Icon icon="ph:check-circle-fill" class="text-green-600" />
-	{:else}
-		<Icon icon="ph:x-circle-fill" class="text-red-600" />
-	{/if}
-{/snippet}
-
-{#snippet actionsCell(member: CheckinMember)}
-	{@const checkin = data.checkins.get(member.player.id)}
-
-	{#if checkin}
-		<Button
-			icon="ph:arrow-square-out"
-			label="Visa på discord"
-			kind="secondary"
-			href="https://discord.com/users/{checkin.discordId}"
-			openInNewTab
-		/>
-
-		<Button
-			icon="ph:link-break"
-			kind="secondary"
-			onclick={() => onCheckinRevokeClick(member.player.battletag, checkin.discordId)}
-		/>
-	{/if}
-{/snippet}
-
 <Breadcrumbs
 	crumbs={[
 		{ label: season.name, href: `/admin/sasong/${season.id}` },
@@ -169,7 +135,7 @@
 {#if isAdmin}
 	{#if season.checkinOpen}
 		<AdminCard title="Incheckning">
-			<NewTable
+			<Table
 				kind="transparent"
 				rows={roster.members}
 				key={(member) => member.player.battletag}
@@ -180,6 +146,40 @@
 				]}
 			/>
 		</AdminCard>
+
+		{#snippet playerCell(member: CheckinMember)}
+			{member.player.battletag}
+		{/snippet}
+
+		{#snippet checkinCell(member: CheckinMember)}
+			{@const checkin = data.checkins.get(member.player.id)}
+
+			{#if checkin}
+				<Icon icon="ph:check-circle-fill" class="text-green-600" />
+			{:else}
+				<Icon icon="ph:x-circle-fill" class="text-red-600" />
+			{/if}
+		{/snippet}
+
+		{#snippet actionsCell(member: CheckinMember)}
+			{@const checkin = data.checkins.get(member.player.id)}
+
+			{#if checkin}
+				<Button
+					icon="ph:arrow-square-out"
+					label="Visa på discord"
+					kind="secondary"
+					href="https://discord.com/users/{checkin.discordId}"
+					openInNewTab
+				/>
+
+				<Button
+					icon="ph:link-break"
+					kind="secondary"
+					onclick={() => onCheckinRevokeClick(member.player.battletag, checkin.discordId)}
+				/>
+			{/if}
+		{/snippet}
 	{/if}
 
 	<AdminSocials emptyText="Detta lag har inga länkar." bind:socials={team.socials} />

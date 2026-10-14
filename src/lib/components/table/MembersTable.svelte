@@ -4,7 +4,7 @@
 	import { capitalize, roleIcon } from '$lib/util';
 	import Icon from '../ui/Icon.svelte';
 	import Rank from '../ui/Rank.svelte';
-	import NewTable from './NewTable.svelte';
+	import Table from './Table.svelte';
 	import Link from '../ui/Link.svelte';
 
 	type Props = {
@@ -14,6 +14,23 @@
 
 	let { members, class: classProp }: Props = $props();
 </script>
+
+<Table
+	columns={[
+		{ label: 'Roll', snippet: roleCell, center: true },
+		{
+			label: 'Battletag',
+			snippet: battletagCell
+		},
+		{
+			label: 'Rank',
+			snippet: rankCell
+		}
+	]}
+	rows={members}
+	key={(member) => member.player.battletag}
+	class={classProp}
+/>
 
 {#snippet roleCell({ role }: Member)}
 	<Icon class="text-xl" icon={roleIcon(role)} title={capitalize(role)} />
@@ -41,20 +58,3 @@
 		<Rank rank={{ sr }} collapse />
 	{/if}
 {/snippet}
-
-<NewTable
-	columns={[
-		{ label: 'Roll', snippet: roleCell, center: true },
-		{
-			label: 'Battletag',
-			snippet: battletagCell
-		},
-		{
-			label: 'Rank',
-			snippet: rankCell
-		}
-	]}
-	rows={members}
-	key={(member) => member.player.battletag}
-	class={classProp}
-/>

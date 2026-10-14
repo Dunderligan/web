@@ -1,77 +1,111 @@
 <script lang="ts" generics="T">
 	import type { ClassValue } from 'svelte/elements';
 	import type { ComponentProps, Snippet } from 'svelte';
-	import Note from '../ui/Note.svelte';
 	import Placeholder from '../ui/Placeholder.svelte';
+	import Tooltip from '../ui/Tooltip.svelte';
 
 	type Kind = 'neutral' | 'transparent';
 
+	type ColumnContent =
+		| { snippet: Snippet<[T, number]> }
+		| { content: (value: T, index: number) => string | number };
+
 	type Column = {
 		label?: string;
-		note?: string | Snippet;
+		tooltip?: string | Snippet;
 		center?: boolean;
 		width?: string;
-	};
+		class?: ClassValue;
+	} & ColumnContent;
 
 	type Props = {
 		columns: Column[];
+		key: (value: T) => number | string;
 		rows: T[];
-		row: Snippet<[{ value: T; index: number }]>;
-		key?: (value: T) => string | number;
 		class?: ClassValue;
 		kind?: Kind;
 		placeholder?: ComponentProps<typeof Placeholder>;
 	};
 
-	let {
-		columns,
-		rows,
-		row,
-		key,
-		class: classProp,
-		kind = 'neutral',
-		placeholder
-	}: Props = $props();
+	let { columns, rows, key, class: classProp, kind = 'neutral', placeholder }: Props = $props();
 
-	const gridTemplateColumns = $derived(columns.map((c) => c.width ?? 'auto').join(' '));
+	const fixedLayout = $derived(columns.some((c) => c.width));
 </script>
 
 {#if rows.length === 0 && placeholder}
 	<Placeholder {...placeholder} class={[classProp, placeholder.class, 'w-full']} />
 {:else}
-	<div
-		role="table"
-		class={[
-			classProp,
-			kind === 'transparent'
-				? '*:border-b *:border-gray-100 dark:*:border-gray-800'
-				: 'gap-y-1 *:bg-gray-100 dark:*:bg-gray-900',
-			'table-root grid w-full overflow-hidden overflow-x-auto rounded-lg font-medium text-gray-700 *:flex *:min-h-14 *:items-center *:px-4 *:py-1.5 dark:text-gray-300'
-		]}
-		style="grid-template-columns: {gridTemplateColumns};"
-	>
-		{#each columns as { label, center, note }, i (i)}
-			<div
-				class={[
-					center && 'justify-center',
-					kind === 'transparent'
-						? 'border-gray-200! dark:border-gray-700!'
-						: 'bg-gray-50! dark:bg-gray-900/50!',
-					'table-header flex min-h-0! items-center gap-1 py-2 text-gray-600 dark:text-gray-400'
-				]}
-			>
-				{#if label}
-					{label}
-				{/if}
+	<div class="overflow-x-auto">
+		<table
+			class={[
+				classProp,
+				fixedLayout ? 'table-fixed' : 'table-auto',
+				'border-spacing-x- w-full min-w-xl border-separate border-spacing-y-0.75 overflow-hidden rounded-lg font-medium'
+			]}
+		>
+			<colgroup>
+				{#each columns as { label, width }, i (label ?? i)}
+					<col style={width ? `width: ${width}` : undefined} />
+				{/each}
+			</colgroup>
 
-				{#if note}
-					<Note content={note} class="hidden sm:block" />
-				{/if}
-			</div>
-		{/each}
-
-		{#each rows as value, index (key?.(value) ?? value)}
-			{@render row({ value, index })}
-		{/each}
+			<thead>
+				<tr class={['rounded-t-lg', kind === 'neutral' && 'bg-gray-50 dark:bg-gray-900/50']}>
+					{#each columns as { label, center, tooltip: note }, i (label ?? i)}
+						<th
+							class={[
+								center ? 'text-center' : 'text-left',
+								kind === 'transparent' && 'border-b border-gray-200 dark:border-gray-700',
+								'px-1.5 py-1 font-medium text-gray-600 first:pl-3 last:pr-3 dark:text-gray-400'
+							]}
+						>
+							{#if label}
+								{#if note}
+									<Tooltip content={note} underline>
+										{label}
+									</Tooltip>
+								{:else}
+									{label}
+								{/if}
+							{/if}
+						</th>
+					{/each}
+				</tr>
+			</thead>
+			<tbody>
+				{#each rows as row, i (key(row))}
+					<tr
+						class={[
+							i === rows.length - 1 && 'rounded-b-lg',
+							kind === 'neutral' && 'gap-y-1 bg-gray-100 dark:bg-gray-900'
+						]}
+					>
+						{#each columns as column, j (String(key(row)) + '-' + (column.label ?? j))}
+							<td
+								class={[
+									column.center && 'text-center',
+									kind === 'transparent' && 'border-b border-gray-100 dark:border-gray-800',
+									'px-1.5 first:pl-3 last:pr-3'
+								]}
+							>
+								<div
+									class={[
+										column.class,
+										column.center && 'justify-center',
+										'flex min-h-14 items-center py-1'
+									]}
+								>
+									{#if 'snippet' in column}
+										{@render column.snippet(row, i)}
+									{:else if column.content}
+										{column.content(row, i)}
+									{/if}
+								</div>
+							</td>
+						{/each}
+					</tr>
+				{/each}
+			</tbody>
+		</table>
 	</div>
 {/if}
