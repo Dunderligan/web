@@ -6,6 +6,7 @@
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import Table from './Table.svelte';
 	import { resolve } from '$app/paths';
+	import Tooltip from '../ui/Tooltip.svelte';
 
 	type TableEntry = {
 		roster: Roster;
@@ -66,11 +67,9 @@
 	{@const seed = isAfterLine ? index : index + 1}
 
 	{#if roster.resigned}
-		<Icon
-			icon="ph:minus-circle-fill"
-			title="Laget fullföljde inte säsongen"
-			class="text-xl text-yellow-600"
-		/>
+		<Tooltip content="Laget fullföljde inte säsongen">
+			<Icon icon="ph:minus-circle-fill" class="text-xl text-yellow-600" />
+		</Tooltip>
 	{:else}
 		{seed}
 	{/if}
