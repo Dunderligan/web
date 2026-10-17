@@ -26,8 +26,8 @@ A development database is also required. The simplest way to get started is to i
 Clone the repository and navigate to it:
 
 ```bash
-git clone https://github.com/Dunderligan/web
-cd hemsida
+git clone https://github.com/Dunderligan/web dunderligan-web
+cd dunderligan-web
 ```
 
 Copy the `.env.example` file to `.env` and fill in the `DATABASE_URL` field with the URL of your database:
