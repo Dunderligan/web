@@ -26,15 +26,12 @@
 	type Props = {
 		match: ResolvedMatchWithSeeds;
 		seasonSlug: string;
-		roundIndex: number;
 		state: State;
 		lines: Lines;
+		hoveredRosterId?: string | null;
 	};
 
-	let { match, seasonSlug, roundIndex, state, lines }: Props = $props();
-
-	// don't ask
-	const verticalLineHeight = $derived(40 * Math.pow(roundIndex, 2) - 42 * roundIndex + 82);
+	let { match, seasonSlug, state, lines, hoveredRosterId = $bindable(null) }: Props = $props();
 
 	const logicalMatch = $derived(resolvedMatchToLogical(match));
 	const showScore = $derived(hasMatchScore(logicalMatch));
@@ -45,23 +42,27 @@
 		lines.forward && 'has-next-round',
 		lines.backward && 'has-prev-round',
 		state === 'hidden' ? 'hidden' : state === 'invisible' ? 'invisible' : 'visible',
-		'relative h-[125px] w-60 rounded-lg'
+
+		'match relative h-(--match-height) w-(--match-width) rounded-lg'
 	]}
 >
-	<MatchInfoRow class="h-[25px] rounded-t-lg bg-gray-100 px-4 dark:bg-gray-900" {match} />
+	<MatchInfoRow
+		class="h-(--info-row-height) rounded-t-lg bg-gray-100 px-2 dark:bg-gray-900"
+		{match}
+	/>
 
 	{@render side('A')}
 
-	<div class="divider h-0.5 w-full"></div>
+	<div class="h-(--line-width) w-full bg-gray-200 dark:bg-gray-800"></div>
 
 	{@render side('B', 'rounded-b-lg')}
 
 	{#if lines.up}
-		<div class="vertical-line line-up" style="height: {verticalLineHeight}px"></div>
+		<div class="vertical-line line-up"></div>
 	{/if}
 
 	{#if lines.down}
-		<div class="vertical-line line-down" style="height: {verticalLineHeight}px"></div>
+		<div class="vertical-line line-down"></div>
 	{/if}
 </div>
 
@@ -73,21 +74,20 @@
 
 	{@const bgClass = showScore
 		? won
-			? 'bg-gray-200 dark:bg-gray-800'
-			: 'bg-gray-50 dark:bg-gray-900'
-		: 'bg-gray-100 dark:bg-gray-900'}
-
-	{@const seedBgClass = showScore
-		? won
-			? 'border-gray-300 dark:border-gray-700'
-			: 'border-gray-100 dark:border-gray-800'
-		: 'border-gray-200 dark:border-gray-800'}
+			? 'bg-gray-200 dark:bg-gray-900'
+			: 'bg-gray-100 dark:bg-gray-900/80'
+		: 'bg-gray-100 dark:bg-gray-900/80'}
 
 	<div
+		role="button"
+		tabindex={0}
+		onmouseenter={() => (hoveredRosterId = roster?.id ?? null)}
+		onmouseleave={() => (hoveredRosterId = null)}
 		class={[
 			classProp,
 			bgClass,
-			'relative flex h-[49px] items-center overflow-hidden pr-4 font-medium text-gray-600 dark:text-gray-400'
+			hoveredRosterId === roster?.id && 'bg-gray-300! dark:bg-gray-800!',
+			'relative flex h-(--side-height) cursor-default items-center pr-4 text-base font-medium text-gray-600 dark:text-gray-400'
 		]}
 	>
 		{#if roster}
@@ -95,7 +95,7 @@
 
 			<div
 				class={[
-					seedBgClass,
+					'border-gray-300/20 dark:border-gray-700/20',
 					'absolute right-0 bottom-0 border-t-28 border-r-28 border-t-transparent!'
 				]}
 			></div>
@@ -108,13 +108,13 @@
 				class={[
 					showScore ? 'text-2xl font-extrabold' : 'text-lg',
 					won ? 'text-accent-600 dark:text-accent-500' : 'text-gray-500 dark:text-gray-400',
-					'flex h-full shrink-0 items-center justify-center px-4 text-center'
+					'flex h-full w-8 shrink-0 items-center justify-center text-center'
 				]}
 			>
-				{showScore ? score.toString() : '?'}
+				{showScore ? score.toString() : '-'}
 			</div>
 
-			<RosterLogo id={roster.id} {href} class="mr-2 size-8" />
+			<RosterLogo id={roster.id} {href} class="mr-1 size-8" />
 			<a
 				{href}
 				class={[
@@ -139,32 +139,47 @@
 {/snippet}
 
 <style>
+	.match {
+		--match-height: 120px;
+		--match-width: 210px;
+		--line-width: 2px;
+		--info-row-height: 20px;
+
+		--side-height: calc((var(--match-height) - var(--info-row-height) - var(--line-width)) / 2);
+
+		--prev-match-count: calc(pow(2, var(--bracket-round-index) - 1));
+		--prev-matches-height: calc(
+			(var(--prev-match-count) * (var(--match-height) + var(--bracket-match-spacing)))
+		);
+	}
+
 	/* Horizontal lines connecting rounds */
 	.has-prev-round::before,
 	.has-next-round::after {
 		content: '';
 		position: absolute;
-		height: 2px;
+		height: var(--line-width);
 		z-index: -1;
 	}
 
 	/* Forwards line to next round. */
 	.has-next-round::after {
-		right: -32px;
+		right: calc(var(--bracket-round-spacing) / -2);
 		left: 100%;
 	}
 
 	/* Backwards line to previous round. */
 	.has-prev-round::before {
 		right: 100%;
-		left: -30px;
+		left: calc(var(--bracket-round-spacing) / -2);
 	}
 
 	/* Vertical lines connecting to the above and below previous matches. */
 	.vertical-line {
 		position: absolute;
-		left: -30px;
-		width: 2px;
+		left: calc(var(--bracket-round-spacing) / -2);
+		width: var(--line-width);
+		height: calc(var(--prev-matches-height) / 2 + var(--line-width));
 		z-index: -1;
 	}
 
@@ -172,25 +187,23 @@
 	.line-down,
 	.has-next-round::after,
 	.has-prev-round::before {
-		top: calc(50% + 25px / 2 - 1px);
+		top: calc(var(--info-row-height) + var(--side-height));
 	}
 
 	/* Lines that start in the center y of a match */
 	.line-up {
-		bottom: calc(50% - 25px / 2 - 1px);
+		bottom: var(--side-height);
 	}
 
-	.divider,
 	.vertical-line,
 	.has-prev-round::before,
 	.has-next-round::after {
-		background-color: var(--color-gray-200);
+		background-color: var(--color-gray-100);
 	}
 
-	:global(.dark) .divider,
 	:global(.dark) .vertical-line,
 	:global(.dark) .has-prev-round::before,
 	:global(.dark) .has-next-round::after {
-		background-color: var(--color-gray-800);
+		background-color: var(--color-gray-900);
 	}
 </style>

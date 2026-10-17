@@ -9,6 +9,8 @@
 
 	let { rounds, seasonSlug }: Props = $props();
 
+	let hoveredRosterId = $state<string | null>(null);
+
 	const collapseFirstRound = $derived.by(() => {
 		if (rounds.length === 0) return false;
 
@@ -30,12 +32,23 @@
 	}
 </script>
 
-<div class="w-full overflow-x-auto xl:overflow-x-visible">
-	<div class="flex gap-15">
+<div
+	style="--bracket-rounds: {collapseFirstRound ? rounds.length - 1 : rounds.length}"
+	class="bracket w-full overflow-x-auto xl:overflow-x-visible"
+>
+	<div class="flex gap-(--bracket-round-spacing)">
 		{#each rounds as round, i (i)}
 			{@const prevRound = i > 0 ? rounds[i - 1] : null}
+			{@const roundIndex = collapseFirstRound ? i - 1 : i}
+			{@const isCollapsed = false}
 
-			<div class="flex shrink-0 flex-col justify-around gap-8">
+			<div
+				style="--bracket-round-index: {roundIndex};"
+				class={[
+					isCollapsed && '-mr-[calc(var(--bracket-round-spacing)/2)]',
+					'flex shrink-0 flex-col justify-around gap-(--bracket-match-spacing)'
+				]}
+			>
 				{#each round as match, j (match.id)}
 					{@const prevAbove = !isMatchHidden(prevRound?.[j * 2])}
 					{@const prevBelow = !isMatchHidden(prevRound?.[j * 2 + 1])}
@@ -43,14 +56,14 @@
 					<BracketMatch
 						{seasonSlug}
 						{match}
-						roundIndex={collapseFirstRound ? i - 1 : i}
+						bind:hoveredRosterId
 						state={isMatchHidden(match)
 							? collapseFirstRound && i === 0 && j % 2 === 0
 								? 'hidden'
 								: 'invisible'
 							: 'visible'}
 						lines={{
-							forward: i < rounds.length - 1,
+							forward: !isCollapsed && i < rounds.length - 1,
 							backward: i > 0 && (prevAbove || prevBelow),
 							up: prevAbove,
 							down: prevBelow && (!collapseFirstRound || i > 1)
@@ -61,3 +74,10 @@
 		{/each}
 	</div>
 </div>
+
+<style>
+	.bracket {
+		--bracket-round-spacing: calc(var(--spacing) * 6);
+		--bracket-match-spacing: calc(var(--spacing) * 4);
+	}
+</style>
