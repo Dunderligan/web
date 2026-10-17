@@ -5,10 +5,11 @@
 	import SearchSelect from '../form/SearchSelect.svelte';
 	import type { RosterWithGroup, SelectItem } from '$lib/types';
 
-	type Props = { excludeSeasonId?: string; excludeTeamId?: string } & Omit<
-		ComponentProps<typeof SearchSelect>,
-		'queryItems'
-	>;
+	type Props = {
+		excludeSeasonId?: string;
+		excludeTeamId?: string;
+		onTeamChanged?: (value: { teamId: string; rosters: RosterWithGroup[] } | undefined) => void;
+	} & Omit<ComponentProps<typeof SearchSelect>, 'queryItems'>;
 
 	let {
 		excludeSeasonId,
@@ -16,6 +17,8 @@
 		value = $bindable(),
 		placeholder = 'Sök efter lag...',
 		noResultsText = 'Inga lag hittades',
+		onTeamChanged,
+		onValueChange,
 		...props
 	}: Props = $props();
 
@@ -34,9 +37,26 @@
 			}))
 			.toArray();
 	}
+
+	function handleValueChange(teamId: string | undefined) {
+		if (teamId) {
+			const rosters = rostersByTeamId.get(teamId) ?? [];
+			onTeamChanged?.({ teamId, rosters });
+		} else {
+			onTeamChanged?.(undefined);
+		}
+		onValueChange?.(teamId);
+	}
 </script>
 
-<SearchSelect bind:value {queryItems} {placeholder} {noResultsText} {...props}>
+<SearchSelect
+	bind:value
+	{queryItems}
+	{placeholder}
+	{noResultsText}
+	onValueChange={handleValueChange}
+	{...props}
+>
 	{#snippet itemSnippet({ value })}
 		{@const rosters = rostersByTeamId.get(value) ?? []}
 

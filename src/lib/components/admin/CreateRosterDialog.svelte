@@ -42,9 +42,9 @@
 			bind:value={teamId}
 			{excludeSeasonId}
 			disabled={!hasExistingTeam}
-			onValueChange={(_, rosters) => {
-				if (rosters) {
-					name = rosters[0].name;
+			onTeamChanged={(selectedTeam) => {
+				if (selectedTeam) {
+					name = selectedTeam.rosters.at(0)?.name ?? '';
 				}
 			}}
 		/>
