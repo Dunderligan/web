@@ -146,7 +146,7 @@
 			rows={awards}
 			key={(award) => award.id}
 			columns={[
-				{ label: 'Battletag', snippet: battletagCell, class: 'font-semibold' },
+				{ label: 'Battletag', snippet: battletagCell, class: 'font-semibold text-lg' },
 				{ label: awardType.showDivision ? 'Säsong' : '', snippet: seasonCell, center: true },
 				{ label: awardType.showDivision ? 'Division' : '', snippet: divisionCell, center: true },
 				{ snippet: actionsCell, center: true, class: 'gap-1' }

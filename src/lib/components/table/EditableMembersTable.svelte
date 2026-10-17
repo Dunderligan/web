@@ -339,7 +339,6 @@
 		<InputField
 			bind:value={newPlayerBattletag}
 			placeholder="Spelare#1234"
-			onenter={addNewPlayer}
 			oninput={() => validateNewPlayerName(true)}
 			onblur={() => validateNewPlayerName(false)}
 		/>

@@ -5,6 +5,7 @@
 	import Icon from '../ui/Icon.svelte';
 	import type { Snippet } from 'svelte';
 	import type { ClassValue } from 'svelte/elements';
+	import type { SelectItem } from '$lib/types';
 
 	type LabelDecoration =
 		| {
@@ -22,12 +23,12 @@
 		  }
 		| {
 				itemIcon?: never;
-				itemSnippet?: Snippet<[{ value: string }]>;
+				itemSnippet?: Snippet<[SelectItem]>;
 		  };
 
 	type Props = WithoutChildren<Select.RootProps> & {
 		placeholder?: string;
-		items: { value: string; label: string; disabled?: boolean }[];
+		items: SelectItem[];
 		class?: ClassValue;
 		avoidCollisions?: boolean;
 		canClear?: boolean;
@@ -89,7 +90,7 @@
 >
 	<Select.Trigger class={[classProp, 'group field flex items-center gap-2 overflow-hidden']}>
 		{#each selectedItems as item (item.value)}
-			{@render renderedItemIcon(item.value)}
+			{@render renderedItemIcon(item)}
 		{/each}
 
 		<div class={[!label && !selectedLabel && 'opacity-80', 'grow text-left']}>
@@ -129,7 +130,7 @@
 		{#each items as item, i (i + item.value)}
 			<Select.Item {...item} class="floating-item gap-2">
 				{#snippet children({ selected })}
-					{@render renderedItemIcon(item.value)}
+					{@render renderedItemIcon(item)}
 
 					<span>{item.label}</span>
 
@@ -142,13 +143,13 @@
 	</Select.Viewport>
 {/snippet}
 
-{#snippet renderedItemIcon(value: string)}
-	{@const renderedIcon = itemIcon?.(value)}
+{#snippet renderedItemIcon(item: SelectItem)}
+	{@const renderedIcon = itemIcon?.(item.value)}
 
 	{#if renderedIcon}
 		{@render icon(renderedIcon)}
 	{:else if itemSnippet}
-		{@render itemSnippet({ value })}
+		{@render itemSnippet(item)}
 	{/if}
 {/snippet}
 

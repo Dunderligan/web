@@ -1,6 +1,7 @@
 import type z from 'zod';
 import type { matchQueryParamsSchema } from './schemas';
 import type { ResolvedPathname } from '$app/types';
+import type { Select } from 'bits-ui';
 
 export type ListedSeason = {
 	id: string;
@@ -267,6 +268,8 @@ export type TournamentState = {
 	| { status: 'registration'; registrationClosesAt: Date | null } // during registration
 	| { status: 'starting'; startsAt: Date | null } // after registration closed but before season start
 );
+
+export type SelectItem = Exclude<Select.RootProps['items'], undefined>[number];
 
 export type DropdownItem = {
 	label: string;

@@ -1,119 +1,59 @@
 <script lang="ts">
-	import type { RosterWithGroup } from '$lib/types';
-	import { Combobox } from 'bits-ui';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import { queryTeams } from '$lib/remote/team.remote';
-	import Icon from '../ui/Icon.svelte';
+	import type { ComponentProps } from 'svelte';
+	import SearchSelect from '../form/SearchSelect.svelte';
+	import type { RosterWithGroup, SelectItem } from '$lib/types';
 
-	type Props = {
-		value?: string;
-		excludeSeasonId?: string;
-		excludeTeamId?: string;
-		disabled?: boolean;
-		onValueChange?: (id: string, rosters: RosterWithGroup[]) => void;
-	};
+	type Props = { excludeSeasonId?: string; excludeTeamId?: string } & Omit<
+		ComponentProps<typeof SearchSelect>,
+		'queryItems'
+	>;
 
 	let {
-		value = $bindable(),
 		excludeSeasonId,
 		excludeTeamId,
-		disabled = false,
-		onValueChange
+		value = $bindable(),
+		placeholder = 'Sök efter lag...',
+		noResultsText = 'Inga lag hittades',
+		...props
 	}: Props = $props();
 
-	let searchQuery = $state('');
-	let items: { label: string; value: string }[] = $state([]);
-	let teams: Map<string, RosterWithGroup[]> = $state(new Map());
+	let rostersByTeamId: Map<string, RosterWithGroup[]> = $state(new Map());
 
-	let loading = $state(false);
-	let queryTimer: NodeJS.Timeout | null = null;
+	async function queryItems(query: string): Promise<SelectItem[]> {
+		const results = await queryTeams({ query, excludeSeasonId, excludeTeamId });
 
-	$effect(() => {
-		onTyped(searchQuery);
-	});
+		rostersByTeamId = results;
 
-	async function onTyped(searchQuery: string) {
-		if (queryTimer) {
-			clearTimeout(queryTimer);
-		}
-
-		if (searchQuery.length >= 2) {
-			loading = true;
-
-			queryTimer = setTimeout(() => {
-				updateItems(searchQuery);
-			}, 300);
-		} else {
-			items = [];
-			teams = new Map();
-			loading = false;
-		}
-	}
-
-	async function updateItems(searchQuery: string) {
-		const results = await queryTeams({ query: searchQuery, excludeSeasonId, excludeTeamId });
-		teams = results;
-		items = results
+		return results
 			.entries()
 			.map(([teamId, rosters]) => ({
-				label: rosters.length > 0 ? rosters[0].name : 'Okänt lag',
+				label: rosters.at(0)?.name ?? 'Okänt lag',
 				value: teamId
 			}))
 			.toArray();
-
-		loading = false;
 	}
 </script>
 
-<Combobox.Root
-	type="single"
-	bind:value
-	{items}
-	{disabled}
-	onValueChange={(teamId) => {
-		if (onValueChange) {
-			const rosters = teams.get(teamId) ?? [];
-			onValueChange(teamId, rosters);
-		}
-	}}
->
-	<Combobox.Input
-		class="group field flex grow items-center overflow-hidden rounded-lg border border-transparent ring-accent-600 focus:ring-2 focus:outline-none"
-		placeholder="Sök efter lag..."
-		oninput={(evt) => (searchQuery = evt.currentTarget.value)}
-	></Combobox.Input>
+<SearchSelect bind:value {queryItems} {placeholder} {noResultsText} {...props}>
+	{#snippet itemSnippet({ value })}
+		{@const rosters = rostersByTeamId.get(value) ?? []}
 
-	{#if searchQuery.length >= 2}
-		<Combobox.Portal>
-			<Combobox.Content class="floating w-(--bits-combobox-anchor-width)">
-				{#if loading}
-					<div class="py-2 text-center font-medium text-gray-500">
-						<Icon icon="ph:spinner" class="animate-spin" />
+		<div class="space-y-1">
+			{#each rosters as roster (roster.id)}
+				<div class="flex w-full items-center">
+					<RosterLogo id={roster.id} class="mr-3 size-8" />
+					<div>
+						<div>
+							{roster.name}
+						</div>
+						<div class="text-sm">
+							{roster.group.division.season.name}
+						</div>
 					</div>
-				{:else if teams.size === 0}
-					<div class="py-2 text-center font-medium text-gray-600 dark:text-gray-300">
-						Inga lag hittades
-					</div>
-				{:else}
-					{#each teams as [teamId, rosters] (teamId)}
-						<Combobox.Item value={teamId} class="floating-item my-0.5 flex-col gap-2">
-							{#each rosters as roster (roster.id)}
-								<div class="flex w-full items-center">
-									<RosterLogo id={roster.id} class="mr-3 size-8" />
-									<div>
-										<div>
-											{roster.name}
-										</div>
-										<div class="text-sm">
-											{roster.group.division.season.name}
-										</div>
-									</div>
-								</div>
-							{/each}
-						</Combobox.Item>
-					{/each}
-				{/if}
-			</Combobox.Content>
-		</Combobox.Portal>
-	{/if}
-</Combobox.Root>
+				</div>
+			{/each}
+		</div>
+	{/snippet}
+</SearchSelect>
