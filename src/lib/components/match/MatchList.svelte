@@ -2,21 +2,28 @@
 	import Match from './Match.svelte';
 	import Subheading from '../ui/Subheading.svelte';
 	import MatchListPlaceholder from './MatchListPlaceholder.svelte';
-	import type { MatchListProps } from '$lib/types';
 	import Button from '../ui/Button.svelte';
 	import { page } from '$app/state';
+	import type { ClassValue } from 'svelte/elements';
+	import type { ResolvedMatchWithContext } from '$lib/types';
+	import type { ComponentProps } from 'svelte';
+
+	type Props = {
+		hideIfEmpty?: boolean;
+		title?: string;
+		class?: ClassValue;
+		matchArchiveParams?: string;
+		matches: ResolvedMatchWithContext[];
+	} & Omit<ComponentProps<typeof Match>, 'match'>;
 
 	let {
-		seasonSlug,
-		mainRosterId,
 		matches,
 		hideIfEmpty = false,
-		hideDivision = false,
 		title,
 		class: classProp,
-		size = 'md',
-		matchArchiveParams
-	}: MatchListProps = $props();
+		matchArchiveParams,
+		...matchProps
+	}: Props = $props();
 
 	const hide = $derived(hideIfEmpty && matches.length === 0);
 </script>
@@ -30,7 +37,7 @@
 
 	<div class={[!title && classProp, 'max-w-2xl space-y-2']}>
 		{#each matches as match (match.id)}
-			<Match {match} {seasonSlug} {hideDivision} {mainRosterId} {size} />
+			<Match {match} {...matchProps} />
 		{:else}
 			<MatchListPlaceholder />
 		{/each}

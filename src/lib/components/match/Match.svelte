@@ -9,7 +9,7 @@
 		matchNote,
 		resolvedMatchToLogical
 	} from '$lib/match';
-	import { MatchState, type MatchSize, type ResolvedMatchWithContext } from '$lib/types';
+	import { MatchState, type ResolvedMatchWithContext } from '$lib/types';
 	import Icon from '../ui/Icon.svelte';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import MatchInfoRow from './MatchInfoRow.svelte';
@@ -25,7 +25,7 @@
 		seasonSlug?: string;
 		mainRosterId?: string;
 		hideDivision?: boolean;
-		size?: MatchSize;
+		size?: 'md' | 'sm' | 'xs';
 	};
 
 	let {

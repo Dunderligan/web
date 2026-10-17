@@ -1,7 +1,5 @@
-import type { Snippet } from 'svelte';
 import type z from 'zod';
 import type { matchQueryParamsSchema } from './schemas';
-import type { ClassValue } from 'svelte/elements';
 import type { ResolvedPathname } from '$app/types';
 
 export type ListedSeason = {
@@ -269,29 +267,6 @@ export type TournamentState = {
 	| { status: 'registration'; registrationClosesAt: Date | null } // during registration
 	| { status: 'starting'; startsAt: Date | null } // after registration closed but before season start
 );
-
-export type MatchSize = 'md' | 'sm' | 'xs';
-
-export type MatchListProps = {
-	seasonSlug?: string;
-	mainRosterId?: string;
-	hideIfEmpty?: boolean;
-	hideDivision?: boolean;
-	title?: string;
-	class?: ClassValue;
-	size?: MatchSize;
-	matchArchiveParams?: string;
-	matches: ResolvedMatchWithContext[];
-};
-
-export type CardProps = {
-	class?: ClassValue;
-	reverse?: boolean;
-	title: string;
-	image: string;
-	alt: string;
-	children?: Snippet;
-};
 
 export type DropdownItem = {
 	label: string;

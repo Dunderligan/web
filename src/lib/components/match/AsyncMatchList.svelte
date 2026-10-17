@@ -1,9 +1,10 @@
 <script lang="ts">
-	import type { MatchListProps, ResolvedMatchWithContext } from '$lib/types';
+	import type { ResolvedMatchWithContext } from '$lib/types';
 	import MatchSkeleton from './MatchSkeleton.svelte';
 	import MatchList from './MatchList.svelte';
+	import type { ComponentProps } from 'svelte';
 
-	type Props = Omit<MatchListProps, 'matches' | 'title'> & {
+	type Props = Omit<ComponentProps<typeof MatchList>, 'matches' | 'title'> & {
 		skeletonCount?: number;
 		matches: Promise<ResolvedMatchWithContext[]>;
 	};

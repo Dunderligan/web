@@ -1,7 +1,17 @@
 <script lang="ts">
-	import type { CardProps } from '$lib/types';
+	import type { Snippet } from 'svelte';
+	import type { ClassValue } from 'svelte/elements';
 
-	let { title, image, alt, reverse = false, children, class: classProp }: CardProps = $props();
+	type Props = {
+		class?: ClassValue;
+		reverse?: boolean;
+		title: string;
+		image: string;
+		alt: string;
+		children?: Snippet;
+	};
+
+	let { title, image, alt, reverse = false, children, class: classProp }: Props = $props();
 </script>
 
 <div
