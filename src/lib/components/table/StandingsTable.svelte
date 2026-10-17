@@ -33,7 +33,7 @@
 			center: true,
 			tooltip: 'Antal vunna kartor',
 			class: 'font-semibold text-xl',
-			width: '6rem'
+			width: '5rem'
 		},
 		{
 			label: 'W/L/D',
