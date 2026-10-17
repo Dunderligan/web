@@ -30,7 +30,13 @@
 
 	const { data } = $props();
 
+	// svelte-ignore state_referenced_locally
 	let submission = $state(data.submission);
+
+	$effect(() => {
+		submission = data.submission;
+	});
+
 	const registration = $derived(submission.registration);
 	const season = $derived(registration.season);
 

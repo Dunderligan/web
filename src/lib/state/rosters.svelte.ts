@@ -17,11 +17,18 @@ export class RosterContext {
 	canEditRosters: boolean;
 	map: SvelteMap<string, Roster>;
 
-	constructor(list: Roster[]) {
+	constructor() {
 		this.editingMatch = $state(null);
 		this.canEditRosters = true;
-		this.map = $state(new SvelteMap(list.map((roster) => [roster.id, roster])));
+		this.map = $state(new SvelteMap());
 	}
+
+	setRosters = (list: Roster[]) => {
+		this.map.clear();
+		for (const roster of list) {
+			this.map.set(roster.id, roster);
+		}
+	};
 
 	editMatch = (match: UnresolvedMatch, canEditRosters?: boolean) => {
 		if (!match.id) return;

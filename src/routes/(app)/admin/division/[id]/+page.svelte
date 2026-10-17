@@ -19,8 +19,14 @@
 
 	const { data } = $props();
 
-	const division = $state(data.division);
-	const season = $state(division.season);
+	// svelte-ignore state_referenced_locally
+	let division = $state(data.division);
+
+	$effect(() => {
+		division = data.division;
+	});
+
+	const season = $derived(division.season);
 
 	SaveContext.set(
 		new SaveContext({

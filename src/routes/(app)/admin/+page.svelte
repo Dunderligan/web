@@ -18,7 +18,12 @@
 
 	SaveContext.set(new SaveContext());
 
+	// svelte-ignore state_referenced_locally
 	let seasons = $state(data.seasons);
+
+	$effect(() => {
+		seasons = data.seasons;
+	});
 
 	let createSeasonOpen = $state(false);
 

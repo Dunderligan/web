@@ -19,7 +19,13 @@
 
 	const { data } = $props();
 
-	const registration = $state(data.registration);
+	// svelte-ignore state_referenced_locally
+	let registration = $state(data.registration);
+
+	$effect(() => {
+		registration = data.registration;
+	});
+
 	const season = $derived(registration.season);
 
 	SaveContext.set(new SaveContext({ save, href: () => `/anmal/${season.slug}` }));

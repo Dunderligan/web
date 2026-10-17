@@ -25,7 +25,12 @@
 
 	let { data } = $props();
 
+	// svelte-ignore state_referenced_locally
 	let player = $state(data.player);
+
+	$effect(() => {
+		player = data.player;
+	});
 
 	const slug = $derived(player.battletag.replace('#', '-'));
 

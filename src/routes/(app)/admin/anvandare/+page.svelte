@@ -21,7 +21,12 @@
 
 	let { data } = $props();
 
+	// svelte-ignore state_referenced_locally
 	let users = $state(data.users);
+
+	$effect(() => {
+		users = data.users;
+	});
 
 	SaveContext.set(new SaveContext({ save }));
 

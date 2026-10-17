@@ -34,8 +34,14 @@
 
 	let { data } = $props();
 
-	let awardType = $derived(data.awardType);
-	let awards = $derived(awardType.awards);
+	// svelte-ignore state_referenced_locally
+	let awardType = $state(data.awardType);
+
+	$effect(() => {
+		awardType = data.awardType;
+	});
+
+	const awards = $derived(awardType.awards);
 
 	SaveContext.set(new SaveContext({ save }));
 

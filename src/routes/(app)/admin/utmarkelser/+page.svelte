@@ -19,7 +19,12 @@
 
 	SaveContext.set(new SaveContext());
 
+	// svelte-ignore state_referenced_locally
 	let awardTypes = $state(data.awardTypes);
+
+	$effect(() => {
+		awardTypes = data.awardTypes;
+	});
 
 	const canEdit = $derived(isAdmin(data.user?.role));
 

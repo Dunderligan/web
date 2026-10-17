@@ -41,7 +41,12 @@
 		});
 	}
 
+	// svelte-ignore state_referenced_locally
 	let apiKeys = $state(data.apiKeys);
+
+	$effect(() => {
+		apiKeys = data.apiKeys;
+	});
 
 	let createOpen = $state(false);
 	let newKeyName = $state('');

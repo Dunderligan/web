@@ -23,16 +23,17 @@
 
 	const { data } = $props();
 
-	// eslint-disable-next-line svelte/prefer-writable-derived
+	// svelte-ignore state_referenced_locally
 	let group = $state(data.group);
-	const division = $derived(group.division);
-	const season = $derived(division.season);
 
 	$effect(() => {
 		group = data.group;
 	});
 
-	RosterContext.set(new RosterContext(group.rosters));
+	const division = $derived(group.division);
+	const season = $derived(division.season);
+
+	RosterContext.set(new RosterContext());
 	SaveContext.set(
 		new SaveContext({
 			save,
@@ -40,9 +41,13 @@
 		})
 	);
 
-	let rosterCtx = RosterContext.get();
 	let confirmCtx = ConfirmContext.get();
 	let saveCtx = SaveContext.get();
+	let rosterCtx = RosterContext.get();
+
+	$effect(() => {
+		rosterCtx.setRosters(group.rosters);
+	});
 
 	let addRosterOpen = $state(false);
 

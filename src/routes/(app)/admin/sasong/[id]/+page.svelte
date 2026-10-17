@@ -22,8 +22,12 @@
 
 	const { data } = $props();
 
-	const season = $state(data.season);
-	let registration = $state(season.registration);
+	// svelte-ignore state_referenced_locally
+	let season = $state(data.season);
+
+	$effect(() => {
+		season = data.season;
+	});
 
 	SaveContext.set(new SaveContext({ save, href: () => `/stallningar/${season.slug}` }));
 
@@ -90,9 +94,9 @@
 
 {#if isAdmin(data.user?.role)}
 	<AdminCard title="Anmälan">
-		{#if registration}
+		{#if season.registration}
 			<div class="overflow-hidden rounded-lg">
-				<AdminLink href="/admin/anmalan/{registration.id}">Hantera anmälan</AdminLink>
+				<AdminLink href="/admin/anmalan/{season.registration.id}">Hantera anmälan</AdminLink>
 			</div>
 		{:else}
 			<AdminEmptyNotice oncreateclick={() => (createRegistrationOpen = true)}

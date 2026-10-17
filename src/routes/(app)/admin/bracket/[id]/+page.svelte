@@ -20,11 +20,17 @@
 
 	const { data } = $props();
 
-	const bracket = $state(data.bracket);
-	const division = $state(data.division);
-	const season = $state(division.season);
+	// svelte-ignore state_referenced_locally
+	let bracket = $state(data.bracket);
 
-	RosterContext.set(new RosterContext(data.rosters));
+	$effect(() => {
+		bracket = data.bracket;
+	});
+
+	const division = $derived(data.division);
+	const season = $derived(division.season);
+
+	RosterContext.set(new RosterContext());
 	SaveContext.set(
 		new SaveContext({
 			save,
@@ -35,9 +41,14 @@
 	const saveCtx = SaveContext.get();
 	const confirmCtx = ConfirmContext.get();
 
-	// we need deep reactivity here to make sure the matches are
-	// actually edited, not just local copies in `rounds`
-	// eslint-disable-next-line svelte/prefer-writable-derived
+	const rosterCtx = RosterContext.get();
+
+	$effect(() => {
+		rosterCtx.setRosters(data.rosters);
+	});
+
+	// we can't use derived here as we need deep reactivity to make sure
+	// the root match objects are actually edited, not just local copies in `rounds`
 	let rounds: UnresolvedMatchWithOrder[][] = $state([]);
 
 	$effect(() => {

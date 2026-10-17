@@ -32,13 +32,15 @@
 
 	let { data } = $props();
 
+	// svelte-ignore state_referenced_locally
+	let roster = $state(data.roster);
+	// svelte-ignore state_referenced_locally
+	let team = $state(data.team);
+
 	$effect(() => {
 		roster = data.roster;
 		team = data.team;
 	});
-
-	let roster = $state(data.roster);
-	let team = $state(data.team);
 
 	let { group, division, season } = $derived(flattenGroup(roster.group));
 
@@ -51,7 +53,7 @@
 	let linkTeamId: string | undefined = $state();
 
 	let changeGroupOpen = $state(false);
-	let changeGroupTo = $state(group.id);
+	let changeGroupTo = $derived(group.id);
 
 	let uploadedLogo = $state(false);
 
