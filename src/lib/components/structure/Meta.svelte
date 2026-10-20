@@ -13,7 +13,7 @@
 
 	let {
 		title,
-		description = 'Välkommen till Dunderligan, Sveriges främsta Overwatchturnerning!',
+		description = 'Välkommen till Dunderligan, Sveriges främsta Overwatchturnering!',
 		ogImage = logo,
 		ogImageAlt,
 		ogImageWidth,
