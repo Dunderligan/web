@@ -10,7 +10,7 @@
 	import { flattenGroup } from '$lib/util';
 	import MatchList from '$lib/components/match/MatchList.svelte';
 	import Meta from '$lib/components/structure/Meta.svelte';
-	import { MatchState } from '$lib/types';
+	import { MatchState, type TabItem } from '$lib/types';
 	import { averageLegacyRank, averageRank } from '$lib/rank';
 	import { isModerator } from '$lib/auth-role.js';
 	import Field from '$lib/components/structure/Field.svelte';
@@ -37,7 +37,7 @@
 	);
 	const upcomingMatches = $derived(matches.filter((match) => match.state === MatchState.SCHEDULED));
 
-	const rosterTabItems = $derived(
+	const rosterTabItems: TabItem<string>[] = $derived(
 		team.rosters
 			.toSorted((a, b) => {
 				const seasonA = flattenGroup(a.group).season;

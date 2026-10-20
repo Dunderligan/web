@@ -2,6 +2,8 @@ import type z from 'zod';
 import type { matchQueryParamsSchema } from './schemas';
 import type { ResolvedPathname } from '$app/types';
 import type { Select } from 'bits-ui';
+import type { ComponentProps } from 'svelte';
+import Tabs from './components/ui/Tabs.svelte';
 
 export type ListedSeason = {
 	id: string;
@@ -270,13 +272,14 @@ export type TournamentState = {
 );
 
 export type SelectItem = Exclude<Select.RootProps['items'], undefined>[number];
+export type TabItem<T> = ComponentProps<typeof Tabs<T>>['items'][number];
 
 export type DropdownItem = {
 	label: string;
 	icon?: string;
 	hidden?: boolean;
 } & (
-	| { type: 'button'; href?: string | ResolvedPathname; onclick?: () => void }
+	| { type: 'button'; href?: ResolvedPathname; onclick?: () => void }
 	| { type: 'checkbox'; checked: boolean; onchange: (value: boolean) => void }
 );
 

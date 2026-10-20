@@ -141,7 +141,7 @@
 <style>
 	.match {
 		--match-height: 120px;
-		--match-width: 210px;
+		--match-width: 225px;
 		--line-width: 2px;
 		--info-row-height: 20px;
 

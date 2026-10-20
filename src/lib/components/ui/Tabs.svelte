@@ -2,12 +2,13 @@
 	import type { ClassValue } from 'svelte/elements';
 	import Icon from './Icon.svelte';
 	import { Button } from 'bits-ui';
+	import type { ResolvedPathname } from '$app/types';
 
 	type Item = {
 		label: string;
 		value: T;
 		icon?: string;
-		href?: string;
+		href?: ResolvedPathname;
 		disabled?: boolean;
 	};
 
