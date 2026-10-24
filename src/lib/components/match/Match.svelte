@@ -133,19 +133,12 @@
 	{@const note = matchNote(match, side)}
 
 	<div
-		class={[
-			classProp,
-			'flex items-center gap-2.5 overflow-hidden text-gray-700 dark:text-gray-300'
-		]}
+		class={[classProp, 'flex items-center gap-2 overflow-hidden text-gray-700 dark:text-gray-300']}
 	>
 		{#if roster}
 			{@const href = resolve(`/lag/${roster.slug}/${seasonSlug}`)}
 
-			<RosterLogo
-				id={roster.id}
-				{href}
-				class={size === 'xs' ? 'size-8 sm:size-10' : 'size-10 sm:size-12'}
-			/>
+			<RosterLogo {href} id={roster.id} size={size === 'xs' ? 'sm' : 'md'} />
 
 			<a
 				{href}
@@ -154,7 +147,7 @@
 				{size === 'md' ? roster.name : shortenTeamName(roster.name)}
 			</a>
 		{:else}
-			<Icon icon="ph:minus-circle" class="shrink-0 text-4xl text-gray-600 dark:text-gray-400" />
+			<Icon icon="ph:minus-circle" class="shrink-0 text-3xl text-gray-600 dark:text-gray-400" />
 
 			<div class="text-lg font-semibold text-gray-600 dark:text-gray-400">TBD</div>
 		{/if}

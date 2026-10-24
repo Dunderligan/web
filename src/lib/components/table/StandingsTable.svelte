@@ -78,7 +78,7 @@
 {#snippet teamCell({ roster }: TableEntry, index: number)}
 	{@const href = resolve(`/lag/${roster.slug}/${seasonSlug}`)}
 
-	<RosterLogo id={roster.id} {href} class="mr-2 size-12" />
+	<RosterLogo id={roster.id} {href} size="md" class="mr-2" />
 
 	<Link {href} class="truncate">{roster.name}</Link>
 

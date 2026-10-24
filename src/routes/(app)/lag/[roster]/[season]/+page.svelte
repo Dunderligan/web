@@ -67,7 +67,7 @@
 />
 
 <PageHeader class="flex flex-col items-center gap-6 sm:flex-row">
-	<RosterLogo id={roster.id} class="size-40" imgSize={256} />
+	<RosterLogo id={roster.id} size="xl" />
 
 	<div>
 		<h1 class="font-display text-5xl font-extrabold sm:text-left sm:text-6xl">

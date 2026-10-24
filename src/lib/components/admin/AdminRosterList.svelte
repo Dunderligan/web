@@ -24,7 +24,7 @@
 	{...adminLinkListProps}
 >
 	{#snippet linkContent({ item: roster })}
-		<RosterLogo id={roster.id} class="mr-2 inline size-12" />
+		<RosterLogo size="md" id={roster.id} class="mr-2 inline" />
 
 		<div class="grow pr-4">
 			<div>{roster.name}</div>

@@ -120,7 +120,7 @@
 	{@const rosterHref = resolve(`/lag/${roster.slug}/${tournamentState.season.slug}`)}
 
 	<div class="flex items-center gap-3 rounded-lg bg-gray-700 px-6 py-4 dark:bg-gray-800">
-		<RosterLogo id={roster.id} class="size-14" href={rosterHref} />
+		<RosterLogo id={roster.id} size="md" href={rosterHref} />
 		<div class="text-left">
 			<div class="font-medium text-gray-300">
 				Vinnare <Link href={bracketHref}>{bracket.name}</Link>

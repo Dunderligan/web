@@ -7,14 +7,25 @@
 	type Props = {
 		id: string;
 		class?: ClassValue;
-		imgSize?: number;
+		size: 'sm' | 'md' | 'lg' | 'xl' | number;
 		src?: string | null;
 		href?: ResolvedPathname | null;
 	};
 
-	let { id, class: classProp, imgSize = 64, src: srcOverride, href }: Props = $props();
+	let { id, class: classProp, size: sizeProp = 'md', src: srcOverride, href }: Props = $props();
 
-	let src = $derived(srcOverride ?? cdn.rosterLogoUrl(id, { width: imgSize }));
+	const size = $derived(
+		typeof sizeProp === 'number'
+			? sizeProp
+			: {
+					sm: 32,
+					md: 48,
+					lg: 64,
+					xl: 160
+				}[sizeProp]
+	);
+
+	let src = $derived(srcOverride ?? cdn.rosterLogoUrl(id, { width: size }));
 
 	function onerror() {
 		src = placeholderTeam;
@@ -28,5 +39,11 @@
 {/if}
 
 {#snippet image()}
-	<img {src} {onerror} class={[classProp, 'shrink-0 rounded-[20%] object-contain']} alt="Logotyp" />
+	<img
+		{src}
+		{onerror}
+		style="width: {size}px; height: {size}px;"
+		class={[classProp, 'shrink-0 rounded-[20%] object-contain']}
+		alt="Logotyp"
+	/>
 {/snippet}

@@ -63,7 +63,7 @@
 		<div class="space-y-1">
 			{#each rosters as roster (roster.id)}
 				<div class="flex w-full items-center">
-					<RosterLogo id={roster.id} class="mr-3 size-8" />
+					<RosterLogo id={roster.id} size="sm" class="mr-3" />
 					<div>
 						<div>
 							{roster.name}

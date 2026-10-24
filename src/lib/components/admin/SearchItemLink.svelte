@@ -22,7 +22,7 @@
 
 <AdminLink href={item.href} {onclick}>
 	{#if item.type === 'roster'}
-		<RosterLogo id={item.id} class="mr-3 size-12" imgSize={48} />
+		<RosterLogo id={item.id} class="mr-3" size="md" />
 	{:else if item.image}
 		<img
 			src={item.image}

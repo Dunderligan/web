@@ -220,7 +220,7 @@
 				{@const { season } = flattenGroup(roster.group)}
 				{@const href = resolve(`/lag/${roster.slug}/${season.slug}`)}
 
-				<RosterLogo id={roster.id} class="size-12" {href} />
+				<RosterLogo id={roster.id} size="md" {href} />
 
 				<Link {href} class="hidden truncate sm:inline">
 					{roster.name}

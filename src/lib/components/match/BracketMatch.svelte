@@ -110,7 +110,7 @@
 				{showScore ? score.toString() : '-'}
 			</div>
 
-			<RosterLogo id={roster.id} {href} class="mr-1 size-8" />
+			<RosterLogo id={roster.id} {href} size="sm" class="mr-1" />
 			<a
 				{href}
 				class={[
