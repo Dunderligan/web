@@ -77,7 +77,7 @@
 
 <style>
 	.bracket {
-		--bracket-round-spacing: calc(var(--spacing) * 6);
+		--bracket-round-spacing: calc(var(--spacing) * 8);
 		--bracket-match-spacing: calc(var(--spacing) * 4);
 	}
 </style>

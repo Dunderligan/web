@@ -2,7 +2,7 @@
 
 # web
 
-Dunderligan's official website, [dunderligan.se](https://dunderligan.se). The site houses information about the tournament, teams and their players, as well as current and historial standings, match records and brackets, with more to come!
+Dunderligan's official website, [dunderligan.se](https://dunderligan.se). The site houses information about the tournament, teams and their players, as well as current and historical standings, match records and brackets, with more to come!
 
 It's a full-stack app built using SvelteKit, Tailwind and Drizzle ORM. For technical documentation, see [./docs/](./docs/overview.md).
 

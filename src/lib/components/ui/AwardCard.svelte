@@ -27,7 +27,7 @@
 <div
 	class="relative min-h-40 rounded-lg bg-gray-100 py-4 font-medium text-gray-700 dark:bg-gray-900 dark:text-gray-300"
 >
-	<img class="absolute -top-1 -left-4 w-36 drop-shadow-sm" src={medal} alt="Medal" />
+	<img class="absolute -top-1 -left-4 w-36 drop-shadow-sm" src={medal} alt="Medalj" />
 
 	<div
 		class="banner flex items-center gap-4 overflow-hidden py-3 pr-4 pl-30 text-xl font-bold text-white"

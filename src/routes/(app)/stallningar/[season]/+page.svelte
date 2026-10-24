@@ -9,7 +9,7 @@
 	import Bracket from '$lib/components/match/Bracket.svelte';
 	import { buildBracketRounds } from '$lib/bracket';
 	import Subheading from '$lib/components/ui/Subheading.svelte';
-	import type { UnresolvedMatch, Roster, ResolvedMatchWithSeeds } from '$lib/types';
+	import type { UnresolvedMatch, Roster, ResolvedMatchWithSeeds, TabItem } from '$lib/types';
 	import SeasonStateChip from '$lib/components/ui/SeasonStateChip.svelte';
 	import MatchList from '$lib/components/match/MatchList.svelte';
 	import { goto } from '$app/navigation';
@@ -33,19 +33,19 @@
 	const hasGroupStage = $derived(division.rosters.length > 0);
 	const hasPlayoffs = $derived(division.brackets.length > 0);
 
-	const tabItems = $derived([
+	const tabItems: TabItem<string>[] = $derived([
 		{
 			icon: 'ph:table',
 			label: 'Gruppspel',
 			value: 'group',
-			href: `?div=${division.slug}&visa=gruppspel`,
+			href: `/stallningar/${season.slug}?div=${division.slug}&visa=gruppspel`,
 			disabled: !hasGroupStage
 		},
 		{
 			icon: 'ph:trophy',
 			label: 'Slutspel',
 			value: 'bracket',
-			href: `?div=${division.slug}&visa=slutspel`,
+			href: `/stallningar/${season.slug}?div=${division.slug}&visa=slutspel`,
 			disabled: !hasPlayoffs
 		}
 	]);
@@ -57,9 +57,13 @@
 		}
 
 		if (mode === 'group' && !hasGroupStage) {
-			goto(resolve(`/?div=${division.slug}&visa=slutspel`), { replaceState: true });
+			goto(resolve(`/stallningar/${season.slug}?div=${division.slug}&visa=slutspel`), {
+				replaceState: true
+			});
 		} else if (mode === 'bracket' && !hasPlayoffs) {
-			goto(resolve(`/?div=${division.slug}&visa=gruppspel`), { replaceState: true });
+			goto(resolve(`/stallningar/${season.slug}?div=${division.slug}&visa=gruppspel`), {
+				replaceState: true
+			});
 		}
 	});
 
@@ -172,7 +176,7 @@
 				items={divisions.map((division) => ({
 					label: division.name,
 					value: division.id,
-					href: `?div=${division.slug}&visa=${mode === 'group' ? 'gruppspel' : 'slutspel'}`
+					href: `/stallningar/${season.slug}?div=${division.slug}&visa=${mode === 'group' ? 'gruppspel' : 'slutspel'}`
 				}))}
 			/>
 		{/if}

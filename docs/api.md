@@ -566,7 +566,7 @@ export type Checkin = {
 };
 ```
 
-## `GET /api/checkin/[seasonId]/[discordId]`
+## `GET /checkin/[seasonId]/[discordId]`
 
 Get a checked-in user by season and discord id. Requires an API key with admin privileges or higher.
 

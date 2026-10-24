@@ -138,7 +138,7 @@
 	.match {
 		/** Full size of a match card. */
 		--match-height: 120px;
-		--match-width: 210px;
+		--match-width: 225px;
 
 		/** Width of the lines connecting matches. */
 		--line-width: 2px;

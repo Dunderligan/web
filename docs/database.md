@@ -36,7 +36,7 @@ When you're ready to commit your changes, pull from the dev branch and generate 
 pnpm db:generate --name [name]
 ```
 
-This will create a new SQL migration file in `drizzle/migrations/` which will be ran against the production database on deploy. You can also try them out locally with:
+This will create a new folder and SQL migration file in `drizzle/` which will be ran against the production database on deploy. You can also try them out locally with:
 
 > [!IMPORTANT]
 > Make sure to **always** pull in changes from the dev branch when creating migrations. Drizzle does not handle migration forking/joining well, so migrations need to happen in a linear line unlike Git branches.

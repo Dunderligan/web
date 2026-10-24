@@ -51,7 +51,7 @@ The API is quite slow, so we cache the results in Redis (or a `Map` if `REDIS_UR
 2. Enter the following content:
 
 ```sql
-INSERT INTO hero (name, slug, role) VALUES ('<name>', '<url-friendly slug>', '<tank, damange or support>');
+INSERT INTO hero (name, slug, role) VALUES ('<name>', '<url-friendly slug>', '<tank, damage or support>');
 ```
 
 ### 2. Add a hero portrait
