@@ -72,11 +72,7 @@
 	{@const score = matchScore(logicalMatch, side)}
 	{@const note = matchNote(match, side)}
 
-	{@const bgClass = showScore
-		? won
-			? 'bg-gray-200 dark:bg-gray-900'
-			: 'bg-gray-100 dark:bg-gray-900/80'
-		: 'bg-gray-100 dark:bg-gray-900/80'}
+	{@const bgClass = won ? 'bg-gray-200 dark:bg-gray-900' : 'bg-gray-100 dark:bg-gray-900/80'}
 
 	<div
 		role="button"
@@ -140,20 +136,27 @@
 
 <style>
 	.match {
+		/** Full size of a match card. */
 		--match-height: 120px;
 		--match-width: 210px;
+
+		/** Width of the lines connecting matches. */
 		--line-width: 2px;
+		/** Height of the MatchInfoRow component. */
 		--info-row-height: 20px;
 
+		/** Height of each team on the match card. */
 		--side-height: calc((var(--match-height) - var(--info-row-height) - var(--line-width)) / 2);
 
+		/** Number of matches in the previous round. */
 		--prev-match-count: calc(pow(2, var(--bracket-round-index) - 1));
+		/** Total height of the previous round, including spacing. */
 		--prev-matches-height: calc(
 			(var(--prev-match-count) * (var(--match-height) + var(--bracket-match-spacing)))
 		);
 	}
 
-	/* Horizontal lines connecting rounds */
+	/* Horizontal lines connecting rounds. */
 	.has-prev-round::before,
 	.has-next-round::after {
 		content: '';
@@ -162,13 +165,13 @@
 		z-index: -1;
 	}
 
-	/* Forwards line to next round. */
+	/* Horizontal forwards line to next round. */
 	.has-next-round::after {
 		right: calc(var(--bracket-round-spacing) / -2);
 		left: 100%;
 	}
 
-	/* Backwards line to previous round. */
+	/* Horizontal backwards line to previous round. */
 	.has-prev-round::before {
 		right: 100%;
 		left: calc(var(--bracket-round-spacing) / -2);
@@ -183,14 +186,14 @@
 		z-index: -1;
 	}
 
-	/* Lines that end at the center y of a match */
+	/* Lines that end at the center y of a match. */
 	.line-down,
 	.has-next-round::after,
 	.has-prev-round::before {
 		top: calc(var(--info-row-height) + var(--side-height));
 	}
 
-	/* Lines that start in the center y of a match */
+	/* Lines that start in the center y of a match. */
 	.line-up {
 		bottom: var(--side-height);
 	}
