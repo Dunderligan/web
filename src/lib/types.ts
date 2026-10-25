@@ -366,3 +366,5 @@ export type PlayerCheckin = {
 	discordId: string;
 	checkedInAt: Date;
 };
+
+export type MatchLineState = 'hidden' | 'visible' | 'highlighted';

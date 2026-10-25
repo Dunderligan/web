@@ -238,10 +238,15 @@
 				<Subheading class="mt-6 mb-4">{bracket.name}</Subheading>
 			{/if}
 
-			<Bracket
-				seasonSlug={season.slug}
-				rounds={buildBracketRounds(bracket.matches.map(resolveMatch))}
-			/>
+			<!-- Allow the bracket to expand horizontally to the full width of the screen. -->
+			<div
+				class="relative left-1/2 flex w-screen max-w-[calc(100vw-2rem)] -translate-x-1/2 flex-col overflow-x-auto"
+			>
+				<Bracket
+					seasonSlug={season.slug}
+					rounds={buildBracketRounds(bracket.matches.map(resolveMatch))}
+				/>
+			</div>
 
 			{#if isModerator(data.user?.role)}
 				<Button

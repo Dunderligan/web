@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MatchState, type ResolvedMatchWithSeeds } from '$lib/types';
+	import { MatchState, type MatchLineState, type ResolvedMatchWithSeeds } from '$lib/types';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import {
 		matchRoster,
@@ -17,10 +17,10 @@
 	type State = 'visible' | 'invisible' | 'hidden';
 
 	type Lines = {
-		forward?: boolean;
-		backward?: boolean;
-		up?: boolean;
-		down?: boolean;
+		forward?: MatchLineState;
+		backward?: MatchLineState;
+		up?: MatchLineState;
+		down?: MatchLineState;
 	};
 
 	type Props = {
@@ -39,10 +39,11 @@
 
 <div
 	class={[
-		lines.forward && 'has-next-round',
-		lines.backward && 'has-prev-round',
+		lines.forward !== 'hidden' && 'has-next-round',
+		lines.backward !== 'hidden' && 'has-prev-round',
+		lines.forward === 'highlighted' && 'highlighted-line-forward',
+		lines.backward === 'highlighted' && 'highlighted-line-backward',
 		state === 'hidden' ? 'hidden' : state === 'invisible' ? 'invisible' : 'visible',
-
 		'match relative h-(--match-height) w-(--match-width) rounded-lg'
 	]}
 >
@@ -57,31 +58,33 @@
 
 	{@render side('B', 'rounded-b-lg')}
 
-	{#if lines.up}
-		<div class="vertical-line line-up"></div>
+	{#if lines.up !== 'hidden'}
+		<div class={['vertical-line line-up', lines.up === 'highlighted' && 'highlighted-line']}></div>
 	{/if}
 
-	{#if lines.down}
-		<div class="vertical-line line-down"></div>
+	{#if lines.down !== 'hidden'}
+		<div
+			class={['vertical-line line-down', lines.down === 'highlighted' && 'highlighted-line']}
+		></div>
 	{/if}
 </div>
 
 {#snippet side(side: MatchSide, classProp?: string)}
 	{@const roster = matchRoster(match, side)}
-	{@const won = isWinner(logicalMatch, side)}
+	{@const winner = isWinner(logicalMatch, side)}
 	{@const score = matchScore(logicalMatch, side)}
 	{@const note = matchNote(match, side)}
-
-	{@const bgClass = won ? 'bg-gray-200 dark:bg-gray-900' : 'bg-gray-100 dark:bg-gray-900/80'}
 
 	<div
 		role="button"
 		tabindex={0}
+		onfocus={() => (hoveredRosterId = roster?.id ?? null)}
+		onblur={() => (hoveredRosterId = null)}
 		onmouseenter={() => (hoveredRosterId = roster?.id ?? null)}
 		onmouseleave={() => (hoveredRosterId = null)}
 		class={[
 			classProp,
-			bgClass,
+			winner ? 'bg-gray-200 dark:bg-gray-900' : 'bg-gray-100 dark:bg-gray-900/80',
 			hoveredRosterId === roster?.id && 'bg-gray-300! dark:bg-gray-800!',
 			'relative flex h-(--side-height) cursor-default items-center pr-4 text-base font-medium text-gray-600 dark:text-gray-400'
 		]}
@@ -103,7 +106,7 @@
 			<div
 				class={[
 					showScore ? 'text-2xl font-extrabold' : 'text-lg',
-					won ? 'text-accent-600 dark:text-accent-500' : 'text-gray-500 dark:text-gray-400',
+					winner ? 'text-accent-600 dark:text-accent-500' : 'text-gray-500 dark:text-gray-400',
 					'flex h-full w-8 shrink-0 items-center justify-center text-center'
 				]}
 			>
@@ -114,7 +117,7 @@
 			<a
 				{href}
 				class={[
-					won
+					winner
 						? 'font-semibold text-gray-800 dark:text-gray-200'
 						: 'font-medium text-gray-700 dark:text-gray-300',
 					'mr-auto truncate hover:underline'
@@ -137,8 +140,8 @@
 <style>
 	.match {
 		/** Full size of a match card. */
-		--match-height: 120px;
-		--match-width: 225px;
+		--match-height: 115px;
+		--match-width: 250px;
 
 		/** Width of the lines connecting matches. */
 		--line-width: 2px;
@@ -204,9 +207,23 @@
 		background-color: var(--color-gray-100);
 	}
 
-	:global(.dark) .vertical-line,
-	:global(.dark) .has-prev-round::before,
-	:global(.dark) .has-next-round::after {
-		background-color: var(--color-gray-900);
+	.highlighted-line,
+	.highlighted-line-forward::after,
+	.highlighted-line-backward::before {
+		background-color: var(--color-gray-300);
+	}
+
+	:global(.dark) {
+		& .vertical-line,
+		& .has-prev-round::before,
+		& .has-next-round::after {
+			background-color: var(--color-gray-900);
+		}
+
+		& .highlighted-line,
+		& .highlighted-line-forward::after,
+		& .highlighted-line-backward::before {
+			background-color: var(--color-gray-800);
+		}
 	}
 </style>
