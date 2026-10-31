@@ -1,10 +1,14 @@
 <script lang="ts">
-	import { MatchState, type MatchLineState, type ResolvedMatchWithSeeds } from '$lib/types';
+	import {
+		MatchState,
+		MatchSlot,
+		type MatchLineState,
+		type ResolvedMatchWithSeeds
+	} from '$lib/types';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import {
 		matchRoster,
 		isWinner,
-		type MatchSide,
 		matchScore,
 		matchNote,
 		hasMatchScore,
@@ -52,11 +56,11 @@
 		{match}
 	/>
 
-	{@render side('A')}
+	{@render teamSlot(MatchSlot.A)}
 
 	<div class="h-(--line-width) w-full bg-gray-200 dark:bg-gray-800"></div>
 
-	{@render side('B', 'rounded-b-lg')}
+	{@render teamSlot(MatchSlot.B, 'rounded-b-lg')}
 
 	{#if lines.up !== 'hidden'}
 		<div class={['vertical-line line-up', lines.up === 'highlighted' && 'highlighted-line']}></div>
@@ -69,11 +73,11 @@
 	{/if}
 </div>
 
-{#snippet side(side: MatchSide, classProp?: string)}
-	{@const roster = matchRoster(match, side)}
-	{@const winner = isWinner(logicalMatch, side)}
-	{@const score = matchScore(logicalMatch, side)}
-	{@const note = matchNote(match, side)}
+{#snippet teamSlot(slot: MatchSlot, classProp?: string)}
+	{@const roster = matchRoster(match, slot)}
+	{@const winner = isWinner(logicalMatch, slot)}
+	{@const score = matchScore(logicalMatch, slot)}
+	{@const note = matchNote(match, slot)}
 
 	<div
 		role="button"
@@ -86,7 +90,7 @@
 			classProp,
 			winner ? 'bg-gray-200 dark:bg-gray-900' : 'bg-gray-100 dark:bg-gray-900/80',
 			hoveredRosterId === roster?.id && 'bg-gray-300! dark:bg-gray-800!',
-			'relative flex h-(--side-height) cursor-default items-center pr-4 text-base font-medium text-gray-600 dark:text-gray-400'
+			'relative flex h-(--slot-height) cursor-default items-center pr-4 text-base font-medium text-gray-600 dark:text-gray-400'
 		]}
 	>
 		{#if roster}
@@ -149,7 +153,7 @@
 		--info-row-height: 20px;
 
 		/** Height of each team on the match card. */
-		--side-height: calc((var(--match-height) - var(--info-row-height) - var(--line-width)) / 2);
+		--slot-height: calc((var(--match-height) - var(--info-row-height) - var(--line-width)) / 2);
 
 		/** Number of matches in the previous round. */
 		--prev-match-count: calc(pow(2, var(--bracket-round-index) - 1));
@@ -193,12 +197,12 @@
 	.line-down,
 	.has-next-round::after,
 	.has-prev-round::before {
-		top: calc(var(--info-row-height) + var(--side-height));
+		top: calc(var(--info-row-height) + var(--slot-height));
 	}
 
 	/* Lines that start in the center y of a match. */
 	.line-up {
-		bottom: var(--side-height);
+		bottom: var(--slot-height);
 	}
 
 	.vertical-line,

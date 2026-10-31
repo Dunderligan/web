@@ -21,8 +21,8 @@
 <div class="relative rounded-lg bg-gray-100 px-1 py-1 dark:bg-gray-900">
 	<MatchInfoRow {match} class="mb-0.5 px-4 py-0.5" />
 
-	{@render side(match.teamAScore, match.rosterAId, match.teamANote)}
-	{@render side(match.teamBScore, match.rosterBId, match.teamBNote)}
+	{@render teamRow(match.teamAScore, match.rosterAId, match.teamANote)}
+	{@render teamRow(match.teamBScore, match.rosterBId, match.teamBNote)}
 
 	<div class="absolute top-3 right-3 flex items-center">
 		<Button
@@ -38,7 +38,7 @@
 	</div>
 </div>
 
-{#snippet side(score: number, rosterId?: string | null, note?: string | null)}
+{#snippet teamRow(score: number, rosterId?: string | null, note?: string | null)}
 	{@const roster = rosterCtx.find(rosterId)}
 
 	<div class="flex items-center py-0.5 text-gray-700 dark:text-gray-300">

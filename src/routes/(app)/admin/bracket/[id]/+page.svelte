@@ -85,13 +85,13 @@
 				const match = rounds[i][j];
 
 				const nextMatch = rounds[i + 1][Math.floor(j / 2)];
-				const isRosterSideAInNext = j % 2 == 0;
+				const isSlotAInNext = j % 2 == 0;
 
 				const winner = matchRosterId(match, matchWinner(match));
 
-				if (isRosterSideAInNext) {
+				if (isSlotAInNext) {
 					nextMatch.rosterAId = winner;
-				} else if (!isRosterSideAInNext) {
+				} else if (!isSlotAInNext) {
 					nextMatch.rosterBId = winner;
 				}
 			}

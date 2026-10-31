@@ -84,6 +84,16 @@ export enum MatchState {
 	CANCELLED = 'cancelled'
 }
 
+/**
+ * One logical slot of a match.
+ * The tournament does not have a concept of "home" or "away" teams, instead
+ * "A" is usually displayed as the leftmost/top team, whereas "B" is the other.
+ */
+export enum MatchSlot {
+	A = 'a',
+	B = 'b'
+}
+
 export enum SubmissionStatus {
 	PENDING = 'pending',
 	APPROVED = 'approved',

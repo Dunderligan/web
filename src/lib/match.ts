@@ -3,6 +3,7 @@ import {
 	type ResolvedMatch,
 	type MatchWithoutRosters,
 	MatchState,
+	MatchSlot,
 	type Placement,
 	type UnresolvedMatch,
 	type ResolvedMatchWithContext
@@ -24,63 +25,56 @@ export function isInMatch(match: LogicalMatch, rosterId: string): boolean {
 	return match.rosterAId === rosterId || match.rosterBId === rosterId;
 }
 
-/**
- * One logical side of a match.
- * The tournament does not have a concept of "home" or "away" teams, instead
- * "A" is usually displayed as the leftmost/top team, whereas "B" is the other.
- */
-export type MatchSide = 'A' | 'B';
-
-/** Returns the opposite of the given side if the flip flag is true. Otherwise, returns the input side. */
-export function flipSide(side: MatchSide, flip: boolean = true): MatchSide {
-	if (!flip) return side;
-	return side === 'A' ? 'B' : 'A';
+/** Returns the opposite of the given slot if the flip flag is true. Otherwise, returns the input slot. */
+export function flipSlot(slot: MatchSlot, flip: boolean = true): MatchSlot {
+	if (!flip) return slot;
+	return slot === MatchSlot.A ? MatchSlot.B : MatchSlot.A;
 }
 
-/** Returns the score of a side in a match. */
-export function matchScore(match: LogicalMatch, side: MatchSide): number {
-	if (side === 'A') return match.teamAScore;
-	if (side === 'B') return match.teamBScore;
+/** Returns the score of a slot in a match. */
+export function matchScore(match: LogicalMatch, slot: MatchSlot): number {
+	if (slot === MatchSlot.A) return match.teamAScore;
+	if (slot === MatchSlot.B) return match.teamBScore;
 	return 0;
 }
 
-/** Returns the winning side of a match, or null if there is no winner. */
-export function matchWinner(match: LogicalMatch): MatchSide | null {
+/** Returns the winning slot of a match, or null if there is no winner. */
+export function matchWinner(match: LogicalMatch): MatchSlot | null {
 	if (!hasMatchScore(match)) return null;
 
-	const teamA = matchScore(match, 'A');
-	const teamB = matchScore(match, 'B');
+	const teamA = matchScore(match, MatchSlot.A);
+	const teamB = matchScore(match, MatchSlot.B);
 
-	if (teamA > teamB) return 'A';
-	if (teamB > teamA) return 'B';
+	if (teamA > teamB) return MatchSlot.A;
+	if (teamB > teamA) return MatchSlot.B;
 
 	return null;
 }
 
-/** Returns the roster on the given side of a match, or null if not resolved. */
+/** Returns the roster in the given slot of a match, or null if not resolved. */
 export function matchRoster<R>(
 	match: { rosterA?: R | null; rosterB?: R | null },
-	side: MatchSide
+	slot: MatchSlot
 ): R | null {
-	return (side === 'A' ? match.rosterA : match.rosterB) ?? null;
+	return (slot === MatchSlot.A ? match.rosterA : match.rosterB) ?? null;
 }
 
-/** Returns the team note of a side in a match, or null if none. */
-export function matchNote(match: MatchWithoutRosters, side: MatchSide): string | null {
-	return (side === 'A' ? match.teamANote : match.teamBNote) ?? null;
+/** Returns the team note of a slot in a match, or null if none. */
+export function matchNote(match: MatchWithoutRosters, slot: MatchSlot): string | null {
+	return (slot === MatchSlot.A ? match.teamANote : match.teamBNote) ?? null;
 }
 
-/** Returns whether the given side is the winner of a match. */
-export function isWinner(match: LogicalMatch, side: MatchSide): boolean {
+/** Returns whether the given slot is the winner of a match. */
+export function isWinner(match: LogicalMatch, slot: MatchSlot): boolean {
 	const winner = matchWinner(match);
 	if (!winner) return false;
-	return winner === side;
+	return winner === slot;
 }
 
-/** Returns the roster ID on the given side of a match, or null if not set. */
-export function matchRosterId(match: LogicalMatch, side?: MatchSide | null): string | null {
-	if (side === 'A') return match.rosterAId;
-	if (side === 'B') return match.rosterBId;
+/** Returns the roster ID in the given slot of a match, or null if not set. */
+export function matchRosterId(match: LogicalMatch, slot?: MatchSlot | null): string | null {
+	if (slot === MatchSlot.A) return match.rosterAId;
+	if (slot === MatchSlot.B) return match.rosterBId;
 	return null;
 }
 
