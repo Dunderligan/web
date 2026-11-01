@@ -169,6 +169,25 @@ describe('buildBracketLayout', () => {
 		expect(final.visible).toBe(true);
 		expect(final.x).toBe(0);
 	});
+
+	it('compacts first round when every other match is a bye', () => {
+		const matches = create(8, 3, BracketFormat.SINGLE_ELIMINATION);
+		const firstRound = matches.filter((match) => match.round === 2);
+
+		// turn even-numbered first-round matches into byes
+		for (const match of firstRound.filter((_, i) => i % 2 === 0)) {
+			match.rosterB = null;
+			match.state = MatchState.WALKOVER;
+			match.teamAScore = 3;
+		}
+
+		const layout = buildBracketLayout(matches, BracketFormat.SINGLE_ELIMINATION);
+
+		expect(layout.nodes.filter((node) => node.visible)).toHaveLength(5);
+		expect(layout.width).toBe(2 * (MATCH_WIDTH + COLUMN_GAP) + MATCH_WIDTH);
+		// the first column is compacted to only two matches
+		expect(layout.height).toBe(2 * MATCH_HEIGHT + MATCH_GAP);
+	});
 });
 
 describe('orderEdgesForPainting', () => {
