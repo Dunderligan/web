@@ -1,21 +1,31 @@
 <script lang="ts">
-	import type { ClassValue } from '$lib/types';
-	import { cdnImageSrc, cdnRosterLogoPath } from '$lib/util';
+	import type { ResolvedPathname } from '$app/types';
 	import placeholderTeam from '$lib/assets/images/placeholder-team.avif';
+	import cdn from '$lib/cdn';
+	import type { ClassValue } from 'svelte/elements';
 
 	type Props = {
 		id: string;
 		class?: ClassValue;
-		imgSize?: number;
+		size: 'sm' | 'md' | 'lg' | 'xl' | number;
 		src?: string | null;
-		href?: string | null;
+		href?: ResolvedPathname | null;
 	};
 
-	let { id, class: classProp, imgSize = 64, src: srcOverride, href }: Props = $props();
+	let { id, class: classProp, size: sizeProp = 'md', src: srcOverride, href }: Props = $props();
 
-	let element: HTMLImageElement;
+	const size = $derived(
+		typeof sizeProp === 'number'
+			? sizeProp
+			: {
+					sm: 32,
+					md: 48,
+					lg: 64,
+					xl: 160
+				}[sizeProp]
+	);
 
-	let src = $derived(srcOverride ?? cdnImageSrc(cdnRosterLogoPath(id), { width: imgSize }));
+	let src = $derived(srcOverride ?? cdn.rosterLogoUrl(id, { width: size }));
 
 	function onerror() {
 		src = placeholderTeam;
@@ -32,8 +42,8 @@
 	<img
 		{src}
 		{onerror}
+		style="width: {size}px; height: {size}px;"
 		class={[classProp, 'shrink-0 rounded-[20%] object-contain']}
 		alt="Logotyp"
-		bind:this={element}
 	/>
 {/snippet}

@@ -1,30 +1,37 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
-	import InputField from '$lib/components/ui/InputField.svelte';
-	import Label from '$lib/components/ui/Label.svelte';
+	import InputField from '$lib/components/form/InputField.svelte';
+	import Label from '$lib/components/form/Label.svelte';
 	import SaveToast from '$lib/components/admin/SaveToast.svelte';
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
 	import { SaveContext } from '$lib/state/save.svelte';
 	import { createGroup } from '$lib/remote/group.remote';
 	import { deleteDivision, updateDivision } from '$lib/remote/division.remote';
-	import Checkbox from '$lib/components/ui/Checkbox.svelte';
+	import Checkbox from '$lib/components/form/Checkbox.svelte';
 	import GenerateBracketDialog from '$lib/components/admin/GenerateBracketDialog.svelte';
 	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
-	import { isAdmin } from '$lib/authRole';
+	import { isAdmin } from '$lib/auth-role.js';
 
 	const { data } = $props();
 
-	const division = $state(data.division);
-	const season = $state(division.season);
+	// svelte-ignore state_referenced_locally
+	let division = $state(data.division);
+
+	$effect(() => {
+		division = data.division;
+	});
+
+	const season = $derived(division.season);
 
 	SaveContext.set(
 		new SaveContext({
 			save,
-			href: `/stallningar/${season.slug}?div=${division.slug}&visa=gruppspel`
+			href: () => `/stallningar/${season.slug}?div=${division.slug}&visa=gruppspel`
 		})
 	);
 
@@ -40,13 +47,13 @@
 		await confirmCtx.confirm({
 			title: 'Radera division',
 			description: `Är du säker på att du vill radera ${division.name}, ${season.name}?`,
-			negative: true,
+			destructive: true,
 			action: async () => {
 				await deleteDivision({
 					id: division.id
 				});
 
-				await goto(`/admin/sasong/${season.id}`);
+				await goto(resolve(`/admin/sasong/${season.id}`));
 			}
 		});
 	}
@@ -57,7 +64,7 @@
 			divisionId: division.id
 		});
 
-		await goto(`/admin/grupp/${group.id}`);
+		await goto(resolve(`/admin/grupp/${group.id}`));
 	}
 
 	async function save() {
@@ -118,7 +125,7 @@
 			</Label>
 		</div>
 
-		<Button icon="ph:trash" label="Radera division" kind="negative" onclick={submitDelete} />
+		<Button icon="ph:trash" label="Radera division" kind="destructive" onclick={submitDelete} />
 	</AdminCard>
 {/if}
 

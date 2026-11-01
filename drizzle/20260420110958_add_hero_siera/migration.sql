@@ -1,0 +1,1 @@
+INSERT INTO hero (name) VALUES ('sierra');

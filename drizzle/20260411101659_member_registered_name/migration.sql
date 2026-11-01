@@ -1,0 +1,1 @@
+ALTER TABLE "member" ADD COLUMN "registered_name" text;--> statement-breakpoint

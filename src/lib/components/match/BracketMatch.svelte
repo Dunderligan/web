@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MatchState, type ResolvedMatch, type ResolvedMatchWithSeeds } from '$lib/types';
+	import { MatchState, type MatchLineState, type ResolvedMatchWithSeeds } from '$lib/types';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import {
 		matchRoster,
@@ -7,93 +7,94 @@
 		type MatchSide,
 		matchScore,
 		matchNote,
-		hasMatchScore
+		hasMatchScore,
+		resolvedMatchToLogical
 	} from '$lib/match';
 	import MatchInfoRow from './MatchInfoRow.svelte';
 	import Note from '../ui/Note.svelte';
+	import { resolve } from '$app/paths';
+
+	type State = 'visible' | 'invisible' | 'hidden';
+
+	type Lines = {
+		forward?: MatchLineState;
+		backward?: MatchLineState;
+		up?: MatchLineState;
+		down?: MatchLineState;
+	};
 
 	type Props = {
 		match: ResolvedMatchWithSeeds;
 		seasonSlug: string;
-		roundIndex: number;
-		hidden?: boolean;
-		hasNext: boolean;
-		hasPrevAbove: boolean;
-		hasPrevBelow: boolean;
+		state: State;
+		lines: Lines;
+		hoveredRosterId?: string | null;
 	};
 
-	let {
-		match,
-		seasonSlug,
-		roundIndex,
-		hidden = false,
-		hasNext,
-		hasPrevAbove,
-		hasPrevBelow
-	}: Props = $props();
+	let { match, seasonSlug, state, lines, hoveredRosterId = $bindable(null) }: Props = $props();
 
-	// don't ask
-	const verticalLineHeight = $derived(40 * Math.pow(roundIndex, 2) - 42 * roundIndex + 82);
-
-	const showScore = $derived(hasMatchScore(match));
+	const logicalMatch = $derived(resolvedMatchToLogical(match));
+	const showScore = $derived(hasMatchScore(logicalMatch));
 </script>
 
 <div
 	class={[
-		hasNext && 'has-next-round',
-		(hasPrevAbove || hasPrevBelow) && 'has-prev-round',
-		hidden && 'invisible',
-		'relative h-[125px] w-60 rounded-lg'
+		lines.forward !== 'hidden' && 'has-next-round',
+		lines.backward !== 'hidden' && 'has-prev-round',
+		lines.forward === 'highlighted' && 'highlighted-line-forward',
+		lines.backward === 'highlighted' && 'highlighted-line-backward',
+		state === 'hidden' ? 'hidden' : state === 'invisible' ? 'invisible' : 'visible',
+		'match relative h-(--match-height) w-(--match-width) rounded-lg'
 	]}
 >
-	<MatchInfoRow class="h-[25px] rounded-t-lg bg-gray-100 px-4 dark:bg-gray-900" {match} />
+	<MatchInfoRow
+		class="h-(--info-row-height) rounded-t-lg bg-gray-100 px-2 dark:bg-gray-900"
+		{match}
+	/>
 
 	{@render side('A')}
 
-	<div class="divider h-0.5 w-full"></div>
+	<div class="h-(--line-width) w-full bg-gray-200 dark:bg-gray-800"></div>
 
 	{@render side('B', 'rounded-b-lg')}
 
-	{#if hasPrevAbove}
-		<div class="vertical-line line-up" style="height: {verticalLineHeight}px"></div>
+	{#if lines.up !== 'hidden'}
+		<div class={['vertical-line line-up', lines.up === 'highlighted' && 'highlighted-line']}></div>
 	{/if}
 
-	{#if hasPrevBelow}
-		<div class="vertical-line line-down" style="height: {verticalLineHeight}px"></div>
+	{#if lines.down !== 'hidden'}
+		<div
+			class={['vertical-line line-down', lines.down === 'highlighted' && 'highlighted-line']}
+		></div>
 	{/if}
 </div>
 
 {#snippet side(side: MatchSide, classProp?: string)}
 	{@const roster = matchRoster(match, side)}
-	{@const won = isWinner(match, side)}
-	{@const score = matchScore(match, side)}
+	{@const winner = isWinner(logicalMatch, side)}
+	{@const score = matchScore(logicalMatch, side)}
 	{@const note = matchNote(match, side)}
 
-	{@const href = `/lag/${roster?.slug}/${seasonSlug}`}
-
-	{@const bgClass = showScore
-		? won
-			? 'bg-gray-200 dark:bg-gray-800'
-			: 'bg-gray-50 dark:bg-gray-900'
-		: 'bg-gray-100 dark:bg-gray-900'}
-
-	{@const seedBgClass = showScore
-		? won
-			? 'border-gray-300 dark:border-gray-700'
-			: 'border-gray-100 dark:border-gray-800'
-		: 'border-gray-200 dark:border-gray-800'}
-
 	<div
+		role="button"
+		tabindex={0}
+		onfocus={() => (hoveredRosterId = roster?.id ?? null)}
+		onblur={() => (hoveredRosterId = null)}
+		onmouseenter={() => (hoveredRosterId = roster?.id ?? null)}
+		onmouseleave={() => (hoveredRosterId = null)}
 		class={[
 			classProp,
-			bgClass,
-			'relative flex h-[49px] items-center overflow-hidden pr-4 font-medium text-gray-600 dark:text-gray-400'
+			winner ? 'bg-gray-200 dark:bg-gray-900' : 'bg-gray-100 dark:bg-gray-900/80',
+			hoveredRosterId === roster?.id && 'bg-gray-300! dark:bg-gray-800!',
+			'relative flex h-(--side-height) cursor-default items-center pr-4 text-base font-medium text-gray-600 dark:text-gray-400'
 		]}
 	>
 		{#if roster}
+			{@const href = resolve(`/lag/${roster.slug}/${seasonSlug}`)}
+
 			<div
 				class={[
-					seedBgClass,
+					'border-gray-300/20 dark:border-gray-700/20',
 					'absolute right-0 bottom-0 border-t-28 border-r-28 border-t-transparent!'
 				]}
 			></div>
@@ -105,18 +106,18 @@
 			<div
 				class={[
 					showScore ? 'text-2xl font-extrabold' : 'text-lg',
-					won ? 'text-accent-600 dark:text-accent-500' : 'text-gray-500 dark:text-gray-400',
-					'flex h-full shrink-0 items-center justify-center px-4 text-center'
+					winner ? 'text-accent-600 dark:text-accent-500' : 'text-gray-500 dark:text-gray-400',
+					'flex h-full w-8 shrink-0 items-center justify-center text-center'
 				]}
 			>
-				{showScore ? score.toString() : '?'}
+				{showScore ? score.toString() : '-'}
 			</div>
 
-			<RosterLogo id={roster.id} {href} class="mr-2 size-8" />
+			<RosterLogo id={roster.id} {href} size="sm" class="mr-1" />
 			<a
 				{href}
 				class={[
-					won
+					winner
 						? 'font-semibold text-gray-800 dark:text-gray-200'
 						: 'font-medium text-gray-700 dark:text-gray-300',
 					'mr-auto truncate hover:underline'
@@ -129,7 +130,7 @@
 				<Note content={note} class="ml-auto" />
 			{/if}
 		{:else}
-			<div class="grow text-center font-semibold">
+			<div class="grow text-center font-medium">
 				{match.state === MatchState.PLAYED ? '---' : 'TBD'}
 			</div>
 		{/if}
@@ -137,58 +138,92 @@
 {/snippet}
 
 <style>
-	/* Horizontal lines connecting rounds */
+	.match {
+		/** Full size of a match card. */
+		--match-height: 115px;
+		--match-width: 250px;
+
+		/** Width of the lines connecting matches. */
+		--line-width: 2px;
+		/** Height of the MatchInfoRow component. */
+		--info-row-height: 20px;
+
+		/** Height of each team on the match card. */
+		--side-height: calc((var(--match-height) - var(--info-row-height) - var(--line-width)) / 2);
+
+		/** Number of matches in the previous round. */
+		--prev-match-count: calc(pow(2, var(--bracket-round-index) - 1));
+		/** Total height of the previous round, including spacing. */
+		--prev-matches-height: calc(
+			(var(--prev-match-count) * (var(--match-height) + var(--bracket-match-spacing)))
+		);
+	}
+
+	/* Horizontal lines connecting rounds. */
 	.has-prev-round::before,
 	.has-next-round::after {
 		content: '';
 		position: absolute;
-		height: 2px;
+		height: var(--line-width);
 		z-index: -1;
 	}
 
-	/* Forwards line to next round. */
+	/* Horizontal forwards line to next round. */
 	.has-next-round::after {
-		right: -32px;
+		right: calc(var(--bracket-round-spacing) / -2);
 		left: 100%;
 	}
 
-	/* Backwards line to previous round. */
+	/* Horizontal backwards line to previous round. */
 	.has-prev-round::before {
 		right: 100%;
-		left: -30px;
+		left: calc(var(--bracket-round-spacing) / -2);
 	}
 
 	/* Vertical lines connecting to the above and below previous matches. */
 	.vertical-line {
 		position: absolute;
-		left: -30px;
-		width: 2px;
+		left: calc(var(--bracket-round-spacing) / -2);
+		width: var(--line-width);
+		height: calc(var(--prev-matches-height) / 2 + var(--line-width));
 		z-index: -1;
 	}
 
-	/* Lines that end at the center y of a match */
+	/* Lines that end at the center y of a match. */
 	.line-down,
 	.has-next-round::after,
 	.has-prev-round::before {
-		top: calc(50% + 25px / 2 - 1px);
+		top: calc(var(--info-row-height) + var(--side-height));
 	}
 
-	/* Lines that start in the center y of a match */
+	/* Lines that start in the center y of a match. */
 	.line-up {
-		bottom: calc(50% - 25px / 2 - 1px);
+		bottom: var(--side-height);
 	}
 
-	.divider,
 	.vertical-line,
 	.has-prev-round::before,
 	.has-next-round::after {
-		background-color: var(--color-gray-200);
+		background-color: var(--color-gray-100);
 	}
 
-	:global(.dark) .divider,
-	:global(.dark) .vertical-line,
-	:global(.dark) .has-prev-round::before,
-	:global(.dark) .has-next-round::after {
-		background-color: var(--color-gray-800);
+	.highlighted-line,
+	.highlighted-line-forward::after,
+	.highlighted-line-backward::before {
+		background-color: var(--color-gray-300);
+	}
+
+	:global(.dark) {
+		& .vertical-line,
+		& .has-prev-round::before,
+		& .has-next-round::after {
+			background-color: var(--color-gray-900);
+		}
+
+		& .highlighted-line,
+		& .highlighted-line-forward::after,
+		& .highlighted-line-backward::before {
+			background-color: var(--color-gray-800);
+		}
 	}
 </style>

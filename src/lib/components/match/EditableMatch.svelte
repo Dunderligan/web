@@ -3,6 +3,7 @@
 	import { MatchState, type UnresolvedMatch } from '$lib/types';
 	import Button from '../ui/Button.svelte';
 	import Icon from '../ui/Icon.svelte';
+	import Link from '../ui/Link.svelte';
 	import MatchInfoRow from './MatchInfoRow.svelte';
 
 	type Props = {
@@ -48,7 +49,7 @@
 		</div>
 
 		{#if roster}
-			<a href="/admin/roster/{rosterId}" class="font-semibold hover:underline">{roster?.name}</a>
+			<Link href="/admin/roster/{rosterId}" class="font-semibold">{roster?.name}</Link>
 		{:else}
 			---
 		{/if}

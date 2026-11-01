@@ -7,38 +7,37 @@
 	import RosterLogo from '$lib/components/ui/RosterLogo.svelte';
 	import Tabs from '$lib/components/ui/Tabs.svelte';
 	import TeamSocial from '$lib/components/ui/TeamSocial.svelte';
-	import { cdnImageSrc, cdnRosterLogoPath, flattenGroup } from '$lib/util';
+	import { flattenGroup } from '$lib/util';
 	import MatchList from '$lib/components/match/MatchList.svelte';
 	import Meta from '$lib/components/structure/Meta.svelte';
-	import { MatchState } from '$lib/types';
+	import { MatchState, type TabItem } from '$lib/types';
 	import { averageLegacyRank, averageRank } from '$lib/rank';
-	import { isModerator } from '$lib/authRole';
+	import { isModerator } from '$lib/auth-role.js';
 	import Field from '$lib/components/structure/Field.svelte';
+	import Placement from '$lib/components/ui/Placement.svelte';
+	import cdn from '$lib/cdn.js';
 
 	let { data } = $props();
 
-	let { team, roster } = $derived(data);
-	let { division, season } = $derived(flattenGroup(roster.group));
+	const { roster, matches } = $derived(data);
+	const { division, season } = $derived(flattenGroup(roster.group));
+	const team = $derived(roster.team);
 
 	let average = $derived(
 		season.legacyRanks ? averageLegacyRank(roster.members) : averageRank(roster.members)
 	);
 
 	const playedMatches = $derived(
-		roster.matches.filter(
+		matches.filter(
 			(match) =>
 				match.state === MatchState.PLAYED ||
-				// don't show walkovers where one team is missing (most often bracket byes)
-				(match.state === MatchState.WALKOVER && match.rosterAId && match.rosterBId)
+				// don't show walkovers where one team is missing (byes)
+				(match.state === MatchState.WALKOVER && match.rosterA && match.rosterB)
 		)
 	);
-	const upcomingMatches = $derived(
-		roster.matches.filter(
-			(match) => match.state === MatchState.SCHEDULED || match.state === MatchState.CANCELLED
-		)
-	);
+	const upcomingMatches = $derived(matches.filter((match) => match.state === MatchState.SCHEDULED));
 
-	const rosterTabItems = $derived(
+	const rosterTabItems: TabItem<string>[] = $derived(
 		team.rosters
 			.toSorted((a, b) => {
 				const seasonA = flattenGroup(a.group).season;
@@ -61,17 +60,17 @@
 <Meta
 	title={roster.name}
 	description="Se medlemmar och senaste matcher för {roster.name}, {division.name} i {season.name}."
-	ogImage={cdnImageSrc(cdnRosterLogoPath(roster.id), { width: 630 })}
+	ogImage={cdn.rosterLogoUrl(roster.id, { width: 630, height: 630 })}
 	ogImageAlt="Logotyp för {roster.name}"
 	ogImageWidth={630}
 	ogImageHeight={630}
 />
 
 <PageHeader class="flex flex-col items-center gap-6 sm:flex-row">
-	<RosterLogo id={roster.id} class="size-40" imgSize={256} />
+	<RosterLogo id={roster.id} size="xl" />
 
 	<div>
-		<h1 class="text-center font-display text-5xl font-extrabold sm:text-left sm:text-6xl">
+		<h1 class="font-display text-5xl font-extrabold sm:text-left sm:text-6xl">
 			{roster.name}
 		</h1>
 		<div
@@ -113,7 +112,7 @@
 	<section class="shrink-0 space-y-6 sm:w-56">
 		<div class="flex flex-col items-start gap-2">
 			<Button
-				href="/stallningar/{season.slug}?div={division.slug}"
+				href="/stallningar/{season.slug}?div={division.slug}#{roster.slug}"
 				label="Se ställningar"
 				icon="ph:table"
 				kind="secondary"
@@ -129,6 +128,12 @@
 			{/if}
 		</div>
 
+		{#if data.placement}
+			<Field title="Placering">
+				<Placement {...data.placement} />
+			</Field>
+		{/if}
+
 		{#if average}
 			<Field title="Genomsnittlig rank">
 				<Rank rank={average} />
@@ -136,7 +141,7 @@
 		{/if}
 
 		{#if team.socials.length > 0}
-			<Field title="Sociala medier">
+			<Field title="Länkar">
 				<div class="mt-1 flex items-center gap-3">
 					{#each team.socials as { platform, url } (platform)}
 						<TeamSocial class="text-3xl" {platform} href={url} />

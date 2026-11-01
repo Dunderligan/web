@@ -12,10 +12,11 @@ const rankNums: Record<Rank, number> = {
 	silver: 1,
 	gold: 2,
 	platinum: 3,
-	diamond: 4,
-	master: 5,
-	grandmaster: 6,
-	champion: 7
+	emerald: 4,
+	diamond: 5,
+	master: 6,
+	grandmaster: 7,
+	champion: 8
 };
 
 /** Averages a list of ranks. Null ranks are ignored. If the list is empty, returns null. */
@@ -32,6 +33,10 @@ export function averageRank(ranks: NullableFullRank[]): FullRank | null {
 
 		nonNullCount++;
 		total += rankToNum({ rank, tier });
+	}
+
+	if (nonNullCount === 0) {
+		return null;
 	}
 
 	return numToRank(total / nonNullCount);
@@ -73,14 +78,26 @@ export function averageLegacyRank(ranks: NullableLegacyRank[]): LegacyRank | nul
 		total += sr;
 	}
 
+	if (nonNullCount === 0) {
+		return null;
+	}
+
 	return { sr: Math.round(total / nonNullCount) };
+}
+
+/**
+ * Formats a rank for display.
+ *
+ * For full ranks, this is the rank and tier (e.g. "gold 3").
+ * For legacy ranks, this is the rank and SR in 'k' format (e.g. "gold 2.5k").
+ */
+export function formatRank(rank: AnyRank): string {
+	return `${getRank(rank)} ${getTierLabel(rank)}`;
 }
 
 /** Returns the rank component of a full rank or legacy rank (bronze, silver, gold, e.t.c.). */
 export function getRank(rank: AnyRank): Rank {
-	if ('rank' in rank) {
-		return rank.rank;
-	} else {
+	if (isLegacyRank(rank)) {
 		if (rank.sr < 1500) return Rank.BRONZE;
 		if (rank.sr < 2000) return Rank.SILVER;
 		if (rank.sr < 2500) return Rank.GOLD;
@@ -88,6 +105,8 @@ export function getRank(rank: AnyRank): Rank {
 		if (rank.sr < 3500) return Rank.DIAMOND;
 		if (rank.sr < 4000) return Rank.MASTER;
 		return Rank.GRANDMASTER;
+	} else {
+		return rank.rank;
 	}
 }
 
@@ -96,18 +115,19 @@ export function getRank(rank: AnyRank): Rank {
  * For full ranks, this is the tier number (1-5), while legacy ranks the SR in 'k' format (e.g. 2.5k).
  */
 export function getTierLabel(rank: AnyRank): string {
-	if ('rank' in rank) {
-		return rank.tier.toString();
-	} else {
+	if (isLegacyRank(rank)) {
+		if (rank.sr === 0) return '0';
+
 		// round to nearest 100th with one decimal place
 		return `${Math.round(rank.sr / 100) / 10.0}k`;
+	} else {
+		return rank.tier.toString();
 	}
 }
 
 /** Returns whether the given rank is a legacy rank. */
-export function isLegacyRank(rank: AnyRank): boolean {
-	if ('sr' in rank) {
-		return true;
-	}
-	return false;
+export function isLegacyRank(rank: AnyRank): rank is LegacyRank {
+	if (!('sr' in rank)) return false;
+	if (rank.sr === null && 'rank' in rank) return false;
+	return true;
 }

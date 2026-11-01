@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { ClassValue } from '$lib/types';
 	import type { Snippet } from 'svelte';
+	import type { ClassValue } from 'svelte/elements';
 
 	type Props = {
 		class?: ClassValue;
@@ -14,7 +14,7 @@
 <main
 	class={[
 		topMargin && 'mt-20',
-		'relative z-0 grow bg-white px-4 pt-18 pb-24 text-gray-800 dark:bg-gray-950 dark:text-gray-300'
+		'relative z-0 grow overflow-hidden bg-white px-4 pt-18 pb-24 text-gray-800 dark:bg-gray-950 dark:text-gray-300'
 	]}
 >
 	<div class={[classProp, 'mx-auto max-w-4xl']}>

@@ -3,31 +3,36 @@
 	import AdminEmptyNotice from './AdminEmptyNotice.svelte';
 	import AdminLink from './AdminLink.svelte';
 	import Button from '../ui/Button.svelte';
-	import { isAdmin } from '$lib/authRole';
+	import { isAdmin } from '$lib/auth-role';
 	import { page } from '$app/state';
+	import type { ResolvedPathname } from '$app/types';
 
 	type Props<T> = {
 		items: T[];
-		linkHref: (item: T) => string;
+		itemKey?: (item: T) => string;
+		linkHref: (item: T) => ResolvedPathname;
 		linkLabel?: (item: T) => string;
 		linkContent?: Snippet<[{ item: T }]>;
 		emptyText: string;
 		oncreateclick?: () => void;
 		createButtonLabel?: string;
 		createButtonIcon?: string;
+		hideCreateButton?: boolean;
 	};
 
 	let {
 		items,
+		itemKey,
 		linkHref,
 		linkLabel,
 		linkContent,
 		oncreateclick,
 		emptyText,
+		hideCreateButton: hideProp,
 		...emptyNoticeProps
 	}: Props<T> = $props();
 
-	const hideCreateButton = $derived(!isAdmin(page.data.user?.role));
+	const hideCreateButton = $derived(hideProp || !isAdmin(page.data.user?.role));
 </script>
 
 {#if items.length === 0}
@@ -36,7 +41,7 @@
 	</AdminEmptyNotice>
 {:else}
 	<div class="space-y-1 overflow-hidden rounded-lg">
-		{#each items as item}
+		{#each items as item (itemKey?.(item) ?? item)}
 			<AdminLink href={linkHref(item)}>
 				{#if linkContent}
 					{@render linkContent({ item })}

@@ -1,9 +1,11 @@
 import {
 	type LogicalMatch,
-	type MatchRoster,
 	type ResolvedMatch,
 	type MatchWithoutRosters,
-	MatchState
+	MatchState,
+	type Placement,
+	type UnresolvedMatch,
+	type ResolvedMatchWithContext
 } from './types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -77,8 +79,8 @@ export function isWinner(match: LogicalMatch, side: MatchSide): boolean {
 
 /** Returns the roster ID on the given side of a match, or null if not set. */
 export function matchRosterId(match: LogicalMatch, side?: MatchSide | null): string | null {
-	if (side === 'A') return match.rosterAId ?? null;
-	if (side === 'B') return match.rosterBId ?? null;
+	if (side === 'A') return match.rosterAId;
+	if (side === 'B') return match.rosterBId;
 	return null;
 }
 
@@ -108,11 +110,12 @@ export function compareMatchDates(a: MatchWithoutRosters, b: MatchWithoutRosters
 /**
  * Creates a new, unresolved and scheduled match with default values for a group.
  */
-export function createGroupMatch(groupId: string) {
+export function createGroupMatch(groupId: string): Required<UnresolvedMatch> {
 	return {
 		id: uuidv4(),
 		groupId,
 		bracketId: null,
+		divisionId: null,
 		rosterAId: null,
 		rosterBId: null,
 		teamAScore: 0,
@@ -124,6 +127,65 @@ export function createGroupMatch(groupId: string) {
 		playedAt: null,
 		scheduledAt: null,
 		vodUrl: null,
-		nextMatchId: null
+		nextMatchId: null,
+		round: null
 	};
+}
+
+/**
+ * Converts a ResolvedMatch to a LogicalMatch by flatting the roster objects to their IDs.
+ */
+export function resolvedMatchToLogical(match: ResolvedMatch): LogicalMatch {
+	return {
+		rosterAId: match.rosterA?.id ?? null,
+		rosterBId: match.rosterB?.id ?? null,
+		teamAScore: match.teamAScore,
+		teamBScore: match.teamBScore,
+		draws: match.draws,
+		state: match.state
+	};
+}
+
+export function getFinalMatch(
+	matches: ResolvedMatchWithContext[]
+): ResolvedMatchWithContext | null {
+	return (
+		matches
+			.filter((match) => match.round != null)
+			.sort((a, b) => a.round! - b.round!)
+			.at(0) ?? null
+	);
+}
+
+export function getRosterPlacement(
+	rosterId: string,
+	rosterCount: number,
+	finalMatch: ResolvedMatchWithContext | null
+): Placement | null {
+	if (!finalMatch || finalMatch.round == null) return null;
+
+	const round = finalMatch.round;
+	const worst = Math.min(Math.pow(2, round + 1), rosterCount);
+
+	if (finalMatch.state === MatchState.SCHEDULED) {
+		return { best: 1, worst };
+	}
+
+	if (round === 0) {
+		const logicalFinalMatch = resolvedMatchToLogical(finalMatch);
+
+		// played in the grand final
+		const winner = matchWinner(logicalFinalMatch);
+		// grand final is undecided
+		if (!winner) return { best: 1, worst: 2 };
+
+		const place = matchRosterId(logicalFinalMatch, winner) === rosterId ? 1 : 2;
+		return { best: place, worst: place };
+	}
+
+	// since we didn't win (or play) the grand final, we must have lost our final match
+
+	const best = Math.pow(2, round) + 1;
+
+	return { best, worst };
 }

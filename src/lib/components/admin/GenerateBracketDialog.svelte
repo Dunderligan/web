@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { generateBracket } from '$lib/remote/bracket.remote';
-	import Checkbox from '../ui/Checkbox.svelte';
-	import InputField from '../ui/InputField.svelte';
-	import Label from '../ui/Label.svelte';
+	import Checkbox from '../form/Checkbox.svelte';
+	import InputField from '../form/InputField.svelte';
+	import Label from '../form/Label.svelte';
 	import Note from '../ui/Note.svelte';
-	import Select from '../ui/Select.svelte';
+	import Select from '../form/Select.svelte';
 	import CreateDialog from './CreateDialog.svelte';
 
 	type Props = {
@@ -18,7 +19,7 @@
 
 	let name = $derived(divisionName);
 	let roundCount = $state(2);
-	let avoidPreviousMatches = $state(true);
+	let avoidPreviousMatchups = $state(true);
 	let flipStandings = $state(false);
 
 	async function submit() {
@@ -26,12 +27,12 @@
 			name,
 			divisionId,
 			roundCount: roundCount,
-			avoidPreviousMatches,
+			avoidPreviousMatchups,
 			flipStandings
 		});
 
 		open = false;
-		await goto(`/admin/bracket/${bracket.id}`);
+		await goto(resolve(`/admin/bracket/${bracket.id}`));
 	}
 </script>
 
@@ -50,7 +51,7 @@
 			class="grow"
 			type="single"
 			bind:value={() => roundCount.toString(), (v: string) => (roundCount = parseInt(v))}
-			items={[2, 3, 4].map((n) => ({
+			items={[2, 3, 4, 5].map((n) => ({
 				label: `${n} rundor (${Math.pow(2, n)} platser)`,
 				value: n.toString()
 			}))}
@@ -58,7 +59,7 @@
 	</Label>
 
 	<Label label="Undvik tidigare möten">
-		<Checkbox bind:checked={avoidPreviousMatches} />
+		<Checkbox bind:checked={avoidPreviousMatchups} />
 	</Label>
 
 	<Label label="Invertera seeding">

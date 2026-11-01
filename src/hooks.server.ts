@@ -2,8 +2,8 @@ import { error, type Handle, type ServerInit } from '@sveltejs/kit';
 import session from '$lib/server/session';
 import { sequence } from '@sveltejs/kit/hooks';
 import { initDb } from '$lib/server/db';
-import { isModerator } from '$lib/authRole';
-import apiToken from '$lib/server/apiToken';
+import { isModerator } from '$lib/auth-role';
+import apiToken from '$lib/server/api-token';
 
 const handleAuth: Handle = async ({ event, resolve }) => {
 	event.locals.user = null;
@@ -49,9 +49,15 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
+// TODO: make this not hardcoded
+const adminPaths = ['/admin'];
+const adminExceptions = ['/admin/spelare', '/admin/laganmalan'];
+
 const guardAdminPages: Handle = async ({ event, resolve }) => {
-	// TODO: make this not hardcoded
-	if (!event.url.pathname.startsWith('/admin') || event.url.pathname.startsWith('/admin/spelare')) {
+	if (
+		!adminPaths.some((path) => event.url.pathname.startsWith(path)) ||
+		adminExceptions.some((path) => event.url.pathname.startsWith(path))
+	) {
 		return resolve(event);
 	}
 

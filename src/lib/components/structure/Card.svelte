@@ -1,7 +1,9 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import type { ClassValue } from 'svelte/elements';
 
 	type Props = {
+		class?: ClassValue;
 		reverse?: boolean;
 		title: string;
 		image: string;
@@ -9,11 +11,14 @@
 		children?: Snippet;
 	};
 
-	let { title, image, alt, reverse = false, children }: Props = $props();
+	let { title, image, alt, reverse = false, children, class: classProp }: Props = $props();
 </script>
 
 <div
-	class="grid grid-cols-1 items-stretch overflow-hidden rounded-xl bg-gray-100 text-lg font-medium sm:grid-cols-[1fr_1fr] dark:bg-gray-900"
+	class={[
+		classProp,
+		'grid grid-cols-1 items-stretch overflow-hidden rounded-xl bg-gray-100 text-lg font-medium sm:grid-cols-[1fr_1fr] dark:bg-gray-900'
+	]}
 >
 	<img class={[reverse && 'sm:order-1', 'object-cover']} src={image} {alt} />
 

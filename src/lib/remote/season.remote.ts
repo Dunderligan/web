@@ -4,8 +4,9 @@ import { toSlug } from '$lib/util';
 import { eq } from 'drizzle-orm';
 import z from 'zod';
 import { roleGuard } from './auth.remote';
-import { AuthRole } from '$lib/authRole';
-import { entityQuery } from '$lib/server/db/helpers';
+import { AuthRole } from '$lib/auth-role';
+import { divisionOrder, entityQuery } from '$lib/server/db/helpers';
+import { createDivision } from './division.remote';
 
 export const createSeason = command(
 	z.object({
@@ -30,24 +31,24 @@ export const createSeason = command(
 			})
 			.returning();
 
+		await createDivision({ name: 'Division 1', seasonId: season.id });
+
 		return { season };
 	}
 );
 
 export const createRegistration = command(
 	z.object({
-		url: z.url(),
 		openDate: z.date(),
 		closeDate: z.date(),
 		seasonId: z.uuid()
 	}),
-	async ({ url, openDate, closeDate, seasonId }) => {
+	async ({ openDate, closeDate, seasonId }) => {
 		await roleGuard(AuthRole.ADMIN);
 
 		const [registration] = await db
 			.insert(schema.registration)
 			.values({
-				url,
 				openDate,
 				closeDate,
 				seasonId
@@ -67,32 +68,18 @@ export const updateSeason = command(
 		legacyRanks: z.boolean(),
 		legacySeeding: z.boolean(),
 		hidden: z.boolean(),
-		registration: z
-			.object({
-				url: z.url(),
-				openDate: z.date(),
-				closeDate: z.date()
-			})
-			.nullish()
+		spinoff: z.boolean(),
+		checkinOpen: z.boolean()
 	}),
-	async ({ id, name, startedAt, endedAt, legacyRanks, legacySeeding, hidden, registration }) => {
+	async ({ id, name, ...data }) => {
 		await roleGuard(AuthRole.ADMIN);
 
 		const slug = toSlug(name);
 
-		await db.transaction(async (tx) => {
-			await tx
-				.update(schema.season)
-				.set({ name, slug, startedAt, endedAt, legacyRanks, legacySeeding, hidden })
-				.where(eq(schema.season.id, id));
-
-			if (registration) {
-				await tx
-					.update(schema.registration)
-					.set(registration)
-					.where(eq(schema.registration.seasonId, id));
-			}
-		});
+		await db
+			.update(schema.season)
+			.set({ name, slug, ...data })
+			.where(eq(schema.season.id, id));
 	}
 );
 
@@ -107,17 +94,6 @@ export const deleteSeason = command(
 	}
 );
 
-export const deleteRegistration = command(
-	z.object({
-		id: z.uuidv4()
-	}),
-	async ({ id }) => {
-		await roleGuard(AuthRole.ADMIN);
-
-		await db.delete(schema.registration).where(eq(schema.registration.id, id));
-	}
-);
-
 export const getDivisionsBySeason = query(
 	z.object({
 		seasonId: z.uuid()
@@ -126,15 +102,18 @@ export const getDivisionsBySeason = query(
 		await roleGuard(AuthRole.ADMIN);
 
 		const divisions = await db.query.division.findMany({
+			...entityQuery,
 			where: {
 				seasonId
 			},
-			orderBy: {
-				name: 'asc'
-			},
-			...entityQuery,
+			orderBy: (t) => divisionOrder(t.name),
 			with: {
-				groups: entityQuery
+				groups: {
+					...entityQuery,
+					orderBy: {
+						name: 'asc'
+					}
+				}
 			}
 		});
 

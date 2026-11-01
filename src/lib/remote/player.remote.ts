@@ -1,5 +1,5 @@
-import { command, getRequestEvent } from '$app/server';
-import { canEditUserPage, isModerator } from '$lib/authRole';
+import { command, getRequestEvent, query } from '$app/server';
+import { AuthRole, canEditUserPage, isModerator } from '$lib/auth-role';
 import { socialSchema } from '$lib/schemas';
 import { db, schema } from '$lib/server/db';
 import { type Transaction } from '$lib/server/db/helpers';
@@ -8,6 +8,7 @@ import type { Social } from '$lib/types';
 import { error } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import z from 'zod';
+import { roleGuard } from './auth.remote';
 
 export const editPlayer = command(
 	z.object({
@@ -16,7 +17,7 @@ export const editPlayer = command(
 		description: z.string().max(500).nullable(),
 		socials: z.array(socialSchema),
 		signatureHeroes: z.array(z.uuid()).max(3),
-		aliases: z.array(z.string()).max(5)
+		aliases: z.array(z.string().max(20)).max(5)
 	}),
 	async ({ id, pronouns, description, socials, signatureHeroes, aliases }) => {
 		const { locals } = getRequestEvent();
@@ -102,8 +103,7 @@ async function updateAliases(tx: Transaction, playerId: string, aliases: string[
 }
 
 /**
- * Allows users to take ownership of player profiles that have been
- * registered without a full tag, but match their battletag name.
+ * Allows users to take ownership of player profiles that have been registered without a full tag, but match their own name.
  * */
 export const claimPlayer = command(
 	z.object({
@@ -120,14 +120,14 @@ export const claimPlayer = command(
 			throw error(404);
 		}
 
-		// only players without a full battletag can be claimed
+		// only profiles without a full battletag can be claimed
 		if (player.battletag.includes('#')) {
 			throw error(400);
 		}
 
 		const name = locals.user?.battletag.split('#')[0];
 
-		if (name !== player.battletag) {
+		if (name?.toLowerCase() !== player.battletag.toLowerCase()) {
 			throw error(403);
 		}
 
@@ -142,13 +142,21 @@ export const claimPlayer = command(
 
 export const setProfileSlug = command(
 	z.object({
-		playerId: z.string(),
+		playerId: z.uuid(),
 		slug: z.string()
 	}),
 	async ({ playerId, slug }) => {
 		const { locals } = getRequestEvent();
 
-		if (!canEditUserPage(locals.user, playerId)) {
+		const player = await db.query.player.findFirst({
+			where: { id: playerId }
+		});
+
+		if (!player) {
+			throw error(404);
+		}
+
+		if (!canEditUserPage(locals.user, player.battletag)) {
 			throw error(403);
 		}
 
@@ -158,5 +166,70 @@ export const setProfileSlug = command(
 			.where(eq(schema.player.id, playerId));
 
 		await overwatch.invalidateCache(locals.user!.battletag);
+	}
+);
+
+export const linkPlayerAlias = command(
+	z.object({
+		playerId: z.uuid(),
+		otherPlayerId: z.uuid()
+	}),
+	async ({ playerId, otherPlayerId }) => {
+		await roleGuard(AuthRole.MODERATOR);
+
+		const otherPlayer = await db.query.player.findFirst({
+			where: { id: otherPlayerId }
+		});
+
+		if (!otherPlayer) {
+			throw error(404);
+		}
+
+		await db
+			.update(schema.member)
+			.set({ playerId, registeredName: otherPlayer.battletag })
+			.where(eq(schema.member.playerId, otherPlayerId));
+
+		await db.delete(schema.player).where(eq(schema.player.id, otherPlayerId));
+	}
+);
+
+export const queryPlayers = query(
+	z.object({
+		query: z.string()
+	}),
+	async ({ query }) => {
+		await roleGuard(AuthRole.MODERATOR);
+
+		if (query.trim().length < 2) {
+			return [];
+		}
+
+		return await db.query.player.findMany({
+			limit: 15,
+			where: {
+				OR: [
+					{
+						battletag: {
+							ilike: `%${query}%`
+						}
+					},
+					{
+						aliases: {
+							name: {
+								ilike: `%${query}%`
+							}
+						}
+					}
+				]
+			},
+			columns: {
+				id: true,
+				battletag: true
+			},
+			orderBy: {
+				battletag: 'asc'
+			}
+		});
 	}
 );

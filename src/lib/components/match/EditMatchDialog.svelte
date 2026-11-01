@@ -2,14 +2,14 @@
 	import { RosterContext } from '$lib/state/rosters.svelte';
 	import { SaveContext } from '$lib/state/save.svelte';
 	import Dialog from '../ui/Dialog.svelte';
-	import InputField from '../ui/InputField.svelte';
-	import Label from '../ui/Label.svelte';
+	import InputField from '../form/InputField.svelte';
+	import Label from '../form/Label.svelte';
 	import RosterSelect from '../admin/RosterSelect.svelte';
 	import DateInput from '../ui/DateInput.svelte';
 	import { Accordion } from 'bits-ui';
 	import Icon from '../ui/Icon.svelte';
 	import { MatchState } from '$lib/types';
-	import Select from '../ui/Select.svelte';
+	import Select from '../form/Select.svelte';
 
 	const rosterCtx = RosterContext.get();
 	const saveCtx = SaveContext.get();
@@ -60,13 +60,17 @@
 	buttons={[
 		{
 			label: 'Klar',
-			icon: 'ph:check',
+			icon: 'ph:check-circle',
 			onclick: () => rosterCtx.stopMatchEdit()
 		}
 	]}
-	onOpenChange={(state) => {
-		if (!state) {
+	onOpenChange={(newOpen) => {
+		if (!newOpen) {
 			rosterCtx.stopMatchEdit();
+			if (match) {
+				match.teamAScore = match.teamAScore ?? 0;
+				match.teamBScore = match.teamBScore ?? 0;
+			}
 		}
 	}}
 >
@@ -125,7 +129,7 @@
 		<Accordion.Root type="single">
 			<Accordion.Item class="w-full">
 				<Accordion.Trigger
-					class="flex w-full items-center gap-2 rounded-md bg-gray-100 px-4 py-2 text-left font-medium text-gray-800 hover:bg-gray-200 data-[state=open]:rounded-b-none dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+					class="flex w-full items-center gap-2 rounded-md bg-gray-100 px-4 py-2 text-left font-medium text-gray-800 hover:bg-gray-200 data-[state=open]:rounded-b-none dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800"
 				>
 					<Icon icon="ph:gear-six" class="inline-block" />
 					Fler inställningar

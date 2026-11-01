@@ -1,0 +1,2 @@
+ALTER TABLE "api_key" DROP CONSTRAINT "api_key_user_id_user_id_fkey", ADD CONSTRAINT "api_key_user_id_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE;--> statement-breakpoint
+ALTER TABLE "session" DROP CONSTRAINT "session_user_id_user_id_fkey", ADD CONSTRAINT "session_user_id_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE;

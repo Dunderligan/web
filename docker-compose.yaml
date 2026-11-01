@@ -11,7 +11,7 @@ services:
       - 5432:5432
     networks:
       - default
-  
+
   redis:
     image: valkey/valkey:9.0.0
     ports:

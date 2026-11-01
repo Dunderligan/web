@@ -1,12 +1,10 @@
 <script lang="ts">
-	import {
-		type ClassValue,
-		type NestedBracket,
-		type NestedGroup,
-		type MatchWithoutRosters
-	} from '$lib/types';
-	import { formatDate, formatDateTime } from '$lib/util';
+	import { type NestedBracket, type NestedGroup, type MatchWithoutRosters } from '$lib/types';
+	import { capitalize, formatDateShort, formatDateTime, formatDateTimeShort } from '$lib/util';
+	import type { ClassValue } from 'svelte/elements';
 	import Icon from '../ui/Icon.svelte';
+	import Link from '../ui/Link.svelte';
+	import Tooltip from '../ui/Tooltip.svelte';
 
 	type Props = {
 		match: MatchWithoutRosters;
@@ -30,16 +28,16 @@
 
 	const division = $derived(group ? group.division : bracket ? bracket.division : null);
 
-	const { icon, label, date } = $derived(
+	const { icon, label, date, showTime } = $derived(
 		{
 			played: {
 				icon: 'ph:check',
-				date: match.playedAt ? formatDate(match.playedAt) : 'Okänt datum'
+				date: match.playedAt ? match.playedAt : 'Okänt datum'
 			},
 			scheduled: {
 				icon: 'ph:calendar-blank',
-				label: 'Planerad',
-				date: match.scheduledAt ? formatDateTime(match.scheduledAt) : null
+				date: match.scheduledAt ? match.scheduledAt : null,
+				showTime: true
 			},
 			walkover: { icon: 'ph:flag', label: 'Walkover' },
 			cancelled: { icon: 'ph:x', label: 'Inställd' }
@@ -51,7 +49,7 @@
 	class={[
 		classProp,
 		center && 'sm:justify-center',
-		'flex items-center gap-4 text-sm font-semibold text-gray-600 dark:text-gray-400'
+		'flex items-center gap-4 text-sm font-medium text-gray-600 dark:text-gray-400'
 	]}
 >
 	{#if bracket}
@@ -64,33 +62,40 @@
 		{/if}
 
 		{#if label && !short}
-			{label}
+			{capitalize(label)}
 		{/if}
 
 		{#if date}
-			{date}
+			{#if typeof date === 'string'}
+				{date}
+			{:else}
+				<Tooltip underline>
+					{#snippet content()}
+						<p class="text-center text-lg">
+							{formatDateTime(date)}
+						</p>
+					{/snippet}
+					{showTime ? formatDateTimeShort(date) : formatDateShort(date)}
+				</Tooltip>
+			{/if}
 		{/if}
 	</div>
 
 	{#if (division && !hideDivision) || match.vodUrl}
-		<span class="-mx-1.5 text-base">•</span>
+		<span class="-mx-2 text-base">—</span>
 	{/if}
 
 	{#if division && !hideDivision}
-		<a
+		<Link
 			href="/stallningar/{division.season.slug}?div={division.slug}&visa={bracket
 				? 'slutspel'
 				: 'gruppspel'}"
-			class="hover:underline"
 		>
 			{bracket?.name ?? division.name}
-		</a>
+		</Link>
 	{/if}
 
 	{#if match.vodUrl}
-		<a class="hover:underline" href={match.vodUrl} target="_blank" rel="noopener noreferrer">
-			<Icon icon="ph:arrow-square-out" />
-			VOD
-		</a>
+		<Link externalHref={match.vodUrl} openInNewTab>VOD</Link>
 	{/if}
 </div>

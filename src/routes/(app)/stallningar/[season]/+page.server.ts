@@ -1,13 +1,9 @@
 import { compareMatchDates } from '$lib/match';
 import { db } from '$lib/server/db';
-import {
-	fullMatchColumns,
-	groupMatchOrder,
-	divisionOrder,
-	hiddenSeasonFilter
-} from '$lib/server/db/helpers';
+import { fullMatchColumns, groupMatchOrder, divisionOrder } from '$lib/server/db/helpers';
+import { hiddenSeasonFilter } from '$lib/server/db/hidden.js';
 import { calculateStandings } from '$lib/standings';
-import { MatchState, type LogicalMatch } from '$lib/types';
+import { MatchState } from '$lib/types';
 import { aggregateGroups } from '$lib/util';
 import { error } from '@sveltejs/kit';
 
@@ -17,22 +13,11 @@ export const load = async ({ params, locals }) => {
 			slug: params.season,
 			hidden: hiddenSeasonFilter(locals.user)
 		},
-		columns: {
-			name: true,
-			slug: true,
-			startedAt: true,
-			endedAt: true,
-			legacySeeding: true
-		},
 		with: {
 			divisions: {
 				orderBy: (t) => divisionOrder(t.name),
 				columns: {
-					id: true,
-					name: true,
-					slug: true,
-					playoffLine: true,
-					groupwiseStandings: true
+					seasonId: false
 				},
 				with: {
 					brackets: {
@@ -94,6 +79,7 @@ export const load = async ({ params, locals }) => {
 			let groupings;
 			if (division.groupwiseStandings) {
 				groupings = groups.map((group) => ({
+					id: group.id,
 					title: group.name,
 					matches: group.matches,
 					rosters: group.rosters,
@@ -102,6 +88,7 @@ export const load = async ({ params, locals }) => {
 			} else {
 				groupings = [
 					{
+						id: division.id,
 						title: null,
 						matches: divisionMatches,
 						rosters,
@@ -111,7 +98,9 @@ export const load = async ({ params, locals }) => {
 			}
 
 			const tables = groupings.map(({ matches, rosters, ...table }) => {
-				const standings = calculateStandings(rosters, matches, season.legacySeeding);
+				const standings = calculateStandings(rosters, matches, {
+					legacy: season.legacySeeding
+				});
 
 				return {
 					...table,

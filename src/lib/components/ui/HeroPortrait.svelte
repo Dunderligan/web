@@ -1,13 +1,14 @@
 <script lang="ts">
-	import type { ClassValue } from '$lib/types';
+	import type { Hero } from '$lib/types';
+	import type { ClassValue } from 'svelte/elements';
 
 	type Props = {
-		name: string;
+		hero: Hero;
 		size?: 'xs' | 'sm' | 'md';
 		class?: ClassValue;
 	};
 
-	let { name, size = 'md', class: classProp }: Props = $props();
+	let { hero, size = 'md', class: classProp }: Props = $props();
 
 	const sizeClass = $derived(
 		{
@@ -18,4 +19,4 @@
 	);
 </script>
 
-<img src="/heroes/{name}.png" alt={name} class={[sizeClass, classProp]} />
+<img src="/heroes/{hero.slug}.webp" alt={hero.name} class={[sizeClass, classProp]} />

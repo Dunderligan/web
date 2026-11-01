@@ -1,55 +1,59 @@
 <script lang="ts">
 	import { goto, invalidateAll } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
 	import AdminLink from '$lib/components/admin/AdminLink.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
-	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
-	import Icon from '$lib/components/ui/Icon.svelte';
-	import InputField from '$lib/components/ui/InputField.svelte';
-	import Label from '$lib/components/ui/Label.svelte';
+	import InputField from '$lib/components/form/InputField.svelte';
+	import Label from '$lib/components/form/Label.svelte';
 	import RosterLogoUpload from '$lib/components/admin/RosterLogoUpload.svelte';
 	import SaveToast from '$lib/components/admin/SaveToast.svelte';
-	import Select from '$lib/components/ui/Select.svelte';
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
 	import { SaveContext } from '$lib/state/save.svelte';
-	import { Rank, Role, SocialPlatform } from '$lib/types';
-	import { formatSocialPlatform, flattenGroup } from '$lib/util';
+	import { flattenGroup, formatDateTime } from '$lib/util';
 	import TeamSelect from '$lib/components/admin/TeamSelect.svelte';
 	import { deleteRoster, editRoster, mergeTeams, moveRoster } from '$lib/remote/roster.remote';
-	import AdminMembersTable from '$lib/components/table/AdminMembersTable.svelte';
+	import EditableMembersTable from '$lib/components/table/EditableMembersTable.svelte';
 	import Notice from '$lib/components/ui/Notice.svelte';
-	import { getDivisionsBySeason } from '$lib/remote/season.remote';
-	import Checkbox from '$lib/components/ui/Checkbox.svelte';
-	import { AuthRole, checkPermission } from '$lib/authRole';
+	import Checkbox from '$lib/components/form/Checkbox.svelte';
+	import { AuthRole, checkPermission } from '$lib/auth-role.js';
 	import AdminSocials from '$lib/components/admin/AdminSocials.svelte';
+	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
+	import GroupSelect from '$lib/components/form/GroupSelect.svelte';
+	import Table from '$lib/components/table/Table.svelte';
+	import Icon from '$lib/components/ui/Icon.svelte';
+	import { deleteCheckin } from '$lib/remote/checkin.remote.js';
+
+	type CheckinMember = {
+		player: { id: string; battletag: string };
+	};
 
 	let { data } = $props();
+
+	// svelte-ignore state_referenced_locally
+	let roster = $state(data.roster);
+	// svelte-ignore state_referenced_locally
+	let team = $state(data.team);
 
 	$effect(() => {
 		roster = data.roster;
 		team = data.team;
 	});
 
-	let roster = $state(data.roster);
-	let team = $state(data.team);
-
 	let { group, division, season } = $derived(flattenGroup(roster.group));
 
-	SaveContext.set(new SaveContext({ save, href: `/lag/${roster.slug}/${season.slug}` }));
+	SaveContext.set(new SaveContext({ save, href: () => `/lag/${roster.slug}/${season.slug}` }));
 
 	let confirm = ConfirmContext.get();
 	let saveCtx = SaveContext.get();
-
-	let newPlayerOpen = $state(false);
-	let newPlayerBattletag = $state('');
 
 	let linkTeamOpen = $state(false);
 	let linkTeamId: string | undefined = $state();
 
 	let changeGroupOpen = $state(false);
-	let changeGroupTo = $state(group.id);
+	let changeGroupTo = $derived(group.id);
 
 	let uploadedLogo = $state(false);
 
@@ -66,39 +70,17 @@
 		});
 	}
 
-	async function addNewPlayer() {
-		roster.members.push({
-			isCaptain: false,
-			role: Role.DAMAGE,
-			rank: season.legacyRanks ? null : Rank.BRONZE,
-			tier: season.legacyRanks ? null : 1,
-			sr: season.legacyRanks ? 0 : null,
-			player: {
-				id: null as any as string, // the backend will either link this up with an existing player, or create a new one
-				battletag: newPlayerBattletag
-			}
-		});
-
-		saveCtx.setDirty();
-		resetNewPlayer();
-	}
-
-	function resetNewPlayer() {
-		newPlayerOpen = false;
-		newPlayerBattletag = '';
-	}
-
 	async function onDeleteClick() {
 		await confirm.confirm({
 			title: 'Radera roster',
 			description: `Är du säker på att du vill radera ${roster.name} från ${season.name}? <b>Detta går inte att ångra!</b>`,
-			negative: true,
+			destructive: true,
 			action: async () => {
 				await deleteRoster({
 					id: roster.id
 				});
 
-				await goto(`/admin/grupp/${group.id}`);
+				await goto(resolve(`/admin/grupp/${group.id}`));
 			}
 		});
 	}
@@ -120,6 +102,18 @@
 
 		changeGroupOpen = false;
 	}
+
+	async function onCheckinRevokeClick(battletag: string, discordId: string) {
+		await confirm.confirm({
+			title: 'Ta bort incheckning',
+			description: `Är du säker på att du vill ta bort incheckningen för <b>${battletag}</b>? Spelaren kommer behöva checka in igen.`,
+			destructive: true,
+			action: async () => {
+				await deleteCheckin({ seasonId: season.id, discordId });
+				await invalidateAll();
+			}
+		});
+	}
 </script>
 
 <Breadcrumbs
@@ -131,32 +125,66 @@
 	]}
 />
 
-<AdminCard title="Spelare">
-	{#if roster.members.length === 0}
-		<AdminEmptyNotice oncreateclick={() => (newPlayerOpen = true)} hideCreateButton={!isAdmin}>
-			Detta roster har inga medlemmar.
-		</AdminEmptyNotice>
-	{:else}
-		<AdminMembersTable
-			bind:members={roster.members}
-			legacyRanks={season.legacyRanks}
-			disabled={!isAdmin}
-			ondelete={(index) => {
-				roster.members.splice(index, 1);
-			}}
-		/>
-
-		{#if isAdmin}
-			<Button kind="primary" icon="ph:plus" onclick={() => (newPlayerOpen = true)} />
-		{/if}
-	{/if}
+<AdminCard title="Spelartrupp">
+	<EditableMembersTable
+		bind:members={roster.members}
+		legacyRanks={season.legacyRanks}
+		disabled={!isAdmin}
+		memberLinks
+	/>
 </AdminCard>
 
 {#if isAdmin}
-	<AdminSocials
-		emptyText="Detta lag har inga länkade sociala medier."
-		bind:socials={team.socials}
-	/>
+	{#if season.checkinOpen}
+		<AdminCard title="Incheckning">
+			<Table
+				kind="transparent"
+				rows={roster.members}
+				key={(member) => member.player.battletag}
+				columns={[
+					{ label: 'Spelare', snippet: playerCell, class: 'text-lg font-semibold' },
+					{ label: 'Incheckad', snippet: checkinCell, center: true, class: 'text-xl' },
+					{ label: 'Åtgärder', snippet: actionsCell, center: true, class: 'gap-2' }
+				]}
+			/>
+		</AdminCard>
+
+		{#snippet playerCell(member: CheckinMember)}
+			{member.player.battletag}
+		{/snippet}
+
+		{#snippet checkinCell(member: CheckinMember)}
+			{@const checkin = data.checkins.get(member.player.id)}
+
+			{#if checkin}
+				<Icon icon="ph:check-circle-fill" class="text-green-600" />
+			{:else}
+				<Icon icon="ph:x-circle-fill" class="text-red-600" />
+			{/if}
+		{/snippet}
+
+		{#snippet actionsCell(member: CheckinMember)}
+			{@const checkin = data.checkins.get(member.player.id)}
+
+			{#if checkin}
+				<Button
+					icon="ph:arrow-square-out"
+					label="Visa på discord"
+					kind="secondary"
+					href="https://discord.com/users/{checkin.discordId}"
+					openInNewTab
+				/>
+
+				<Button
+					icon="ph:link-break"
+					kind="secondary"
+					onclick={() => onCheckinRevokeClick(member.player.battletag, checkin.discordId)}
+				/>
+			{/if}
+		{/snippet}
+	{/if}
+
+	<AdminSocials emptyText="Detta lag har inga länkar." bind:socials={team.socials} />
 
 	<AdminCard title="Inställningar">
 		<Label label="Namn">
@@ -168,7 +196,11 @@
 		</Label>
 
 		<Label label="Logotyp">
-			<RosterLogoUpload rosterId={roster.id} onUpload={() => (uploadedLogo = true)} />
+			<RosterLogoUpload
+				rosterName={roster.name}
+				rosterId={roster.id}
+				onUpload={() => (uploadedLogo = true)}
+			/>
 		</Label>
 
 		{#if uploadedLogo}
@@ -185,9 +217,23 @@
 				onclick={() => (changeGroupOpen = true)}
 			/>
 
-			<Button icon="ph:trash" label="Radera roster" kind="negative" onclick={onDeleteClick} />
+			<Button icon="ph:trash" label="Radera roster" kind="destructive" onclick={onDeleteClick} />
 		</div>
 	</AdminCard>
+
+	{#if roster.submission}
+		<AdminCard title="Anmälan">
+			{#if roster.submission.reviewedAt}
+				<Label label="Granskades senast">
+					<span class="font-medium">{formatDateTime(roster.submission.reviewedAt)}</span>
+				</Label>
+			{/if}
+
+			<div class="space-y-1 overflow-hidden rounded-lg">
+				<AdminLink href="/admin/laganmalan/{roster.submission.id}">Redigera anmälan</AdminLink>
+			</div></AdminCard
+		>
+	{/if}
 
 	<AdminCard title="Länkade rosters">
 		{#if team.rosters.length > 1}
@@ -219,18 +265,6 @@
 {/if}
 
 <CreateDialog
-	title="Lägg till spelare"
-	bind:open={newPlayerOpen}
-	oncreate={addNewPlayer}
-	onclose={resetNewPlayer}
-	disabled={!newPlayerBattletag}
->
-	<Label label="Battletag">
-		<InputField bind:value={newPlayerBattletag} placeholder="Spelare#0000" />
-	</Label>
-</CreateDialog>
-
-<CreateDialog
 	title="Länka roster"
 	createLabel="Länka"
 	oncreate={linkTeam}
@@ -239,8 +273,7 @@
 	disabled={!linkTeamId}
 >
 	{#snippet description()}
-		Välj vilket lag du vill länka {roster.name} till. Tänk på att det inte går att länka två rosters
-		från samma säsong.
+		Välj vilket lag du vill länka {roster.name} till. Det går inte att länka två rosters i samma säsong.
 	{/snippet}
 
 	<Label label="Lag">
@@ -256,20 +289,7 @@
 	disabled={!changeGroupTo}
 >
 	<Label label="Grupp">
-		{#await getDivisionsBySeason({ seasonId: season.id }) then { divisions }}
-			<Select
-				type="single"
-				class="grow"
-				items={divisions.flatMap((division) =>
-					division.groups.map((group) => ({
-						label: `${division.name}, ${group.name}`,
-						value: group.id
-					}))
-				)}
-				bind:value={changeGroupTo}
-				placeholder="Välj grupp"
-			/>
-		{/await}
+		<GroupSelect seasonId={season.id} bind:groupId={changeGroupTo} />
 	</Label>
 </CreateDialog>
 

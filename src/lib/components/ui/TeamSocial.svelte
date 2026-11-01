@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { ClassValue } from '$lib/types';
 	import { capitalize } from '$lib/util';
+	import type { ClassValue } from 'svelte/elements';
 	import Icon from './Icon.svelte';
 
 	type Props = {
@@ -12,7 +12,11 @@
 	let { platform, href, class: classProp }: Props = $props();
 </script>
 
-<a {href} class={[classProp, 'inline-flex items-center']} target="_blank" rel="noopener noreferrer"
+<a
+	{href}
+	class={[classProp, 'inline-flex items-center']}
+	target="_blank"
+	rel="external noopener noreferrer"
 	><Icon
 		class="text-accent-500 hover:text-accent-600"
 		icon="ph:{platform}-logo-fill"

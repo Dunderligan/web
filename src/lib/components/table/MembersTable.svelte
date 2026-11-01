@@ -1,9 +1,11 @@
 <script lang="ts">
-	import type { ClassValue, Member } from '$lib/types';
+	import type { Member } from '$lib/types';
+	import type { ClassValue } from 'svelte/elements';
 	import { capitalize, roleIcon } from '$lib/util';
 	import Icon from '../ui/Icon.svelte';
 	import Rank from '../ui/Rank.svelte';
 	import Table from './Table.svelte';
+	import Link from '../ui/Link.svelte';
 
 	type Props = {
 		members: Member[];
@@ -15,39 +17,45 @@
 
 <Table
 	columns={[
-		{ label: 'Roll', center: true },
+		{ label: 'Roll', snippet: roleCell, center: true, width: '4rem' },
 		{
-			label: 'Battletag'
+			label: 'Battletag',
+			snippet: battletagCell
 		},
 		{
-			label: 'Rank'
+			label: 'Rank',
+			snippet: rankCell,
+			width: '14rem'
 		}
 	]}
 	rows={members}
 	key={(member) => member.player.battletag}
-	class={[classProp, 'grid-cols-[60px_1fr_100px] sm:grid-cols-[70px_1fr_220px]']}
->
-	{#snippet row({ value: { player, role, rank, sr, tier, isCaptain } })}
-		<div class="justify-center py-4.5 text-xl">
-			<Icon icon={roleIcon(role)} title={capitalize(role)} />
-		</div>
+	class={classProp}
+/>
 
-		<div class="font-semibold">
-			<a href="/spelare/{player.battletag.replace('#', '-')}" class="hover:underline"
-				>{player.battletag}</a
-			>
+{#snippet roleCell({ role }: Member)}
+	<Icon class="text-xl" icon={roleIcon(role)} title={capitalize(role)} />
+{/snippet}
 
-			{#if isCaptain}
-				<Icon icon="ph:crown-simple" class="mb-0.5 ml-2" title="Lagkapten" />
-			{/if}
-		</div>
+{#snippet battletagCell({ player, isCaptain, registeredName }: Member)}
+	{@const shownName =
+		registeredName ?? (isCaptain ? player.battletag : player.battletag.split('#')[0])}
 
-		<div class="text-base font-medium">
-			{#if rank && tier}
-				<Rank rank={{ rank, tier }} collapse />
-			{:else if sr}
-				<Rank rank={{ sr }} collapse />
-			{/if}
-		</div>
-	{/snippet}
-</Table>
+	<Link
+		class="text-lg font-semibold"
+		href="/spelare/{player.battletag.replace('#', '-')}"
+		title={player.battletag}>{shownName}</Link
+	>
+
+	{#if isCaptain}
+		<Icon icon="ph:crown-simple" class="ml-2" title="Lagkapten" />
+	{/if}
+{/snippet}
+
+{#snippet rankCell({ rank, tier, sr }: Member)}
+	{#if rank && tier}
+		<Rank rank={{ rank, tier }} collapse />
+	{:else if sr}
+		<Rank rank={{ sr }} collapse />
+	{/if}
+{/snippet}

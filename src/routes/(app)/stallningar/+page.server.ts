@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db';
-import { hiddenSeasonFilter } from '$lib/server/db/helpers.js';
+import { hiddenSeasonFilter } from '$lib/server/db/hidden.js';
 import { error, redirect } from '@sveltejs/kit';
 
 export const load = async ({ locals }) => {
@@ -8,7 +8,8 @@ export const load = async ({ locals }) => {
 			startedAt: 'desc'
 		},
 		where: {
-			hidden: hiddenSeasonFilter(locals.user)
+			hidden: hiddenSeasonFilter(locals.user),
+			spinoff: false
 		},
 		columns: {
 			slug: true
@@ -16,7 +17,7 @@ export const load = async ({ locals }) => {
 	});
 
 	if (!latestSeason) {
-		error(404);
+		throw error(404, 'No seasons found');
 	}
 
 	redirect(302, `/stallningar/${latestSeason.slug}`);

@@ -26,8 +26,8 @@ A development database is also required. The simplest way to get started is to i
 Clone the repository and navigate to it:
 
 ```bash
-git clone https://github.com/Dunderligan/web
-cd hemsida
+git clone https://github.com/Dunderligan/web dunderligan-web
+cd dunderligan-web
 ```
 
 Copy the `.env.example` file to `.env` and fill in the `DATABASE_URL` field with the URL of your database:
@@ -60,7 +60,7 @@ Open up http://localhost:5173/setup in a browser, where the website will ask you
 
 ### Formatting
 
-The project uses [Prettier](https://prettier.io/) for code formatting. **Always format your code before contributing.** This can be done via your editor (for example with the Prettier VSCode extension), or by running `pnpm format`.
+The project uses [Oxfmt](https://oxc.rs/docs/guide/usage/formatter.html) for code formatting. **Always format your code before contributing.** This can be done via your editor (for example with the Oxc VSCode extension), or by running `pnpm format`.
 
 ### Next steps
 
@@ -73,5 +73,5 @@ New contributions are always welcome! Just make sure to follow these:
 
 - Adhere to the tournament code of conduct ([discord message link](https://discord.com/channels/631178408268660756/1077717324049690765/1345763447589044284))
 - Make sure to target the `dev` branch with your pull request **(important!)**
-- Please contact Dunderligan management if you wish to make larger changes 
+- Please contact Dunderligan management if you wish to make larger changes
 - Prefer to split larger PRs into smaller chunks

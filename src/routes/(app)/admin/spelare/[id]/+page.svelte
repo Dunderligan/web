@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
-	import { isModerator } from '$lib/authRole';
+	import { isModerator } from '$lib/auth-role.js';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
 	import AdminSocials from '$lib/components/admin/AdminSocials.svelte';
@@ -9,23 +9,32 @@
 	import SaveToast from '$lib/components/admin/SaveToast.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import HeroPortrait from '$lib/components/ui/HeroPortrait.svelte';
-	import InputField from '$lib/components/ui/InputField.svelte';
-	import Label from '$lib/components/ui/Label.svelte';
+	import InputField from '$lib/components/form/InputField.svelte';
+	import Label from '$lib/components/form/Label.svelte';
 	import Notice from '$lib/components/ui/Notice.svelte';
 	import OverwatchProfile from '$lib/components/ui/OverwatchProfile.svelte';
-	import Select from '$lib/components/ui/Select.svelte';
-	import { editPlayer, setProfileSlug } from '$lib/remote/player.remote.js';
+	import Select from '$lib/components/form/Select.svelte';
+	import { editPlayer, linkPlayerAlias, setProfileSlug } from '$lib/remote/player.remote.js';
+	import TextArea from '$lib/components/form/TextArea.svelte';
 	import { SaveContext } from '$lib/state/save.svelte';
 	import type { GameProfile } from '$lib/types.js';
 	import { capitalize, formatDateTime } from '$lib/util.js';
+	import Note from '$lib/components/ui/Note.svelte';
+	import Link from '$lib/components/ui/Link.svelte';
+	import { resolve } from '$app/paths';
 
 	let { data } = $props();
 
+	// svelte-ignore state_referenced_locally
 	let player = $state(data.player);
-	const slug = $derived(player.battletag.replace('#', '-'));
-	const href = $derived(`/spelare/${slug}`);
 
-	SaveContext.set(new SaveContext({ save, href }));
+	$effect(() => {
+		player = data.player;
+	});
+
+	const slug = $derived(player.battletag.replace('#', '-'));
+
+	SaveContext.set(new SaveContext({ save, href: () => resolve(`/spelare/${slug}`) }));
 
 	const saveCtx = SaveContext.get();
 
@@ -34,6 +43,8 @@
 
 	let addSignatureHeroOpen = $state(false);
 	let newSignatureHeroId: string | undefined = $state();
+
+	let linkingAlias = $state(false);
 
 	const remainingHeroes = $derived(
 		data.heroes.filter((hero) => !player.signatureHeroes.some((sh) => sh.hero.id === hero.id))
@@ -77,18 +88,26 @@
 		addSignatureHeroOpen = false;
 	}
 
+	async function linkAlias(otherPlayerId: string) {
+		try {
+			linkingAlias = true;
+
+			await linkPlayerAlias({ playerId: player.id, otherPlayerId });
+			await invalidate('admin:player');
+		} finally {
+			linkingAlias = false;
+		}
+	}
+
 	async function onProfileClicked(profile: GameProfile) {
 		await setProfileSlug({ playerId: player.id, slug: profile.slug });
-		await invalidate('admin:profile');
+		await invalidate('admin:player');
 	}
 </script>
 
-<Breadcrumbs crumbs={[{ label: player.battletag, href }]} />
+<Breadcrumbs crumbs={[{ label: player.battletag, href: `/admin/spelare/${player.id}` }]} />
 
-<AdminSocials
-	emptyText="Denna spelare har inga länkade sociala medier."
-	bind:socials={player.socials}
-/>
+<AdminSocials emptyText="Denna spelare har inga länkar." bind:socials={player.socials} />
 
 <AdminCard title="Alias">
 	{#if player.aliases.length === 0}
@@ -97,13 +116,12 @@
 		</AdminEmptyNotice>
 	{:else}
 		<div class="space-y-1.5 py-1">
-			{#each player.aliases as alias, i}
+			{#each player.aliases as alias, i (i)}
 				<div class="flex max-w-xl items-center gap-2">
-					<InputField value={alias.name} />
+					<InputField value={alias.name} maxlength={20} oninput={saveCtx.setDirty} />
 
 					<Button
 						icon="ph:trash"
-						class="ml-2"
 						kind="tertiary"
 						title="Radera"
 						onclick={() => {
@@ -128,9 +146,9 @@
 		</AdminEmptyNotice>
 	{:else}
 		<div class="space-y-1.5 py-1">
-			{#each player.signatureHeroes as { hero }, i}
+			{#each player.signatureHeroes as { hero }, i (hero.id)}
 				<div class="flex items-center gap-2">
-					<HeroPortrait name={hero.name} size="sm" />
+					<HeroPortrait {hero} size="sm" />
 
 					<div class="font-medium capitalize">
 						{hero.name}
@@ -161,7 +179,7 @@
 		<OverwatchProfile name={player.battletag} profile={data.profile.profile} />
 	{:else if data.profile.status === 'missing'}
 		<Notice kind="warn">
-			Profilen hittades inte genom Blizzard API:t. Se till att din profil är offentlig.
+			Profilen hittades inte på Blizzard. Se till att din profil är offentlig.
 		</Notice>
 	{:else if data.profile.status === 'error'}
 		<Notice kind="error">
@@ -195,23 +213,59 @@
 		<Label label="Pronomen">
 			<InputField
 				placeholder="T.ex. han/honom"
-				onchange={saveCtx.setDirty}
+				oninput={saveCtx.setDirty}
 				bind:value={player.pronouns}
 				maxlength={20}
 			/>
 		</Label>
 
-		<Label label="Beskrivning">
-			<InputField
-				onchange={saveCtx.setDirty}
-				type="textarea"
+		<Label label="Beskrivning" column>
+			<TextArea
+				oninput={saveCtx.setDirty}
 				bind:value={player.description}
 				maxlength={500}
 				disabled={!isModerator(data.user?.role)}
+				class="w-full"
+				placeholder="En kort beskrivning av spelaren..."
 			/>
+
+			<Note content="Endast administratörer kan redigera detta fält." />
 		</Label>
 	</div>
 </AdminCard>
+
+{#if isModerator(data.user?.role) && data.matchingProfiles.length > 0}
+	<AdminCard title="Matchande profiler">
+		{#snippet description()}
+			Dessa spelare matchar minst ett av aliasen för {player.battletag}. Om någon av dessa är samma
+			person som spelaren ovan, länka dem för att samla all information under en profil.
+		{/snippet}
+
+		{#each data.matchingProfiles as otherProfile (otherProfile.id)}
+			<div class="flex items-center gap-12">
+				<div>
+					<Link
+						class="block text-lg font-semibold"
+						href="/spelare/{otherProfile.battletag.replace('#', '-')}"
+					>
+						{otherProfile.battletag}
+					</Link>
+					<div class="font-medium">
+						{otherProfile.memberships.length} rosters
+					</div>
+				</div>
+
+				<Button
+					kind="secondary"
+					icon="ph:link"
+					label="Länka"
+					loading={linkingAlias}
+					onclick={() => linkAlias(otherProfile.id)}
+				/>
+			</div>
+		{/each}
+	</AdminCard>
+{/if}
 
 <CreateDialog
 	bind:open={createAliasOpen}
@@ -243,7 +297,7 @@
 			{#snippet itemSnippet({ value })}
 				{@const hero = data.heroes.find((h) => h.id === value)!}
 
-				<HeroPortrait name={hero.name} size="xs" class="mr-2" />
+				<HeroPortrait {hero} size="xs" class="mr-2" />
 			{/snippet}
 		</Select>
 	</Label>

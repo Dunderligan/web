@@ -1,10 +1,14 @@
 <script lang="ts">
+	import { page } from '$app/state';
+	import { resolve } from '$app/paths';
+	import { isModerator } from '$lib/auth-role';
 	import { SaveContext } from '$lib/state/save.svelte';
 	import Icon from '../ui/Icon.svelte';
+	import type { ResolvedPathname } from '$app/types';
 
 	type Crumb = {
 		label: string;
-		href: string;
+		href: ResolvedPathname;
 	};
 
 	type Props = {
@@ -14,33 +18,44 @@
 	let { crumbs = [] }: Props = $props();
 
 	const saveCtx = SaveContext.get();
+
+	const userIsModerator = $derived(isModerator(page.data.user?.role));
 </script>
 
-<div class="flex items-center gap-4 font-display text-lg text-gray-600 dark:text-gray-400">
-	<a
-		href="/admin"
-		class="flex items-center justify-center text-xl hover:text-gray-700 dark:hover:text-gray-300"
-	>
-		<Icon icon="ph:house" />
-	</a>
+<div class="flex h-8 items-center gap-4 font-display text-lg text-gray-600 dark:text-gray-400">
+	{#if userIsModerator}
+		<a
+			href={resolve('/admin')}
+			class="flex items-center justify-center text-xl hover:text-gray-700 dark:hover:text-gray-300"
+		>
+			<Icon icon="ph:house" />
+		</a>
+	{/if}
 
-	{#each crumbs as { label, href }, i}
+	{#each crumbs as { label, href }, i (href)}
 		{@const isLast = i == crumbs.length - 1}
 
-		<Icon class={[!isLast && 'hidden sm:block', 'text-xl']} icon="ph:caret-right" />
+		{#if isLast}
+			<Icon class={[!isLast && 'hidden sm:block', 'text-xl']} icon="ph:caret-right" />
 
-		<a
-			{href}
-			class={[
-				isLast
-					? 'font-bold text-accent-600 hover:text-accent-700 hover:underline dark:hover:text-accent-500'
-					: 'hidden font-medium hover:text-gray-700 hover:underline sm:block dark:hover:text-gray-300'
-			]}>{label}</a
-		>
+			<span class="truncate font-semibold text-gray-900 dark:text-white">{label}</span>
+			<!-- for non-moderators, only show the current page -->
+		{:else if userIsModerator}
+			<Icon class={[!isLast && 'hidden sm:block', 'text-xl']} icon="ph:caret-right" />
+
+			<a
+				{href}
+				class="hidden font-medium text-nowrap hover:text-gray-700 hover:underline sm:block dark:hover:text-gray-300"
+				>{label}</a
+			>
+		{/if}
 	{/each}
 
-	{#if saveCtx.href}
-		<a class="ml-2 text-sm font-medium hover:text-accent-500 hover:underline" href={saveCtx.href}>
+	{#if saveCtx && saveCtx.href}
+		<a
+			class="ml-2 text-sm font-medium text-nowrap hover:text-gray-700 hover:underline dark:hover:text-gray-300"
+			href={saveCtx.href()}
+		>
 			<Icon icon="ph:link-simple" />
 			Visa</a
 		>

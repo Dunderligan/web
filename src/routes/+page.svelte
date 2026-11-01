@@ -1,25 +1,33 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/Button.svelte';
 	import PageSection from '$lib/components/structure/PageSection.svelte';
-	import { cdnSrc } from '$lib/util';
 	import MatchList from '$lib/components/match/MatchList.svelte';
 	import Meta from '$lib/components/structure/Meta.svelte';
 	import trailerThumbnail from '$lib/assets/images/trailer-thumbnail.avif';
 	import TournamentStateSection from '$lib/components/structure/TournamentStateSection.svelte';
 	import Card from '$lib/components/structure/Card.svelte';
 	import PageSectionAlternate from '$lib/components/structure/PageSectionAlternate.svelte';
-	import discordImage from '$lib/assets/images/discord.png';
-	import twitchImage from '$lib/assets/images/twitch.jpg';
+	import discordImage from '$lib/assets/images/discord.avif';
+	import twitchImage from '$lib/assets/images/twitch.avif';
 	import { socials } from '$lib/socials.js';
+	import cdn from '$lib/cdn.js';
 
 	let { data } = $props();
+
+	const seasonRegistrationsOpen = $derived.by(() => {
+		if (data.tournamentState?.status !== 'registration') {
+			return null;
+		}
+
+		return data.tournamentState.season;
+	});
 </script>
 
 <Meta />
 
 <header class="relative h-200 w-full px-4">
 	<video
-		src={cdnSrc('/dunderligan/trailer.mp4')}
+		src={cdn.srcUrl('dunderligan/trailer.mp4')}
 		class="trailer absolute top-0 left-0 -z-10 h-full w-full bg-cover object-cover brightness-50"
 		autoplay
 		muted
@@ -42,9 +50,9 @@
 
 		<Button
 			icon="ph:arrow-right"
-			class="mt-8 max-w-max shadow-lg"
-			label="Se ställningar"
-			href="/stallningar"
+			class="mt-6 max-w-max shadow-lg"
+			label={seasonRegistrationsOpen ? 'Anmäl ditt lag' : 'Se ställningarna'}
+			href={seasonRegistrationsOpen ? `/anmal/${seasonRegistrationsOpen.slug}` : '/stallningar'}
 		/>
 	</div>
 </header>
@@ -58,18 +66,18 @@
 		<div class="grow">
 			<MatchList
 				title="Senaste matcherna"
-				matches={data.matches.latest}
+				matches={data.matches.latest.results}
+				matchArchiveParams="state=played"
 				hideIfEmpty
-				matchArchiveParams="status=played"
 			/>
 		</div>
 
 		<div class="shrink-0 px-2">
 			<MatchList
 				title="Kommande matcher"
-				matches={data.matches.upcoming}
-				short
-				matchArchiveParams="status=scheduled"
+				matches={data.matches.upcoming.results}
+				matchArchiveParams="state=scheduled"
+				size="sm"
 			/>
 		</div>
 	</div>
@@ -79,8 +87,8 @@
 	<h2 class="font-display text-4xl font-bold">Kolla in vår senaste video!</h2>
 
 	<iframe
-		class="mx-auto mt-8 aspect-video w-full max-w-2xl rounded-lg"
-		src="https://www.youtube-nocookie.com/embed/3bD2l3F6UNc"
+		class="mx-auto mt-8 aspect-video w-full max-w-3xl rounded-lg"
+		src="https://www.youtube-nocookie.com/embed/t-KI8OPKBmk"
 		title="YouTube video player"
 		frameborder="0"
 		allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Checkbox from '../ui/Checkbox.svelte';
-	import InputField from '../ui/InputField.svelte';
-	import Label from '../ui/Label.svelte';
+	import Checkbox from '../form/Checkbox.svelte';
+	import InputField from '../form/InputField.svelte';
+	import Label from '../form/Label.svelte';
 	import CreateDialog from './CreateDialog.svelte';
 	import TeamSelect from './TeamSelect.svelte';
 
@@ -42,9 +42,9 @@
 			bind:value={teamId}
 			{excludeSeasonId}
 			disabled={!hasExistingTeam}
-			onValueChange={(_, rosters) => {
-				if (rosters) {
-					name = rosters[0].name;
+			onTeamChanged={(selectedTeam) => {
+				if (selectedTeam) {
+					name = selectedTeam.rosters.at(0)?.name ?? '';
 				}
 			}}
 		/>

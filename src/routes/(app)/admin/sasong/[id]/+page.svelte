@@ -1,34 +1,35 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
-	import InputField from '$lib/components/ui/InputField.svelte';
-	import Label from '$lib/components/ui/Label.svelte';
+	import InputField from '$lib/components/form/InputField.svelte';
+	import Label from '$lib/components/form/Label.svelte';
 	import SaveToast from '$lib/components/admin/SaveToast.svelte';
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
 	import { SaveContext } from '$lib/state/save.svelte';
 	import DateInput from '$lib/components/ui/DateInput.svelte';
 	import { createDivision } from '$lib/remote/division.remote';
-	import {
-		createRegistration,
-		deleteRegistration,
-		deleteSeason,
-		updateSeason
-	} from '$lib/remote/season.remote';
-	import Checkbox from '$lib/components/ui/Checkbox.svelte';
+	import { createRegistration, deleteSeason, updateSeason } from '$lib/remote/season.remote';
+	import Checkbox from '$lib/components/form/Checkbox.svelte';
 	import Note from '$lib/components/ui/Note.svelte';
 	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
-	import { isAdmin } from '$lib/authRole.js';
+	import { isAdmin } from '$lib/auth-role.js';
+	import AdminLink from '$lib/components/admin/AdminLink.svelte';
 
 	const { data } = $props();
 
-	const season = $state(data.season);
-	let registration = $state(season.registration);
+	// svelte-ignore state_referenced_locally
+	let season = $state(data.season);
 
-	SaveContext.set(new SaveContext({ save, href: `/stallningar/${season.slug}` }));
+	$effect(() => {
+		season = data.season;
+	});
+
+	SaveContext.set(new SaveContext({ save, href: () => `/stallningar/${season.slug}` }));
 
 	const confirmCtx = ConfirmContext.get();
 	const saveCtx = SaveContext.get();
@@ -37,78 +38,49 @@
 	let newDivisionName = $state('');
 
 	let createRegistrationOpen = $state(false);
-	let newRegistrationUrl = $state('');
 	let newRegistrationStart = $state(new Date());
 	let newRegistrationEnd = $state(new Date());
 
 	async function submitNewDivision() {
 		const { division } = await createDivision({
 			name: newDivisionName,
-			seasonId: season.id
+			seasonId: data.season.id
 		});
 
-		await goto(`/admin/division/${division.id}`);
+		await goto(resolve(`/admin/division/${division.id}`));
 	}
 
 	async function save() {
-		await updateSeason({
-			id: season.id,
-			name: season.name,
-			startedAt: season.startedAt,
-			endedAt: season.endedAt,
-			legacyRanks: season.legacyRanks,
-			legacySeeding: season.legacySeeding,
-			hidden: season.hidden,
-			registration
-		});
+		await updateSeason(season);
 	}
 
-	async function submitDelete() {
+	async function onDeleteClicked() {
 		await confirmCtx.confirm({
 			title: 'Radera säsong',
-			description: `Är du säker på att du vill radera ${season.name}?`,
-			negative: true,
+			description: `Är du säker på att du vill radera ${data.season.name}?`,
+			destructive: true,
 			action: async () => {
 				await deleteSeason({
-					id: season.id
+					id: data.season.id
 				});
 
-				await goto('/admin');
+				await goto(resolve('/admin'));
 			}
 		});
 	}
 
 	async function submitCreateRegistation() {
-		const result = await createRegistration({
-			seasonId: season.id,
-			url: newRegistrationUrl,
+		const { registration } = await createRegistration({
+			seasonId: data.season.id,
 			openDate: newRegistrationStart,
 			closeDate: newRegistrationEnd
 		});
 
-		registration = result.registration;
-		createRegistrationOpen = false;
-	}
-
-	async function submitDeleteRegistration() {
-		await confirmCtx.confirm({
-			title: 'Radera anmälningsformulär',
-			description: `Är du säker på att du vill radera anmälan för ${season.name}?`,
-			negative: true,
-			action: async () => {
-				if (!registration) return;
-
-				await deleteRegistration({
-					id: registration.id
-				});
-
-				registration = null;
-			}
-		});
+		await goto(resolve(`/admin/anmalan/${registration.id}`));
 	}
 </script>
 
-<Breadcrumbs crumbs={[{ label: season.name, href: `/admin/sasong/${season.id}` }]} />
+<Breadcrumbs crumbs={[{ label: data.season.name, href: `/admin/sasong/${data.season.id}` }]} />
 
 <AdminCard title="Divisioner">
 	<AdminLinkList
@@ -122,44 +94,24 @@
 
 {#if isAdmin(data.user?.role)}
 	<AdminCard title="Anmälan">
-		{#if registration}
-			<div class="space-y-2">
-				<Label label="Länk">
-					<InputField
-						bind:value={registration.url}
-						placeholder="https://docs.google.com/forms..."
-						onchange={saveCtx.setDirty}
-					/>
-				</Label>
-
-				<Label label="Startdatum">
-					<DateInput
-						bind:value={registration.openDate}
-						type="datetime-local"
-						oninput={saveCtx.setDirty}
-						required
-					/>
-				</Label>
-
-				<Label label="Slutdatum">
-					<DateInput
-						bind:value={registration.closeDate}
-						type="datetime-local"
-						oninput={saveCtx.setDirty}
-					/>
-				</Label>
+		{#if season.registration}
+			<div class="overflow-hidden rounded-lg">
+				<AdminLink href="/admin/anmalan/{season.registration.id}">Hantera anmälan</AdminLink>
 			</div>
-
-			<Button
-				icon="ph:trash"
-				label="Radera anmälan"
-				kind="negative"
-				onclick={submitDeleteRegistration}
-			/>
 		{:else}
 			<AdminEmptyNotice oncreateclick={() => (createRegistrationOpen = true)}
 				>Säsongen har inget anmälningsformulär.</AdminEmptyNotice
 			>
+		{/if}
+	</AdminCard>
+
+	<AdminCard title="Incheckning">
+		<Label label="Incheckning öppen">
+			<Checkbox bind:checked={season.checkinOpen} onCheckedChange={saveCtx.setDirty} />
+		</Label>
+
+		{#if season.checkinOpen}
+			<AdminLink href="/admin/incheckning/{season.id}" rounded>Hantera incheckning</AdminLink>
 		{/if}
 	</AdminCard>
 
@@ -183,22 +135,28 @@
 			</Label>
 
 			<Label label="Gömd">
-				<Note content="Gömda säsonger kan bara visas av admins." class="mr-2" />
+				<Note content="Gömda säsonger visas endast för administratörer." />
 				<Checkbox bind:checked={season.hidden} onCheckedChange={saveCtx.setDirty} />
 			</Label>
 
-			<div class="h-4"></div>
+			<Label label="Spinoff">
+				<Note
+					content="Spinoff säsonger listas separat i säsongsarkivet och visas som standard inte på spelarsidor."
+				/>
+				<Checkbox bind:checked={season.spinoff} onCheckedChange={saveCtx.setDirty} />
+			</Label>
+
+			<Label label="Legacy seeding">
+				<Note content="Använd seedingreglerna som de var innan ändringarna i säsong 8." />
+				<Checkbox bind:checked={season.legacySeeding} onCheckedChange={saveCtx.setDirty} />
+			</Label>
 
 			<Label label="SR-poäng">
 				<Checkbox bind:checked={season.legacyRanks} onCheckedChange={saveCtx.setDirty} />
 			</Label>
-
-			<Label label="Legacy-seeding">
-				<Checkbox bind:checked={season.legacySeeding} onCheckedChange={saveCtx.setDirty} />
-			</Label>
 		</div>
 
-		<Button icon="ph:trash" label="Radera säsong" kind="negative" onclick={submitDelete} />
+		<Button icon="ph:trash" label="Radera säsong" kind="destructive" onclick={onDeleteClicked} />
 	</AdminCard>
 {/if}
 
@@ -214,14 +172,10 @@
 </CreateDialog>
 
 <CreateDialog
-	title="Skapa anmälning"
+	title="Skapa anmälningsformulär"
 	bind:open={createRegistrationOpen}
 	oncreate={submitCreateRegistation}
 >
-	<Label label="Länk">
-		<InputField bind:value={newRegistrationUrl} placeholder="https://docs.google.com/forms..." />
-	</Label>
-
 	<Label label="Startdatum">
 		<DateInput bind:value={newRegistrationStart} type="datetime-local" required />
 	</Label>

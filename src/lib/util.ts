@@ -1,15 +1,15 @@
 import slugify from 'slugify';
-import { browser } from '$app/environment';
-import { getRequestEvent } from '$app/server';
-import { PUBLIC_CDN_ENDPOINT } from '$env/static/public';
 import {
 	type FlattenedDivision,
 	type FlattenedGroup,
+	type MatchQueryParams,
+	MatchState,
 	type NestedDivision,
 	type NestedGroup,
 	Role,
 	type SeasonState,
-	SocialPlatform
+	SocialPlatform,
+	SubmissionStatus
 } from './types';
 
 /** Returns a readable version of a SocialPlatform. */
@@ -21,6 +21,29 @@ export function formatSocialPlatform(platform: SocialPlatform) {
 			return 'Youtube';
 		case SocialPlatform.DISCORD:
 			return 'Discord';
+		case SocialPlatform.TWITCH:
+			return 'Twitch';
+		case SocialPlatform.TIKTOK:
+			return 'TikTok';
+		case SocialPlatform.BLUESKY:
+			return 'Bluesky';
+	}
+}
+
+export function socialMediaPlatformDomains(platform: SocialPlatform) {
+	switch (platform) {
+		case SocialPlatform.TWITTER:
+			return ['twitter.com', 'x.com'];
+		case SocialPlatform.YOUTUBE:
+			return ['youtube.com', 'youtu.be'];
+		case SocialPlatform.DISCORD:
+			return []; // special case
+		case SocialPlatform.TWITCH:
+			return ['twitch.tv'];
+		case SocialPlatform.TIKTOK:
+			return ['tiktok.com'];
+		case SocialPlatform.BLUESKY:
+			return ['bsky.app'];
 	}
 }
 
@@ -34,7 +57,7 @@ export function flattenDivision<S, D>(
 	return { season, division: division as D };
 }
 
-/** Flattens a nested group. ({ group: { division: { season } } } -> { group, division, season }) */
+/** Flattens a nested group. (`{ group: { division: { season } } } -> { group, division, season }`) */
 export function flattenGroup<S, D, G>(nestedGroup: NestedGroup<S, D, G>): FlattenedGroup<S, D, G> {
 	const { division: nestedDivision, ...group } = nestedGroup;
 	const { season, division } = flattenDivision(nestedDivision);
@@ -49,39 +72,6 @@ export function toSlug(str: string) {
 		lower: true,
 		locale: 'sv-SE'
 	});
-}
-
-/**
- * Returns a url to the CDN endpoint (specified via environment variable) with a path appended.
- * The path must be prefixed with a forward slash.
- */
-export function cdnSrc(path: string) {
-	return `${PUBLIC_CDN_ENDPOINT}${path}`;
-}
-
-/**
- * Returns a url to the Cloudflare Images endpoint with the specified transformations applied.
- * See https://developers.cloudflare.com/images/transform-images/transform-via-url/ for details.
- *
- * This assumes Images is configured on top of the CDN domain (called zones by cloudflare).
- */
-export function cdnImageSrc(path: string, { width, height }: { width: number; height?: number }) {
-	let filters = `format=auto,fit=scale-down,width=${width}`;
-	if (height) {
-		filters += `,height=${height}`;
-	}
-
-	return cdnSrc(`/cdn-cgi/image/${filters}${path}`);
-}
-
-/** Returns the CDN path (as used with cdnSrc) for a roster logo. */
-export function cdnRosterLogoPath(rosterId: string) {
-	return `/${s3RosterLogoKey(rosterId)}`;
-}
-
-/** Returns the S3 key for a roster logo. */
-export function s3RosterLogoKey(rosterId: string) {
-	return `logos/${rosterId}.webp`;
 }
 
 export function capitalize(str: string) {
@@ -146,21 +136,42 @@ function isWithinWeek(a: Date, b: Date) {
 }
 
 /** Formats a date in a readable way, without time. */
-export function formatDate(date: Date, extra?: any): string {
-	const isThisWeek = isWithinWeek(date, new Date());
+export function formatDate(date: Date, extra?: Intl.DateTimeFormatOptions): string {
 	const isCurrentYear = date.getFullYear() === new Date().getFullYear();
 
 	return date.toLocaleDateString('sv-SE', {
-		...(isThisWeek ? { weekday: 'long' } : { day: 'numeric', month: 'short' }),
+		day: 'numeric',
+		month: 'long',
 		// only show year if not current year
-		...(isCurrentYear ? {} : { year: 'numeric' }),
+		year: isCurrentYear ? undefined : 'numeric',
+		...extra
+	});
+}
+
+/** Formats a date in a concise, readable way, without time. */
+export function formatDateShort(date: Date, extra?: Intl.DateTimeFormatOptions): string {
+	const isThisWeek = isWithinWeek(date, new Date());
+
+	return formatDate(date, {
+		...(isThisWeek
+			? { day: undefined, month: undefined, weekday: 'long' }
+			: { day: 'numeric', month: 'short' }),
 		...extra
 	});
 }
 
 /** Formats a date in a readable way, with time. */
-export function formatDateTime(date: Date, extra?: any): string {
+export function formatDateTime(date: Date, extra?: Intl.DateTimeFormatOptions): string {
 	return formatDate(date, {
+		hour: '2-digit',
+		minute: '2-digit',
+		...extra
+	});
+}
+
+/** Formats a date in a concise, readable way, with time. */
+export function formatDateTimeShort(date: Date, extra?: Intl.DateTimeFormatOptions): string {
+	return formatDateShort(date, {
 		hour: '2-digit',
 		minute: '2-digit',
 		...extra
@@ -178,35 +189,107 @@ export function shortenTeamName(name: string) {
 		.join('');
 }
 
-/** Client/server agnostic cookie functions */
+export function parseMatchQueryParams(searchParams: URLSearchParams): MatchQueryParams {
+	const stateParam = searchParams.get('state');
+	const state = stateParam ? parseMatchStateParam(stateParam) : undefined;
 
-export async function getCookie(name: string): Promise<string | null> {
-	if (browser) {
-		const cookie = await cookieStore.get(name);
-		return cookie?.value ?? null;
-	} else {
-		const { cookies } = getRequestEvent();
-		return cookies.get(name) ?? null;
-	}
+	const pageSizeParam = searchParams.get('pageSize');
+	const pageSize = pageSizeParam ? Number(pageSizeParam) : undefined;
+
+	const isBracket = parseBooleanParam(searchParams.get('isBracket'));
+	const hasDate = parseBooleanParam(searchParams.get('hasDate'));
+
+	// default to true
+	const includeEmpty = searchParams.get('includeEmpty') === 'true';
+
+	return {
+		rosterId: searchParams.get('rosterId') ?? undefined,
+		divisionId: searchParams.get('divisionId') ?? undefined,
+		seasonId: searchParams.get('seasonId') ?? undefined,
+		page: Number(searchParams.get('page') ?? 0),
+		isBracket,
+		hasDate,
+		includeEmpty,
+		pageSize,
+		state
+	};
 }
 
-const COOKIE_EXPIRATION_MS = 365 * 24 * 60 * 60 * 1000; // 1 year
-
-export function setCookie(name: string, value: string) {
-	const expires = new Date(Date.now() + COOKIE_EXPIRATION_MS);
-	if (browser) {
-		document.cookie = `${name}=${value}; path=/; expires=${expires.toUTCString()}`;
-	} else {
-		const { cookies } = getRequestEvent();
-		cookies.set(name, value, { path: '/', httpOnly: false, expires });
-	}
+function parseBooleanParam(param: string | null): boolean | undefined {
+	if (param === null) return undefined;
+	if (param === 'true') return true;
+	if (param === 'false') return false;
+	return undefined;
 }
 
-export async function deleteCookie(name: string) {
-	if (browser) {
-		await cookieStore.delete(name);
-	} else {
-		const { cookies } = getRequestEvent();
-		cookies.delete(name, { path: '/', httpOnly: false });
+function parseMatchStateParam(param: string): MatchState[] {
+	let invert = false;
+
+	if (param.startsWith('!')) {
+		param = param.substring(1);
+		invert = true;
+	}
+
+	let states = param
+		.split(',')
+		.filter((str) => Object.values(MatchState).includes(str as MatchState))
+		.map((str) => str as MatchState);
+
+	if (invert) {
+		states = Object.values(MatchState).filter((state) => !states.includes(state));
+	}
+
+	return states;
+}
+
+export function compareRoles(a: Role, b: Role): number {
+	const order = [Role.TANK, Role.DAMAGE, Role.SUPPORT, Role.FLEX, Role.COACH, Role.MANAGER];
+
+	const aIndex = order.indexOf(a);
+	const bIndex = order.indexOf(b);
+
+	return aIndex - bIndex;
+}
+
+export function compareNullable<T>(
+	a: T | null,
+	b: T | null,
+	cmp: (a: T, b: T) => number = compare
+): number {
+	if (a === null && b === null) return 0;
+	if (a === null) return -1;
+	if (b === null) return 1;
+	return cmp(a, b);
+}
+
+export function compare<T>(a: T, b: T): number {
+	if (a < b) return -1;
+	if (a > b) return 1;
+	return 0;
+}
+
+export function compareNullableStrings(a?: string | null, b?: string | null): number {
+	return compareNullable(a ?? null, b ?? null, (x, y) => x.localeCompare(y));
+}
+
+export const PLAYER_ROLES = [Role.DAMAGE, Role.TANK, Role.SUPPORT, Role.FLEX];
+export const ORGANIZATION_ROLES = [Role.COACH, Role.MANAGER];
+
+export function isPlayerRole(role: Role): boolean {
+	return PLAYER_ROLES.includes(role);
+}
+
+export function isOrganizationRole(role: Role): boolean {
+	return ORGANIZATION_ROLES.includes(role);
+}
+
+export function formatSubmissionStatus(status: SubmissionStatus): string {
+	switch (status) {
+		case SubmissionStatus.PENDING:
+			return 'Väntar';
+		case SubmissionStatus.APPROVED:
+			return 'Godkänd';
+		case SubmissionStatus.REJECTED:
+			return 'Nekad';
 	}
 }

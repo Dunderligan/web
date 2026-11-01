@@ -20,7 +20,7 @@ Here is a sample response from the endpoint:
 		"title": {
 			"en_US": "Stalwart Hero",
 			"es_MX": "Heroísmo leal",
-            // ...
+			// ...
 			"th_TH": "ฮีโร่ผู้แข็งแกร่ง"
 		},
 		"url": "d84ba28181708fe0bba121a9d5%7C4d8123f4f89b5a5ac17c11b741c967e8",
@@ -35,10 +35,28 @@ Here is a sample response from the endpoint:
 		"url": "d86b82a18150afe0bba122a7d4%7C42cd1def09165470e6c28dd5f9f77981",
 		"name": "JUNKRAT"
 	}
-    // ...
+	// ...
 ]
 ```
 
 To differentiate between profiles with the same name but different tags, we use the `url` field, called `slug` in the codebase. If the API returns multiple profiles for a player, they are able to select a profile in the admin interface, which will store the slug in the database and use that to filter the result from then on. This slug is also used to construct the URL to the official profile page at `https://overwatch.blizzard.com/en-us/career/{slug}`.
 
 The API is quite slow, so we cache the results in Redis (or a `Map` if `REDIS_URL` isn't provided), and refresh it every 24 hours.
+
+## Adding a Hero
+
+### 1. Create a database migration
+
+1. Run `pnpm db:generate --name add_hero_<name> --custom` to create an empty migration file.
+2. Enter the following content:
+
+```sql
+INSERT INTO hero (name, slug, role) VALUES ('<name>', '<url-friendly slug>', '<tank, damage or support>');
+```
+
+### 2. Add a hero portrait
+
+Hero portraits are sourced from https://overwatch.blizzard.com/en-us/heroes/ and placed into `static/heroes`.
+
+1. Download the image from the website and convert it to a `webp`.
+2. Add the image to `static/heroes` with the name matching the hero's slug.

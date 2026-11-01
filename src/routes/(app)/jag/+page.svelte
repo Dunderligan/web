@@ -1,10 +1,7 @@
 <script lang="ts">
-	import PageHeader from '$lib/components/structure/PageHeader.svelte';
 	import PageSection from '$lib/components/structure/PageSection.svelte';
 	import Notice from '$lib/components/ui/Notice.svelte';
 </script>
-
-<PageHeader></PageHeader>
 
 <PageSection>
 	<Notice kind="warn">

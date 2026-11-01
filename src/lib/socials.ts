@@ -1,4 +1,4 @@
-export const socials = {
+export const socials: Record<string, string> = {
 	youtube: 'https://www.youtube.com/@dunderligan_ow',
 	twitter: 'https://x.com/dunderligan_ow',
 	discord: 'https://discord.gg/74Y9B7dTNN',

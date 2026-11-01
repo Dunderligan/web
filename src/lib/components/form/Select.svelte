@@ -1,0 +1,158 @@
+<script lang="ts">
+	import { mapEmptyToUndefined } from '$lib/util';
+	import { Select, type WithoutChildren } from 'bits-ui';
+
+	import Icon from '../ui/Icon.svelte';
+	import type { Snippet } from 'svelte';
+	import type { ClassValue } from 'svelte/elements';
+	import type { SelectItem } from '$lib/types';
+
+	type LabelDecoration =
+		| {
+				label?: never;
+		  }
+		| {
+				placeholder?: never;
+				label: string;
+		  };
+
+	type ItemDecoration =
+		| {
+				itemIcon?: (value: string) => string | false | null | undefined;
+				itemSnippet?: never;
+		  }
+		| {
+				itemIcon?: never;
+				itemSnippet?: Snippet<[SelectItem]>;
+		  };
+
+	type Props = WithoutChildren<Select.RootProps> & {
+		placeholder?: string;
+		items: SelectItem[];
+		class?: ClassValue;
+		avoidCollisions?: boolean;
+		canClear?: boolean;
+	} & LabelDecoration &
+		ItemDecoration;
+
+	let {
+		open = $bindable(false),
+		value = $bindable(),
+		class: classProp,
+		items,
+		placeholder,
+		avoidCollisions,
+		label,
+		itemIcon,
+		itemSnippet,
+		disabled,
+		canClear,
+		...restProps
+	}: Props = $props();
+
+	const type = $derived(restProps.type);
+
+	const selectedItems = $derived(
+		type === 'multiple'
+			? items.filter((item) => value?.includes(item.value))
+			: type === 'single'
+				? items.filter((item) => item.value === value)
+				: []
+	);
+
+	const selectedItem = $derived(
+		type === 'single' ? items.find((item) => item.value === value) : null
+	);
+
+	const selectedLabel = $derived(
+		mapEmptyToUndefined(selectedItems.map((item) => item.label).join(', '))
+	);
+</script>
+
+<Select.Root
+	bind:value={
+		() => value as never, // TS workaround, see https://www.bits-ui.com/docs/components/select#reusable-components
+		(newValue) => {
+			if (canClear && newValue === '__clear') {
+				if (type === 'single') {
+					value = undefined;
+				} else if (Array.isArray(value)) {
+					value = [];
+				}
+			} else if (newValue !== '') {
+				value = newValue;
+			}
+		}
+	}
+	bind:open
+	{disabled}
+	{...restProps}
+>
+	<Select.Trigger class={[classProp, 'group field flex items-center gap-2 overflow-hidden']}>
+		{#each selectedItems as item (item.value)}
+			{@render renderedItemIcon(item)}
+		{/each}
+
+		<div class={[!label && !selectedLabel && 'opacity-80', 'grow text-left']}>
+			{label ?? selectedLabel ?? placeholder}
+		</div>
+
+		<Icon
+			icon="ph:caret-down"
+			class={[open && 'rotate-180', 'ml-auto transform text-gray-600 dark:text-gray-400']}
+		/>
+	</Select.Trigger>
+	<Select.Portal>
+		<Select.Content forceMount {avoidCollisions}>
+			{#snippet child({ wrapperProps, props, open })}
+				<div {...wrapperProps}>
+					{#if open}
+						<div {...props} class="floating w-(--bits-select-anchor-width)">
+							{@render viewport()}
+						</div>
+					{/if}
+				</div>
+			{/snippet}
+		</Select.Content>
+	</Select.Portal>
+</Select.Root>
+
+{#snippet viewport()}
+	<Select.Viewport>
+		{#if canClear && type === 'single' && selectedItem}
+			<Select.Item label="Rensa" value="__clear" class="floating-item gap-2">
+				{@render icon('ph:backspace')}
+
+				<span>Rensa</span>
+			</Select.Item>
+		{/if}
+
+		{#each items as item, i (i + item.value)}
+			<Select.Item {...item} class="floating-item gap-2">
+				{#snippet children({ selected })}
+					{@render renderedItemIcon(item)}
+
+					<span>{item.label}</span>
+
+					{#if selected}
+						<Icon icon="ph:check" class="ml-auto text-accent-400" />
+					{/if}
+				{/snippet}
+			</Select.Item>
+		{/each}
+	</Select.Viewport>
+{/snippet}
+
+{#snippet renderedItemIcon(item: SelectItem)}
+	{@const renderedIcon = itemIcon?.(item.value)}
+
+	{#if renderedIcon}
+		{@render icon(renderedIcon)}
+	{:else if itemSnippet}
+		{@render itemSnippet(item)}
+	{/if}
+{/snippet}
+
+{#snippet icon(icon: string)}
+	<Icon {icon} class="shrink-0 text-lg" />
+{/snippet}

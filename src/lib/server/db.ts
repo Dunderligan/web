@@ -1,4 +1,4 @@
-import { drizzle, PostgresJsDatabase } from 'drizzle-orm/postgres-js';
+import { drizzle } from 'drizzle-orm/postgres-js';
 import { env } from '$env/dynamic/private';
 import { seed as seed } from './db/seed';
 import { dev } from '$app/environment';

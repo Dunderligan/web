@@ -1,21 +1,32 @@
 <script lang="ts">
-	import { AuthRole, canPromoteTo, formatRole as formatAuthRole } from '$lib/authRole';
+	import { AuthRole, canPromoteTo, formatRole as formatAuthRole } from '$lib/auth-role.js';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import SaveToast from '$lib/components/admin/SaveToast.svelte';
 	import Table from '$lib/components/table/Table.svelte';
-	import Select from '$lib/components/ui/Select.svelte';
+	import Select from '$lib/components/form/Select.svelte';
 	import { updateUsers } from '$lib/remote/auth.remote';
 	import { SaveContext } from '$lib/state/save.svelte';
 	import { formatDate } from '$lib/util';
 	import { page } from '$app/state';
-	import InputField from '$lib/components/ui/InputField.svelte';
-	import Label from '$lib/components/ui/Label.svelte';
-	import Note from '$lib/components/ui/Note.svelte';
+	import InputField from '$lib/components/form/InputField.svelte';
+	import Label from '$lib/components/form/Label.svelte';
+
+	type UserRow = {
+		id: string;
+		battletag: string;
+		role: AuthRole;
+		createdAt: Date;
+	};
 
 	let { data } = $props();
 
+	// svelte-ignore state_referenced_locally
 	let users = $state(data.users);
+
+	$effect(() => {
+		users = data.users;
+	});
 
 	SaveContext.set(new SaveContext({ save }));
 
@@ -45,39 +56,29 @@
 	<Table
 		rows={shownUsers}
 		key={(user) => user.id}
-		class="grid-cols-[1fr_150px_200px]"
 		columns={[
-			{ label: 'Battletag' },
-			{ label: 'Roll', center: true, note: roleNote },
-			{ label: 'Första inloggning', center: true }
+			{ label: 'Battletag', content: (user) => user.battletag, class: 'font-semibold' },
+			{ label: 'Roll', snippet: roleCell, center: true, tooltip: roleNote },
+			{ label: 'Första inloggning', content: (user) => formatDate(user.createdAt), center: true }
 		]}
-	>
-		{#snippet row({ value: user })}
-			<div class="flex items-center py-4 pl-6 text-lg font-semibold">
-				{user.battletag}
-			</div>
-
-			<div class="flex items-center justify-center">
-				<Select
-					type="single"
-					class="grow"
-					bind:value={user.role}
-					onValueChange={saveCtx.setDirty}
-					items={Object.values(AuthRole).map((role) => ({
-						label: formatAuthRole(role),
-						disabled: !canPromoteTo(currentUser?.role, role),
-						value: role
-					}))}
-					disabled={!canPromoteTo(currentUser?.role, user.role)}
-				/>
-			</div>
-
-			<div class="flex items-center justify-center font-medium">
-				{formatDate(user.createdAt)}
-			</div>
-		{/snippet}
-	</Table>
+		kind="transparent"
+	/>
 </AdminCard>
+
+{#snippet roleCell(user: UserRow)}
+	<Select
+		type="single"
+		class="grow"
+		bind:value={user.role}
+		onValueChange={saveCtx.setDirty}
+		disabled={!canPromoteTo(currentUser?.role, user.role)}
+		items={Object.values(AuthRole).map((role) => ({
+			label: formatAuthRole(role),
+			disabled: !canPromoteTo(currentUser?.role, role),
+			value: role
+		}))}
+	/>
+{/snippet}
 
 <SaveToast />
 
@@ -91,8 +92,8 @@
 			moderatorer.
 		</li>
 		<li>
-			<b>Moderator:</b> Kan endast skapa, ändra och ta bort matchresultat. Har heller inte tillgång till
-			gömda säsonger.
+			<b>Moderator:</b> Kan skapa matcher och ändra matchresultat, samt redigera spelarprofiler. Har heller
+			inte tillgång till gömda säsonger.
 		</li>
 	</ul>
 {/snippet}

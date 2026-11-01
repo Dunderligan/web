@@ -24,7 +24,11 @@
 		<h1 class="-mt-2 text-center text-8xl font-bold text-gray-900 dark:text-gray-100">
 			{page.status}
 		</h1>
-		<h2 class="text-lg font-medium text-gray-700 dark:text-gray-300">Något gick fel</h2>
+		<h2 class="text-lg font-medium text-gray-700 dark:text-gray-300">
+			Något gick fel{#if page.error}
+				: "{page.error.message}"
+			{/if}
+		</h2>
 
 		{#if page.status === 404}
 			<Button

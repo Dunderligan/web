@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import AdminCard from '$lib/components/admin/AdminCard.svelte';
 	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
 	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import EditableMatch from '$lib/components/match/EditableMatch.svelte';
 	import EditMatchDialog from '$lib/components/match/EditMatchDialog.svelte';
-	import InputField from '$lib/components/ui/InputField.svelte';
-	import Label from '$lib/components/ui/Label.svelte';
-	import RosterLogo from '$lib/components/ui/RosterLogo.svelte';
+	import InputField from '$lib/components/form/InputField.svelte';
+	import Label from '$lib/components/form/Label.svelte';
 	import SaveToast from '$lib/components/admin/SaveToast.svelte';
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
 	import { RosterContext } from '$lib/state/rosters.svelte';
@@ -18,26 +18,36 @@
 	import { createRoster } from '$lib/remote/roster.remote';
 	import { createGroupMatch, isInMatch } from '$lib/match.js';
 	import RosterSelect from '$lib/components/admin/RosterSelect.svelte';
-	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
-	import { isAdmin } from '$lib/authRole.js';
+	import { isAdmin } from '$lib/auth-role.js';
+	import AdminRosterList from '$lib/components/admin/AdminRosterList.svelte';
 
 	const { data } = $props();
 
+	// svelte-ignore state_referenced_locally
 	let group = $state(data.group);
-	let division = $state(data.division);
-	let season = $state(data.season);
 
-	RosterContext.set(new RosterContext(data.group.rosters));
+	$effect(() => {
+		group = data.group;
+	});
+
+	const division = $derived(group.division);
+	const season = $derived(division.season);
+
+	RosterContext.set(new RosterContext());
 	SaveContext.set(
 		new SaveContext({
 			save,
-			href: `/stallningar/${season.slug}?div=${division.slug}&visa=gruppspel`
+			href: () => `/stallningar/${season.slug}?div=${division.slug}&visa=gruppspel`
 		})
 	);
 
-	let rosterCtx = RosterContext.get();
 	let confirmCtx = ConfirmContext.get();
 	let saveCtx = SaveContext.get();
+	let rosterCtx = RosterContext.get();
+
+	$effect(() => {
+		rosterCtx.setRosters(group.rosters);
+	});
 
 	let addRosterOpen = $state(false);
 
@@ -48,17 +58,12 @@
 	const shownMatchIndicies = $derived(
 		group.matches
 			.map((match, index) => ({ match, index }))
-			.filter(({ match, index }) => {
+			.filter(({ match }) => {
 				if (!rosterFilter) return true;
 				return isInMatch(match, rosterFilter);
 			})
 			.map(({ index }) => index)
 	);
-
-	$effect(() => {
-		group = data.group;
-		// rosterCtx.set(group.rosters);
-	});
 
 	async function save() {
 		await updateGroup({
@@ -71,14 +76,14 @@
 	async function submitDelete() {
 		await confirmCtx.confirm({
 			title: 'Radera grupp',
-			description: `Är du säker på att du vill radera ${group.name} i ${season.name}, ${division.name} <b>tillsammans med ${group.rosters.length} rosters</b>?`,
-			negative: true,
+			description: `Är du säker på att du vill radera ${group.name} i ${group.division.name}, ${group.division.season.name} <b>tillsammans med ${group.rosters.length} rosters</b>?`,
+			destructive: true,
 			action: async () => {
 				await deleteGroup({
 					id: group.id
 				});
 
-				await goto(`/admin/division/${division.id}`);
+				await goto(resolve(`/admin/division/${group.division.id}`));
 			}
 		});
 	}
@@ -86,16 +91,15 @@
 	async function submitNewRoster(name: string, teamId?: string) {
 		const { roster } = await createRoster({
 			groupId: group.id,
-			seasonSlug: season.slug,
 			name: name,
 			teamId
 		});
 
-		await goto(`/admin/roster/${roster.id}`);
+		await goto(resolve(`/admin/roster/${roster.id}`));
 	}
 
 	function addMatchAndEdit() {
-		const match = createGroupMatch(data.group.id);
+		const match = createGroupMatch(group.id);
 
 		group.matches.unshift(match);
 		rosterCtx.editMatch(group.matches[0]);
@@ -114,17 +118,13 @@
 />
 
 <AdminCard title="Lag">
-	<AdminLinkList
-		items={group.rosters}
-		linkHref={(roster) => `/admin/roster/${roster.id}`}
+	<AdminRosterList
+		rosters={group.rosters}
 		emptyText="Denna grupp har inga lag!"
 		oncreateclick={() => (addRosterOpen = true)}
-	>
-		{#snippet linkContent({ item: roster })}
-			<RosterLogo id={roster.id} class="mr-2 inline size-12" />
-			<span>{roster.name}</span>
-		{/snippet}
-	</AdminLinkList>
+		showCheckins={season.checkinOpen}
+		checkins={data.checkins}
+	/>
 </AdminCard>
 
 <AdminCard title="Gruppspel">
@@ -163,7 +163,7 @@
 			<InputField bind:value={group.name} oninput={saveCtx.setDirty} />
 		</Label>
 
-		<Button icon="ph:trash" label="Radera grupp" kind="negative" onclick={submitDelete} />
+		<Button icon="ph:trash" label="Radera grupp" kind="destructive" onclick={submitDelete} />
 	</AdminCard>
 {/if}
 

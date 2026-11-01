@@ -1,15 +1,17 @@
 import {
 	nestedGroupQuery,
-	hiddenGroupFilter,
-	hiddenSeasonFilter,
 	memberQuery,
-	fullMatchQueryWithContext
+	fullMatchQueryWithContext,
+	entityQuery
 } from '$lib/server/db/helpers';
-import { db } from '$lib/server/db';
+import { hiddenGroupFilter } from '$lib/server/db/hidden.js';
+import { db, schema } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
+import { compareMatchDates, getFinalMatch, getRosterPlacement } from '$lib/match.js';
+import { and, eq, not, sql } from 'drizzle-orm';
 
 export const load = async ({ params, locals }) => {
-	const data = await db.query.roster.findFirst({
+	const roster = await db.query.roster.findFirst({
 		where: {
 			slug: params.roster,
 			group: {
@@ -20,13 +22,11 @@ export const load = async ({ params, locals }) => {
 				}
 			}
 		},
-		columns: {
-			id: true,
-			name: true,
-			slug: true
-		},
+		columns: entityQuery.columns,
 		with: {
 			members: memberQuery,
+			matchesAsA: fullMatchQueryWithContext,
+			matchesAsB: fullMatchQueryWithContext,
 			team: {
 				columns: {},
 				with: {
@@ -37,10 +37,7 @@ export const load = async ({ params, locals }) => {
 						}
 					},
 					rosters: {
-						columns: {
-							id: true,
-							slug: true
-						},
+						columns: entityQuery.columns,
 						where: {
 							group: hiddenGroupFilter(locals.user)
 						},
@@ -53,32 +50,37 @@ export const load = async ({ params, locals }) => {
 		}
 	});
 
-	if (!data) {
+	if (!roster) {
 		error(404);
 	}
 
-	const matches = await db.query.match.findMany({
-		where: {
-			OR: [
-				{
-					rosterAId: data.id
-				},
-				{
-					rosterBId: data.id
-				}
-			]
-		},
-		...fullMatchQueryWithContext
-	});
+	const rosterInfo = roster.team.rosters.find((r) => r.id === roster.id)!;
 
-	const currentRosterInfo = data.team.rosters.find((r) => r.id === data.id)!;
-
-	if (!currentRosterInfo) {
+	if (!rosterInfo) {
 		// our current roster is in a hidden season we can't access
 		error(404);
 	}
 
-	const roster = { ...data, team: undefined, ...currentRosterInfo, matches };
+	const matches = [...roster.matchesAsA, ...roster.matchesAsB].sort((a, b) =>
+		compareMatchDates(a, b)
+	);
 
-	return { roster, team: data.team };
+	const rosterCount = await getRosterCount(rosterInfo.group.division.id);
+
+	const finalMatch = getFinalMatch(matches);
+	const placement = getRosterPlacement(roster.id, rosterCount, finalMatch);
+
+	return { roster: { ...roster, ...rosterInfo }, matches, placement };
 };
+
+async function getRosterCount(divisionId: string) {
+	const { group, roster } = schema;
+
+	const [{ rosterCount }] = await db
+		.select({ rosterCount: sql<number>`count(*)` })
+		.from(roster)
+		.innerJoin(group, eq(roster.groupId, group.id))
+		.where(and(eq(group.divisionId, divisionId), not(roster.resigned)));
+
+	return rosterCount;
+}

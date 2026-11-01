@@ -1,5 +1,6 @@
 import { db } from '$lib/server/db';
-import { entityQuery, hiddenSeasonFilter } from '$lib/server/db/helpers';
+import { entityQuery } from '$lib/server/db/helpers';
+import { hiddenSeasonFilter } from '$lib/server/db/hidden.js';
 import { json } from '@sveltejs/kit';
 
 export const GET = async ({ locals }) => {

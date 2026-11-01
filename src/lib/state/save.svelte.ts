@@ -1,7 +1,11 @@
 import { beforeNavigate, invalidateAll } from '$app/navigation';
+import type { ResolvedPathname } from '$app/types';
+import { ConfirmContext, type ConfirmData } from './confirm.svelte';
 import { defineContext } from './util';
 
 const { get, set } = defineContext<SaveContext>('$_save_state');
+
+type ConfirmDataFn = () => Omit<ConfirmData, 'action'> | null | undefined;
 
 /**
  * Context for managing save state on a page.
@@ -28,19 +32,29 @@ export class SaveContext {
 	private saveAction?: () => Promise<void>;
 	private discardAction: () => Promise<void>;
 
+	private confirmSave?: ConfirmDataFn;
+	private confirmContext?: ConfirmContext;
+
+	autoSave = $state(false);
+
 	// the href to return to after saving/discarding
-	// TODO: currently not used?
-	href?: string;
+	href?: () => ResolvedPathname;
 
 	constructor(options?: {
 		save?: () => Promise<void>;
 		discard?: () => Promise<void>;
-		href?: string;
+		autoSave?: boolean;
+		href?: () => ResolvedPathname;
+		confirmSave?: ConfirmDataFn;
 	}) {
 		this.saveAction = options?.save;
 		this.discardAction = options?.discard ?? invalidateAll;
+		this.confirmSave = options?.confirmSave;
 
+		this.autoSave = options?.autoSave ?? false;
 		this.href = options?.href;
+
+		this.confirmContext = ConfirmContext.get();
 
 		beforeNavigate(({ cancel }) => {
 			if (!this.isDirty) return;
@@ -56,18 +70,38 @@ export class SaveContext {
 	}
 
 	setDirty = () => {
-		this.isDirty = true;
+		if (this.autoSave) {
+			this.saveAction?.();
+		} else {
+			this.isDirty = true;
+		}
 	};
 
-	save = async () => {
+	save = async (): Promise<boolean> => {
+		const confirm = this.confirmSave?.();
+		if (confirm) {
+			if (this.confirmContext) {
+				const confimed = await this.confirmContext.confirm(confirm);
+				if (!confimed) return false;
+			} else {
+				console.warn(
+					'SaveContext is missing a ConfirmContext, but confirmSave was provided. The confirmation dialog will be skipped.'
+				);
+			}
+		}
+
 		try {
 			this.saving = true;
 			await this.saveAction?.();
 
 			this.isDirty = false;
-		} finally {
+		} catch (error) {
 			this.saving = false;
+			throw error;
 		}
+
+		this.saving = false;
+		return true;
 	};
 
 	discard = async () => {

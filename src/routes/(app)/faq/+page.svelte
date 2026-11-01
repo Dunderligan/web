@@ -5,8 +5,7 @@
 
 	import Subheading from '$lib/components/ui/Subheading.svelte';
 	import Accordion from '$lib/components/ui/Accordion.svelte';
-	import Icon from '$lib/components/ui/Icon.svelte';
-	import { socials } from '$lib/socials';
+	import DiscordLink from '$lib/components/ui/DiscordLink.svelte';
 
 	const items = [
 		{
@@ -34,7 +33,10 @@
 			content:
 				'Ungefär två månader pågår ligan, förutsatt att ditt lag tar sig hela vägen fram till en final.'
 		},
-		{ title: 'Finns Dunderligan i andra spel?', content: 'Nej. Bara i Overwatch.' },
+		{
+			title: 'Finns Dunderligan i andra spel?',
+			content: 'Nej. Bara i Overwatch.'
+		},
 		{
 			title: 'Kommer matcher att sändas live?',
 			content:
@@ -44,6 +46,11 @@
 			title: 'Hur kan jag hjälpa till i Dunderligan?',
 			content:
 				'DL existerar på grund utav och tack vare eldsjälar. Varje år behöver vi hjälp med modsysslor på discordservern, redigerare, casters, grafiker, och bildproducenter. Vill du hjälpa till och känner att du kanske har något som du kan tillföra, ta kontakt med moderatorerna på discordservern.'
+		},
+		{
+			title: 'Hur hittar jag ett lag?',
+			content:
+				'I Dunderligans discord server finns en kanal där man kan skriva att man letar lag eller hitta ett lag som söker spelare.'
 		}
 	];
 </script>
@@ -57,8 +64,5 @@
 	<Accordion type="multiple" {items}></Accordion>
 
 	<Subheading class="mt-8">Undrar du fortfarande något?</Subheading>
-	<a class="font-medium hover:underline" href={socials.discord}>
-		<Icon icon="ph:arrow-square-out" />
-		Gå med i vår discordserver!</a
-	>
+	<DiscordLink>Gå med i våran Discordserver!</DiscordLink>
 </PageSection>

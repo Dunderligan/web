@@ -1,27 +1,25 @@
 import { command } from '$app/server';
-import { S3_BUCKET_NAME } from '$env/static/private';
 import { db, schema } from '$lib/server/db';
-import { findOrCreatePlayer, type Transaction } from '$lib/server/db/helpers';
-import S3 from '$lib/server/s3';
-import { Rank, Role, type Member, type Social } from '$lib/types';
-import { cdnRosterLogoPath, s3RosterLogoKey, toSlug } from '$lib/util';
-import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
+import { lookupOrCreatePlayer, type Transaction } from '$lib/server/db/helpers';
+import { type Member, type Social } from '$lib/types';
+import { toSlug } from '$lib/util';
 import { eq } from 'drizzle-orm';
 import z from 'zod';
 import { roleGuard } from './auth.remote';
-import { AuthRole } from '$lib/authRole';
-import sharp from 'sharp';
-import { socialSchema } from '$lib/schemas';
+import { AuthRole } from '$lib/auth-role';
+import { memberSchema, socialSchema } from '$lib/schemas';
+import s3 from '$lib/server/s3';
+import cdn from '$lib/cdn';
+import image from '$lib/server/image';
 
 /// Create a roster and add it to a group. If an associated teamId is not provided, a new team will be created.
 export const createRoster = command(
 	z.object({
 		groupId: z.uuidv4(),
-		seasonSlug: z.string(),
 		name: z.string().nonempty(),
 		teamId: z.uuidv4().nullish()
 	}),
-	async ({ groupId, seasonSlug, name, teamId }) => {
+	async ({ groupId, name, teamId }) => {
 		await roleGuard(AuthRole.ADMIN);
 
 		if (!teamId) {
@@ -54,66 +52,52 @@ export const deleteRoster = command(
 
 		await db.delete(schema.roster).where(eq(schema.roster.id, id));
 
-		// TODO: also delete logos when rosters are deleted from cascades (deleting groups e.t.c.)
-		const command = new DeleteObjectCommand({
-			Bucket: S3_BUCKET_NAME,
-			Key: cdnRosterLogoPath(id)
-		});
+		await s3.deleteFile(cdn.rosterLogoKey(id));
 
-		await S3.send(command);
+		// TODO: also delete logos when rosters are deleted from cascades (deleting groups e.t.c.)
 	}
 );
 
 export const editRoster = command(
 	z.object({
 		id: z.string(),
-		teamId: z.string(),
-		name: z.string(),
-		resigned: z.boolean(),
-		members: z.array(
-			z.object({
-				role: z.enum(Role),
-				rank: z.enum(Rank).nullable(),
-				tier: z.int().max(5).min(1).nullable(),
-				sr: z.int().min(0).nullable(),
-				isCaptain: z.boolean(),
-				player: z.object({
-					id: z.string().nullable(),
-					battletag: z.string()
-				})
-			})
-		),
-		socials: z.array(socialSchema)
+		name: z.string().optional(),
+		teamId: z.string().optional(),
+		resigned: z.boolean().optional(),
+		members: z.array(memberSchema).optional(),
+		socials: z.array(socialSchema).optional()
 	}),
 	async ({ id, teamId, name, resigned, members, socials }) => {
 		await roleGuard(AuthRole.ADMIN);
 
-		const newSlug = toSlug(name);
-
 		await db.transaction(async (tx) => {
-			await Promise.all([
-				updateInfo(tx, id, name, newSlug, resigned),
-				updateMembers(tx, id, members),
-				updateSocials(tx, teamId, socials)
-			]);
-		});
+			const tasks = [];
 
-		return { slug: newSlug };
+			if (name || resigned !== undefined) {
+				tasks.push(updateInfo(tx, id, name, resigned));
+			}
+
+			if (members) {
+				tasks.push(updateMembers(tx, id, members));
+			}
+
+			if (socials && teamId) {
+				tasks.push(updateSocials(tx, teamId, socials));
+			}
+
+			await Promise.all(tasks);
+		});
 	}
 );
 
-async function updateInfo(
-	tx: Transaction,
-	rosterId: string,
-	name: string,
-	slug: string,
-	resigned: boolean
-) {
+async function updateInfo(tx: Transaction, rosterId: string, name?: string, resigned?: boolean) {
+	const newSlug = name ? toSlug(name) : undefined;
+
 	await tx
 		.update(schema.roster)
 		.set({
 			name,
-			slug,
+			slug: newSlug,
 			resigned
 		})
 		.where(eq(schema.roster.id, rosterId));
@@ -121,13 +105,19 @@ async function updateInfo(
 
 async function updateMembers(tx: Transaction, rosterId: string, members: Member[]) {
 	// delete all the members and insert them again
-	// there is probably a more effective way to do this
+	// there is probably a more efficient way to do this
 	await tx.delete(schema.member).where(eq(schema.member.rosterId, rosterId));
 
 	const memberInserts = await Promise.all(
 		members.map(async ({ player, ...member }) => {
 			// if they already have an associated id, use that
-			const playerId = player.id ?? (await findOrCreatePlayer(tx, player.battletag));
+			let playerId: string;
+			if (player.id) {
+				playerId = player.id;
+			} else {
+				const foundPlayer = await lookupOrCreatePlayer(tx, player.battletag);
+				playerId = foundPlayer.id;
+			}
 
 			return {
 				playerId,
@@ -164,17 +154,8 @@ export const uploadRosterLogo = command(
 	async ({ rosterId, file }) => {
 		await roleGuard(AuthRole.ADMIN);
 
-		const converted = await sharp(file).webp({ lossless: true }).toBuffer();
-		const key = s3RosterLogoKey(rosterId);
-
-		const command = new PutObjectCommand({
-			Bucket: S3_BUCKET_NAME,
-			Key: key,
-			Body: converted,
-			ContentType: `image/webp`
-		});
-
-		await S3.send(command);
+		const buffer = await image.convertToWebp(Buffer.from(file));
+		await s3.uploadImage(buffer, cdn.rosterLogoKey(rosterId));
 	}
 );
 

@@ -1,10 +1,8 @@
-import { sql, eq, isNull, Table, not, inArray, and, Column } from 'drizzle-orm';
-import { PgTransaction } from 'drizzle-orm/pg-core';
+import { sql, eq } from 'drizzle-orm';
 import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
-import { schema } from '$lib/server/db';
-import type { User } from './schema/auth';
-import { AuthRole, checkPermission, isAdmin } from '$lib/authRole';
-import type { Social } from '$lib/types';
+import { db, schema } from '$lib/server/db';
+import type { PgColumn, PgTransaction } from 'drizzle-orm/pg-core';
+import type { PlayerCheckin } from '$lib/types';
 
 // Helper queries and functions for database operations.
 
@@ -23,18 +21,25 @@ export const entityQuery = {
 } as const;
 
 /**
+ * Query for the base information about a season.
+ */
+export const seasonQuery = {
+	columns: {
+		legacyRanks: true,
+		startedAt: true,
+		spinoff: true,
+		checkinOpen: true,
+		...entityQuery.columns
+	}
+} as const;
+
+/**
  * Query for a division with the parent season nested.
  */
 export const nestedDivisionQuery = {
 	...entityQuery,
 	with: {
-		season: {
-			columns: {
-				legacyRanks: true,
-				startedAt: true,
-				...entityQuery.columns
-			}
-		}
+		season: seasonQuery
 	}
 } as const;
 
@@ -64,7 +69,12 @@ export const nestedBracketQuery = {
 /**
  * Query for the base information about a roster participating in matches.
  */
-export const matchRosterQuery = entityQuery;
+export const rosterQuery = {
+	columns: {
+		resigned: true,
+		...entityQuery.columns
+	}
+} as const;
 
 /**
  * Default ordering for matches within a group.
@@ -87,21 +97,26 @@ export const fullMatchColumns = {
 	state: true,
 	vodUrl: true,
 	playedAt: true,
-	scheduledAt: true
+	scheduledAt: true,
+	round: true
 } as const;
 
 export const fullMatchQuery = {
-	columns: fullMatchColumns,
+	columns: {
+		...fullMatchColumns,
+		// The IDs are already included in the joined roster objects, don't query them twice
+		rosterAId: false,
+		rosterBId: false
+	},
 	orderBy: groupMatchOrder,
 	with: {
-		rosterA: matchRosterQuery,
-		rosterB: matchRosterQuery
+		rosterA: rosterQuery,
+		rosterB: rosterQuery
 	}
 } as const;
 
 export const fullMatchQueryWithContext = {
-	columns: fullMatchColumns,
-	orderBy: groupMatchOrder,
+	...fullMatchQuery,
 	with: {
 		...fullMatchQuery.with,
 		group: nestedGroupQuery,
@@ -111,22 +126,27 @@ export const fullMatchQueryWithContext = {
 
 export const finalMatchQuery = {
 	...fullMatchQuery,
-	where: {
-		nextMatchId: {
-			isNull: true
-		}
+	limit: 1,
+	orderBy: {
+		round: 'asc'
 	}
 } as const;
 
-export const memberQuery = {
+export const memberQueryWithoutPlayer = {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	orderBy: (t: any) => sql`${rolesOrder(t.role)}, ${t.playerId} ASC`,
 	columns: {
 		isCaptain: true,
 		tier: true,
 		rank: true,
 		sr: true,
-		role: true
-	},
+		role: true,
+		registeredName: true
+	}
+} as const;
+
+export const memberQuery = {
+	...memberQueryWithoutPlayer,
 	with: {
 		player: {
 			columns: {
@@ -139,7 +159,7 @@ export const memberQuery = {
 
 export type Transaction = PgTransaction<PostgresJsQueryResultHKT, typeof schema>;
 
-export function rolesOrder(column: any) {
+export function rolesOrder(column: PgColumn) {
 	return sql`(
 		CASE ${column}
 			WHEN 'tank' THEN 1
@@ -153,12 +173,34 @@ export function rolesOrder(column: any) {
 	) ASC`;
 }
 
+export function rosterSeasonFilter(seasonId: string) {
+	return {
+		group: {
+			division: {
+				season: {
+					id: seasonId
+				}
+			}
+		}
+	};
+}
+
+export function isNull(isNull: boolean | null | undefined) {
+	if (isNull === true) {
+		return { isNull: true as const };
+	} else if (isNull === false) {
+		return { isNotNull: true as const };
+	} else {
+		return {};
+	}
+}
+
 /**
- * An sql ordering that puts "Dunderligan" first, then alphabetically by the provided column.
+ * An SQL ordering that puts "Dunderligan" and "Dunderserien" first, then alphabetically by the provided column.
  *
  * Used for sorting divisions and brackets.
  */
-export function divisionOrder(column: any) {
+export function divisionOrder(column: PgColumn) {
 	return sql`(
 		CASE ${column}
 			WHEN 'Dunderligan' THEN '0'
@@ -168,90 +210,86 @@ export function divisionOrder(column: any) {
 	) ASC`;
 }
 
-export async function findOrCreatePlayer(tx: Transaction, battletag: string) {
+export type FindPlayerResult =
+	| { type: 'found'; player: { id: string; battletag: string } }
+	| { type: 'ambiguous'; matches: { id: string; battletag: string }[] }
+	| { type: 'missing' };
+
+export async function lookupPlayer(battletag: string): Promise<FindPlayerResult> {
 	const name = battletag.split('#')[0];
 
-	const [existingPlayer] = await tx
-		.select()
+	// first match only player names, case-insensitively
+	const matchingPlayers = await db
+		.select({
+			id: schema.player.id,
+			battletag: schema.player.battletag
+		})
 		.from(schema.player)
-		.where(eq(sql<string>`SPLIT_PART(${schema.player.battletag}, '#', 1)`, name));
+		.where(eq(sql`SPLIT_PART(${schema.player.battletag}, '#', 1)::citext`, name));
 
-	if (existingPlayer) {
-		if (name !== battletag && existingPlayer.battletag !== battletag) {
-			// if we got a number tag and the exisitng player doesn't, store the new one
-			await tx
-				.update(schema.player)
-				.set({ battletag })
-				.where(eq(schema.player.id, existingPlayer.id));
+	if (matchingPlayers.length == 0) {
+		return { type: 'missing' };
+	}
+
+	if (battletag.includes('#')) {
+		const exactMatch = matchingPlayers.find(
+			(match) => match.battletag.toLowerCase() === battletag.toLowerCase()
+		);
+
+		if (exactMatch) {
+			return { type: 'found', player: exactMatch };
 		}
 
-		return existingPlayer.id;
+		return { type: 'missing' };
+	} else if (matchingPlayers.length === 1) {
+		// if we don't have a discriminator, but there's only one matching name,
+		// we don't care about the discriminator and just return that player
+		return { type: 'found', player: matchingPlayers[0] };
 	} else {
-		const [newPlayer] = await tx.insert(schema.player).values({ battletag }).returning();
-
-		return newPlayer.id;
+		console.log('multiple players with the same name but no discriminator provided');
+		// multiple players with the same name but no discriminator provided;
+		// we can't determine which one the user meant
+		return { type: 'ambiguous', matches: matchingPlayers };
 	}
 }
 
-export function canSeeHiddenSeasons(user?: User | null) {
-	return isAdmin(user?.role);
+export async function lookupOrCreatePlayer(
+	tx: Transaction,
+	battletag: string
+): Promise<{ id: string; battletag: string }> {
+	const findResult = await lookupPlayer(battletag);
+	switch (findResult.type) {
+		case 'found':
+			return findResult.player;
+		case 'ambiguous':
+			throw new Error(
+				`Multiple players found with the name "${battletag.split('#')[0]}". Please specify the full battletag.`
+			);
+		case 'missing':
+			break;
+	}
+
+	const [newPlayer] = await tx.insert(schema.player).values({ battletag }).returning();
+	return { id: newPlayer.id, battletag };
 }
 
-export function hiddenSeasonFilter(user?: User | null) {
-	return canSeeHiddenSeasons(user) ? undefined : false;
-}
-
-export function hiddenDivisionFilter(user?: User | null) {
-	return {
-		season: {
-			hidden: hiddenSeasonFilter(user)
-		}
-	};
-}
-
-export function hiddenGroupFilter(user?: User | null) {
-	return {
-		division: hiddenDivisionFilter(user)
-	};
-}
-
-export function hiddenBracketFilter(user?: User | null) {
-	return {
-		division: hiddenDivisionFilter(user)
-	};
-}
-
-export function hiddenMatchFilter(user?: User | null) {
-	return {
-		AND: [
-			{
-				OR: [
-					{
-						groupId: {
-							isNull: true as true
-						}
-					},
-					{
-						group: hiddenGroupFilter(user)
-					}
-				]
-			},
-			{
-				OR: [
-					{
-						bracketId: {
-							isNull: true as true
-						}
-					},
-					{
-						bracket: hiddenBracketFilter(user)
-					}
-				]
+export async function retrievePlayerCheckins(
+	seasonId: string,
+	playerIds: string[]
+): Promise<Map<string, PlayerCheckin>> {
+	const checkins = await db.query.playerCheckin.findMany({
+		where: {
+			seasonId: seasonId,
+			playerId: {
+				in: playerIds
 			}
-		]
-	};
-}
+		},
+		columns: {
+			playerId: true,
+			checkedInAt: true,
+			discordId: true
+		}
+	});
 
-export function canSeeSeason(season: { hidden: boolean }, user?: User | null) {
-	return !season.hidden || canSeeHiddenSeasons(user);
+	return new Map(checkins.map(({ playerId, ...data }) => [playerId, data]));
 }

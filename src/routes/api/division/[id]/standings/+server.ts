@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db';
-import { entityQuery, fullMatchColumns } from '$lib/server/db/helpers';
+import { fullMatchColumns, rosterQuery } from '$lib/server/db/helpers';
 import { calculateStandings } from '$lib/standings.js';
 import { aggregateGroups } from '$lib/util';
 import { json, error } from '@sveltejs/kit';
@@ -14,12 +14,17 @@ export const GET = async ({ params }) => {
 			groupwiseStandings: true
 		},
 		with: {
+			season: {
+				columns: {
+					legacySeeding: true
+				}
+			},
 			groups: {
 				columns: {
 					name: true
 				},
 				with: {
-					rosters: entityQuery,
+					rosters: rosterQuery,
 					matches: {
 						columns: fullMatchColumns
 					}
@@ -41,7 +46,9 @@ export const GET = async ({ params }) => {
 	}
 
 	const tables = groupings.map((grouping) => {
-		const standings = calculateStandings(grouping.rosters, grouping.matches);
+		const standings = calculateStandings(grouping.rosters, grouping.matches, {
+			legacy: division.season.legacySeeding
+		});
 
 		const resolvedStandings = standings.map(({ rosterId, score }) => {
 			const roster = grouping.rosters.find((roster) => roster.id === rosterId)!;

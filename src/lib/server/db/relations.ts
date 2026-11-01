@@ -4,7 +4,8 @@ import schema from './schema.js';
 const relations = defineRelations(schema, (r) => ({
 	season: {
 		divisions: r.many.division(),
-		registration: r.one.registration()
+		registration: r.one.registration(),
+		checkins: r.many.playerCheckin()
 	},
 	division: {
 		season: r.one.season({
@@ -13,7 +14,8 @@ const relations = defineRelations(schema, (r) => ({
 			optional: false
 		}),
 		groups: r.many.group(),
-		brackets: r.many.bracket()
+		brackets: r.many.bracket(),
+		awards: r.many.playerAward()
 	},
 	group: {
 		division: r.one.division({
@@ -37,7 +39,11 @@ const relations = defineRelations(schema, (r) => ({
 		}),
 		members: r.many.member(),
 		matchesAsA: r.many.match({ alias: 'rosterA' }),
-		matchesAsB: r.many.match({ alias: 'rosterB' })
+		matchesAsB: r.many.match({ alias: 'rosterB' }),
+		submission: r.one.teamSubmission({
+			from: r.roster.id,
+			to: r.teamSubmission.approvedRosterId
+		})
 	},
 	teamSocial: {
 		team: r.one.team({ from: r.teamSocial.teamId, to: r.team.id, optional: false })
@@ -49,7 +55,28 @@ const relations = defineRelations(schema, (r) => ({
 		memberships: r.many.member(),
 		socials: r.many.playerSocial(),
 		aliases: r.many.playerAlias(),
-		signatureHeroes: r.many.signatureHero()
+		signatureHeroes: r.many.signatureHero(),
+		awards: r.many.playerAward(),
+		checkins: r.many.playerCheckin()
+	},
+	awardType: {
+		awards: r.many.playerAward()
+	},
+	playerAward: {
+		awardType: r.one.awardType({
+			from: r.playerAward.awardTypeId,
+			to: r.awardType.id,
+			optional: false
+		}),
+		player: r.one.player({
+			from: r.playerAward.playerId,
+			to: r.player.id,
+			optional: false
+		}),
+		division: r.one.division({
+			from: r.playerAward.divisionId,
+			to: r.division.id
+		})
 	},
 	member: {
 		player: r.one.player({
@@ -82,6 +109,28 @@ const relations = defineRelations(schema, (r) => ({
 			from: r.registration.seasonId,
 			to: r.season.id,
 			optional: false
+		}),
+		submissions: r.many.teamSubmission()
+	},
+	teamSubmission: {
+		registration: r.one.registration({
+			from: r.teamSubmission.registrationId,
+			to: r.registration.id,
+			optional: false
+		}),
+		submittedBy: r.one.user({
+			from: r.teamSubmission.submittedById,
+			to: r.user.id,
+			alias: 'submittedBy'
+		}),
+		reviewedBy: r.one.user({
+			from: r.teamSubmission.reviewedById,
+			to: r.user.id,
+			alias: 'reviewedBy'
+		}),
+		approvedRoster: r.one.roster({
+			from: r.teamSubmission.approvedRosterId,
+			to: r.roster.id
 		})
 	},
 	apiKey: {
@@ -92,7 +141,9 @@ const relations = defineRelations(schema, (r) => ({
 		})
 	},
 	user: {
-		apiKeys: r.many.apiKey()
+		apiKeys: r.many.apiKey(),
+		submittedTeams: r.many.teamSubmission({ alias: 'submittedBy' }),
+		reviewedTeams: r.many.teamSubmission({ alias: 'reviewedBy' })
 	},
 	hero: {
 		signaturePlayers: r.many.signatureHero()
@@ -113,6 +164,18 @@ const relations = defineRelations(schema, (r) => ({
 		player: r.one.player({
 			from: r.playerAlias.playerId,
 			to: r.player.id,
+			optional: false
+		})
+	},
+	playerCheckin: {
+		player: r.one.player({
+			from: r.playerCheckin.playerId,
+			to: r.player.id,
+			optional: false
+		}),
+		season: r.one.season({
+			from: r.playerCheckin.seasonId,
+			to: r.season.id,
 			optional: false
 		})
 	}

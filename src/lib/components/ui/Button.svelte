@@ -1,53 +1,51 @@
 <script lang="ts">
-	import { type ButtonRootProps, type WithoutChildren } from 'bits-ui';
 	import type { Snippet } from 'svelte';
 	import Icon from './Icon.svelte';
-	import type { ButtonKind } from '$lib/types';
+	import type { ButtonRootProps, WithoutChildren } from 'bits-ui';
+
+	type ButtonKind = 'primary' | 'secondary' | 'tertiary' | 'transparent' | 'destructive';
+
+	type Content =
+		| { children: Snippet; label?: never; icon?: never }
+		| { children?: never; label: string; icon?: string }
+		| { children?: never; label?: never; icon: string };
 
 	type Props = {
-		icon?: string;
 		kind?: ButtonKind;
 		loading?: boolean;
-	} & (
-		| { children: Snippet; label?: never; icon?: never }
-		| {
-				children?: never;
-				label: string;
-				icon?: string;
-		  }
-		| {
-				children?: never;
-				label?: never;
-				icon: string;
-		  }
-	) &
+		openInNewTab?: boolean;
+	} & Content &
 		WithoutChildren<ButtonRootProps>;
 
 	let {
-		icon: iconProp,
 		children,
+		label,
+		icon,
 		loading,
 		disabled: disabledProp,
-		label,
 		class: classProp,
 		kind = 'primary',
 		href,
+		openInNewTab,
 		...props
 	}: Props = $props();
 
 	const disabled = $derived(disabledProp || loading);
-	const icon = $derived(loading ? 'ph:spinner' : iconProp);
+
+	const resolvedIcon = $derived(loading ? 'ph:spinner' : icon);
 
 	const typeClass = $derived(
 		{
-			primary: 'bg-accent-600 hover:bg-accent-700 font-semibold text-white',
+			primary:
+				'bg-accent-600 not-disabled:hover:bg-accent-700 font-semibold text-white dark:bg-accent-700 dark:not-disabled:hover:bg-accent-800',
 			secondary:
-				'bg-gray-200 text-gray-700 hover:bg-gray-300 font-semibold dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-300',
+				'bg-gray-200 text-gray-700 not-disabled:hover:bg-gray-300 font-semibold dark:bg-gray-800 dark:not-disabled:hover:bg-gray-700 dark:text-gray-300',
 			tertiary:
-				'text-gray-600 font-medium hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-800',
+				'text-gray-600 font-medium not-disabled:hover:bg-gray-50 dark:text-gray-400 dark:not-disabled:hover:bg-gray-800',
 			transparent:
-				'text-accent-800 hover:bg-accent-100 dark:text-accent-300 dark:hover:bg-accent-900',
-			negative: 'bg-red-700 hover:bg-red-600 font-semibold text-red-100 hover:text-white'
+				'text-accent-800 not-disabled:hover:bg-accent-100 dark:text-accent-300 dark:not-disabled:hover:bg-accent-950',
+			destructive:
+				'bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-100 not-disabled:hover:bg-red-200/80 font-semibold dark:not-disabled:hover:bg-red-900/80'
 		}[kind]
 	);
 </script>
@@ -63,13 +61,14 @@
 	]}
 	{disabled}
 	href={disabled ? undefined : href}
+	{...href && openInNewTab ? { target: '_blank', rel: 'noopener noreferrer' } : {}}
 	{...props}
 >
 	{#if children}
 		{@render children()}
 	{:else}
-		{#if icon}
-			<Icon {icon} class={[loading && 'animate-spin', 'text-lg']} />
+		{#if resolvedIcon}
+			<Icon icon={resolvedIcon} class={[loading && 'animate-spin', 'text-lg']} />
 		{/if}
 
 		{label}

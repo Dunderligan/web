@@ -2,15 +2,16 @@
 	import type { TableScore } from '$lib/standings';
 	import type { Roster } from '$lib/types';
 	import Icon from '../ui/Icon.svelte';
+	import Link from '../ui/Link.svelte';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import Table from './Table.svelte';
+	import { resolve } from '$app/paths';
+	import Tooltip from '../ui/Tooltip.svelte';
 
 	type TableEntry = {
 		roster: Roster;
 		score: TableScore;
 	};
-
-	type Row = TableEntry | 'playoffLine';
 
 	type Props = {
 		standings: TableEntry[];
@@ -20,95 +21,67 @@
 	};
 
 	let { standings, playoffLine, seasonSlug, showInitialSeeds = false }: Props = $props();
-
-	const rows = $derived.by(() => {
-		if (!playoffLine) return standings;
-
-		const rowsWithLine: Row[] = [];
-		standings.forEach((entry, index) => {
-			rowsWithLine.push(entry);
-			if (index === playoffLine! - 1) {
-				rowsWithLine.push('playoffLine');
-			}
-		});
-
-		return rowsWithLine;
-	});
 </script>
 
 <Table
+	rows={standings}
 	columns={[
+		{ label: '#', snippet: seedCell, center: true, class: 'font-semibold text-lg', width: '3rem' },
+		{ label: 'Lag', snippet: teamCell, class: 'font-semibold text-lg' },
 		{
-			label: '#',
-			center: true
+			label: 'Poäng',
+			content: ({ score }) => score.mapWins,
+			center: true,
+			tooltip: 'Antal vunna kartor',
+			class: 'font-semibold text-xl',
+			width: '5rem'
 		},
 		{
-			label: 'Lag'
+			label: 'W/L/D',
+			content: ({ score }) => `${score.mapWins}/${score.mapLosses}/${score.mapDraws}`,
+			center: true,
+			tooltip: 'Antal vunna/förlorade/oavgjorda kartor',
+			class: 'text-lg',
+			width: '5rem'
 		},
-		...(showInitialSeeds ? [{ label: 'Seed', center: true }] : []),
-		{ label: 'Poäng', center: true, note: 'Antal vunna maps' },
-		{ label: 'W/L/D', center: true, note: 'Map record: Wins/Losses/Draws' },
-		{ label: 'Matcher', center: true }
+		{
+			label: 'Matcher',
+			content: ({ score }) => score.matchesPlayed,
+			center: true,
+			tooltip: 'Antal spelade matcher',
+			class: 'text-lg',
+			width: '5rem'
+		}
 	]}
-	{rows}
-	key={(row) => (row === 'playoffLine' ? row : row.roster.id)}
-	class={[
-		'max-w-2xl',
-		showInitialSeeds
-			? 'grid-cols-[40px_1fr_40px_50px_60px_70px] sm:grid-cols-[50px_1fr_50px_100px_110px_80px]'
-			: 'grid-cols-[40px_1fr_50px_60px_70px] sm:grid-cols-[50px_1fr_100px_110px_80px]'
-	]}
->
-	{#snippet row({ index, value: row })}
-		{#if row === 'playoffLine'}
-			<div class="my-2.5 border-t-2 border-dashed border-red-600"></div>
-			<div class="my-2.5 border-t-2 border-dashed border-red-600"></div>
-			<div class="my-auto bg-transparent text-center text-sm text-red-600">Playoffs</div>
-			<div class="my-2.5 border-t-2 border-dashed border-red-600"></div>
-			<div class="my-2.5 border-t-2 border-dashed border-red-600"></div>
-		{:else}
-			{@const { roster, score } = row}
+	key={(row) => row.roster.id}
+	class="max-w-2xl"
+/>
 
-			{@const isAfterLine = playoffLine && index > playoffLine}
-			{@const seed = isAfterLine ? index : index + 1}
+{#snippet line(index: number)}
+	{#if index + 1 === playoffLine}
+		<div class="absolute -bottom-1 w-full border-b-2 border-dashed border-red-500"></div>
+	{/if}
+{/snippet}
 
-			{@const href = `/lag/${roster.slug}/${seasonSlug}`}
+{#snippet seedCell({ roster }: TableEntry, index: number)}
+	{@const isAfterLine = playoffLine && index > playoffLine}
+	{@const seed = isAfterLine ? index : index + 1}
 
-			<div class="relative justify-center font-semibold">
-				{#if roster.resigned}
-					<Icon
-						icon="ph:minus-circle-fill"
-						title="Laget fullföljde inte säsongen"
-						class="text-xl text-yellow-600"
-					/>
-				{:else}
-					{seed}
-				{/if}
-			</div>
+	{#if roster.resigned}
+		<Tooltip content="Laget fullföljde inte säsongen">
+			<Icon icon="ph:minus-circle-fill" class="text-xl text-yellow-600" />
+		</Tooltip>
+	{:else}
+		{seed}
+	{/if}
+{/snippet}
 
-			<div class="min-w-0 gap-2 py-1.5 font-semibold">
-				<RosterLogo id={roster.id} {href} class="size-12" />
+{#snippet teamCell({ roster }: TableEntry, index: number)}
+	{@const href = resolve(`/lag/${roster.slug}/${seasonSlug}`)}
 
-				<a {href} class="truncate hover:underline">{roster.name}</a>
-			</div>
+	<RosterLogo id={roster.id} {href} size="md" class="mr-2" />
 
-			{#if showInitialSeeds}
-				<div class="justify-center text-xl">
-					{roster.initialSeed}
-				</div>
-			{/if}
+	<Link {href} class="truncate">{roster.name}</Link>
 
-			<div class="justify-center text-xl">
-				{score.mapWins}
-			</div>
-
-			<div class="justify-center">
-				{score.mapWins}/{score.mapLosses}/{score.mapDraws}
-			</div>
-
-			<div class="justify-center">
-				{score.matchesPlayed}
-			</div>
-		{/if}
-	{/snippet}
-</Table>
+	{@render line(index)}
+{/snippet}

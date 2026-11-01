@@ -1,4 +1,5 @@
 import type { UnresolvedMatch, Roster } from '$lib/types';
+import { SvelteMap } from 'svelte/reactivity';
 import { defineContext } from './util';
 
 const { get, set } = defineContext<RosterContext>('$_roster_state');
@@ -14,13 +15,20 @@ export class RosterContext {
 
 	editingMatch: UnresolvedMatch | null;
 	canEditRosters: boolean;
-	map: Map<string, Roster>;
+	map: SvelteMap<string, Roster>;
 
-	constructor(list: Roster[]) {
+	constructor() {
 		this.editingMatch = $state(null);
 		this.canEditRosters = true;
-		this.map = $state(new Map(list.map((roster) => [roster.id, roster])));
+		this.map = $state(new SvelteMap());
 	}
+
+	setRosters = (list: Roster[]) => {
+		this.map.clear();
+		for (const roster of list) {
+			this.map.set(roster.id, roster);
+		}
+	};
 
 	editMatch = (match: UnresolvedMatch, canEditRosters?: boolean) => {
 		if (!match.id) return;

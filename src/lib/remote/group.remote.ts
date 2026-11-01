@@ -5,7 +5,7 @@ import { toSlug } from '$lib/util';
 import { and, eq } from 'drizzle-orm';
 import z from 'zod';
 import { roleGuard } from './auth.remote';
-import { AuthRole } from '$lib/authRole';
+import { AuthRole } from '$lib/auth-role';
 
 export const createGroup = command(
 	z.object({

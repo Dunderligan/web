@@ -9,20 +9,21 @@
 	import Bracket from '$lib/components/match/Bracket.svelte';
 	import { buildBracketRounds } from '$lib/bracket';
 	import Subheading from '$lib/components/ui/Subheading.svelte';
-	import type { UnresolvedMatch, Roster, ResolvedMatchWithSeeds } from '$lib/types';
+	import type { UnresolvedMatch, Roster, ResolvedMatchWithSeeds, TabItem } from '$lib/types';
 	import SeasonStateChip from '$lib/components/ui/SeasonStateChip.svelte';
 	import MatchList from '$lib/components/match/MatchList.svelte';
 	import { goto } from '$app/navigation';
 	import Meta from '$lib/components/structure/Meta.svelte';
-	import { isModerator } from '$lib/authRole';
-	import Checkbox from '$lib/components/ui/Checkbox.svelte';
+	import { isModerator } from '$lib/auth-role.js';
+	import Chip from '$lib/components/ui/Chip.svelte';
+	import { resolve } from '$app/paths';
+	import Checkbox from '$lib/components/form/Checkbox.svelte';
 
 	let { data } = $props();
 
 	let { season, divisions } = $derived(data);
 
 	let showInitialSeeds = $derived(false);
-
 	const state = $derived(getSeasonState(season));
 
 	let division = $derived.by(() => {
@@ -34,19 +35,19 @@
 	const hasGroupStage = $derived(division.rosters.length > 0);
 	const hasPlayoffs = $derived(division.brackets.length > 0);
 
-	const tabItems = $derived([
+	const tabItems: TabItem<string>[] = $derived([
 		{
 			icon: 'ph:table',
 			label: 'Gruppspel',
 			value: 'group',
-			href: `?div=${division.slug}&visa=gruppspel`,
+			href: `/stallningar/${season.slug}?div=${division.slug}&visa=gruppspel`,
 			disabled: !hasGroupStage
 		},
 		{
 			icon: 'ph:trophy',
 			label: 'Slutspel',
 			value: 'bracket',
-			href: `?div=${division.slug}&visa=slutspel`,
+			href: `/stallningar/${season.slug}?div=${division.slug}&visa=slutspel`,
 			disabled: !hasPlayoffs
 		}
 	]);
@@ -58,9 +59,13 @@
 		}
 
 		if (mode === 'group' && !hasGroupStage) {
-			goto(`?div=${division.slug}&visa=slutspel`, { replaceState: true });
+			goto(resolve(`/stallningar/${season.slug}?div=${division.slug}&visa=slutspel`), {
+				replaceState: true
+			});
 		} else if (mode === 'bracket' && !hasPlayoffs) {
-			goto(`?div=${division.slug}&visa=gruppspel`, { replaceState: true });
+			goto(resolve(`/stallningar/${season.slug}?div=${division.slug}&visa=gruppspel`), {
+				replaceState: true
+			});
 		}
 	});
 
@@ -134,8 +139,12 @@
 	</h1>
 
 	<div
-		class="flex flex-row flex-wrap items-center justify-center gap-3 text-center sm:flex-row sm:items-center sm:justify-start"
+		class="flex flex-row flex-wrap items-center justify-center gap-2 text-center sm:flex-row sm:items-center sm:justify-start"
 	>
+		{#if season.spinoff}
+			<Chip color="accent" icon="ph:star" label="Spinoff" />
+		{/if}
+
 		<SeasonStateChip {state} />
 
 		<div class="font-medium text-gray-600 dark:text-gray-400">
@@ -162,14 +171,14 @@
 </PageHeader>
 
 <PageSection>
-	<div class="mb-4 max-w-2xl space-y-1.5">
+	<div class="mb-4 max-w-2xl space-y-1">
 		{#if divisions.length > 1}
 			<Tabs
 				selected={division.id}
 				items={divisions.map((division) => ({
 					label: division.name,
 					value: division.id,
-					href: `?div=${division.slug}&visa=${mode === 'group' ? 'gruppspel' : 'slutspel'}`
+					href: `/stallningar/${season.slug}?div=${division.slug}&visa=${mode === 'group' ? 'gruppspel' : 'slutspel'}`
 				}))}
 			/>
 		{/if}
@@ -178,7 +187,7 @@
 	</div>
 
 	{#if mode === 'group'}
-		{#each division.tables as table}
+		{#each division.tables as table (table.id)}
 			{@const resolvedStandings = table.standings.map(({ rosterId, score }) => ({
 				roster: resolveRoster(rosterId)!,
 				score
@@ -216,7 +225,7 @@
 			seasonSlug={season.slug}
 			class="mt-12"
 			hideIfEmpty
-			matchArchiveParams="division={division.id}&status=scheduled"
+			matchArchiveParams="divisionId={division.id}&state=scheduled&isBracket=false"
 		/>
 
 		{#if division.latestMatches.length > 0}
@@ -225,7 +234,7 @@
 				title="Senaste matcherna"
 				matches={division.latestMatches.map(resolveMatch)}
 				seasonSlug={season.slug}
-				matchArchiveParams="division={division.id}&status=!scheduled"
+				matchArchiveParams="divisionId={division.id}&state=!scheduled&isBracket=false"
 			/>
 		{/if}
 	{:else}
@@ -234,10 +243,15 @@
 				<Subheading class="mt-6 mb-4">{bracket.name}</Subheading>
 			{/if}
 
-			<Bracket
-				seasonSlug={season.slug}
-				rounds={buildBracketRounds(bracket.matches.map(resolveMatch))}
-			/>
+			<!-- Allow the bracket to expand horizontally to the full width of the screen. -->
+			<div
+				class="relative left-1/2 flex w-screen max-w-[calc(100vw-2rem)] -translate-x-1/2 flex-col overflow-x-auto"
+			>
+				<Bracket
+					seasonSlug={season.slug}
+					rounds={buildBracketRounds(bracket.matches.map(resolveMatch))}
+				/>
+			</div>
 
 			{#if isModerator(data.user?.role)}
 				<Button

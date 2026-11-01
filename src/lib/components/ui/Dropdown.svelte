@@ -1,8 +1,9 @@
 <script lang="ts">
-	import type { ClassValue, DropdownItem } from '$lib/types';
+	import type { DropdownItem } from '$lib/types';
 	import { DropdownMenu } from 'bits-ui';
 	import type { Snippet } from 'svelte';
 	import Icon from './Icon.svelte';
+	import type { ClassValue } from 'svelte/elements';
 
 	type Props = {
 		items: DropdownItem[];
@@ -20,7 +21,7 @@
 		{@render children?.()}
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content class="floating">
-		{#each items as item}
+		{#each items as item (item.label)}
 			{#if !item.hidden}
 				{#if item.type === 'button'}
 					<DropdownMenu.Item class="floating-item">

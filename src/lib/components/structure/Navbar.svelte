@@ -4,13 +4,16 @@
 	import Button from '../ui/Button.svelte';
 	import { page } from '$app/state';
 	import { invalidateAll } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { logout } from '$lib/remote/auth.remote';
 	import { PreferencesState } from '$lib/state/preferences.svelte';
 	import Dropdown from '../ui/Dropdown.svelte';
 	import logo from '$lib/assets/images/logo.webp';
-	import { onMount } from 'svelte';
-	import { isModerator } from '$lib/authRole';
+	import { isModerator } from '$lib/auth-role';
 	import type { DropdownItem } from '$lib/types';
+	import SearchDialog from './SearchDialog.svelte';
+	import Link from '../ui/Link.svelte';
+	import type { ResolvedPathname } from '$app/types';
 
 	type Props = {
 		alwaysWhiteTextAtTop?: boolean;
@@ -18,7 +21,12 @@
 
 	let { alwaysWhiteTextAtTop }: Props = $props();
 
-	const links = [
+	type NavLink = {
+		href: ResolvedPathname;
+		label: string;
+	};
+
+	const links: NavLink[] = [
 		{
 			href: '/stallningar',
 			label: 'Ställningar'
@@ -42,9 +50,14 @@
 	let scrolled = $state(false);
 	let loggingIn = $state(false);
 
+	let searchOpen = $state(false);
+
 	const user = $derived(page.data.user);
 
-	const loginHref = $derived(`/api/login/battlenet?next=${page.url.pathname}`);
+	const loginHref = $derived.by(() => {
+		const next = encodeURIComponent(page.url.pathname);
+		return resolve(`/api/login/battlenet?next=${next}`);
+	});
 
 	const hamburgerLinks = $derived.by(() => {
 		if (user) return links;
@@ -90,8 +103,14 @@
 		},
 		{
 			type: 'button',
+			icon: 'ph:gear',
+			label: 'Inställningar',
+			href: `/jag/installningar`
+		},
+		{
+			type: 'button',
 			icon: 'ph:wrench',
-			label: 'Admin',
+			label: 'Adminpanel',
 			href: '/admin',
 			hidden: !isModerator(user?.role)
 		},
@@ -103,25 +122,27 @@
 		}
 	]);
 
+	const SCROLL_THRESHOLD = 40;
+
 	async function onLogout() {
 		await logout();
 		await invalidateAll();
 	}
 
-	const SCROLL_THRESHOLD = 40;
+	function onDocumentKeydown(evt: KeyboardEvent) {
+		if (evt.key === 'k' && (evt.metaKey || evt.ctrlKey)) {
+			evt.preventDefault();
+			searchOpen = !searchOpen;
+		}
+	}
 
-	onMount(() => {
-		const onScroll = () => {
-			scrolled = window.scrollY > SCROLL_THRESHOLD;
-		};
-
-		window.addEventListener('scroll', onScroll);
-
-		return () => {
-			window.removeEventListener('scroll', onScroll);
-		};
-	});
+	function onWindowScroll() {
+		scrolled = window.scrollY > SCROLL_THRESHOLD;
+	}
 </script>
+
+<svelte:document onkeydown={onDocumentKeydown} />
+<svelte:window onscroll={onWindowScroll} />
 
 <nav
 	class={[
@@ -132,19 +153,21 @@
 >
 	<div class="mx-auto flex h-full max-w-4xl items-center justify-between gap-2">
 		<div class="flex items-center gap-12 font-display">
-			<a href="/" class="mr-8 shrink-0">
+			<a href={resolve('/')} class="mr-8 shrink-0">
 				<img src={logo} alt="Dunderligan logotyp" class="size-12" />
 			</a>
 
 			{#each links as { href, label } (href)}
-				<a class="hidden font-medium hover:underline md:block" {href}>{label}</a>
+				<Link class="hidden md:block" {href}>{label}</Link>
 			{/each}
 		</div>
 
-		<div class="flex items-center gap-4">
-			<Dropdown items={preferencesDropdownItems} class="flex items-center justify-center p-3">
-				<Icon icon="ph:gear" class="text-xl" />
+		<div class="flex items-center gap-2">
+			<Dropdown items={preferencesDropdownItems}>
+				<Button icon="ph:gear" kind="secondary" />
 			</Dropdown>
+
+			<Button icon="ph:magnifying-glass" kind="secondary" onclick={() => (searchOpen = true)} />
 
 			{#if user}
 				<Dropdown items={userDropdownItems} class="p-1.5 font-display font-medium">
@@ -186,3 +209,5 @@
 		</div>
 	</div>
 </nav>
+
+<SearchDialog bind:open={searchOpen} />

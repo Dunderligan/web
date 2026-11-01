@@ -1,25 +1,17 @@
 <script lang="ts">
 	import { Dialog, type DialogRootProps } from 'bits-ui';
-	import { backOut, quadOut, sineOut } from 'svelte/easing';
-	import { fade, fly, scale } from 'svelte/transition';
-	import type { ButtonKind } from '$lib/types';
+	import { fade } from 'svelte/transition';
 	import Button from './Button.svelte';
-	import type { Snippet } from 'svelte';
+	import type { ComponentProps, Snippet } from 'svelte';
 
-	type ButtonType = {
-		label: string;
-		icon?: string;
-		kind?: ButtonKind;
-		disabled?: boolean;
-		loading?: boolean;
-		onclick?: () => void;
-	};
+	type Position = 'center' | 'top';
 
 	type Props = {
 		title: string;
-		buttons?: ButtonType[];
+		buttons?: ComponentProps<typeof Button>[];
 		description?: string | Snippet;
 		wide?: boolean;
+		position?: Position;
 		onsubmit?: () => void;
 	} & DialogRootProps;
 
@@ -30,6 +22,7 @@
 		open = $bindable(false),
 		children,
 		wide = false,
+		position = 'center',
 		onsubmit,
 		...restProps
 	}: Props = $props();
@@ -53,13 +46,14 @@
 				{#if open}
 					<div
 						class={[
-							'fixed top-[50%] left-[50%] z-40 w-full max-w-[calc(100%-1rem)] translate-x-[-50%] translate-y-[-50%] space-y-2 rounded-xl bg-white p-8 text-gray-600 shadow-xl dark:border dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300',
-							wide ? 'sm:max-w-xl' : 'sm:max-w-lg'
+							wide ? 'sm:max-w-xl' : 'sm:max-w-lg',
+							position === 'top' ? 'top-8 sm:top-[12.5%]' : 'top-[50%] translate-y-[-50%]',
+							'fixed left-[50%] z-40 w-full max-w-[calc(100%-1rem)] translate-x-[-50%] space-y-2 overflow-y-auto rounded-xl bg-white p-8 text-gray-600 shadow-xl dark:border dark:border-gray-800 dark:bg-gray-950 dark:text-gray-300'
 						]}
 						transition:fade={{ duration: 25 }}
 						onkeydown={(evt) => {
-							if (evt.key === 'Enter') {
-								onsubmit?.();
+							if (onsubmit && evt.key === 'Enter' && evt.shiftKey) {
+								onsubmit();
 							}
 						}}
 						{...props}
@@ -72,7 +66,7 @@
 						>
 
 						{#if description}
-							<Dialog.Description class="mb-4 text-center font-medium">
+							<Dialog.Description class="mb-4 space-y-4 font-medium">
 								{#if typeof description === 'string'}
 									{description}
 								{:else}
@@ -85,7 +79,7 @@
 
 						{#if buttons}
 							<div class="flex items-center justify-end gap-2 pt-2">
-								{#each buttons as button}
+								{#each buttons as button (button.label)}
 									<Button {...button} />
 								{/each}
 							</div>

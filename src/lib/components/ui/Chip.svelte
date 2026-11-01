@@ -1,0 +1,41 @@
+<script lang="ts">
+	import type { ChipColor } from '$lib/types';
+	import type { ClassValue } from 'svelte/elements';
+	import Icon from './Icon.svelte';
+
+	type Props = {
+		color: ChipColor;
+		label: string;
+		icon?: string;
+		class?: ClassValue;
+		hideLabel?: boolean;
+	};
+
+	let { color, label, icon, class: classProp, hideLabel }: Props = $props();
+
+	const colorClass = $derived(
+		{
+			yellow: 'bg-yellow-200 text-yellow-800 dark:bg-yellow-950/70 dark:text-yellow-100',
+			green: 'bg-green-200 text-green-800 dark:bg-green-950/70 dark:text-green-100',
+			gray: 'bg-gray-200 text-gray-800 dark:bg-gray-800/70 dark:text-gray-300',
+			accent: 'bg-accent-200 text-accent-900 dark:bg-accent-800/70 dark:text-accent-100',
+			red: 'bg-red-200 text-red-800 dark:bg-red-950/70 dark:text-red-100'
+		}[color]
+	);
+</script>
+
+<div
+	class={[
+		classProp,
+		colorClass,
+		'flex items-center justify-center gap-2 rounded-full px-4 py-1.5 text-sm font-semibold'
+	]}
+>
+	{#if icon}
+		<Icon class="text-lg" {icon} />
+	{/if}
+
+	{#if !hideLabel}
+		<span>{label}</span>
+	{/if}
+</div>

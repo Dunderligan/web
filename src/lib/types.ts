@@ -1,14 +1,17 @@
-import type { Snippet } from 'svelte';
+import type z from 'zod';
+import type { matchQueryParamsSchema } from './schemas';
+import type { ResolvedPathname } from '$app/types';
+import type { Select } from 'bits-ui';
+import type { ComponentProps } from 'svelte';
+import Tabs from './components/ui/Tabs.svelte';
 
-/**
- * SvelteKit accepts these types in the class attribute, but does not expose the type definitions.
- * However, it is often useful to have them for typing class props to allow more flexibility over a simple `string`.
- *
- * This code is taken from the clsx library, which SvelteKit uses internally.
- */
-export type ClassDictionary = Record<string, any>;
-export type ClassArray = ClassValue[];
-export type ClassValue = ClassArray | ClassDictionary | string | null | undefined;
+export type ListedSeason = {
+	id: string;
+	name: string;
+	slug: string;
+	startedAt: Date;
+	spinoff: boolean;
+};
 
 /** Full rank representation with rank (bronze, silver, etc.) and tier (1-5 where 1 is the highest). */
 export type FullRank = {
@@ -43,22 +46,26 @@ export enum Rank {
 	SILVER = 'silver',
 	GOLD = 'gold',
 	PLATINUM = 'platinum',
+	EMERALD = 'emerald',
 	DIAMOND = 'diamond',
 	MASTER = 'master',
 	GRANDMASTER = 'grandmaster',
 	CHAMPION = 'champion'
 }
 
-/** Available social platforms for team social media links. */
+/** Available social platforms for team and player social media links. */
 export enum SocialPlatform {
 	YOUTUBE = 'youtube',
 	TWITTER = 'twitter',
-	DISCORD = 'discord'
+	DISCORD = 'discord',
+	TWITCH = 'twitch',
+	TIKTOK = 'tiktok',
+	BLUESKY = 'bluesky'
 }
 
 export enum Role {
-	DAMAGE = 'damage',
 	TANK = 'tank',
+	DAMAGE = 'damage',
 	SUPPORT = 'support',
 	FLEX = 'flex',
 	COACH = 'coach',
@@ -77,39 +84,52 @@ export enum MatchState {
 	CANCELLED = 'cancelled'
 }
 
+export enum SubmissionStatus {
+	PENDING = 'pending',
+	APPROVED = 'approved',
+	REJECTED = 'rejected'
+}
+
 /**
  * Base information used to identify seasons, divisions, groups, etc.
  * Often used in nested types from database queries.
  * See the $lib/server/db/helpers.ts file for the equivalent query definition.
  */
 export type BaseEntity = {
+	id: string;
 	name: string;
 	slug: string;
 };
 
+export type BaseSeason = BaseEntity & {
+	legacyRanks: boolean;
+	startedAt: Date;
+	spinoff: boolean;
+};
+
 // Definitions of nested entities used in various places throughout the app.
-export type NestedSeason<S = BaseEntity> = S;
-export type NestedDivision<S = BaseEntity, D = S> = D & {
+export type NestedSeason<S = BaseSeason> = S;
+export type NestedDivision<S = BaseSeason, D = BaseEntity> = D & {
 	season: S;
 };
-export type NestedGroup<S = BaseEntity, D = S, G = S> = G & {
+export type NestedGroup<S = BaseSeason, D = BaseEntity, G = BaseEntity> = G & {
 	division: NestedDivision<S, D>;
 };
 
-export type FlattenedSeason<S = BaseEntity> = {
+export type FlattenedSeason<S = BaseSeason> = {
 	season: S;
 };
-export type FlattenedDivision<S = BaseEntity, D = S> = {
+export type FlattenedDivision<S = BaseSeason, D = BaseEntity> = {
 	season: S;
 	division: D;
 };
-export type FlattenedGroup<S = BaseEntity, D = S, G = S> = {
+export type FlattenedGroup<S = BaseSeason, D = BaseEntity, G = BaseEntity> = {
 	season: S;
 	division: D;
 	group: G;
 };
 
-export type NestedBracket<S = BaseEntity, D = S> = {
+export type NestedBracket<S = BaseSeason, D = BaseEntity> = {
 	id: string;
 	name: string;
 	division: NestedDivision<S, D>;
@@ -121,8 +141,9 @@ export type Member = {
 	tier: number | null;
 	sr: number | null;
 	isCaptain: boolean;
+	registeredName: string | null;
 	player: {
-		id?: string | null;
+		id: string | null;
 		battletag: string;
 	};
 };
@@ -155,7 +176,7 @@ export type MatchWithoutRosters = {
 	id: string;
 	groupId?: string | null;
 	divisionId?: string | null;
-	createdAt?: Date;
+	bracketId?: string | null;
 	teamAScore: number;
 	teamBScore: number;
 	draws: number;
@@ -166,14 +187,15 @@ export type MatchWithoutRosters = {
 	scheduledAt?: Date | null;
 	vodUrl?: string | null;
 	nextMatchId?: string | null;
+	round?: number | null;
 };
 
 /**
  * A match with roster IDs that have not been resolved to full roster objects.
  */
 export type UnresolvedMatch = MatchWithoutRosters & {
-	rosterAId?: string | null;
-	rosterBId?: string | null;
+	rosterAId: string | null;
+	rosterBId: string | null;
 };
 
 /**
@@ -187,13 +209,13 @@ export type UnresolvedMatchWithOrder = UnresolvedMatch & {
  * A full match with resolved roster objects.
  */
 export type ResolvedMatch = MatchWithoutRosters & {
-	rosterA?: MatchRoster | null;
-	rosterB?: MatchRoster | null;
+	rosterA: MatchRoster | null;
+	rosterB: MatchRoster | null;
 };
 
 export type ResolvedMatchWithSeeds = MatchWithoutRosters & {
-	rosterA?: MatchRosterWithSeed | null;
-	rosterB?: MatchRosterWithSeed | null;
+	rosterA: MatchRosterWithSeed | null;
+	rosterB: MatchRosterWithSeed | null;
 };
 
 /**
@@ -225,24 +247,24 @@ export type ResolvedMatchWithContext<G = NestedGroup, B = NestedBracket> = Resol
  * e.g., calculating seeds and generating brackets.
  */
 export type LogicalMatch = {
-	rosterAId?: string | null;
-	rosterBId?: string | null;
 	teamAScore: number;
 	teamBScore: number;
 	draws: number;
 	state: MatchState;
+	rosterAId: string | null;
+	rosterBId: string | null;
 };
-
-export type ButtonKind = 'primary' | 'secondary' | 'tertiary' | 'transparent' | 'negative';
 
 export type SeasonState = 'upcoming' | 'ongoing' | 'ended';
 
 export type BracketWinner = {
 	roster: MatchRoster;
-	bracket: BaseEntity;
+	bracket: NestedBracket;
 };
 
-export type TournamentState = { season: BaseEntity & { startedAt: Date | null } } & (
+export type TournamentState = {
+	season: BaseEntity & { startedAt: Date | null };
+} & (
 	| { status: 'ongoing' } // active season
 	| { status: 'offseason'; winners: BracketWinner[] } // season has ended before next registration is published
 	| { status: 'upcoming'; registrationOpensAt: Date | null } // before registration opens
@@ -250,24 +272,15 @@ export type TournamentState = { season: BaseEntity & { startedAt: Date | null } 
 	| { status: 'starting'; startsAt: Date | null } // after registration closed but before season start
 );
 
-export type MatchListProps = {
-	seasonSlug?: string;
-	mainRosterId?: string;
-	hideIfEmpty?: boolean;
-	hideDivision?: boolean;
-	title?: string;
-	class?: ClassValue;
-	short?: boolean;
-	matchArchiveParams?: string;
-	matches: ResolvedMatchWithContext[];
-};
+export type SelectItem = Exclude<Select.RootProps['items'], undefined>[number];
+export type TabItem<T> = ComponentProps<typeof Tabs<T>>['items'][number];
 
 export type DropdownItem = {
 	label: string;
 	icon?: string;
 	hidden?: boolean;
 } & (
-	| { type: 'button'; href?: string; onclick?: () => void }
+	| { type: 'button'; href?: ResolvedPathname; onclick?: () => void }
 	| { type: 'checkbox'; checked: boolean; onchange: (value: boolean) => void }
 );
 
@@ -292,3 +305,67 @@ export type GameProfileEntry =
 	| { status: 'error'; error: string };
 
 export type GameProfileEntryWithDate = { date: string } & GameProfileEntry;
+
+export type MatchQueryParams = z.infer<typeof matchQueryParamsSchema>;
+
+export type ChipColor = 'gray' | 'yellow' | 'green' | 'accent';
+
+export type Placement = {
+	best: number;
+	worst: number;
+};
+
+export type SearchItem = {
+	id: string;
+	href: ResolvedPathname;
+	name: string;
+	subtitle?: string | null;
+	image?: string | null;
+	type: 'player' | 'roster' | 'season';
+};
+
+export type PlayerAward = {
+	id: string;
+	division: NestedDivision | null;
+	description: string | null;
+};
+
+export type AwardType = {
+	id: string;
+	name: string;
+	showDivision: boolean;
+	imageUrl: string | null;
+};
+
+export type Hero = {
+	name: string;
+	slug: string;
+	role: Role;
+};
+
+export type TeamSubmission = {
+	data: TeamSubmissionData;
+	info: TeamSubmissionInfo;
+};
+
+export type TeamSubmissionData = {
+	name: string;
+	captainDiscordUsername: string;
+	members: Member[];
+};
+
+export type TeamSubmissionInfo = {
+	id: string;
+	name: string;
+	status: SubmissionStatus;
+	createdAt: Date;
+	reviewedAt: Date | null;
+	editedAt: Date | null;
+};
+
+export type PlayerCheckin = {
+	discordId: string;
+	checkedInAt: Date;
+};
+
+export type MatchLineState = 'hidden' | 'visible' | 'highlighted';

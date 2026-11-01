@@ -1,29 +1,89 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { canEditUserPage } from '$lib/authRole.js';
+	import { page } from '$app/state';
+	import { canEditUserPage } from '$lib/auth-role.js';
+	import AwardCard from '$lib/components/ui/AwardCard.svelte';
+	import Match from '$lib/components/match/Match.svelte';
 	import Field from '$lib/components/structure/Field.svelte';
 	import Meta from '$lib/components/structure/Meta.svelte';
 	import PageHeader from '$lib/components/structure/PageHeader.svelte';
 	import PageSection from '$lib/components/structure/PageSection.svelte';
 	import Table from '$lib/components/table/Table.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
+	import ChipToggle from '$lib/components/form/ChipToggle.svelte';
 	import HeroPortrait from '$lib/components/ui/HeroPortrait.svelte';
 	import Icon from '$lib/components/ui/Icon.svelte';
 	import Notice from '$lib/components/ui/Notice.svelte';
 	import OverwatchProfile from '$lib/components/ui/OverwatchProfile.svelte';
+	import Placement from '$lib/components/ui/Placement.svelte';
 	import Rank from '$lib/components/ui/Rank.svelte';
 	import RosterLogo from '$lib/components/ui/RosterLogo.svelte';
 	import Subheading from '$lib/components/ui/Subheading.svelte';
 	import TeamSocial from '$lib/components/ui/TeamSocial.svelte';
 	import { claimPlayer } from '$lib/remote/player.remote.js';
-	import { flattenGroup, formatDateTime, roleIcon } from '$lib/util';
+	import {
+		Role,
+		type AwardType,
+		type Member,
+		type Placement as PlacementType,
+		type PlayerAward,
+		type ResolvedMatchWithContext,
+		type RosterWithGroup
+	} from '$lib/types.js';
+	import { compareNullable, flattenGroup, formatDateTime, roleIcon } from '$lib/util';
+	import Link from '$lib/components/ui/Link.svelte';
+	import { resolve } from '$app/paths';
+
+	type MembershipRow = Pick<Member, 'role' | 'rank' | 'tier' | 'sr'> & {
+		roster: RosterWithGroup;
+	};
+
+	type AchievementRow = {
+		roster: RosterWithGroup;
+		placement: PlacementType | null;
+		finalMatch: ResolvedMatchWithContext | null;
+	};
 
 	let { data } = $props();
 
 	let claimLoading = $state(false);
 
+	let showMiscRoles = $derived(page.url.searchParams.get('coachroller') === 'true');
+	let showSpinoffSeasons = $derived(page.url.searchParams.get('spinoff') === 'true');
+
+	const memberships = $derived(data.player.memberships);
+
+	const hasMiscRoles = $derived(memberships.some((m) => isMiscRole(m.role)));
+	const hasSpinoffSeasons = $derived(
+		memberships.some((m) => flattenGroup(m.roster.group).season.spinoff)
+	);
+
+	const awardsByType = $derived.by(() => {
+		// eslint-disable-next-line svelte/prefer-svelte-reactivity
+		const map = new Map<string, [AwardType, PlayerAward[]]>();
+
+		for (const award of data.player.awards) {
+			const type = award.awardType;
+			const entry = map.get(type.id);
+
+			if (entry) {
+				entry[1].push(award);
+			} else {
+				map.set(type.id, [type, [award]]);
+			}
+		}
+
+		for (const awardType of map.values()) {
+			awardType[1].sort((a, b) =>
+				compareNullable(b.division?.season.startedAt, a.division?.season.startedAt)
+			);
+		}
+
+		return [...map.values()].sort((a, b) => a[0].name.localeCompare(b[0].name));
+	});
+
 	const sortedMemberships = $derived(
-		data.player.memberships.toSorted((a, b) => {
+		memberships.toSorted((a, b) => {
 			const aSeason = flattenGroup(a.roster.group).season;
 			const bSeason = flattenGroup(b.roster.group).season;
 
@@ -31,13 +91,28 @@
 		})
 	);
 
+	const filteredMemberships = $derived(
+		sortedMemberships.filter(
+			(m) =>
+				(showMiscRoles || !isMiscRole(m.role)) &&
+				(showSpinoffSeasons || !flattenGroup(m.roster.group).season.spinoff)
+		)
+	);
+
 	const lastMembership = $derived(sortedMemberships.at(0));
+
 	const name = $derived(data.player.battletag.split('#')[0]);
+	const hasFullTag = $derived(data.player.battletag.includes('#'));
 
 	const profile = $derived(data.profile.status === 'found' ? data.profile.profile : null);
 
-	const hasFullTag = $derived(data.player.battletag.includes('#'));
-	const isUser = $derived(data.user?.battletag.split('#')[0] == name);
+	const canClaim = $derived(data.user?.battletag.split('#')[0].toLowerCase() == name.toLowerCase());
+
+	const achievements = $derived(
+		filteredMemberships
+			.filter((membership) => membership.placement !== null)
+			.sort((a, b) => a.placement!.best - b.placement!.best)
+	);
 
 	async function onClaimClicked() {
 		claimLoading = true;
@@ -47,10 +122,14 @@
 				battletag: data.player.battletag
 			});
 
-			await goto(`/admin/spelare/${id}`);
+			await goto(resolve(`/admin/spelare/${id}`));
 		} finally {
 			claimLoading = false;
 		}
+	}
+
+	function isMiscRole(role: Role) {
+		return role === Role.COACH || role === Role.MANAGER;
 	}
 </script>
 
@@ -66,18 +145,19 @@
 
 <PageSection class="flex flex-col-reverse gap-10 md:flex-row">
 	<section class="shrink grow">
-		{#if !hasFullTag && isUser}
-			<Notice kind="info" class="mb-6">
+		{#if !hasFullTag && canClaim}
+			<Notice
+				kind="info"
+				class="mb-6"
+				button={{
+					label: 'Redigera',
+					icon: 'ph:pencil-simple',
+					kind: 'transparent',
+					onclick: onClaimClicked,
+					loading: claimLoading
+				}}
+			>
 				Är detta din profil?
-
-				<Button
-					label="Redigera"
-					icon="ph:pencil-simple"
-					kind="transparent"
-					class="ml-auto shrink-0"
-					onclick={onClaimClicked}
-					loading={claimLoading}
-				/>
 			</Notice>
 		{/if}
 
@@ -93,55 +173,135 @@
 
 			<p class="mb-8 text-lg font-semibold">
 				Spelade senast i
-				<a href="/lag/{roster.slug}/{season.slug}" class="text-accent-600 hover:underline">
+				<Link href="/lag/{roster.slug}/{season.slug}" colored>
 					{roster.name}, {season.name}
-				</a>
+				</Link>
 			</p>
 		{/if}
 
-		<Subheading>Rosters</Subheading>
+		{#if data.player.memberships.length === 0}
+			<Notice kind="info">Inga rosters hittades för denna spelare.</Notice>
+		{:else}
+			<Subheading>Rosters</Subheading>
 
-		<Table
-			class="mt-4 grid-cols-[1fr_160px_50px_80px] sm:grid-cols-[1fr_160px_60px_170px]"
-			rows={sortedMemberships}
-			key={(value) => value.roster.id}
-			columns={[
-				{ label: 'Lag' },
-				{ label: 'Säsong', center: true },
-				{ label: 'Roll', center: true },
-				{ label: 'Rank' }
-			]}
-		>
-			{#snippet row({ value: membership })}
-				{@const { roster, role, rank, tier, sr } = membership}
-				{@const { division, season } = flattenGroup(roster.group)}
-				{@const href = `/lag/${roster.slug}/${season.slug}`}
+			<div class="mt-2 flex items-center gap-1">
+				{#if hasSpinoffSeasons}
+					<ChipToggle
+						icon="ph:star"
+						label="Andra turneringar"
+						checked={showSpinoffSeasons}
+						href="?spinoff={!showSpinoffSeasons}&coachroller={showMiscRoles}"
+					/>
+				{/if}
+				{#if hasMiscRoles}
+					<ChipToggle
+						icon="ph:clipboard"
+						label="Coachroller"
+						checked={showMiscRoles}
+						href="?spinoff={showSpinoffSeasons}&coachroller={!showMiscRoles}"
+					/>
+				{/if}
+			</div>
 
-				<div class="gap-2 px-4 py-1.5 font-semibold">
-					<RosterLogo id={roster.id} class="size-12" {href} />
+			<Table
+				class="mt-2"
+				rows={filteredMemberships}
+				key={(value) => value.roster.id}
+				columns={[
+					{ label: 'Lag', snippet: teamCell, class: 'gap-2 text-lg font-semibold' },
+					{ label: 'Säsong', snippet: seasonCell },
+					{ label: 'Roll', snippet: roleCell, center: true, class: 'gap-2 text-xl' },
+					{ label: 'Rank', snippet: rankCell }
+				]}
+			/>
 
-					<a {href} class="hidden hover:underline sm:inline">
-						{roster.name}
-					</a>
-				</div>
+			{#snippet teamCell(membership: MembershipRow)}
+				{@const { roster } = membership}
+				{@const { season } = flattenGroup(roster.group)}
+				{@const href = resolve(`/lag/${roster.slug}/${season.slug}`)}
 
-				<div class="justify-center text-base">
-					{division.name}, {season.name}
-				</div>
+				<RosterLogo id={roster.id} size="md" {href} />
 
-				<div class="justify-center gap-2 text-xl">
-					<Icon icon={roleIcon(role)} title={role} />
-				</div>
-
-				<div class="text-base">
-					{#if rank && tier}
-						<Rank rank={{ rank, tier }} collapse />
-					{:else if sr}
-						<Rank rank={{ sr }} collapse />
-					{/if}
-				</div>
+				<Link {href} class="hidden truncate sm:inline">
+					{roster.name}
+				</Link>
 			{/snippet}
-		</Table>
+
+			{#snippet seasonCell(membership: MembershipRow)}
+				{@const { roster } = membership}
+				{@const { division, season } = flattenGroup(roster.group)}
+
+				<Link href="/stallningar/{season.slug}?div={division.slug}">
+					{division.name},<wbr />
+					{season.name}
+				</Link>
+			{/snippet}
+
+			{#snippet roleCell(membership: MembershipRow)}
+				<Icon icon={roleIcon(membership.role)} title={membership.role} />
+			{/snippet}
+
+			{#snippet rankCell(membership: MembershipRow)}
+				{@const { rank, tier, sr } = membership}
+
+				{#if rank && tier}
+					<Rank rank={{ rank, tier }} collapse />
+				{:else if sr}
+					<Rank rank={{ sr }} collapse />
+				{/if}
+			{/snippet}
+		{/if}
+
+		{#if achievements.length > 0}
+			<Subheading class="mt-10">Bedrifter</Subheading>
+
+			<Table
+				class="mt-4"
+				rows={achievements}
+				key={(value) => value.roster.id}
+				columns={[
+					{ label: 'Placering', snippet: placementCell },
+					{ label: 'Säsong', snippet: achievementSeasonCell, class: 'text-base' },
+					{ label: 'Resultat', snippet: resultCell, center: true }
+				]}
+			/>
+
+			{#snippet placementCell(achievement: AchievementRow)}
+				{#if achievement.placement}
+					<Placement {...achievement.placement} />
+				{/if}
+			{/snippet}
+
+			{#snippet achievementSeasonCell(achievement: AchievementRow)}
+				{@const { roster, finalMatch } = achievement}
+				{@const { season, division } = flattenGroup(roster.group)}
+				{@const bracket = finalMatch?.bracket}
+
+				<Link href="/stallningar/{season.slug}?div={division.slug}&visa=slutspel">
+					{bracket?.name},<wbr />
+					{season.name}
+				</Link>
+			{/snippet}
+
+			{#snippet resultCell(achievement: AchievementRow)}
+				{@const { roster, finalMatch } = achievement}
+				{@const { season } = flattenGroup(roster.group)}
+
+				{#if finalMatch}
+					<Match match={finalMatch} seasonSlug={season.slug} mainRosterId={roster.id} size="xs" />
+				{/if}
+			{/snippet}
+		{/if}
+
+		{#if data.player.awards.length > 0}
+			<Subheading class="mt-10">Utmärkelser</Subheading>
+
+			<div class="mt-4 space-y-4">
+				{#each awardsByType as [type, awards] (type.id)}
+					<AwardCard {type} {awards} />
+				{/each}
+			</div>
+		{/if}
 
 		<p class="mt-6 text-sm font-medium text-gray-500 dark:text-gray-400">
 			{#if data.profile.status === 'found'}
@@ -189,8 +349,8 @@
 		{#if data.player.signatureHeroes.length > 0}
 			<Field title="Signaturhjältar">
 				<div class="mt-1 flex flex-wrap gap-1">
-					{#each data.player.signatureHeroes as { hero }}
-						<HeroPortrait name={hero.name} size="sm" />
+					{#each data.player.signatureHeroes as { hero } (hero.id)}
+						<HeroPortrait {hero} size="sm" />
 					{/each}
 				</div>
 			</Field>
@@ -203,7 +363,7 @@
 					{data.player.battletag}
 				</div>
 
-				{#each data.player.aliases as alias}
+				{#each data.player.aliases as alias (alias.id)}
 					<div>
 						{alias.name}
 					</div>
@@ -212,7 +372,7 @@
 		{/if}
 
 		{#if data.player.socials.length > 0}
-			<Field title="Sociala medier">
+			<Field title="Länkar">
 				<div class="mt-1 flex items-center gap-3">
 					{#each data.player.socials as { platform, url } (platform)}
 						<TeamSocial class="text-3xl" {platform} href={url} />

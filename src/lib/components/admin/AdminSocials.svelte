@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { SaveContext } from '$lib/state/save.svelte';
 	import { SocialPlatform, type Social } from '$lib/types';
-	import { formatSocialPlatform } from '$lib/util';
+	import { formatSocialPlatform, socialMediaPlatformDomains } from '$lib/util';
 	import Button from '../ui/Button.svelte';
 	import Icon from '../ui/Icon.svelte';
-	import InputField from '../ui/InputField.svelte';
-	import Label from '../ui/Label.svelte';
-	import Select from '../ui/Select.svelte';
+	import InputField from '../form/InputField.svelte';
+	import Label from '../form/Label.svelte';
+	import Select from '../form/Select.svelte';
 	import AdminCard from './AdminCard.svelte';
 	import AdminEmptyNotice from './AdminEmptyNotice.svelte';
 	import CreateDialog from './CreateDialog.svelte';
@@ -24,6 +24,18 @@
 	let newPlatform = $state(SocialPlatform.TWITTER);
 	let newUrl = $state('');
 
+	const newPlatformDomains = $derived(socialMediaPlatformDomains(newPlatform));
+	const invalid = $derived.by(() => {
+		if (!newPlatform || !newUrl) return true;
+
+		if (newPlatform === SocialPlatform.DISCORD) {
+			// check for a discord snowflake ID
+			return !/^\d{17,19}$/.test(newUrl);
+		} else {
+			return !newPlatformDomains.some((domain) => newUrl.includes(domain));
+		}
+	});
+
 	const remainingPlatforms = $derived(
 		Object.values(SocialPlatform).filter(
 			(platform) => !socials.some((social) => social.platform === platform)
@@ -31,6 +43,12 @@
 	);
 
 	async function submit() {
+		if (invalid) return;
+
+		if (newPlatform === SocialPlatform.DISCORD) {
+			newUrl = `https://discord.com/users/${newUrl}`;
+		}
+
 		socials.push({
 			platform: newPlatform,
 			url: newUrl
@@ -50,7 +68,7 @@
 	}
 </script>
 
-<AdminCard title="Sociala medier">
+<AdminCard title="Länkar">
 	{#if socials.length === 0}
 		<AdminEmptyNotice oncreateclick={() => (newDialogOpen = true)}>
 			{emptyText}
@@ -64,7 +82,7 @@
 						{formatSocialPlatform(social.platform)}
 					{/snippet}
 
-					<InputField bind:value={social.url} placeholder="URL" />
+					<InputField bind:value={social.url} placeholder="URL" oninput={saveCtx.setDirty} />
 
 					<Button
 						icon="ph:trash"
@@ -87,18 +105,18 @@
 </AdminCard>
 
 <CreateDialog
-	title="Lägg till social media"
+	title="Lägg till länk"
 	bind:open={newDialogOpen}
 	oncreate={submit}
 	onclose={reset}
-	disabled={!newUrl || !newPlatform}
+	disabled={invalid}
 >
 	<Label label="Platform">
 		<Select
 			type="single"
 			class="grow"
 			bind:value={newPlatform}
-			itemIcon={(platform) => `ph:${platform}-logo-fill`}
+			itemIcon={(platform) => `ph:${platform}-logo`}
 			items={remainingPlatforms.map((platform) => ({
 				label: formatSocialPlatform(platform),
 				value: platform
@@ -106,7 +124,23 @@
 		/>
 	</Label>
 
-	<Label label="URL">
-		<InputField bind:value={newUrl} placeholder="https://{newPlatform}.com/..." />
-	</Label>
+	{#if newPlatform === SocialPlatform.DISCORD}
+		<Label label="Användar-ID">
+			<InputField bind:value={newUrl} placeholder="T.ex. 308117922260451340..." />
+		</Label>
+
+		<a
+			href="https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID#h_01HRSTXPS5H5D7JBY2QKKPVKNA"
+			target="_blank"
+			rel="noopener noreferrer"
+			class="my-1 font-medium text-accent-600 hover:underline"
+		>
+			<Icon icon="ph:arrow-square-out" />
+			Hur hittar jag mitt användar-ID?
+		</a>
+	{:else}
+		<Label label="URL">
+			<InputField bind:value={newUrl} placeholder="https://{newPlatformDomains[0]}/..." />
+		</Label>
+	{/if}
 </CreateDialog>

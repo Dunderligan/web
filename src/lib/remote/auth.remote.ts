@@ -1,6 +1,6 @@
 import { command, getRequestEvent, query } from '$app/server';
-import { AuthRole, canPromoteTo, checkPermission } from '$lib/authRole';
-import apiToken from '$lib/server/apiToken';
+import { AuthRole, canPromoteTo, checkPermission } from '$lib/auth-role';
+import apiToken from '$lib/server/api-token';
 import { db, schema } from '$lib/server/db';
 import session from '$lib/server/session';
 import { error } from '@sveltejs/kit';
@@ -15,6 +15,8 @@ export const roleGuard = query(z.enum(AuthRole), (required) => {
 	if (!checkPermission(role, required)) {
 		error(403, 'Insufficient permissions');
 	}
+
+	return locals.user!;
 });
 
 export const logout = command(async () => {
@@ -96,13 +98,11 @@ export const createApiKey = command(
 		name: z.string().nonempty()
 	}),
 	async ({ name }) => {
-		// only admins can create API keys for now
-		await roleGuard(AuthRole.ADMIN);
-
 		const { locals } = getRequestEvent();
 
 		const { key, token } = await apiToken.createKey(name, locals.user!.id);
 
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { tokenHash, ...sanitizedKey } = key;
 
 		return { key: sanitizedKey, token };
@@ -114,9 +114,6 @@ export const deleteApiKey = command(
 		id: z.uuid()
 	}),
 	async ({ id }) => {
-		// only admins can delete API keys for now
-		await roleGuard(AuthRole.ADMIN);
-
 		const { locals } = getRequestEvent();
 
 		await apiToken.deleteKey(id, locals.user!.id);

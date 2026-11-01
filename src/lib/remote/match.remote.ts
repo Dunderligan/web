@@ -1,47 +1,69 @@
 import { getRequestEvent, query } from '$app/server';
+import { matchQueryParamsSchema } from '$lib/schemas';
 import { db } from '$lib/server/db';
-import {
-	entityQuery,
-	fullMatchColumns,
-	groupMatchOrder,
-	hiddenMatchFilter,
-	matchRosterQuery,
-	nestedBracketQuery,
-	nestedGroupQuery
-} from '$lib/server/db/helpers';
+import { fullMatchQueryWithContext, isNull } from '$lib/server/db/helpers';
+import { hiddenMatchFilter } from '$lib/server/db/hidden';
 import { MatchState } from '$lib/types';
-import z from 'zod';
-
-const PAGE_SIZE = 10;
 
 export const queryMatches = query(
-	z.object({
-		rosterId: z.uuid().optional(),
-		divisionId: z.uuid().optional(),
-		page: z.number().min(0).default(0),
-		state: z.array(z.enum(MatchState)).optional()
-	}),
-	async ({ rosterId, divisionId, state, page }) => {
+	matchQueryParamsSchema,
+	async ({
+		rosterId,
+		divisionId,
+		seasonId,
+		state,
+		isBracket,
+		hasDate,
+		includeEmpty,
+		page,
+		pageSize
+	}) => {
 		const { locals } = getRequestEvent();
 
 		const results = await db.query.match.findMany({
 			// retrieve one extra to determine if there should be a next page
-			limit: PAGE_SIZE + 1,
-			offset: page * PAGE_SIZE,
-			orderBy: groupMatchOrder,
+			limit: pageSize ? pageSize + 1 : undefined,
+			offset: pageSize ? page * pageSize : undefined,
+			...fullMatchQueryWithContext,
 			where: {
 				AND: [
+					// if includeEmpty is false, filter out matches that have no rosters assigned to them
+					...(!includeEmpty
+						? [
+								{
+									OR: [
+										{
+											rosterAId: {
+												isNotNull: true as const
+											}
+										},
+										{
+											rosterBId: {
+												isNotNull: true as const
+											}
+										}
+									]
+								}
+							]
+						: []),
+					// check match date filters
+					// the date we want to check depends on the match state, so we need to check all three cases
 					{
-						// don't include matches without any roster assigned
 						OR: [
 							{
-								rosterAId: {
-									isNotNull: true
-								}
+								// if scheduled, check if it has a scheduled date
+								state: MatchState.SCHEDULED,
+								scheduledAt: isNull(hasDate === true ? false : undefined)
 							},
 							{
-								rosterBId: {
-									isNotNull: true
+								// if played, check if it has a played date
+								state: MatchState.PLAYED,
+								playedAt: isNull(hasDate === true ? false : undefined)
+							},
+							{
+								// otherwise, ignore the date and always include the match (however it can still be filtered out by the state filter below)
+								state: {
+									notIn: [MatchState.SCHEDULED, MatchState.PLAYED]
 								}
 							}
 						]
@@ -60,30 +82,41 @@ export const queryMatches = query(
 					},
 					hiddenMatchFilter(locals.user)
 				],
-				// if divisionId is not provided, don't include the "group" filter property at all,
-				// otherwise bracket matches would always be excluded (since they don't have a group)
-				...(divisionId && {
-					group: {
-						divisionId
+				// check target division and season
+				// matches either have a group or a bracket, so we need to check both
+				OR: [
+					{
+						group: {
+							division: {
+								id: divisionId,
+								season: {
+									id: seasonId
+								}
+							}
+						}
+					},
+					{
+						bracket: {
+							division: {
+								id: divisionId,
+								season: {
+									id: seasonId
+								}
+							}
+						}
 					}
-				}),
+				],
+				bracketId: isNull(!isBracket),
 				...(state && {
 					state: {
 						in: state
 					}
 				})
-			},
-			columns: fullMatchColumns,
-			with: {
-				rosterA: matchRosterQuery,
-				rosterB: matchRosterQuery,
-				group: nestedGroupQuery,
-				bracket: nestedBracketQuery
 			}
 		});
 
-		const hasNextPage = results.length > PAGE_SIZE;
-		const shownResults = results.slice(0, PAGE_SIZE);
+		const hasNextPage = pageSize ? results.length > pageSize : false;
+		const shownResults = results.slice(0, pageSize);
 
 		return { results: shownResults, hasNextPage };
 	}

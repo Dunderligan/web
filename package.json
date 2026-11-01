@@ -1,7 +1,7 @@
 {
 	"name": "dunderligan",
-	"private": true,
 	"version": "0.0.1",
+	"private": true,
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
@@ -10,31 +10,14 @@
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"format": "prettier --write .",
-		"lint": "prettier --check .",
+		"format": "oxfmt",
+		"lint": "oxfmt --check && eslint .",
+		"test": "vitest run",
+		"test:watch": "vitest",
 		"db:push": "drizzle-kit push",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
 		"db:studio": "drizzle-kit studio"
-	},
-	"devDependencies": {
-		"@oslojs/crypto": "^1.0.1",
-		"@oslojs/encoding": "^1.1.0",
-		"@prgm/sveltekit-progress-bar": "^3.0.2",
-		"@sveltejs/adapter-auto": "^6.1.1",
-		"@sveltejs/kit": "^2.49.5",
-		"@sveltejs/vite-plugin-svelte": "^6.2.4",
-		"@tailwindcss/vite": "^4.1.18",
-		"@types/node": "^22.19.7",
-		"drizzle-kit": "1.0.0-beta.2-ec83fa8",
-		"prettier": "^3.6.2",
-		"prettier-plugin-svelte": "^3.4.0",
-		"prettier-plugin-tailwindcss": "^0.6.14",
-		"svelte": "^5.46.4",
-		"svelte-check": "^4.3.5",
-		"tailwindcss": "^4.1.18",
-		"typescript": "^5.9.3",
-		"vite": "^7.3.1"
 	},
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.970.0",
@@ -44,6 +27,7 @@
 		"drizzle-orm": "1.0.0-beta.2-ec83fa8",
 		"drizzle-seed": "1.0.0-beta.2-ec83fa8",
 		"iconify-icon": "^3.0.2",
+		"idb-keyval": "^6.3.0",
 		"postgres": "^3.4.8",
 		"redis": "^5.11.0",
 		"sharp": "^0.34.5",
@@ -51,14 +35,29 @@
 		"uuid": "^13.0.0",
 		"zod": "^4.3.5"
 	},
-	"pnpm": {
-		"onlyBuiltDependencies": [
-			"esbuild",
-			"sharp"
-		],
-		"overrides": {
-			"vite": "npm:rolldown-vite@^7.3.1"
-		}
+	"devDependencies": {
+		"@eslint/js": "^10.0.1",
+		"@oslojs/crypto": "^1.0.1",
+		"@oslojs/encoding": "^1.1.0",
+		"@prgm/sveltekit-progress-bar": "^3.0.2",
+		"@sveltejs/adapter-auto": "^6.1.1",
+		"@sveltejs/kit": "^2.68.0",
+		"@sveltejs/vite-plugin-svelte": "^7.1.2",
+		"@tailwindcss/vite": "^4.1.18",
+		"@types/node": "^22.19.7",
+		"drizzle-kit": "1.0.0-beta.2-ec83fa8",
+		"eslint": "^10.4.1",
+		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-svelte": "^3.19.0",
+		"globals": "^17.6.0",
+		"oxfmt": "^0.73.0",
+		"svelte": "^5.46.4",
+		"svelte-check": "^4.3.5",
+		"tailwindcss": "^4.1.18",
+		"typescript": "^5.9.3",
+		"typescript-eslint": "^8.60.1",
+		"vite": "^8.0.0",
+		"vitest": "^5.0.4"
 	},
 	"packageManager": "pnpm@10.25.0+sha512.5e82639027af37cf832061bcc6d639c219634488e0f2baebe785028a793de7b525ffcd3f7ff574f5e9860654e098fe852ba8ac5dd5cefe1767d23a020a92f501"
 }
