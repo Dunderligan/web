@@ -13,7 +13,7 @@
 	import { RosterContext } from '$lib/state/rosters.svelte';
 	import { SaveContext } from '$lib/state/save.svelte';
 	import { BracketFormat, type UnresolvedMatchWithOrder } from '$lib/types';
-	import { buildBracketStructure, propagateBracket, type BracketStructure } from '$lib/bracket.js';
+	import { buildBracketStructure, propagateBracket, type BracketStructure } from '$lib/bracket';
 	import { deleteBracket, updateBracket } from '$lib/remote/bracket.remote';
 	import { isAdmin } from '$lib/auth-role.js';
 

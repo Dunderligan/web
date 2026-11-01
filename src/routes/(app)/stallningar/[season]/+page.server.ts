@@ -23,7 +23,8 @@ export const load = async ({ params, locals }) => {
 					brackets: {
 						columns: {
 							id: true,
-							name: true
+							name: true,
+							format: true
 						},
 						orderBy: (t) => divisionOrder(t.name),
 						with: {

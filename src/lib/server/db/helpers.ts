@@ -101,7 +101,9 @@ export const fullMatchColumns = {
 	scheduledAt: true,
 	round: true,
 	bracketSide: true,
-	loserNextMatchId: true
+	nextSlot: true,
+	loserNextMatchId: true,
+	loserSlot: true
 } as const;
 
 export const fullMatchQuery = {

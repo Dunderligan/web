@@ -6,8 +6,9 @@ import {
 	BracketSide,
 	MatchSlot,
 	MatchState
-} from './types';
-import { flipSlot, isMatchBetween, matchRosterId, matchWinner } from './match';
+} from '../types';
+import { flipSlot, isMatchBetween, matchRosterId, matchWinner } from '../match';
+import { getBracketEdges, type BracketEdgeOutcome, type BracketLinks } from './graph';
 
 export type BracketOptions = {
 	avoidPreviousMatchups: boolean;
@@ -345,50 +346,8 @@ function getMatchOrder(rounds: number): number[] {
 	}
 }
 
-export type BracketEdgeOutcome = 'winner' | 'loser';
-
-export type BracketEdge = {
-	fromId: string;
-	toId: string;
-	outcome: BracketEdgeOutcome;
-	slot: MatchSlot;
-};
-
 /** A match that can be part of the bracket graph. */
-export type BracketMatch = LogicalMatch & {
-	id: string;
-	nextMatchId?: string | null;
-	nextSlot?: MatchSlot | null;
-	loserNextMatchId?: string | null;
-	loserSlot?: MatchSlot | null;
-};
-
-/** Returns all graph edges between the given matches. */
-export function getBracketEdges(matches: BracketMatch[]): BracketEdge[] {
-	const edges: BracketEdge[] = [];
-
-	for (const match of matches) {
-		if (match.nextMatchId && match.nextSlot) {
-			edges.push({
-				fromId: match.id,
-				toId: match.nextMatchId,
-				outcome: 'winner',
-				slot: match.nextSlot
-			});
-		}
-
-		if (match.loserNextMatchId && match.loserSlot) {
-			edges.push({
-				fromId: match.id,
-				toId: match.loserNextMatchId,
-				outcome: 'loser',
-				slot: match.loserSlot
-			});
-		}
-	}
-
-	return edges;
-}
+export type BracketMatch = LogicalMatch & BracketLinks;
 
 type ResolvedInput = { kind: 'team'; rosterId: string } | { kind: 'empty' } | { kind: 'pending' };
 

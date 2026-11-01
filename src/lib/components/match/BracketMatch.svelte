@@ -1,10 +1,5 @@
 <script lang="ts">
-	import {
-		MatchState,
-		MatchSlot,
-		type MatchLineState,
-		type ResolvedMatchWithSeeds
-	} from '$lib/types';
+	import { MatchState, MatchSlot, type ResolvedMatchWithSeeds } from '$lib/types';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import {
 		matchRoster,
@@ -17,39 +12,23 @@
 	import MatchInfoRow from './MatchInfoRow.svelte';
 	import Note from '../ui/Note.svelte';
 	import { resolve } from '$app/paths';
-
-	type State = 'visible' | 'invisible' | 'hidden';
-
-	type Lines = {
-		forward?: MatchLineState;
-		backward?: MatchLineState;
-		up?: MatchLineState;
-		down?: MatchLineState;
-	};
+	import { INFO_ROW_HEIGHT, LINE_WIDTH, MATCH_SLOT_HEIGHT } from '$lib/bracket/layout';
 
 	type Props = {
 		match: ResolvedMatchWithSeeds;
 		seasonSlug: string;
-		state: State;
-		lines: Lines;
 		hoveredRosterId?: string | null;
 	};
 
-	let { match, seasonSlug, state, lines, hoveredRosterId = $bindable(null) }: Props = $props();
+	let { match, seasonSlug, hoveredRosterId = $bindable(null) }: Props = $props();
 
 	const logicalMatch = $derived(resolvedMatchToLogical(match));
 	const showScore = $derived(hasMatchScore(logicalMatch));
 </script>
 
 <div
-	class={[
-		lines.forward !== 'hidden' && 'has-next-round',
-		lines.backward !== 'hidden' && 'has-prev-round',
-		lines.forward === 'highlighted' && 'highlighted-line-forward',
-		lines.backward === 'highlighted' && 'highlighted-line-backward',
-		state === 'hidden' ? 'hidden' : state === 'invisible' ? 'invisible' : 'visible',
-		'match relative h-(--match-height) w-(--match-width) rounded-lg'
-	]}
+	class="match relative h-(--match-height) w-(--match-width) rounded-lg"
+	style="--info-row-height: {INFO_ROW_HEIGHT}px; --line-width: {LINE_WIDTH}px; --slot-height: {MATCH_SLOT_HEIGHT}px;"
 >
 	<MatchInfoRow
 		class="h-(--info-row-height) rounded-t-lg bg-gray-100 px-2 dark:bg-gray-900"
@@ -61,16 +40,6 @@
 	<div class="h-(--line-width) w-full bg-gray-200 dark:bg-gray-800"></div>
 
 	{@render teamSlot(MatchSlot.B, 'rounded-b-lg')}
-
-	{#if lines.up !== 'hidden'}
-		<div class={['vertical-line line-up', lines.up === 'highlighted' && 'highlighted-line']}></div>
-	{/if}
-
-	{#if lines.down !== 'hidden'}
-		<div
-			class={['vertical-line line-down', lines.down === 'highlighted' && 'highlighted-line']}
-		></div>
-	{/if}
 </div>
 
 {#snippet teamSlot(slot: MatchSlot, classProp?: string)}
@@ -140,94 +109,3 @@
 		{/if}
 	</div>
 {/snippet}
-
-<style>
-	.match {
-		/** Full size of a match card. */
-		--match-height: 115px;
-		--match-width: 250px;
-
-		/** Width of the lines connecting matches. */
-		--line-width: 2px;
-		/** Height of the MatchInfoRow component. */
-		--info-row-height: 20px;
-
-		/** Height of each team on the match card. */
-		--slot-height: calc((var(--match-height) - var(--info-row-height) - var(--line-width)) / 2);
-
-		/** Number of matches in the previous round. */
-		--prev-match-count: calc(pow(2, var(--bracket-round-index) - 1));
-		/** Total height of the previous round, including spacing. */
-		--prev-matches-height: calc(
-			(var(--prev-match-count) * (var(--match-height) + var(--bracket-match-spacing)))
-		);
-	}
-
-	/* Horizontal lines connecting rounds. */
-	.has-prev-round::before,
-	.has-next-round::after {
-		content: '';
-		position: absolute;
-		height: var(--line-width);
-		z-index: -1;
-	}
-
-	/* Horizontal forwards line to next round. */
-	.has-next-round::after {
-		right: calc(var(--bracket-round-spacing) / -2);
-		left: 100%;
-	}
-
-	/* Horizontal backwards line to previous round. */
-	.has-prev-round::before {
-		right: 100%;
-		left: calc(var(--bracket-round-spacing) / -2);
-	}
-
-	/* Vertical lines connecting to the above and below previous matches. */
-	.vertical-line {
-		position: absolute;
-		left: calc(var(--bracket-round-spacing) / -2);
-		width: var(--line-width);
-		height: calc(var(--prev-matches-height) / 2 + var(--line-width));
-		z-index: -1;
-	}
-
-	/* Lines that end at the center y of a match. */
-	.line-down,
-	.has-next-round::after,
-	.has-prev-round::before {
-		top: calc(var(--info-row-height) + var(--slot-height));
-	}
-
-	/* Lines that start in the center y of a match. */
-	.line-up {
-		bottom: var(--slot-height);
-	}
-
-	.vertical-line,
-	.has-prev-round::before,
-	.has-next-round::after {
-		background-color: var(--color-gray-100);
-	}
-
-	.highlighted-line,
-	.highlighted-line-forward::after,
-	.highlighted-line-backward::before {
-		background-color: var(--color-gray-300);
-	}
-
-	:global(.dark) {
-		& .vertical-line,
-		& .has-prev-round::before,
-		& .has-next-round::after {
-			background-color: var(--color-gray-900);
-		}
-
-		& .highlighted-line,
-		& .highlighted-line-forward::after,
-		& .highlighted-line-backward::before {
-			background-color: var(--color-gray-800);
-		}
-	}
-</style>

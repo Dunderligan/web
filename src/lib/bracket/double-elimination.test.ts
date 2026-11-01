@@ -1,10 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import {
-	buildBracketStructure,
-	createBracket,
-	getBracketEdges,
-	propagateBracket
-} from '$lib/bracket';
+import { buildBracketStructure, createBracket, propagateBracket } from '$lib/bracket';
+import { getBracketEdges } from '$lib/bracket/graph';
 import { BracketFormat, MatchSlot, MatchState, type UnresolvedMatchWithOrder } from '$lib/types';
 
 function makeRosters(count: number) {
