@@ -24,6 +24,7 @@ type CompetitionRecord = {
 	lostAgainst: Set<string>;
 	drawedAgainst: Set<string>;
 	opponentMapRecordSum: number;
+	resigned: boolean;
 };
 
 type TableScoreWithRecord = {
@@ -195,8 +196,8 @@ function compareSeedSecondIteration(
 		return firstIter;
 	}
 
-	const [highestBeatenA, lowestLostToA] = highestAndLowestLostTo(a, sortedScores);
-	const [highestBeatenB, lowestLostToB] = highestAndLowestLostTo(b, sortedScores);
+	const [highestBeatenA, lowestLostToA] = highestAndLowestLostTo(a[1], sortedScores);
+	const [highestBeatenB, lowestLostToB] = highestAndLowestLostTo(b[1], sortedScores);
 
 	return (
 		compareNullable(highestBeatenB, highestBeatenA) || compareNullable(lowestLostToA, lowestLostToB)

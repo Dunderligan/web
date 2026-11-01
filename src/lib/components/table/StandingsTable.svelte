@@ -28,6 +28,17 @@
 	columns={[
 		{ label: '#', snippet: seedCell, center: true, class: 'font-semibold text-lg', width: '3rem' },
 		{ label: 'Lag', snippet: teamCell, class: 'font-semibold text-lg' },
+		...(showInitialSeeds
+			? [
+					{
+						label: 'Startseed',
+						content: ({ roster }: TableEntry) => (roster.initialSeed ? roster.initialSeed : '-'),
+						center: true,
+						tooltip: 'Lagets startseed i säsongen',
+						width: '5rem'
+					}
+				]
+			: []),
 		{
 			label: 'Poäng',
 			content: ({ score }) => score.mapWins,
