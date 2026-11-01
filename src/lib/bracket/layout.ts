@@ -320,9 +320,16 @@ function positionLane(
 	// Highest round first: the first round is at the left of the lane.
 	for (const [round, matchesInRound] of [...rounds.entries()].sort((a, b) => b[0] - a[0])) {
 		if (round === options.firstRound) {
+			// When every other match in the first round is hidden (usually byes), compress the
+			// round to be half-height (the same as the second round).
+			const isCollapsed = matchesInRound.every((node, index) => index % 2 === 1 || !node.visible);
+
 			matchesInRound.forEach((node, index) => {
-				node.y = rowY(index);
+				const adjustedIndex = isCollapsed ? Math.floor(index / 2) : index;
+
+				node.y = rowY(adjustedIndex);
 			});
+
 			continue;
 		}
 
