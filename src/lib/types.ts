@@ -94,6 +94,19 @@ export enum MatchSlot {
 	B = 'b'
 }
 
+/** The format of a bracket. */
+export enum BracketFormat {
+	SINGLE_ELIMINATION = 'single_elimination',
+	DOUBLE_ELIMINATION = 'double_elimination'
+}
+
+/** Which lane of a bracket a match belongs to. */
+export enum BracketSide {
+	UPPER = 'upper',
+	LOWER = 'lower',
+	GRAND_FINAL = 'grand_final'
+}
+
 export enum SubmissionStatus {
 	PENDING = 'pending',
 	APPROVED = 'approved',
@@ -142,6 +155,7 @@ export type FlattenedGroup<S = BaseSeason, D = BaseEntity, G = BaseEntity> = {
 export type NestedBracket<S = BaseSeason, D = BaseEntity> = {
 	id: string;
 	name: string;
+	format: BracketFormat;
 	division: NestedDivision<S, D>;
 };
 
@@ -197,6 +211,14 @@ export type MatchWithoutRosters = {
 	vodUrl?: string | null;
 	nextMatchId?: string | null;
 	round?: number | null;
+	/** Which lane of the bracket the match belongs to. Only set for bracket matches. */
+	bracketSide?: BracketSide | null;
+	/** Where the loser advances in a double-elimination bracket, if anywhere. */
+	loserNextMatchId?: string | null;
+	/** Which slot of the next match the winner advances into. */
+	nextSlot?: MatchSlot | null;
+	/** Which slot of the loser's next match the loser advances into. */
+	loserSlot?: MatchSlot | null;
 };
 
 /**

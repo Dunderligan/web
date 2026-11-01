@@ -122,6 +122,10 @@ export function createGroupMatch(groupId: string): Required<UnresolvedMatch> {
 		scheduledAt: null,
 		vodUrl: null,
 		nextMatchId: null,
+		nextSlot: null,
+		loserNextMatchId: null,
+		loserSlot: null,
+		bracketSide: null,
 		round: null
 	};
 }

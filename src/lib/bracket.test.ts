@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { buildBracketRounds, createBracket, minBracketRounds } from '$lib/bracket';
-import { MatchState, type LogicalMatch } from '$lib/types';
+import {
+	buildBracketStructure,
+	createBracket,
+	minBracketRounds,
+	type BracketOptions
+} from '$lib/bracket';
+import { BracketFormat, BracketSide, MatchSlot, MatchState, type LogicalMatch } from '$lib/types';
 import { logicalMatch } from '$lib/test/fixtures';
 
 function makeRosters(count: number) {
@@ -10,6 +15,21 @@ function makeRosters(count: number) {
 /** Maps each first-round roster A id to its opponent B id. */
 function pairs(matches: { rosterAId: string | null; rosterBId: string | null }[]) {
 	return new Map(matches.map((match) => [match.rosterAId, match.rosterBId]));
+}
+
+function create(
+	rosterCount: number,
+	previous: LogicalMatch[] = [],
+	roundCount = 3,
+	options: Partial<BracketOptions> = {}
+) {
+	const matches = createBracket(makeRosters(rosterCount), previous, roundCount, {
+		avoidPreviousMatchups: false,
+		format: BracketFormat.SINGLE_ELIMINATION,
+		...options
+	});
+
+	return { matches, structure: buildBracketStructure(matches) };
 }
 
 describe('minBracketRounds', () => {
@@ -32,27 +52,47 @@ describe('minBracketRounds', () => {
 
 describe('createBracket', () => {
 	it('builds the expected round structure', () => {
-		const rounds = createBracket(makeRosters(8), [], 3, { avoidPreviousMatchups: false });
+		const { structure } = create(8);
 
-		expect(rounds.map((round) => round.length)).toEqual([4, 2, 1]);
-		expect(rounds.map((round) => round[0].round)).toEqual([2, 1, 0]);
+		expect(structure.upper.map((round) => round.length)).toEqual([4, 2, 1]);
+		expect(structure.upper.map((round) => round[0].round)).toEqual([2, 1, 0]);
+		expect(structure.lower).toEqual([]);
+		expect(structure.grandFinal).toEqual([]);
 
-		const [first, second, final] = rounds;
-		expect(final[0].nextMatchId).toBeUndefined();
+		const [first, second, final] = structure.upper;
+		expect(final[0].nextMatchId).toBeNull();
 
 		// both semifinals feed the final
 		expect(second.every((match) => match.nextMatchId === final[0].id)).toBe(true);
+		expect(second[0].nextSlot).toBe(MatchSlot.A);
+		expect(second[1].nextSlot).toBe(MatchSlot.B);
 
 		// quarter-finals 0/1 feed semifinal 0, quarter-finals 2/3 feed semifinal 1
 		expect(first[0].nextMatchId).toBe(second[0].id);
 		expect(first[1].nextMatchId).toBe(second[0].id);
 		expect(first[2].nextMatchId).toBe(second[1].id);
 		expect(first[3].nextMatchId).toBe(second[1].id);
+		expect(first.map((match) => match.nextSlot)).toEqual([
+			MatchSlot.A,
+			MatchSlot.B,
+			MatchSlot.A,
+			MatchSlot.B
+		]);
+	});
+
+	it('marks every match as an upper-bracket match with explicit slots', () => {
+		const { matches } = create(8);
+
+		expect(matches.every((match) => match.bracketSide === BracketSide.UPPER)).toBe(true);
+		expect(matches.every((match) => match.loserNextMatchId === null)).toBe(true);
+		expect(matches.every((match) => match.nextMatchId === null || match.nextSlot !== null)).toBe(
+			true
+		);
 	});
 
 	it('seeds the first round highest against lowest', () => {
-		const rounds = createBracket(makeRosters(8), [], 3, { avoidPreviousMatchups: false });
-		const first = pairs(rounds[0]);
+		const { structure } = create(8);
+		const first = pairs(structure.upper[0]);
 
 		expect(first.get('r1')).toBe('r8');
 		expect(first.get('r2')).toBe('r7');
@@ -61,15 +101,15 @@ describe('createBracket', () => {
 	});
 
 	it('gives byes to the top seeds and advances them automatically', () => {
-		const rounds = createBracket(makeRosters(6), [], 3, { avoidPreviousMatchups: false });
-		const [first, second] = rounds;
+		const { structure } = create(6);
+		const [first, second] = structure.upper;
 
 		const byes = first.filter((match) => match.state === MatchState.WALKOVER);
 		expect(byes).toHaveLength(2);
 		expect(byes.map((match) => match.rosterAId).sort()).toEqual(['r1', 'r2']);
 		expect(byes.every((match) => match.teamAScore === 3 && match.rosterBId === null)).toBe(true);
 
-		// the byes are pre-advanced into the semifinals
+		// the byes are advanced into the semifinals
 		expect(second[0].rosterAId).toBe('r1');
 		expect(second[1].rosterAId).toBe('r2');
 
@@ -81,9 +121,9 @@ describe('createBracket', () => {
 	});
 
 	it('drops the lowest seeds when there are more rosters than slots', () => {
-		const rounds = createBracket(makeRosters(10), [], 3, { avoidPreviousMatchups: false });
+		const { structure } = create(10);
 		const used = new Set(
-			rounds[0]
+			structure.upper[0]
 				.flatMap((match) => [match.rosterAId, match.rosterBId])
 				.filter((id): id is string => id !== null)
 		);
@@ -96,11 +136,11 @@ describe('createBracket', () => {
 	it('avoids pairing rosters that already met', () => {
 		const previous: LogicalMatch[] = [logicalMatch({ rosterAId: 'r1', rosterBId: 'r8' })];
 
-		const avoided = createBracket(makeRosters(8), previous, 3, { avoidPreviousMatchups: true });
-		expect(pairs(avoided[0]).get('r1')).toBe('r7');
+		const avoided = create(8, previous, 3, { avoidPreviousMatchups: true });
+		expect(pairs(avoided.structure.upper[0]).get('r1')).toBe('r7');
 
-		const allowed = createBracket(makeRosters(8), previous, 3, { avoidPreviousMatchups: false });
-		expect(pairs(allowed[0]).get('r1')).toBe('r8');
+		const allowed = create(8, previous, 3, { avoidPreviousMatchups: false });
+		expect(pairs(allowed.structure.upper[0]).get('r1')).toBe('r8');
 	});
 
 	it('falls back to the next available roster when every opponent has been faced', () => {
@@ -110,24 +150,38 @@ describe('createBracket', () => {
 			logicalMatch({ rosterAId: 'r1', rosterBId: 'r4' })
 		];
 
-		const rounds = createBracket(makeRosters(4), previous, 2, { avoidPreviousMatchups: true });
-		const first = pairs(rounds[0]);
+		const { structure } = create(4, previous, 2, { avoidPreviousMatchups: true });
+		const first = pairs(structure.upper[0]);
 
 		expect(first.get('r1')).toBe('r2');
 		expect(first.get('r3')).toBe('r4');
 	});
+
+	it('rejects double elimination with a single round', () => {
+		expect(() =>
+			createBracket(makeRosters(2), [], 1, {
+				avoidPreviousMatchups: false,
+				format: BracketFormat.DOUBLE_ELIMINATION
+			})
+		).toThrow();
+	});
 });
 
-describe('buildBracketRounds', () => {
-	it('reconstructs the rounds from a flat match list', () => {
-		const rounds = createBracket(makeRosters(8), [], 3, { avoidPreviousMatchups: false });
-		const rebuilt = buildBracketRounds(rounds.flat());
+describe('buildBracketStructure', () => {
+	it('groups a flat list of matches into rounds', () => {
+		const { matches, structure } = create(8);
+		const rebuilt = buildBracketStructure(matches);
 
-		expect(rebuilt.map((round) => round.length)).toEqual([4, 2, 1]);
-		expect(rebuilt[2][0].id).toBe(rounds[2][0].id);
+		expect(rebuilt.upper.map((round) => round.length)).toEqual([4, 2, 1]);
+		expect(rebuilt.upper[2][0].id).toBe(structure.upper[2][0].id);
+		expect(rebuilt.upper[2][0].id).toBe(matches.find((match) => match.round === 0)?.id);
 	});
 
-	it('returns an empty list when there is no final match', () => {
-		expect(buildBracketRounds([])).toEqual([]);
+	it('returns empty brackets when there are no matches', () => {
+		expect(buildBracketStructure([])).toEqual({
+			upper: [],
+			lower: [],
+			grandFinal: []
+		});
 	});
 });

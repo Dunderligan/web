@@ -7,7 +7,7 @@ import { roleGuard } from './auth.remote';
 import { createBracket } from '$lib/bracket';
 import { error } from '@sveltejs/kit';
 import { sortBySeed, type SeedOptions } from '$lib/standings';
-import { MatchState, type UnresolvedMatchWithOrder } from '$lib/types';
+import { MatchState, BracketFormat, type UnresolvedMatchWithOrder } from '$lib/types';
 import { fullMatchColumns, rosterQuery } from '$lib/server/db/helpers';
 import { AuthRole } from '$lib/auth-role';
 
@@ -15,11 +15,12 @@ export const generateBracket = command(
 	z.object({
 		name: z.string(),
 		divisionId: z.uuid(),
-		roundCount: z.number(),
+		roundCount: z.int().min(2).max(5),
 		avoidPreviousMatchups: z.boolean(),
-		flipStandings: z.boolean()
+		flipStandings: z.boolean(),
+		format: z.enum(BracketFormat).default(BracketFormat.SINGLE_ELIMINATION)
 	}),
-	async ({ name, divisionId, roundCount, avoidPreviousMatchups, flipStandings }) => {
+	async ({ name, divisionId, roundCount, avoidPreviousMatchups, flipStandings, format }) => {
 		await roleGuard(AuthRole.ADMIN);
 
 		const { groups, groupwiseStandings, season } = await fetchDivision(divisionId);
@@ -71,11 +72,12 @@ export const generateBracket = command(
 			sortBySeed(qualifying, groupMatches, seedOptions);
 		}
 
-		const rounds = createBracket(qualifying, groupMatches, roundCount, {
-			avoidPreviousMatchups
+		const bracketMatches = createBracket(qualifying, groupMatches, roundCount, {
+			avoidPreviousMatchups,
+			format
 		});
 
-		const bracket = await insertBracket(name, divisionId, rounds);
+		const bracket = await insertBracket(name, divisionId, format, bracketMatches);
 
 		return { bracket };
 	}
@@ -84,25 +86,25 @@ export const generateBracket = command(
 async function insertBracket(
 	name: string,
 	divisionId: string,
-	rounds: UnresolvedMatchWithOrder[][]
+	format: BracketFormat,
+	matches: UnresolvedMatchWithOrder[]
 ) {
 	return await db.transaction(async (tx) => {
 		const [bracket] = await tx
 			.insert(schema.bracket)
 			.values({
 				name,
-				divisionId
+				divisionId,
+				format
 			})
 			.returning({
 				id: schema.bracket.id
 			});
 
-		const matchInserts = rounds.flatMap((round) =>
-			round.map((match) => ({
-				bracketId: bracket.id,
-				...match
-			}))
-		);
+		const matchInserts = matches.map((match) => ({
+			bracketId: bracket.id,
+			...match
+		}));
 
 		if (matchInserts.length > 0) {
 			await tx.insert(schema.match).values(matchInserts);

@@ -17,10 +17,14 @@ export class RosterContext {
 	canEditRosters: boolean;
 	map: SvelteMap<string, Roster>;
 
-	constructor() {
+	#onMatchEdit?: (match: UnresolvedMatch) => void;
+
+	constructor({ onMatchEdit }: { onMatchEdit?: (match: UnresolvedMatch) => void } = {}) {
 		this.editingMatch = $state(null);
 		this.canEditRosters = true;
 		this.map = $state(new SvelteMap());
+
+		this.#onMatchEdit = onMatchEdit;
 	}
 
 	setRosters = (list: Roster[]) => {
@@ -38,6 +42,7 @@ export class RosterContext {
 	};
 
 	stopMatchEdit = () => {
+		this.#onMatchEdit?.(this.editingMatch!);
 		this.editingMatch = null;
 	};
 

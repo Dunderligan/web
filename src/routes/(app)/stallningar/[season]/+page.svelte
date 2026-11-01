@@ -7,7 +7,7 @@
 	import Tabs from '$lib/components/ui/Tabs.svelte';
 	import { getSeasonState, formatDate } from '$lib/util';
 	import Bracket from '$lib/components/match/Bracket.svelte';
-	import { buildBracketRounds } from '$lib/bracket';
+	import { buildBracketStructure } from '$lib/bracket';
 	import Subheading from '$lib/components/ui/Subheading.svelte';
 	import type { UnresolvedMatch, Roster, ResolvedMatchWithSeeds, TabItem } from '$lib/types';
 	import SeasonStateChip from '$lib/components/ui/SeasonStateChip.svelte';
@@ -244,7 +244,7 @@
 			>
 				<Bracket
 					seasonSlug={season.slug}
-					rounds={buildBracketRounds(bracket.matches.map(resolveMatch))}
+					rounds={buildBracketStructure(bracket.matches.map(resolveMatch)).upper}
 				/>
 			</div>
 

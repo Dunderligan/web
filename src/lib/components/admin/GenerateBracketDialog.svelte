@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { generateBracket } from '$lib/remote/bracket.remote';
+	import { BracketFormat } from '$lib/types';
 	import Checkbox from '../form/Checkbox.svelte';
 	import InputField from '../form/InputField.svelte';
 	import Label from '../form/Label.svelte';
@@ -21,6 +22,7 @@
 	let roundCount = $state(2);
 	let avoidPreviousMatchups = $state(true);
 	let flipStandings = $state(false);
+	let doubleElimination = $state(false);
 
 	async function submit() {
 		const { bracket } = await generateBracket({
@@ -28,7 +30,10 @@
 			divisionId,
 			roundCount: roundCount,
 			avoidPreviousMatchups,
-			flipStandings
+			flipStandings,
+			format: doubleElimination
+				? BracketFormat.DOUBLE_ELIMINATION
+				: BracketFormat.SINGLE_ELIMINATION
 		});
 
 		open = false;
@@ -52,10 +57,14 @@
 			type="single"
 			bind:value={() => roundCount.toString(), (v: string) => (roundCount = parseInt(v))}
 			items={[2, 3, 4, 5].map((n) => ({
-				label: `${n} rundor (${Math.pow(2, n)} platser)`,
+				label: `${n} rundor (${Math.pow(2, n)} platser${doubleElimination ? ' i övre bracket' : ''})`,
 				value: n.toString()
 			}))}
 		/>
+	</Label>
+
+	<Label label="Nedre bracket (dubbel eliminering)">
+		<Checkbox bind:checked={doubleElimination} />
 	</Label>
 
 	<Label label="Undvik tidigare möten">
