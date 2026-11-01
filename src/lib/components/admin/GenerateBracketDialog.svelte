@@ -63,7 +63,7 @@
 		/>
 	</Label>
 
-	<Label label="Nedre bracket (dubbel eliminering)">
+	<Label label="Dubbel eliminering">
 		<Checkbox bind:checked={doubleElimination} />
 	</Label>
 

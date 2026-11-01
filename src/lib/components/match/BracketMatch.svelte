@@ -12,7 +12,6 @@
 	import MatchInfoRow from './MatchInfoRow.svelte';
 	import Note from '../ui/Note.svelte';
 	import { resolve } from '$app/paths';
-	import { INFO_ROW_HEIGHT, LINE_WIDTH, MATCH_SLOT_HEIGHT } from '$lib/bracket/layout';
 
 	type Props = {
 		match: ResolvedMatchWithSeeds;
@@ -26,10 +25,7 @@
 	const showScore = $derived(hasMatchScore(logicalMatch));
 </script>
 
-<div
-	class="match relative h-(--match-height) w-(--match-width) rounded-lg"
-	style="--info-row-height: {INFO_ROW_HEIGHT}px; --line-width: {LINE_WIDTH}px; --slot-height: {MATCH_SLOT_HEIGHT}px;"
->
+<div class="match relative h-(--match-height) w-(--match-width) rounded-lg">
 	<MatchInfoRow
 		class="h-(--info-row-height) rounded-t-lg bg-gray-100 px-2 dark:bg-gray-900"
 		{match}

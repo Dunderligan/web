@@ -117,7 +117,7 @@
 {#if bracket.format === BracketFormat.DOUBLE_ELIMINATION}
 	{@render bracketSection('Övre bracket', structure.upper, true)}
 	{@render bracketSection('Nedre bracket', structure.lower, false)}
-	{@render bracketSection('Grand final', [structure.grandFinal], false)}
+	{@render bracketSection('Final', [structure.grandFinal], false)}
 {:else}
 	{@render bracketSection('Bracket', structure.upper, true)}
 {/if}

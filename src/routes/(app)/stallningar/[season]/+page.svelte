@@ -16,6 +16,7 @@
 	import { isModerator } from '$lib/auth-role.js';
 	import Chip from '$lib/components/ui/Chip.svelte';
 	import { resolve } from '$app/paths';
+	import BracketContainer from '$lib/components/match/BracketContainer.svelte';
 
 	let { data } = $props();
 
@@ -233,21 +234,17 @@
 		{/if}
 	{:else}
 		{#each division.brackets as bracket (bracket.id)}
-			{#if division.brackets.length > 1 || bracket.name !== division.name}
-				<Subheading class="mt-6 mb-4">{bracket.name}</Subheading>
-			{/if}
+			<BracketContainer class="mx-4">
+				{#if division.brackets.length > 1 || bracket.name !== division.name}
+					<Subheading class="mb-4">{bracket.name}</Subheading>
+				{/if}
 
-			<!-- Allow the bracket to expand horizontally to the full width of the screen. -->
-			<div
-				class="relative left-1/2 flex w-screen max-w-[calc(100vw-2rem)] -translate-x-1/2 flex-col overflow-x-auto"
-			>
 				<Bracket
-					class="mx-auto"
 					seasonSlug={season.slug}
 					matches={bracket.matches.map(resolveMatch)}
 					format={bracket.format}
 				/>
-			</div>
+			</BracketContainer>
 
 			{#if isModerator(data.user?.role)}
 				<Button

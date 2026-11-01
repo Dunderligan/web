@@ -1,8 +1,11 @@
 <script lang="ts">
 	import {
-		MATCH_HEIGHT,
-		MATCH_WIDTH,
 		buildBracketLayout,
+		INFO_ROW_HEIGHT,
+		LINE_WIDTH,
+		MATCH_HEIGHT,
+		MATCH_SLOT_HEIGHT,
+		MATCH_WIDTH,
 		orderEdgesForPainting
 	} from '$lib/bracket/layout';
 	import type { BracketFormat, ResolvedMatchWithSeeds } from '$lib/types';
@@ -27,7 +30,7 @@
 
 <div
 	class={[classProp, 'bracket relative']}
-	style="width: {layout.width}px; height: {layout.height}px; --match-width: {MATCH_WIDTH}px; --match-height: {MATCH_HEIGHT}px"
+	style="width: {layout.width}px; height: {layout.height}px; --info-row-height: {INFO_ROW_HEIGHT}px; --line-width: {LINE_WIDTH}px; --slot-height: {MATCH_SLOT_HEIGHT}px; --match-width: {MATCH_WIDTH}px; --match-height: {MATCH_HEIGHT}px"
 >
 	<svg
 		class="pointer-events-none absolute inset-0"
