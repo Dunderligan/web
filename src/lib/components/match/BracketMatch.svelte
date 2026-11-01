@@ -57,7 +57,7 @@
 		onmouseleave={() => (hoveredRosterId = null)}
 		class={[
 			classProp,
-			winner ? 'bg-gray-200 dark:bg-gray-900' : 'bg-gray-100 dark:bg-gray-900/80',
+			winner ? 'bg-gray-200/80 dark:bg-gray-900' : 'bg-gray-100 dark:bg-gray-900/80',
 			hoveredRosterId === roster?.id && 'bg-gray-300! dark:bg-gray-800!',
 			'relative flex h-(--slot-height) cursor-default items-center pr-4 text-base font-medium text-gray-600 dark:text-gray-400'
 		]}
