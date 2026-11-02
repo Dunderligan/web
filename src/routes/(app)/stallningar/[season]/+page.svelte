@@ -234,7 +234,7 @@
 		{/if}
 	{:else}
 		{#each division.brackets as bracket (bracket.id)}
-			<BracketContainer class="mx-4">
+			<BracketContainer class="mx-4 mt-4">
 				{#if division.brackets.length > 1 || bracket.name !== division.name}
 					<Subheading class="mb-4">{bracket.name}</Subheading>
 				{/if}
@@ -244,17 +244,17 @@
 					matches={bracket.matches.map(resolveMatch)}
 					format={bracket.format}
 				/>
-			</BracketContainer>
 
-			{#if isModerator(data.user?.role)}
-				<Button
-					label="Redigera"
-					icon="ph:pencil-simple"
-					kind="secondary"
-					class="mt-4 max-w-max"
-					href="/admin/bracket/{bracket.id}"
-				/>
-			{/if}
+				{#if isModerator(data.user?.role)}
+					<Button
+						label="Redigera"
+						icon="ph:pencil-simple"
+						kind="secondary"
+						class="mt-4 max-w-max"
+						href="/admin/bracket/{bracket.id}"
+					/>
+				{/if}
+			</BracketContainer>
 		{/each}
 	{/if}
 </PageSection>
