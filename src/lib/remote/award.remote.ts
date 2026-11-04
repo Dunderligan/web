@@ -32,14 +32,15 @@ export const updateAwardType = command(
 	z.object({
 		id: z.uuid(),
 		name: z.string().min(1),
-		showDivision: z.boolean()
+		showDivision: z.boolean(),
+		description: z.string().nullable()
 	}),
-	async ({ id, name, showDivision }) => {
+	async ({ id, name, showDivision, description }) => {
 		await roleGuard(AuthRole.ADMIN);
 
 		const [awardType] = await db
 			.update(schema.awardType)
-			.set({ name, showDivision })
+			.set({ name, showDivision, description })
 			.where(eq(schema.awardType.id, id))
 			.returning();
 
@@ -88,7 +89,7 @@ export const createPlayerAward = command(
 		awardTypeId: z.uuid(),
 		playerId: z.uuid(),
 		divisionId: z.uuid().nullable(),
-		description: z.string().nullable()
+		motivation: z.string().nullable()
 	}),
 	async (data) => {
 		await roleGuard(AuthRole.MODERATOR);
@@ -100,12 +101,12 @@ export const createPlayerAward = command(
 export const updatePlayerAward = command(
 	z.object({
 		id: z.uuid(),
-		description: z.string().nullable()
+		motivation: z.string().nullable()
 	}),
-	async ({ id, description }) => {
+	async ({ id, motivation }) => {
 		await roleGuard(AuthRole.MODERATOR);
 
-		await db.update(schema.playerAward).set({ description }).where(eq(schema.playerAward.id, id));
+		await db.update(schema.playerAward).set({ motivation }).where(eq(schema.playerAward.id, id));
 	}
 );
 

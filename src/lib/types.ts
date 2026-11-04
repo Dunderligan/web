@@ -358,7 +358,7 @@ export type SearchItem = {
 export type PlayerAward = {
 	id: string;
 	division: NestedDivision | null;
-	description: string | null;
+	motivation: string | null;
 };
 
 export type AwardType = {
@@ -366,6 +366,7 @@ export type AwardType = {
 	name: string;
 	showDivision: boolean;
 	imageUrl: string | null;
+	description: string | null;
 };
 
 export type Hero = {

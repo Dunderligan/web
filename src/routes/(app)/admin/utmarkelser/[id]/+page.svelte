@@ -56,13 +56,14 @@
 
 	let editAward = $state<PlayerAward | null>(null);
 	let editOpen = $state(false);
-	let newDescription = $state('');
+	let newMotivation = $state('');
 
 	async function save() {
 		const result = await updateAwardType({
 			id: awardType.id,
 			name: awardType.name,
-			showDivision: awardType.showDivision
+			showDivision: awardType.showDivision,
+			description: awardType.description
 		});
 
 		awardType = { ...awardType, ...result.awardType };
@@ -87,7 +88,7 @@
 			awardTypeId: awardType.id,
 			playerId: selectedPlayerId,
 			divisionId: selectedDivisionId ?? null,
-			description: newDescription.length > 0 ? newDescription : null
+			motivation: newMotivation.length > 0 ? newMotivation : null
 		});
 
 		await invalidate('admin:awards');
@@ -101,7 +102,7 @@
 
 		await updatePlayerAward({
 			id: editAward.id,
-			description: newDescription.length > 0 ? newDescription : null
+			motivation: newMotivation.length > 0 ? newMotivation : null
 		});
 
 		await invalidate('admin:awards');
@@ -147,8 +148,12 @@
 			key={(award) => award.id}
 			columns={[
 				{ label: 'Battletag', snippet: battletagCell, class: 'font-semibold text-lg' },
-				{ label: awardType.showDivision ? 'Säsong' : '', snippet: seasonCell, center: true },
-				{ label: awardType.showDivision ? 'Division' : '', snippet: divisionCell, center: true },
+				...(awardType.showDivision
+					? [
+							{ label: 'Säsong', snippet: seasonCell, center: true },
+							{ label: 'Division', snippet: divisionCell, center: true }
+						]
+					: []),
 				{ snippet: actionsCell, center: true, class: 'gap-1' }
 			]}
 		/>
@@ -173,7 +178,7 @@
 				kind="tertiary"
 				onclick={() => {
 					editAward = award;
-					newDescription = award.description ?? '';
+					newMotivation = award.motivation ?? '';
 					editOpen = true;
 				}}
 			/>
@@ -206,6 +211,15 @@
 
 					awardType = { ...awardType, ...result.awardType };
 				}}
+			/>
+		</Label>
+
+		<Label label="Beskrivning (valfri)" column>
+			<TextArea
+				bind:value={awardType.description}
+				class="w-full"
+				placeholder="En beskrivning av utmärkelsen..."
+				oninput={saveCtx.setDirty}
 			/>
 		</Label>
 	</div>
@@ -262,7 +276,7 @@
 
 	<Label label="Motivering (valfri)" column>
 		<TextArea
-			bind:value={newDescription}
+			bind:value={newMotivation}
 			class="w-full"
 			placeholder="En motivering av varför denna spelare har tilldelats utmärkelsen..."
 		/>
@@ -278,7 +292,7 @@
 	{#if editAward}
 		<Label label="Motivering (valfri)" column>
 			<TextArea
-				bind:value={newDescription}
+				bind:value={newMotivation}
 				class="w-full"
 				placeholder="En motivering av varför denna spelare har tilldelats utmärkelsen..."
 			/>

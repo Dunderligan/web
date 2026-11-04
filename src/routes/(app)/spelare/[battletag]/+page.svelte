@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { canEditUserPage } from '$lib/auth-role.js';
-	import AwardCard from '$lib/components/ui/AwardCard.svelte';
+	import Award from '$lib/components/ui/Award.svelte';
 	import Match from '$lib/components/match/Match.svelte';
 	import Field from '$lib/components/structure/Field.svelte';
 	import Meta from '$lib/components/structure/Meta.svelte';
@@ -22,15 +22,18 @@
 	import TeamSocial from '$lib/components/ui/TeamSocial.svelte';
 	import { claimPlayer } from '$lib/remote/player.remote.js';
 	import {
-		Role,
-		type AwardType,
 		type Member,
 		type Placement as PlacementType,
-		type PlayerAward,
 		type ResolvedMatchWithContext,
 		type RosterWithGroup
 	} from '$lib/types.js';
-	import { compareNullable, flattenGroup, formatDateTime, roleIcon } from '$lib/util';
+	import {
+		compareNullable,
+		flattenGroup,
+		formatDateTime,
+		isOrganizationRole,
+		roleIcon
+	} from '$lib/util';
 	import Link from '$lib/components/ui/Link.svelte';
 	import { resolve } from '$app/paths';
 
@@ -48,39 +51,29 @@
 
 	let claimLoading = $state(false);
 
-	let showMiscRoles = $derived(page.url.searchParams.get('coachroller') === 'true');
+	let showOrganisationRoles = $derived(page.url.searchParams.get('coachroller') === 'true');
 	let showSpinoffSeasons = $derived(page.url.searchParams.get('spinoff') === 'true');
 
 	const memberships = $derived(data.player.memberships);
 
-	const hasMiscRoles = $derived(memberships.some((m) => isMiscRole(m.role)));
+	const hasOrganizationRoles = $derived(memberships.some((m) => isOrganizationRole(m.role)));
 	const hasSpinoffSeasons = $derived(
 		memberships.some((m) => flattenGroup(m.roster.group).season.spinoff)
 	);
 
-	const awardsByType = $derived.by(() => {
-		// eslint-disable-next-line svelte/prefer-svelte-reactivity
-		const map = new Map<string, [AwardType, PlayerAward[]]>();
+	const sortedAwards = $derived(
+		data.player.awards.toSorted((a, b) => {
+			const aSeason = a.division?.season ?? null;
+			const bSeason = b.division?.season ?? null;
 
-		for (const award of data.player.awards) {
-			const type = award.awardType;
-			const entry = map.get(type.id);
-
-			if (entry) {
-				entry[1].push(award);
-			} else {
-				map.set(type.id, [type, [award]]);
-			}
-		}
-
-		for (const awardType of map.values()) {
-			awardType[1].sort((a, b) =>
-				compareNullable(b.division?.season.startedAt, a.division?.season.startedAt)
+			// show awards without a season first, then sort by season start date
+			return compareNullable(
+				aSeason,
+				bSeason,
+				(a, b) => a.startedAt.getTime() - b.startedAt.getTime()
 			);
-		}
-
-		return [...map.values()].sort((a, b) => a[0].name.localeCompare(b[0].name));
-	});
+		})
+	);
 
 	const sortedMemberships = $derived(
 		memberships.toSorted((a, b) => {
@@ -94,7 +87,7 @@
 	const filteredMemberships = $derived(
 		sortedMemberships.filter(
 			(m) =>
-				(showMiscRoles || !isMiscRole(m.role)) &&
+				(showOrganisationRoles || !isOrganizationRole(m.role)) &&
 				(showSpinoffSeasons || !flattenGroup(m.roster.group).season.spinoff)
 		)
 	);
@@ -126,10 +119,6 @@
 		} finally {
 			claimLoading = false;
 		}
-	}
-
-	function isMiscRole(role: Role) {
-		return role === Role.COACH || role === Role.MANAGER;
 	}
 </script>
 
@@ -190,15 +179,15 @@
 						icon="ph:star"
 						label="Andra turneringar"
 						checked={showSpinoffSeasons}
-						href="?spinoff={!showSpinoffSeasons}&coachroller={showMiscRoles}"
+						href="?spinoff={!showSpinoffSeasons}&coachroller={showOrganisationRoles}"
 					/>
 				{/if}
-				{#if hasMiscRoles}
+				{#if hasOrganizationRoles}
 					<ChipToggle
 						icon="ph:clipboard"
 						label="Coachroller"
-						checked={showMiscRoles}
-						href="?spinoff={showSpinoffSeasons}&coachroller={!showMiscRoles}"
+						checked={showOrganisationRoles}
+						href="?spinoff={showSpinoffSeasons}&coachroller={!showOrganisationRoles}"
 					/>
 				{/if}
 			</div>
@@ -296,9 +285,9 @@
 		{#if data.player.awards.length > 0}
 			<Subheading class="mt-10">Utmärkelser</Subheading>
 
-			<div class="mt-4 space-y-4">
-				{#each awardsByType as [type, awards] (type.id)}
-					<AwardCard {type} {awards} />
+			<div class="mt-2 grid grid-cols-[repeat(auto-fill,minmax(4.5rem,1fr))] gap-2">
+				{#each sortedAwards as { awardType, ...award } (award.id)}
+					<Award type={awardType} {award} />
 				{/each}
 			</div>
 		{/if}
