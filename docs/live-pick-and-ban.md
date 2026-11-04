@@ -45,3 +45,26 @@ After all the decisions for a map are completed, the site displays the final cho
 Matches are either first to N map wins or a fixed number N of maps; in a first-to-N match a draw does not count toward either team's wins, while in a fixed-N match a draw counts as one of the N maps.
 
 Rooms are automatically created ahead of time by the site for applicable planned matches, no later than 15 minutes before the scheduled start. Admins are also able to manually create a room for a chosen match. If the room goes inactive for some time after the match is set to start (the teams chose to do it manually, or the match was cancelled), it is silently deleted. Finished and cancelled rooms are retained in an archive list indefinitely, like other match results.
+
+## Configuration defaults
+
+Configuration is stored in scoped rows that vary by division, bracket and match round. Every rule knob can be left unset (`null`) on a row, in which case it inherits the value from the next-less-specific applicable scope. When no scope sets a value, these defaults apply:
+
+| Setting                         | Default                                                         |
+| ------------------------------- | --------------------------------------------------------------- |
+| Pick and ban enabled            | No                                                              |
+| Win condition                   | First to 3 map wins                                             |
+| Map pool                        | All active maps                                                 |
+| Gamemode pool                   | All active gamemodes                                            |
+| Restrict used gamemodes         | No                                                              |
+| Fixed gamemode on the first map | No                                                              |
+| Fixed map pool per game         | No                                                              |
+| Decision timeout                | 60 seconds                                                      |
+| Concede the first ban           | Allowed                                                         |
+| Timeout fallbacks               | Do not concede; randomly pick/ban among eligible options        |
+| Room creation lead time         | 15 minutes before scheduled start                               |
+| Inactive room deletion          | 60 minutes after scheduled start if readiness was not completed |
+
+Scope precedence, most specific first: division + bracket + round, bracket + round, division + bracket, bracket, division + round, division, round, global. A scope applies only when each of its non-null dimensions matches the match. Group matches currently have no round number, so round-scoped rows only apply to bracket matches.
+
+Any settings that cannot form a coherent configuration (for example an empty restricted map or gamemode pool, a fixed map pool with duplicate maps, or a fixed first gamemode without a gamemode) are rejected when the effective configuration is resolved.

@@ -15,7 +15,8 @@ const relations = defineRelations(schema, (r) => ({
 		}),
 		groups: r.many.group(),
 		brackets: r.many.bracket(),
-		awards: r.many.playerAward()
+		awards: r.many.playerAward(),
+		pickBanConfigs: r.many.pickBanConfig()
 	},
 	group: {
 		division: r.one.division({
@@ -94,7 +95,8 @@ const relations = defineRelations(schema, (r) => ({
 		rosterA: r.one.roster({ from: r.match.rosterAId, to: r.roster.id, alias: 'rosterA' }),
 		rosterB: r.one.roster({ from: r.match.rosterBId, to: r.roster.id, alias: 'rosterB' }),
 		bracket: r.one.bracket({ from: r.match.bracketId, to: r.bracket.id }),
-		group: r.one.group({ from: r.match.groupId, to: r.group.id })
+		group: r.one.group({ from: r.match.groupId, to: r.group.id }),
+		rooms: r.many.room()
 	},
 	bracket: {
 		division: r.one.division({
@@ -102,7 +104,8 @@ const relations = defineRelations(schema, (r) => ({
 			to: r.division.id,
 			optional: false
 		}),
-		matches: r.many.match()
+		matches: r.many.match(),
+		pickBanConfigs: r.many.pickBanConfig()
 	},
 	registration: {
 		season: r.one.season({
@@ -143,7 +146,12 @@ const relations = defineRelations(schema, (r) => ({
 	user: {
 		apiKeys: r.many.apiKey(),
 		submittedTeams: r.many.teamSubmission({ alias: 'submittedBy' }),
-		reviewedTeams: r.many.teamSubmission({ alias: 'reviewedBy' })
+		reviewedTeams: r.many.teamSubmission({ alias: 'reviewedBy' }),
+		createdRooms: r.many.room({ alias: 'createdBy' }),
+		cancelledRooms: r.many.room({ alias: 'cancelledBy' }),
+		roomDecisions: r.many.roomDecision(),
+		roomReports: r.many.roomReport(),
+		resolvedRoomMaps: r.many.roomMap({ alias: 'resolvedBy' })
 	},
 	hero: {
 		signaturePlayers: r.many.signatureHero()
@@ -177,6 +185,90 @@ const relations = defineRelations(schema, (r) => ({
 			from: r.playerCheckin.seasonId,
 			to: r.season.id,
 			optional: false
+		})
+	},
+	gamemode: {
+		maps: r.many.map()
+	},
+	map: {
+		gamemode: r.one.gamemode({
+			from: r.map.gamemodeId,
+			to: r.gamemode.id,
+			optional: false
+		}),
+		roomMaps: r.many.roomMap()
+	},
+	pickBanConfig: {
+		division: r.one.division({
+			from: r.pickBanConfig.divisionId,
+			to: r.division.id
+		}),
+		bracket: r.one.bracket({
+			from: r.pickBanConfig.bracketId,
+			to: r.bracket.id
+		}),
+		firstGamemode: r.one.gamemode({
+			from: r.pickBanConfig.firstGamemodeId,
+			to: r.gamemode.id,
+			alias: 'firstGamemode'
+		})
+	},
+	room: {
+		match: r.one.match({
+			from: r.room.matchId,
+			to: r.match.id,
+			optional: false
+		}),
+		maps: r.many.roomMap(),
+		createdBy: r.one.user({
+			from: r.room.createdById,
+			to: r.user.id,
+			alias: 'createdBy'
+		}),
+		cancelledBy: r.one.user({
+			from: r.room.cancelledById,
+			to: r.user.id,
+			alias: 'cancelledBy'
+		})
+	},
+	roomMap: {
+		room: r.one.room({
+			from: r.roomMap.roomId,
+			to: r.room.id,
+			optional: false
+		}),
+		map: r.one.map({
+			from: r.roomMap.mapId,
+			to: r.map.id
+		}),
+		decisions: r.many.roomDecision(),
+		reports: r.many.roomReport(),
+		resolvedBy: r.one.user({
+			from: r.roomMap.resolvedById,
+			to: r.user.id,
+			alias: 'resolvedBy'
+		})
+	},
+	roomDecision: {
+		roomMap: r.one.roomMap({
+			from: r.roomDecision.roomMapId,
+			to: r.roomMap.id,
+			optional: false
+		}),
+		actor: r.one.user({
+			from: r.roomDecision.actorUserId,
+			to: r.user.id
+		})
+	},
+	roomReport: {
+		roomMap: r.one.roomMap({
+			from: r.roomReport.roomMapId,
+			to: r.roomMap.id,
+			optional: false
+		}),
+		submittedBy: r.one.user({
+			from: r.roomReport.submittedById,
+			to: r.user.id
 		})
 	}
 }));

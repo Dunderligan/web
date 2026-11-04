@@ -1,0 +1,1 @@
+ALTER TABLE "roster" ADD COLUMN "initial_seed" integer;
