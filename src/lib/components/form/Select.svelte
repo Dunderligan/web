@@ -6,7 +6,6 @@
 	import type { Snippet } from 'svelte';
 	import type { ClassValue } from 'svelte/elements';
 	import type { SelectItem } from '$lib/types';
-	import { fade } from 'svelte/transition';
 
 	type LabelDecoration =
 		| {

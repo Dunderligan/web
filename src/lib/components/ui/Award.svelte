@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { AwardType, PlayerAward } from '$lib/types';
-	import fallbackIcon from '$lib/assets/images/medal.png';
+	import fallbackIcon from '$lib/assets/images/placeholder.avif';
 	import { flattenDivision } from '$lib/util';
 	import Link from './Link.svelte';
 	import Popover from './Popover.svelte';
@@ -78,10 +78,10 @@
 
 	@keyframes spin {
 		0% {
-			transform: rotateY(0deg);
+			transform: rotateY(180deg);
 		}
 		100% {
-			transform: rotateY(180deg);
+			transform: rotateY(0deg);
 		}
 	}
 </style>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ResolvedPathname } from '$app/types';
-	import placeholderTeam from '$lib/assets/images/placeholder-team.avif';
+	import fallbackLogo from '$lib/assets/images/placeholder.avif';
 	import cdn from '$lib/cdn';
 	import type { ClassValue } from 'svelte/elements';
 
@@ -28,7 +28,7 @@
 	let src = $derived(srcOverride ?? cdn.rosterLogoUrl(id, { width: size }));
 
 	function onerror() {
-		src = placeholderTeam;
+		src = fallbackLogo;
 	}
 </script>
 
