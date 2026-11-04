@@ -72,7 +72,7 @@ export const load = async ({ params, locals }) => {
 			awards: {
 				columns: {
 					id: true,
-					description: true
+					motivation: true
 				},
 				with: {
 					awardType: true,

@@ -147,7 +147,8 @@ export const awardType = pgTable(
 		id: uuid().primaryKey().defaultRandom(),
 		name: text().notNull(),
 		showDivision: boolean().notNull().default(true),
-		imageUrl: text()
+		imageUrl: text(),
+		description: text()
 	},
 	(t) => [unique().on(t.name)]
 );
@@ -161,7 +162,7 @@ export const playerAward = pgTable('player_award', {
 		.notNull()
 		.references(() => player.id, { onDelete: 'cascade' }),
 	divisionId: uuid().references(() => division.id, { onDelete: 'cascade' }),
-	description: text()
+	motivation: text()
 });
 
 export const rankEnum = pgEnum('rank', enumToPgEnum(Rank));
