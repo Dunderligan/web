@@ -96,7 +96,8 @@ export const roster = pgTable(
 		groupId: uuid()
 			.notNull()
 			.references(() => group.id, { onDelete: 'cascade' }),
-		resigned: boolean().notNull().default(false)
+		resigned: boolean().notNull().default(false),
+		initialSeed: integer()
 	},
 	(t) => [index('roster_name_gin_idx').using('gin', t.name.op('gin_trgm_ops'))]
 );
