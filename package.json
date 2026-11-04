@@ -11,7 +11,7 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "oxfmt",
-		"lint": "oxfmt --check && eslint .",
+		"lint": "oxfmt --check && eslint .  --cache --cache-strategy content --cache-location node_modules/.cache/eslint",
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"db:push": "drizzle-kit push",

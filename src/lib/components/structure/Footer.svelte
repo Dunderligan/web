@@ -29,7 +29,7 @@
 				{/each}
 			</div>
 
-			<p class="mt-2">
+			<p class="mt-2 text-gray-500 dark:text-gray-400">
 				Dunderligan är<br /><Link externalHref={socials.github} openInNewTab>öppen källkod</Link>.
 				<br />
 				{#if commitHash}
@@ -39,8 +39,6 @@
 						openInNewTab
 						hideExternalIcon>{commitHash.slice(0, 7)}</Link
 					>
-				{:else}
-					Okänd version
 				{/if}
 			</p>
 		</div>

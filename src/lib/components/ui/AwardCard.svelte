@@ -1,99 +1,82 @@
 <script lang="ts">
 	import type { AwardType, PlayerAward } from '$lib/types';
-	import medal from '$lib/assets/images/medal.png';
 	import { flattenDivision } from '$lib/util';
 	import Link from './Link.svelte';
+	import Popover from './Popover.svelte';
+	import AwardTypeLogo from './AwardTypeLogo.svelte';
 
 	type Props = {
 		type: AwardType;
-		awards: PlayerAward[];
+		award: PlayerAward;
 	};
 
-	let { type, awards }: Props = $props();
+	let { type, award }: Props = $props();
 
-	const COLLAPSED_MAX_COUNT = 3;
-
-	let expandedAwards = $state(false);
-
-	const canExpandAwards = $derived(awards.length > COLLAPSED_MAX_COUNT);
-	const shownAwards = $derived(expandedAwards ? awards : awards.slice(0, COLLAPSED_MAX_COUNT));
-
-	let expandedDescription = $state(false);
-
-	const description = $derived(awards.at(0)?.description ?? null);
-	const canExpandDescription = $derived(description !== null && description.split('\n').length > 3);
+	const shownDivision = $derived(type.showDivision ? award.division : null);
 </script>
 
-<div
-	class="relative min-h-40 rounded-lg bg-gray-100 py-4 font-medium text-gray-700 dark:bg-gray-900 dark:text-gray-300"
->
-	<img class="absolute -top-1 -left-4 w-36 drop-shadow-sm" src={medal} alt="Medalj" />
+<Popover class="relative">
+	<AwardTypeLogo {type} />
 
-	<div
-		class="banner flex items-center gap-4 overflow-hidden py-3 pr-4 pl-30 text-xl font-bold text-white"
-	>
-		<div>
-			{type.name}
+	{#if shownDivision}
+		{@const { season } = flattenDivision(shownDivision)}
+		{@const seasonNumber = season.name.split(' ').at(-1) ?? season.name}
+
+		<div
+			class="absolute right-0 bottom-0 transform rounded-md bg-accent-600 px-2 py-0.5 text-sm font-semibold text-white"
+		>
+			S{seasonNumber}
 		</div>
+	{/if}
 
-		{#if awards.length > 1}
-			<div>
-				x{awards.length}
-			</div>
-		{/if}
-	</div>
-
-	<div class="mt-4 mr-4 ml-30">
-		{#if description}
-			<div class={[!expandedDescription && 'line-clamp-3', 'relative whitespace-pre-line']}>
-				<p class="text-sm">Motivering:</p>
-
-				<p>"{description}"</p>
-
-				{#if canExpandDescription && !expandedDescription}
-					<div
-						class="absolute right-0 bottom-0 left-0 h-6 bg-linear-to-t from-gray-100 to-transparent dark:from-gray-900"
-					></div>
-				{/if}
+	{#snippet content()}
+		<div class="max-w-2xs pt-30 text-center">
+			<div
+				class="absolute top-0 left-0 flex h-30 w-full items-center justify-center bg-linear-to-b from-accent-600 to-accent-700 dark:from-accent-800 dark:to-accent-900"
+			>
+				<AwardTypeLogo {type} class="medal-spin size-20" />
 			</div>
 
-			{#if canExpandDescription}
-				<button
-					onclick={() => (expandedDescription = !expandedDescription)}
-					class="mt-1 block font-semibold hover:underline"
-				>
-					{expandedDescription ? 'Visa mindre' : 'Visa mer'}
-				</button>
+			<h3 class="font-display text-xl font-bold">
+				{type.name}
+			</h3>
+
+			{#if shownDivision}
+				{@const { division, season } = flattenDivision(shownDivision)}
+
+				<h4>
+					<Link href="/stallningar/{season.slug}?div={division.slug}">
+						{division.name}, {season.name}
+					</Link>
+				</h4>
 			{/if}
-		{/if}
 
-		{#each shownAwards as award (award.id)}
-			{#if award.division}
-				{@const { division, season } = flattenDivision(award.division)}
-
-				<Link href="/stallningar/{season.slug}?div={division.slug}" class="block max-w-max">
-					{division.name}, {season.name}
-				</Link>
+			{#if award.motivation}
+				<p class="mt-2 text-sm whitespace-pre-line">
+					"{award.motivation}"
+				</p>
 			{/if}
-		{/each}
 
-		{#if canExpandAwards && !expandedAwards}
-			<button
-				onclick={() => (expandedAwards = !expandedAwards)}
-				class="mt-1 block font-semibold hover:underline"
-			>
-				...och {awards.length - COLLAPSED_MAX_COUNT} fler</button
-			>
-		{/if}
-	</div>
-</div>
+			{#if type.description}
+				<p class="mt-2 text-sm whitespace-pre-line">
+					{type.description}
+				</p>
+			{/if}
+		</div>
+	{/snippet}
+</Popover>
 
 <style>
-	.banner {
-		background-image:
-			url('$lib/assets/images/award-background.webp'), linear-gradient(var(--color-accent-600));
-		background-size: cover;
-		background-position: top;
-		background-blend-mode: overlay, normal;
+	:global(.medal-spin) {
+		animation: spin 0.8s cubic-bezier(0.5, 1, 0.89, 1);
+	}
+
+	@keyframes spin {
+		0% {
+			transform: rotateY(180deg);
+		}
+		100% {
+			transform: rotateY(0deg);
+		}
 	}
 </style>

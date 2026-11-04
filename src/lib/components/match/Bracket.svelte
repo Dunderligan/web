@@ -39,7 +39,15 @@
 		aria-hidden="true"
 	>
 		{#each edges as { edge, highlighted } (edge.from.match.id + edge.to.match.id)}
-			<path d={edge.path} class={['bracket-edge', highlighted && 'highlighted']} />
+			<path
+				d={edge.path}
+				class={[
+					'fill-none stroke-[2px]',
+					highlighted
+						? 'stroke-gray-300 dark:stroke-gray-800'
+						: 'stroke-gray-100 dark:stroke-gray-900'
+				]}
+			/>
 		{/each}
 	</svg>
 
@@ -51,24 +59,3 @@
 		{/if}
 	{/each}
 </div>
-
-<style>
-	.bracket-edge {
-		fill: none;
-		stroke: var(--color-gray-100);
-		stroke-width: 2px;
-		stroke-linejoin: round;
-	}
-
-	.bracket-edge.highlighted {
-		stroke: var(--color-gray-300);
-	}
-
-	:global(.dark) .bracket-edge {
-		stroke: var(--color-gray-900);
-	}
-
-	:global(.dark) .bracket-edge.highlighted {
-		stroke: var(--color-gray-800);
-	}
-</style>
