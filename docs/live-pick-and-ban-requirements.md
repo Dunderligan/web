@@ -18,7 +18,7 @@ The live pick and ban feature formalizes the process: teams meet in a room on th
 - Automatic persistence of every decision, linked to the match.
 - Read-only access to any room for anyone, including unauthenticated visitors.
 - Admin ability to create, cancel and resolve rooms.
-- Per-division, per-bracket and per-group-round configuration of the rules.
+- Per-division, per-bracket and per-round configuration of the rules.
 
 ### Out of scope
 
@@ -41,7 +41,7 @@ The live pick and ban feature formalizes the process: teams meet in a room on th
 | Map pool       | The set of maps and/or gamemodes a match may draw from.                                |
 | Seed           | Placement used for ordering teams. Seed 1 is the strongest team.                       |
 | Initial seed   | The roster's pre-season seed, used to determine first ban in group matches.            |
-| Group round    | The round number of a group match, stored in the match's `round` column.               |
+| Match round    | The round number of a match, stored in the match's `round` column.                     |
 | Fixed pool     | A map pool where the map is predetermined per game, so no map pick is offered.         |
 
 "Lower seed" means the worse placement, i.e. the higher seed number.
@@ -71,7 +71,7 @@ A match is eligible for the feature when all of the following hold:
 
 ### 4.2 Configuration dimensions
 
-Rules vary by division, by bracket, and by group match round. For group matches, the round is the match's `round` value, and that number selects the applicable configuration. The following is configurable and may differ between these dimensions:
+Rules vary by division, by bracket, and by match round (either group or bracket round). The following is configurable and may differ between these dimensions:
 
 - Whether pick and ban is used at all for the match.
 - Win condition: either first to a number N of map wins, or a fixed number N of maps played.
