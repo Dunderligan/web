@@ -16,12 +16,14 @@
 	import { isModerator } from '$lib/auth-role.js';
 	import Chip from '$lib/components/ui/Chip.svelte';
 	import { resolve } from '$app/paths';
+	import Checkbox from '$lib/components/form/Checkbox.svelte';
 	import BracketContainer from '$lib/components/match/BracketContainer.svelte';
 
 	let { data } = $props();
 
 	let { season, divisions } = $derived(data);
 
+	let showInitialSeeds = $derived(false);
 	const state = $derived(getSeasonState(season));
 
 	let division = $derived.by(() => {
@@ -201,7 +203,10 @@
 				standings={resolvedStandings}
 				playoffLine={division.playoffLine}
 				seasonSlug={season.slug}
+				{showInitialSeeds}
 			/>
+
+			<Checkbox bind:checked={showInitialSeeds} />
 
 			{#if isModerator(data.user?.role)}
 				<Button

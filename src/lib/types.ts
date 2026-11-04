@@ -177,6 +177,7 @@ export type Roster = {
 	name: string;
 	slug: string;
 	resigned?: boolean;
+	initialSeed?: number | null;
 };
 
 export type RosterWithGroup = Roster & {
