@@ -12,10 +12,9 @@
 	import { ConfirmContext } from '$lib/state/confirm.svelte';
 	import { RosterContext } from '$lib/state/rosters.svelte';
 	import { SaveContext } from '$lib/state/save.svelte';
-	import type { UnresolvedMatchWithOrder } from '$lib/types';
-	import { buildBracketRounds } from '$lib/bracket.js';
+	import { BracketFormat, type UnresolvedMatchWithOrder } from '$lib/types';
+	import { buildBracketStructure, propagateBracket, type BracketStructure } from '$lib/bracket';
 	import { deleteBracket, updateBracket } from '$lib/remote/bracket.remote';
-	import { matchRosterId, matchWinner } from '$lib/match.js';
 	import { isAdmin } from '$lib/auth-role.js';
 
 	const { data } = $props();
@@ -30,7 +29,13 @@
 	const division = $derived(data.division);
 	const season = $derived(division.season);
 
-	RosterContext.set(new RosterContext());
+	RosterContext.set(
+		new RosterContext({
+			onMatchEdit: () => {
+				propagateBracket(bracket.matches);
+			}
+		})
+	);
 	SaveContext.set(
 		new SaveContext({
 			save,
@@ -48,11 +53,15 @@
 	});
 
 	// we can't use derived here as we need deep reactivity to make sure
-	// the root match objects are actually edited, not just local copies in `rounds`
-	let rounds: UnresolvedMatchWithOrder[][] = $state([]);
+	// the root match objects are actually edited, not just local copies in `structure`
+	let structure: BracketStructure<UnresolvedMatchWithOrder> = $state({
+		upper: [],
+		lower: [],
+		grandFinal: []
+	});
 
 	$effect(() => {
-		rounds = buildBracketRounds(bracket.matches);
+		structure = buildBracketStructure(bracket.matches);
 	});
 
 	async function onDeleteClicked() {
@@ -77,26 +86,6 @@
 			matches: bracket.matches
 		});
 	}
-
-	$effect(() => {
-		// propagate winners to the next round
-		for (let i = 0; i < rounds.length - 1; i++) {
-			for (let j = 0; j < rounds[i].length; j++) {
-				const match = rounds[i][j];
-
-				const nextMatch = rounds[i + 1][Math.floor(j / 2)];
-				const isRosterSideAInNext = j % 2 == 0;
-
-				const winner = matchRosterId(match, matchWinner(match));
-
-				if (isRosterSideAInNext) {
-					nextMatch.rosterAId = winner;
-				} else if (!isRosterSideAInNext) {
-					nextMatch.rosterBId = winner;
-				}
-			}
-		}
-	});
 </script>
 
 <Breadcrumbs
@@ -107,17 +96,31 @@
 	]}
 />
 
-<AdminCard title="Bracket">
-	<div class="flex w-full items-stretch gap-4">
-		{#each rounds as round, i (i)}
-			<div class="flex w-full flex-col justify-around gap-4">
-				{#each round as match (match.id)}
-					<EditableMatch {match} canDelete={false} canEditRosters={i === 0} />
-				{/each}
-			</div>
-		{/each}
-	</div>
-</AdminCard>
+{#snippet bracketSection(
+	title: string,
+	rounds: UnresolvedMatchWithOrder[][],
+	canEditRosters: boolean
+)}
+	<AdminCard {title}>
+		<div class="flex items-stretch gap-4 overflow-x-auto">
+			{#each rounds as round, i (i)}
+				<div class="flex w-full min-w-60 flex-col justify-around gap-4">
+					{#each round as match (match.id)}
+						<EditableMatch {match} canDelete={false} canEditRosters={canEditRosters && i === 0} />
+					{/each}
+				</div>
+			{/each}
+		</div>
+	</AdminCard>
+{/snippet}
+
+{#if bracket.format === BracketFormat.DOUBLE_ELIMINATION}
+	{@render bracketSection('Övre bracket', structure.upper, true)}
+	{@render bracketSection('Nedre bracket', structure.lower, false)}
+	{@render bracketSection('Final', [structure.grandFinal], false)}
+{:else}
+	{@render bracketSection('Bracket', structure.upper, true)}
+{/if}
 
 {#if isAdmin(data.user?.role)}
 	<AdminCard title="Inställningar">

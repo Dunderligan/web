@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
 	compareMatchDates,
 	createGroupMatch,
-	flipSide,
+	flipSlot,
 	getFinalMatch,
 	getRosterPlacement,
 	hasMatchScore,
@@ -16,7 +16,7 @@ import {
 	matchWinner,
 	resolvedMatchToLogical
 } from '$lib/match';
-import { MatchState, type MatchWithoutRosters } from '$lib/types';
+import { MatchState, MatchSlot, type MatchWithoutRosters } from '$lib/types';
 import { logicalMatch, matchRoster as makeRoster, resolvedMatch } from '$lib/test/fixtures';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
@@ -36,13 +36,13 @@ describe('hasMatchScore', () => {
 describe('isInMatch / isMatchBetween', () => {
 	const match = logicalMatch({ rosterAId: 'a', rosterBId: 'b' });
 
-	it('detects rosters on either side', () => {
+	it('detects rosters on either slot', () => {
 		expect(isInMatch(match, 'a')).toBe(true);
 		expect(isInMatch(match, 'b')).toBe(true);
 		expect(isInMatch(match, 'c')).toBe(false);
 	});
 
-	it('detects a match between two rosters regardless of side', () => {
+	it('detects a match between two rosters regardless of slot', () => {
 		expect(isMatchBetween(match, 'a', 'b')).toBe(true);
 		expect(isMatchBetween(match, 'b', 'a')).toBe(true);
 		expect(isMatchBetween(match, 'a', 'c')).toBe(false);
@@ -54,31 +54,31 @@ describe('isInMatch / isMatchBetween', () => {
 	});
 });
 
-describe('flipSide', () => {
-	it('flips the side by default', () => {
-		expect(flipSide('A')).toBe('B');
-		expect(flipSide('B')).toBe('A');
+describe('flipSlot', () => {
+	it('flips the slot by default', () => {
+		expect(flipSlot(MatchSlot.A)).toBe(MatchSlot.B);
+		expect(flipSlot(MatchSlot.B)).toBe(MatchSlot.A);
 	});
 
-	it('keeps the side when flip is false', () => {
-		expect(flipSide('A', false)).toBe('A');
-		expect(flipSide('B', false)).toBe('B');
-		expect(flipSide('A', true)).toBe('B');
+	it('keeps the slot when flip is false', () => {
+		expect(flipSlot(MatchSlot.A, false)).toBe(MatchSlot.A);
+		expect(flipSlot(MatchSlot.B, false)).toBe(MatchSlot.B);
+		expect(flipSlot(MatchSlot.A, true)).toBe(MatchSlot.B);
 	});
 });
 
 describe('matchScore', () => {
-	it('returns the score for each side', () => {
+	it('returns the score for each slot', () => {
 		const match = logicalMatch({ teamAScore: 3, teamBScore: 1 });
-		expect(matchScore(match, 'A')).toBe(3);
-		expect(matchScore(match, 'B')).toBe(1);
+		expect(matchScore(match, MatchSlot.A)).toBe(3);
+		expect(matchScore(match, MatchSlot.B)).toBe(1);
 	});
 });
 
 describe('matchWinner', () => {
-	it('returns the side with the higher score', () => {
-		expect(matchWinner(logicalMatch({ teamAScore: 3, teamBScore: 1 }))).toBe('A');
-		expect(matchWinner(logicalMatch({ teamAScore: 0, teamBScore: 3 }))).toBe('B');
+	it('returns the slot with the higher score', () => {
+		expect(matchWinner(logicalMatch({ teamAScore: 3, teamBScore: 1 }))).toBe(MatchSlot.A);
+		expect(matchWinner(logicalMatch({ teamAScore: 0, teamBScore: 3 }))).toBe(MatchSlot.B);
 	});
 
 	it('returns null for a draw', () => {
@@ -108,13 +108,13 @@ describe('matchWinner', () => {
 });
 
 describe('matchRoster / matchNote', () => {
-	it('returns the roster for a side, or null when unresolved', () => {
+	it('returns the roster for a slot, or null when unresolved', () => {
 		const match = { rosterA: makeRoster('a'), rosterB: null };
-		expect(matchRoster(match, 'A')?.id).toBe('a');
-		expect(matchRoster(match, 'B')).toBeNull();
+		expect(matchRoster(match, MatchSlot.A)?.id).toBe('a');
+		expect(matchRoster(match, MatchSlot.B)).toBeNull();
 	});
 
-	it('returns the note for a side, or null when absent', () => {
+	it('returns the note for a slot, or null when absent', () => {
 		const match: MatchWithoutRosters = {
 			id: 'm',
 			teamAScore: 0,
@@ -124,20 +124,20 @@ describe('matchRoster / matchNote', () => {
 			teamANote: 'note A',
 			teamBNote: null
 		};
-		expect(matchNote(match, 'A')).toBe('note A');
-		expect(matchNote(match, 'B')).toBeNull();
+		expect(matchNote(match, MatchSlot.A)).toBe('note A');
+		expect(matchNote(match, MatchSlot.B)).toBeNull();
 	});
 });
 
 describe('isWinner', () => {
-	it('is true only for the winning side', () => {
+	it('is true only for the winning slot', () => {
 		const match = logicalMatch({ teamAScore: 3, teamBScore: 1 });
-		expect(isWinner(match, 'A')).toBe(true);
-		expect(isWinner(match, 'B')).toBe(false);
+		expect(isWinner(match, MatchSlot.A)).toBe(true);
+		expect(isWinner(match, MatchSlot.B)).toBe(false);
 	});
 
-	it('is false for both sides of a draw or an unplayed match', () => {
-		expect(isWinner(logicalMatch({ teamAScore: 2, teamBScore: 2 }), 'A')).toBe(false);
+	it('is false for both slots of a draw or an unplayed match', () => {
+		expect(isWinner(logicalMatch({ teamAScore: 2, teamBScore: 2 }), MatchSlot.A)).toBe(false);
 		expect(
 			isWinner(
 				logicalMatch({
@@ -145,7 +145,7 @@ describe('isWinner', () => {
 					teamBScore: 0,
 					state: MatchState.SCHEDULED
 				}),
-				'A'
+				MatchSlot.A
 			)
 		).toBe(false);
 	});
@@ -154,12 +154,12 @@ describe('isWinner', () => {
 describe('matchRosterId', () => {
 	const match = logicalMatch({ rosterAId: 'a', rosterBId: 'b' });
 
-	it('returns the id for a side', () => {
-		expect(matchRosterId(match, 'A')).toBe('a');
-		expect(matchRosterId(match, 'B')).toBe('b');
+	it('returns the id for a slot', () => {
+		expect(matchRosterId(match, MatchSlot.A)).toBe('a');
+		expect(matchRosterId(match, MatchSlot.B)).toBe('b');
 	});
 
-	it('returns null when the side is omitted or null', () => {
+	it('returns null when the slot is omitted or null', () => {
 		expect(matchRosterId(match)).toBeNull();
 		expect(matchRosterId(match, null)).toBeNull();
 	});

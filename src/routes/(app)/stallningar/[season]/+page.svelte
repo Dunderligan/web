@@ -7,7 +7,6 @@
 	import Tabs from '$lib/components/ui/Tabs.svelte';
 	import { getSeasonState, formatDate } from '$lib/util';
 	import Bracket from '$lib/components/match/Bracket.svelte';
-	import { buildBracketRounds } from '$lib/bracket';
 	import Subheading from '$lib/components/ui/Subheading.svelte';
 	import type { UnresolvedMatch, Roster, ResolvedMatchWithSeeds, TabItem } from '$lib/types';
 	import SeasonStateChip from '$lib/components/ui/SeasonStateChip.svelte';
@@ -18,6 +17,7 @@
 	import Chip from '$lib/components/ui/Chip.svelte';
 	import { resolve } from '$app/paths';
 	import Checkbox from '$lib/components/form/Checkbox.svelte';
+	import BracketContainer from '$lib/components/match/BracketContainer.svelte';
 
 	let { data } = $props();
 
@@ -239,29 +239,27 @@
 		{/if}
 	{:else}
 		{#each division.brackets as bracket (bracket.id)}
-			{#if division.brackets.length > 1 || bracket.name !== division.name}
-				<Subheading class="mt-6 mb-4">{bracket.name}</Subheading>
-			{/if}
+			<BracketContainer class="mx-4 mt-4">
+				{#if division.brackets.length > 1 || bracket.name !== division.name}
+					<Subheading class="mb-4">{bracket.name}</Subheading>
+				{/if}
 
-			<!-- Allow the bracket to expand horizontally to the full width of the screen. -->
-			<div
-				class="relative left-1/2 flex w-screen max-w-[calc(100vw-2rem)] -translate-x-1/2 flex-col overflow-x-auto"
-			>
 				<Bracket
 					seasonSlug={season.slug}
-					rounds={buildBracketRounds(bracket.matches.map(resolveMatch))}
+					matches={bracket.matches.map(resolveMatch)}
+					format={bracket.format}
 				/>
-			</div>
 
-			{#if isModerator(data.user?.role)}
-				<Button
-					label="Redigera"
-					icon="ph:pencil-simple"
-					kind="secondary"
-					class="mt-4 max-w-max"
-					href="/admin/bracket/{bracket.id}"
-				/>
-			{/if}
+				{#if isModerator(data.user?.role)}
+					<Button
+						label="Redigera"
+						icon="ph:pencil-simple"
+						kind="secondary"
+						class="mt-4 max-w-max"
+						href="/admin/bracket/{bracket.id}"
+					/>
+				{/if}
+			</BracketContainer>
 		{/each}
 	{/if}
 </PageSection>

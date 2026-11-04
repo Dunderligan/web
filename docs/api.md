@@ -244,12 +244,17 @@ type Match = {
 	playedAt: string | null; // ISO date string
 	scheduledAt: string | null; // ISO date string
 	vodUrl: string | null;
-	nextMatchId: string | null;
 	rosterA: MatchRoster | null;
 	rosterB: MatchRoster | null;
 	// exactly one of these are null
 	group: Group | null;
 	bracket: Bracket | null;
+	// the following are only set for bracket matches
+	nextMatchId: string | null;
+	nextSlot: MatchSlot | null;
+	loserNextMatchId: string | null;
+	loserSlot: MatchSlot | null;
+	bracketSide: BracketSide | null;
 };
 
 type MatchRoster = {
@@ -287,6 +292,10 @@ type Season = {
 };
 
 type MatchState = 'scheduled' | 'played' | 'walkover' | 'cancelled';
+
+type MatchSlot = 'a' | 'b';
+
+type BracketSide = 'upper' | 'lower' | 'grand_final';
 ```
 
 ```
@@ -331,12 +340,17 @@ type Match = {
 	playedAt: string | null; // ISO date string
 	scheduledAt: string | null; // ISO date string
 	vodUrl: string | null;
-	nextMatchId: string | null;
 	rosterA: MatchRoster | null;
 	rosterB: MatchRoster | null;
 	// exactly one of these are null
 	group: Group | null;
 	bracket: Bracket | null;
+	// the following are only set for bracket matches
+	nextMatchId: string | null;
+	nextSlot: MatchSlot | null;
+	loserNextMatchId: string | null;
+	loserSlot: MatchSlot | null;
+	bracketSide: BracketSide | null;
 };
 
 type MatchRoster = {
@@ -374,6 +388,10 @@ type Season = {
 };
 
 type MatchState = 'scheduled' | 'played' | 'walkover' | 'cancelled';
+
+type MatchSlot = 'a' | 'b';
+
+type BracketSide = 'upper' | 'lower' | 'grand_final';
 ```
 
 ---
@@ -414,12 +432,17 @@ type Match = {
 	playedAt: string | null; // ISO date string
 	scheduledAt: string | null; // ISO date string
 	vodUrl: string | null;
-	nextMatchId: string | null;
 	rosterA: MatchRoster | null;
 	rosterB: MatchRoster | null;
 	// exactly one of these are null
 	group: Group | null;
 	bracket: Bracket | null;
+	// the following are only set for bracket matches
+	nextMatchId: string | null;
+	nextSlot: MatchSlot | null;
+	loserNextMatchId: string | null;
+	loserSlot: MatchSlot | null;
+	bracketSide: BracketSide | null;
 };
 
 type MatchRoster = {
@@ -457,6 +480,10 @@ type Season = {
 };
 
 type MatchState = 'scheduled' | 'played' | 'walkover' | 'cancelled';
+
+type MatchSlot = 'a' | 'b';
+
+type BracketSide = 'upper' | 'lower' | 'grand_final';
 ```
 
 ---
@@ -481,12 +508,17 @@ type Match = {
 	playedAt: string | null; // ISO date string
 	scheduledAt: string | null; // ISO date string
 	vodUrl: string | null;
-	nextMatchId: string | null;
 	rosterA: MatchRoster | null;
 	rosterB: MatchRoster | null;
 	// exactly one of these are null
 	group: Group | null;
 	bracket: Bracket | null;
+	// the following are only set for bracket matches
+	nextMatchId: string | null;
+	nextSlot: MatchSlot | null;
+	loserNextMatchId: string | null;
+	loserSlot: MatchSlot | null;
+	bracketSide: BracketSide | null;
 };
 
 type MatchRoster = {
@@ -524,6 +556,10 @@ type Season = {
 };
 
 type MatchState = 'scheduled' | 'played' | 'walkover' | 'cancelled';
+
+type MatchSlot = 'a' | 'b';
+
+type BracketSide = 'upper' | 'lower' | 'grand_final';
 ```
 
 ## `POST /checkin/[seasonId]/[discordId]`

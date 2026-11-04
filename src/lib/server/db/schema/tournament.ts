@@ -16,6 +16,9 @@ import {
 import { enumToPgEnum, xor } from './util';
 import { isNotNull, isNull, or, sql } from 'drizzle-orm';
 import {
+	BracketFormat,
+	BracketSide,
+	MatchSlot,
 	MatchState,
 	MatchType,
 	Rank,
@@ -168,6 +171,12 @@ export const roleEnum = pgEnum('role', enumToPgEnum(Role));
 
 export const matchStateEnum = pgEnum('match_state', enumToPgEnum(MatchState));
 
+export const matchSlotEnum = pgEnum('match_slot', enumToPgEnum(MatchSlot));
+
+export const bracketFormatEnum = pgEnum('bracket_format', enumToPgEnum(BracketFormat));
+
+export const bracketSideEnum = pgEnum('bracket_side', enumToPgEnum(BracketSide));
+
 export const member = pgTable(
 	'member',
 	{
@@ -217,6 +226,16 @@ export const match = pgTable(
 		nextMatchId: uuid().references((): AnyPgColumn => match.id, {
 			onDelete: 'set null'
 		}),
+		/** Which slot of the next match the winner advances into. */
+		nextSlot: matchSlotEnum(),
+		/** Where the loser advances in a double-elimination bracket, if anywhere. */
+		loserNextMatchId: uuid().references((): AnyPgColumn => match.id, {
+			onDelete: 'set null'
+		}),
+		/** Which slot of the loser's next match the loser advances into. */
+		loserSlot: matchSlotEnum(),
+		/** Which lane of the bracket the match belongs to. Null for group matches. */
+		bracketSide: bracketSideEnum(),
 		/** Used to determine the order of a matches in a bracket in a stable way. Ignored for group-stage matches. */
 		order: integer().notNull().default(0),
 		/** The round number in the bracket, where 0 is the grand final, 1 is semifinals, etc. */
@@ -224,13 +243,19 @@ export const match = pgTable(
 	},
 	(t) => [
 		// Make sure exactly one of groupId or bracketId is set.
-		check('group_xor_bracket', xor(isNotNull(t.groupId), isNotNull(t.bracketId)))
+		check('group_xor_bracket', xor(isNotNull(t.groupId), isNotNull(t.bracketId))),
+		// Only bracket matches have a bracket side, and all bracket matches must have one.
+		check(
+			'bracket_side_for_bracket_matches',
+			sql`(${t.bracketId} is null) = (${t.bracketSide} is null)`
+		)
 	]
 );
 
 export const bracket = pgTable('bracket', {
 	id: uuid().primaryKey().defaultRandom(),
 	name: text().notNull(),
+	format: bracketFormatEnum().notNull().default(BracketFormat.SINGLE_ELIMINATION),
 	divisionId: uuid()
 		.notNull()
 		.references(() => division.id, { onDelete: 'cascade' })

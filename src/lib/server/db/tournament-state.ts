@@ -109,7 +109,8 @@ async function queryLatestSeason() {
 					brackets: {
 						columns: {
 							id: true,
-							name: true
+							name: true,
+							format: true
 						},
 						with: {
 							division: nestedDivisionQuery,

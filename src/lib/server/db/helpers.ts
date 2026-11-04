@@ -59,7 +59,8 @@ export const nestedGroupQuery = {
 export const nestedBracketQuery = {
 	columns: {
 		id: true,
-		name: true
+		name: true,
+		format: true
 	},
 	with: {
 		division: nestedDivisionQuery
@@ -98,7 +99,11 @@ export const fullMatchColumns = {
 	vodUrl: true,
 	playedAt: true,
 	scheduledAt: true,
-	round: true
+	round: true,
+	bracketSide: true,
+	nextSlot: true,
+	loserNextMatchId: true,
+	loserSlot: true
 } as const;
 
 export const fullMatchQuery = {

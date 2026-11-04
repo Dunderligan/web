@@ -3,13 +3,12 @@
 		matchWinner,
 		matchRoster,
 		isWinner,
-		type MatchSide,
-		flipSide,
+		flipSlot,
 		matchScore,
 		matchNote,
 		resolvedMatchToLogical
 	} from '$lib/match';
-	import { MatchState, type ResolvedMatchWithContext } from '$lib/types';
+	import { MatchSlot, MatchState, type ResolvedMatchWithContext } from '$lib/types';
 	import Icon from '../ui/Icon.svelte';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import MatchInfoRow from './MatchInfoRow.svelte';
@@ -43,8 +42,8 @@
 
 	// always show main roster on the left
 	const flipped = $derived(mainRosterId === match.rosterB?.id);
-	const leftSide = $derived(flipped ? 'B' : 'A');
-	const rightSide = $derived(flipSide(leftSide));
+	const leftSlot = $derived(flipped ? MatchSlot.B : MatchSlot.A);
+	const rightSlot = $derived(flipSlot(leftSlot));
 
 	const division = $derived(match.group?.division ?? match.bracket?.division ?? null);
 	const seasonSlug = $derived(seasonSlugProp ?? division?.season.slug);
@@ -86,7 +85,7 @@
 	{/if}
 
 	<div class="flex flex-col gap-2 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:items-stretch">
-		{@render side({ side: leftSide, class: 'flex-row sm:flex-row-reverse', showSpoiler: true })}
+		{@render teamSlot({ slot: leftSlot, class: 'flex-row sm:flex-row-reverse', showSpoiler: true })}
 
 		<div
 			class={[
@@ -103,34 +102,34 @@
 			{:else if shownState === 'spoiler'}
 				{@render spoilerButton({ class: 'h-full' })}
 			{:else}
-				<span class={[winner === leftSide && 'text-accent-600 dark:text-accent-500', 'font-bold']}
-					>{matchScore(logicalMatch, leftSide)}
+				<span class={[winner === leftSlot && 'text-accent-600 dark:text-accent-500', 'font-bold']}
+					>{matchScore(logicalMatch, leftSlot)}
 				</span>
 
 				<span class="font-bold">-</span>
 
-				<span class={[winner === rightSide && 'text-accent-600 dark:text-accent-500', 'font-bold']}
-					>{matchScore(logicalMatch, rightSide)}</span
+				<span class={[winner === rightSlot && 'text-accent-600 dark:text-accent-500', 'font-bold']}
+					>{matchScore(logicalMatch, rightSlot)}</span
 				>
 			{/if}
 		</div>
 
-		{@render side({ side: rightSide })}
+		{@render teamSlot({ slot: rightSlot })}
 	</div>
 </div>
 
-{#snippet side({
-	side,
+{#snippet teamSlot({
+	slot,
 	class: classProp,
 	showSpoiler
 }: {
-	side: MatchSide;
+	slot: MatchSlot;
 	class?: ClassValue;
 	showSpoiler?: boolean;
 })}
-	{@const roster = matchRoster(match, side)}
-	{@const won = roster && isWinner(logicalMatch, side)}
-	{@const note = matchNote(match, side)}
+	{@const roster = matchRoster(match, slot)}
+	{@const won = roster && isWinner(logicalMatch, slot)}
+	{@const note = matchNote(match, slot)}
 
 	<div
 		class={[classProp, 'flex items-center gap-2 overflow-hidden text-gray-700 dark:text-gray-300']}
@@ -169,7 +168,7 @@
 					'ml-auto text-3xl font-extrabold sm:hidden'
 				]}
 			>
-				{matchScore(logicalMatch, side)}
+				{matchScore(logicalMatch, slot)}
 			</div>
 		{/if}
 	</div>
