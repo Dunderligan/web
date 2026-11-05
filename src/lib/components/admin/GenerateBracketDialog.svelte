@@ -57,7 +57,7 @@
 			type="single"
 			bind:value={() => roundCount.toString(), (v: string) => (roundCount = parseInt(v))}
 			items={[1, 2, 3, 4, 5].map((n) => ({
-				label: `${n} rundor (${Math.pow(2, n)} platser${doubleElimination ? ' i övre bracket' : ''})`,
+				label: `${n} ${n === 1 ? 'runda' : 'rundor'} (${Math.pow(2, n)} platser${doubleElimination ? ' i övre bracket' : ''})`,
 				value: n.toString()
 			}))}
 		/>
