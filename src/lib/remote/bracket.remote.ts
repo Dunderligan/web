@@ -15,7 +15,7 @@ export const generateBracket = command(
 	z.object({
 		name: z.string(),
 		divisionId: z.uuid(),
-		roundCount: z.int().min(2).max(5),
+		roundCount: z.int().min(1).max(5),
 		avoidPreviousMatchups: z.boolean(),
 		flipStandings: z.boolean(),
 		format: z.enum(BracketFormat).default(BracketFormat.SINGLE_ELIMINATION)
