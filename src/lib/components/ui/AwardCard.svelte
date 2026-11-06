@@ -1,9 +1,9 @@
 <script lang="ts">
 	import type { AwardType, PlayerAward } from '$lib/types';
-	import fallbackIcon from '$lib/assets/images/placeholder.avif';
 	import { flattenDivision } from '$lib/util';
 	import Link from './Link.svelte';
 	import Popover from './Popover.svelte';
+	import AwardTypeLogo from './AwardTypeLogo.svelte';
 
 	type Props = {
 		type: AwardType;
@@ -13,11 +13,10 @@
 	let { type, award }: Props = $props();
 
 	const shownDivision = $derived(type.showDivision ? award.division : null);
-	const icon = $derived(type.imageUrl ?? fallbackIcon);
 </script>
 
-<Popover class="relative rounded-full shadow-md dark:brightness-85">
-	<img src={icon} alt={type.name} class="h-full w-full object-cover" />
+<Popover class="relative">
+	<AwardTypeLogo {type} />
 
 	{#if shownDivision}
 		{@const { season } = flattenDivision(shownDivision)}
@@ -31,15 +30,11 @@
 	{/if}
 
 	{#snippet content()}
-		<div class="max-w-2xs pt-32 text-center">
+		<div class="max-w-2xs pt-30 text-center">
 			<div
-				class="absolute top-0 left-0 flex h-32 w-full items-center justify-center bg-linear-to-b from-accent-700 to-accent-800 dark:from-accent-800 dark:to-accent-900"
+				class="absolute top-0 left-0 flex h-30 w-full items-center justify-center bg-linear-to-b from-accent-600 to-accent-700 dark:from-accent-800 dark:to-accent-900"
 			>
-				<img
-					src={icon}
-					alt={type.name}
-					class="medal-spin size-20 rounded-full object-cover shadow-lg"
-				/>
+				<AwardTypeLogo {type} class="medal-spin size-20" />
 			</div>
 
 			<h3 class="font-display text-xl font-bold">
@@ -72,7 +67,7 @@
 </Popover>
 
 <style>
-	.medal-spin {
+	:global(.medal-spin) {
 		animation: spin 0.8s cubic-bezier(0.5, 1, 0.89, 1);
 	}
 

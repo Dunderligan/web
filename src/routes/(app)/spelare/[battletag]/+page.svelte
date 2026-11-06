@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { canEditUserPage } from '$lib/auth-role.js';
-	import Award from '$lib/components/ui/Award.svelte';
+	import AwardCard from '$lib/components/ui/AwardCard.svelte';
 	import Match from '$lib/components/match/Match.svelte';
 	import Field from '$lib/components/structure/Field.svelte';
 	import Meta from '$lib/components/structure/Meta.svelte';
@@ -287,7 +287,7 @@
 
 			<div class="mt-2 grid grid-cols-[repeat(auto-fill,minmax(4.5rem,1fr))] gap-2">
 				{#each sortedAwards as { awardType, ...award } (award.id)}
-					<Award type={awardType} {award} />
+					<AwardCard type={awardType} {award} />
 				{/each}
 			</div>
 		{/if}
