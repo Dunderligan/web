@@ -112,7 +112,7 @@ describe('applyDecision', () => {
 			slot: MatchSlot.A,
 			decision: { point: DecisionPoint.MAP_PICK, mapId: MAP.antarctic },
 			actor: { type: 'captain', userId: 'captain-a' },
-			now: 1_000
+			now: new Date(1_000)
 		});
 		expect(pick.ok).toBe(true);
 		if (!pick.ok) return;
@@ -126,7 +126,7 @@ describe('applyDecision', () => {
 			slot: MatchSlot.A,
 			decision: { point: DecisionPoint.BAN_ORDER, concede: false },
 			actor: { type: 'captain', userId: 'captain-a' },
-			now: 2_000
+			now: new Date(2_000)
 		});
 		expect(order.ok).toBe(true);
 		if (!order.ok) return;
@@ -139,7 +139,7 @@ describe('applyDecision', () => {
 			slot: MatchSlot.A,
 			decision: { point: DecisionPoint.FIRST_BAN, heroId: HERO.rein },
 			actor: { type: 'captain', userId: 'captain-a' },
-			now: 3_000
+			now: new Date(3_000)
 		});
 		expect(first.ok).toBe(true);
 		if (!first.ok) return;
@@ -152,7 +152,7 @@ describe('applyDecision', () => {
 			slot: MatchSlot.B,
 			decision: { point: DecisionPoint.SECOND_BAN, heroId: HERO.tracer },
 			actor: { type: 'captain', userId: 'captain-b' },
-			now: 4_000
+			now: new Date(4_000)
 		});
 		expect(second.ok).toBe(true);
 		if (!second.ok) return;
@@ -164,7 +164,7 @@ describe('applyDecision', () => {
 			DecisionPoint.FIRST_BAN,
 			DecisionPoint.SECOND_BAN
 		]);
-		expect(map.decisionsCompletedAt).toBe(4_000);
+		expect(map.decisionsCompletedAt).toEqual(new Date(4_000));
 		expect(mapDecisionsComplete(cfg, map)).toBe(true);
 		expect(nextDecisionPoint(cfg, [map])).toBeNull();
 	});
@@ -177,7 +177,7 @@ describe('applyDecision', () => {
 			slot: MatchSlot.B,
 			decision: { point: DecisionPoint.MAP_PICK, mapId: MAP.antarctic },
 			actor: { type: 'captain', userId: 'captain-b' },
-			now: 1
+			now: new Date(1_000)
 		});
 
 		expect(result).toEqual({ ok: false, error: DecisionError.WRONG_TEAM });
@@ -191,7 +191,7 @@ describe('applyDecision', () => {
 			slot: MatchSlot.A,
 			decision: { point: DecisionPoint.MAP_PICK, mapId: MAP.dorado },
 			actor: { type: 'captain', userId: 'captain-a' },
-			now: 1
+			now: new Date(1_000)
 		});
 
 		expect(result).toEqual({ ok: false, error: DecisionError.INVALID_MAP });
@@ -208,7 +208,7 @@ describe('applyDecision', () => {
 			slot: MatchSlot.A,
 			decision: { point: DecisionPoint.MAP_PICK, mapId: MAP.antarctic },
 			actor: { type: 'captain', userId: 'captain-a' },
-			now: 1
+			now: new Date(1_000)
 		});
 
 		expect(result).toEqual({ ok: false, error: DecisionError.INVALID_MAP });
@@ -231,7 +231,7 @@ describe('applyDecision', () => {
 			slot: MatchSlot.B,
 			decision: { point: DecisionPoint.SECOND_BAN, heroId: HERO.winston },
 			actor: { type: 'captain', userId: 'captain-b' },
-			now: 1
+			now: new Date(1_000)
 		});
 
 		expect(result).toEqual({ ok: false, error: DecisionError.INVALID_HERO });
@@ -259,7 +259,7 @@ describe('applyDecision', () => {
 			slot: MatchSlot.B,
 			decision: { point: DecisionPoint.SECOND_BAN, heroId: HERO.tracer },
 			actor: { type: 'captain', userId: 'captain-b' },
-			now: 1
+			now: new Date(1_000)
 		});
 
 		expect(result).toEqual({ ok: false, error: DecisionError.INVALID_HERO });
@@ -279,7 +279,7 @@ describe('applyDecision', () => {
 			slot: MatchSlot.A,
 			decision: { point: DecisionPoint.BAN_ORDER, concede: true },
 			actor: { type: 'captain', userId: 'captain-a' },
-			now: 2
+			now: new Date(2_000)
 		});
 		expect(order.ok).toBe(true);
 		if (!order.ok) return;
@@ -308,7 +308,7 @@ describe('applyDecision', () => {
 			slot: MatchSlot.A,
 			decision: { point: DecisionPoint.BAN_ORDER, concede: true },
 			actor: { type: 'captain', userId: 'captain-a' },
-			now: 1
+			now: new Date(1_000)
 		});
 
 		expect(result).toEqual({ ok: false, error: DecisionError.WRONG_DECISION_POINT });
@@ -328,7 +328,7 @@ describe('applyDecision', () => {
 			slot: MatchSlot.A,
 			decision: { point: DecisionPoint.MAP_PICK, mapId: MAP.busan },
 			actor: { type: 'captain', userId: 'captain-a' },
-			now: 1
+			now: new Date(1_000)
 		});
 
 		expect(result).toEqual({ ok: false, error: DecisionError.ALREADY_RECORDED });
@@ -346,7 +346,7 @@ describe('applyDecision', () => {
 			slot: MatchSlot.A,
 			decision: { point: DecisionPoint.MAP_PICK, mapId: MAP.busan },
 			actor: { type: 'captain', userId: 'captain-a' },
-			now: 1
+			now: new Date(1_000)
 		});
 
 		expect(result).toEqual({ ok: false, error: DecisionError.WRONG_DECISION_POINT });
@@ -360,7 +360,7 @@ describe('applyDecision', () => {
 			slot: MatchSlot.A,
 			decision: { point: DecisionPoint.MAP_PICK, mapId: MAP.antarctic },
 			actor: { type: 'captain', userId: 'captain-a' },
-			now: 1,
+			now: new Date(1_000),
 			status: RoomState.READY_CHECK
 		});
 
@@ -375,7 +375,7 @@ describe('applyDecision', () => {
 			slot: MatchSlot.A,
 			decision: { point: DecisionPoint.MAP_PICK, mapId: MAP.antarctic },
 			actor: { type: 'admin', userId: 'admin-1' },
-			now: 1
+			now: new Date(1_000)
 		});
 
 		expect(result.ok).toBe(true);
@@ -530,7 +530,7 @@ describe('applyTimeoutFallback', () => {
 			maps: [roomMap()],
 			catalog,
 			random: () => 0,
-			now: 5_000
+			now: new Date(5_000)
 		});
 
 		expect(result.ok).toBe(true);
@@ -538,7 +538,7 @@ describe('applyTimeoutFallback', () => {
 		expect(result.map.mapId).toBe(MAP.antarctic);
 		expect(result.decision.automatic).toBe(true);
 		expect(result.decision.actorUserId).toBeNull();
-		expect(result.decision.createdAt).toBe(5_000);
+		expect(result.decision.createdAt).toEqual(new Date(5_000));
 	});
 });
 

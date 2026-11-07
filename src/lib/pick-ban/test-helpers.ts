@@ -93,7 +93,7 @@ export function decision(
 		value,
 		automatic,
 		actorUserId: automatic ? null : 'user',
-		createdAt: 1_000
+		createdAt: new Date(1_000)
 	};
 }
 
@@ -119,7 +119,7 @@ export function completedMap(overrides: Partial<RoomMapState> = {}): RoomMapStat
 			heroBan(DecisionPoint.FIRST_BAN, MatchSlot.A, HERO.rein),
 			heroBan(DecisionPoint.SECOND_BAN, MatchSlot.B, HERO.tracer)
 		],
-		decisionsCompletedAt: 2_000,
+		decisionsCompletedAt: new Date(2_000),
 		...overrides
 	});
 
@@ -134,7 +134,7 @@ export function resultedMap(
 	return completedMap({
 		result: {
 			outcome,
-			recordedAt: 3_000,
+			recordedAt: new Date(3_000),
 			resolvedById: null
 		},
 		...overrides

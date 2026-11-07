@@ -63,8 +63,7 @@ export type RecordedDecision = {
 	automatic: boolean;
 	/** The acting user, or null for automatic decisions and decisions whose user has been deleted. */
 	actorUserId: string | null;
-	/** Epoch milliseconds. */
-	createdAt: number;
+	createdAt: Date;
 };
 
 /** A captain's independent report of a map result. */
@@ -72,15 +71,13 @@ export type MapReport = {
 	slot: MatchSlot;
 	outcome: MapOutcome;
 	submittedById: string | null;
-	/** Epoch milliseconds. */
-	submittedAt: number;
+	submittedAt: Date;
 };
 
 /** The recorded result of a map, either agreed by both captains or set by an admin. */
 export type MapResult = {
 	outcome: MapOutcome;
-	/** Epoch milliseconds. */
-	recordedAt: number;
+	recordedAt: Date;
 	/** The admin who resolved the result, or null when the captains agreed. */
 	resolvedById: string | null;
 };
@@ -97,8 +94,7 @@ export type RoomMapState = {
 	reports: MapReport[];
 	reportState: RoomMapReportState;
 	result: MapResult | null;
-	/** Epoch milliseconds, set when the second ban is recorded. */
-	decisionsCompletedAt: number | null;
+	decisionsCompletedAt: Date | null;
 };
 
 /** A gamemode in the map catalogue. */

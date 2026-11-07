@@ -59,8 +59,7 @@ export type ApplyDecisionInput = {
 	slot: MatchSlot;
 	decision: DecisionInput;
 	actor: DecisionActor;
-	/** Epoch milliseconds. */
-	now: number;
+	now: Date;
 	status?: RoomState;
 };
 
@@ -308,7 +307,7 @@ export function fallbackDecision(input: FallbackInput): FallbackResult {
 }
 
 /** Applies the timeout fallback as an automatic decision. */
-export function applyTimeoutFallback(input: FallbackInput & { now: number }): ApplyDecisionResult {
+export function applyTimeoutFallback(input: FallbackInput & { now: Date }): ApplyDecisionResult {
 	const fallback = fallbackDecision(input);
 	if (!fallback.ok) return { ok: false, error: fallback.error };
 
