@@ -17,7 +17,7 @@ function report(maps: RoomMapState[], slot: MatchSlot, outcome: MapOutcome, cfg 
 		slot,
 		outcome,
 		submittedById: slot === MatchSlot.A ? 'captain-a' : 'captain-b',
-		now: 5_000
+		now: new Date(5_000)
 	});
 
 	if (!result.ok) return result;
@@ -47,7 +47,7 @@ describe('submitReport', () => {
 		expect(second.maps[0].reportState).toBe(RoomMapReportState.AGREED);
 		expect(second.maps[0].result).toEqual({
 			outcome: MapOutcome.TEAM_A,
-			recordedAt: 5_000,
+			recordedAt: new Date(5_000),
 			resolvedById: null
 		});
 	});
@@ -91,7 +91,7 @@ describe('submitReport', () => {
 		const map = completedMap({
 			result: {
 				outcome: MapOutcome.TEAM_A,
-				recordedAt: 1,
+				recordedAt: new Date(1_000),
 				resolvedById: 'admin'
 			}
 		});
@@ -108,14 +108,14 @@ describe('resolveResult', () => {
 			maps: [completedMap()],
 			outcome: MapOutcome.TEAM_B,
 			adminId: 'admin-1',
-			now: 7_000
+			now: new Date(7_000)
 		});
 
 		expect(result.ok).toBe(true);
 		if (!result.ok) return;
 		expect(result.map.reportState).toBe(RoomMapReportState.RESOLVED);
 		expect(result.map.result?.resolvedById).toBe('admin-1');
-		expect(result.map.result?.recordedAt).toBe(7_000);
+		expect(result.map.result?.recordedAt).toEqual(new Date(7_000));
 	});
 
 	it('resolves a disputed map', () => {
@@ -129,7 +129,7 @@ describe('resolveResult', () => {
 			maps: disputed.maps,
 			outcome: MapOutcome.DRAW,
 			adminId: 'admin-1',
-			now: 8_000
+			now: new Date(8_000)
 		});
 
 		expect(result.ok).toBe(true);
@@ -144,7 +144,7 @@ describe('resolveResult', () => {
 			maps: [completedMap({ decisions: [] })],
 			outcome: MapOutcome.TEAM_A,
 			adminId: 'admin-1',
-			now: 1
+			now: new Date(1_000)
 		});
 
 		expect(result).toEqual({ ok: false, error: ReportError.DECISIONS_INCOMPLETE });

@@ -35,7 +35,7 @@ function picked(mapId: string, index: number): RoomMapState {
 		reportState: RoomMapReportState.AGREED,
 		result: {
 			outcome: MapOutcome.TEAM_A,
-			recordedAt: 1,
+			recordedAt: new Date(1_000),
 			resolvedById: null
 		}
 	});

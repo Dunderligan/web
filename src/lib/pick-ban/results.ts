@@ -36,8 +36,7 @@ export type SubmitReportInput = {
 	/** The outcome of the map, as reported by a captain or admin. */
 	outcome: MapOutcome;
 	submittedById: string | null;
-	/** Epoch milliseconds. */
-	now: number;
+	now: Date;
 };
 
 export type SubmitReportResult =
@@ -49,8 +48,7 @@ export type ResolveResultInput = {
 	maps: readonly RoomMapState[];
 	outcome: MapOutcome;
 	adminId: string;
-	/** Epoch milliseconds. */
-	now: number;
+	now: Date;
 };
 
 export type ResolveResultResult =
