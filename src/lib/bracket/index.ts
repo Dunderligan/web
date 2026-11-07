@@ -174,6 +174,7 @@ function createLowerBracket(
 		linkLoser(upper[0][i * 2 + 1], firstRound[i], MatchSlot.B);
 	}
 
+	// the rest of the rounds alternate between major and minor rounds
 	for (let lowerRound = 2; lowerRound <= roundTotal; lowerRound++) {
 		const round = rounds[lowerRound - 1];
 		const previous = rounds[lowerRound - 2];
