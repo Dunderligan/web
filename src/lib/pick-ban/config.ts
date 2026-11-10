@@ -96,20 +96,12 @@ export const DEFAULT_PICK_BAN_CONFIG: ResolvedPickBanConfig = {
 /**
  * Resolves the effective configuration for a match.
  *
- * Every applicable row is considered. Rows are merged from least to most specific, and each
- * non-null knob overrides the value inherited from less specific scopes. The resulting value
- * is validated against the built-in defaults.
- *
  * Scope precedence, most specific first:
  * 1. bracket + round
  * 2. bracket
  * 3. division + round
  * 4. division
  * 5. global
- *
- * A row only applies when every non-null scope dimension equals the match's value. Group
- * matches currently have `round = null`, so round-scoped rows only apply to bracket matches
- * until group matches gain a round number.
  */
 export function resolveConfig(scope: MatchScope, rows: PickBanConfigRow[]): ResolvedPickBanConfig {
 	const appliedRows = rows

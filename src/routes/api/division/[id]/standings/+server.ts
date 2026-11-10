@@ -1,7 +1,6 @@
 import { db } from '$lib/server/db';
-import { fullMatchColumns, rosterQuery } from '$lib/server/db/helpers';
-import { calculateStandings } from '$lib/standings.js';
-import { aggregateGroups } from '$lib/util';
+import { fullGroupQuery } from '$lib/server/db/helpers';
+import { generateDivisionStandings } from '$lib/server/standings.js';
 import { json, error } from '@sveltejs/kit';
 
 export const GET = async ({ params }) => {
@@ -10,6 +9,7 @@ export const GET = async ({ params }) => {
 			id: params.id
 		},
 		columns: {
+			id: true,
 			name: true,
 			groupwiseStandings: true
 		},
@@ -19,17 +19,7 @@ export const GET = async ({ params }) => {
 					legacySeeding: true
 				}
 			},
-			groups: {
-				columns: {
-					name: true
-				},
-				with: {
-					rosters: rosterQuery,
-					matches: {
-						columns: fullMatchColumns
-					}
-				}
-			}
+			groups: fullGroupQuery
 		}
 	});
 
@@ -37,33 +27,7 @@ export const GET = async ({ params }) => {
 		throw error(404);
 	}
 
-	let groupings;
-
-	if (division?.groupwiseStandings) {
-		groupings = division.groups;
-	} else {
-		groupings = [{ name: division.name, ...aggregateGroups(division.groups) }];
-	}
-
-	const tables = groupings.map((grouping) => {
-		const standings = calculateStandings(grouping.rosters, grouping.matches, {
-			legacy: division.season.legacySeeding
-		});
-
-		const resolvedStandings = standings.map(({ rosterId, score }) => {
-			const roster = grouping.rosters.find((roster) => roster.id === rosterId)!;
-
-			return {
-				score,
-				roster
-			};
-		});
-
-		return {
-			name: grouping.name,
-			standings: resolvedStandings
-		};
-	});
+	const tables = generateDivisionStandings(division, { legacy: division.season.legacySeeding });
 
 	return json({
 		tables

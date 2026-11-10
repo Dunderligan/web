@@ -222,7 +222,6 @@ describe('createGroupMatch', () => {
 		expect(match.teamBScore).toBe(0);
 		expect(match.draws).toBe(0);
 		expect(match.bracketId).toBeNull();
-		expect(match.divisionId).toBeNull();
 		expect(match.nextMatchId).toBeNull();
 		expect(match.round).toBeNull();
 		expect(match.playedAt).toBeNull();

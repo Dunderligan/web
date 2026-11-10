@@ -36,7 +36,7 @@ type RosterTableScoreWithRecord = [string, TableScoreWithRecord];
 
 type RosterMap = Map<string, TableScoreWithRecord>;
 
-type RosterInfo = { id: string; resigned: boolean };
+export type RosterInfo = { id: string; resigned: boolean };
 
 /** Sorts rosters in-place according to their seed, as calculated by the calculateStandings function. */
 export function sortBySeed(

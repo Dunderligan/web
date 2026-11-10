@@ -162,6 +162,26 @@ export const memberQuery = {
 	}
 } as const;
 
+export const fullGroupQuery = {
+	orderBy: {
+		name: 'asc'
+	},
+	columns: entityQuery.columns,
+	with: {
+		rosters: {
+			columns: {
+				...entityQuery.columns,
+				resigned: true,
+				initialSeed: true
+			}
+		},
+		matches: {
+			orderBy: groupMatchOrder,
+			columns: fullMatchColumns
+		}
+	}
+} as const;
+
 export type Transaction = PgTransaction<PostgresJsQueryResultHKT, typeof schema>;
 
 export function rolesOrder(column: PgColumn) {

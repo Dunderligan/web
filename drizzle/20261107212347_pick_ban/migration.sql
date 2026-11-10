@@ -61,7 +61,7 @@ CREATE TABLE "room" (
 	"cancelled_by_id" uuid,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "room_seeds" CHECK ("team_a_seed" >= 1 and "team_b_seed" >= 1),
+	CONSTRAINT "room_seeds" CHECK ("team_a_seed" >= 0 and "team_b_seed" >= 0),
 	CONSTRAINT "room_current_map_index" CHECK ("current_map_index" >= 0)
 );
 --> statement-breakpoint
@@ -124,10 +124,8 @@ ALTER TABLE "room_map" ADD CONSTRAINT "room_map_room_id_room_id_fkey" FOREIGN KE
 ALTER TABLE "room_map" ADD CONSTRAINT "room_map_map_id_map_id_fkey" FOREIGN KEY ("map_id") REFERENCES "map"("id") ON DELETE RESTRICT;--> statement-breakpoint
 ALTER TABLE "room_map" ADD CONSTRAINT "room_map_resolved_by_id_user_id_fkey" FOREIGN KEY ("resolved_by_id") REFERENCES "user"("id") ON DELETE SET NULL;--> statement-breakpoint
 ALTER TABLE "room_report" ADD CONSTRAINT "room_report_room_map_id_room_map_id_fkey" FOREIGN KEY ("room_map_id") REFERENCES "room_map"("id") ON DELETE CASCADE;--> statement-breakpoint
-ALTER TABLE "room_report" ADD CONSTRAINT "room_report_submitted_by_id_user_id_fkey" FOREIGN KEY ("submitted_by_id") REFERENCES "user"("id") ON DELETE SET NULL;--> statement-breakpoint
+ALTER TABLE "room_report" ADD CONSTRAINT "room_report_submitted_by_id_user_id_fkey" FOREIGN KEY ("submitted_by_id") REFERENCES "user"("id") ON DELETE SET NULL;
 
--- Seed the Overwatch map catalogue. Clash is no longer part of the competitive
--- rotation, so its gamemode and maps are kept inactive for historical records.
 INSERT INTO "gamemode" ("name", "slug", "active") VALUES
 	('Control', 'control', true),
 	('Escort', 'escort', true),

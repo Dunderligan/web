@@ -199,7 +199,6 @@ export type Social = {
 export type MatchWithoutRosters = {
 	id: string;
 	groupId?: string | null;
-	divisionId?: string | null;
 	bracketId?: string | null;
 	teamAScore: number;
 	teamBScore: number;
@@ -269,7 +268,12 @@ export type MatchRosterWithSeed = MatchRoster & {
  *
  * Exactly one of group or bracket should be present, depending on the match type.
  */
-export type ResolvedMatchWithContext<G = NestedGroup, B = NestedBracket> = ResolvedMatch & {
+export type ResolvedMatchWithContext<
+	S = NestedSeason,
+	D = NestedDivision,
+	G = NestedGroup<S, D>,
+	B = NestedBracket<S, D>
+> = ResolvedMatch & {
 	group?: G | null;
 	bracket?: B | null;
 };

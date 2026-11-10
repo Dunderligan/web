@@ -39,6 +39,7 @@
 			href: '/faq',
 			label: 'FAQ'
 		},
+		{ href: '/pick-ban', label: 'Pick & ban' },
 		{
 			href: '/om',
 			label: 'Om oss'

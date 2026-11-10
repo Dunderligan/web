@@ -1,7 +1,7 @@
 {
   "version": "8",
   "dialect": "postgres",
-  "id": "1aa95802-437c-4c9d-85cc-4f493b5e3c33",
+  "id": "70887bac-69a0-48d6-a35f-7897268652ec",
   "prevIds": [
     "a52c4aca-92a6-4aa5-b865-8c75fa81c22d"
   ],
@@ -4528,7 +4528,7 @@
       "table": "pick_ban_config"
     },
     {
-      "value": "\"team_a_seed\" >= 1 and \"team_b_seed\" >= 1",
+      "value": "\"team_a_seed\" >= 0 and \"team_b_seed\" >= 0",
       "name": "room_seeds",
       "entityType": "checks",
       "schema": "public",

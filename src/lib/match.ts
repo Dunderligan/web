@@ -6,7 +6,8 @@ import {
 	MatchSlot,
 	type Placement,
 	type UnresolvedMatch,
-	type ResolvedMatchWithContext
+	type ResolvedMatchWithContext,
+	type NestedDivision
 } from './types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -109,7 +110,6 @@ export function createGroupMatch(groupId: string): Required<UnresolvedMatch> {
 		id: uuidv4(),
 		groupId,
 		bracketId: null,
-		divisionId: null,
 		rosterAId: null,
 		rosterBId: null,
 		teamAScore: 0,
@@ -186,4 +186,10 @@ export function getRosterPlacement(
 	const best = Math.pow(2, round) + 1;
 
 	return { best, worst };
+}
+
+export function matchDivision(match: ResolvedMatchWithContext): NestedDivision | null {
+	if (match.group) return match.group.division;
+	if (match.bracket) return match.bracket.division;
+	return null;
 }

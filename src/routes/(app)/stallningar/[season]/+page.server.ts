@@ -1,8 +1,8 @@
 import { compareMatchDates } from '$lib/match';
 import { db } from '$lib/server/db';
-import { fullMatchColumns, groupMatchOrder, divisionOrder } from '$lib/server/db/helpers';
+import { fullMatchColumns, divisionOrder, fullGroupQuery } from '$lib/server/db/helpers';
 import { hiddenSeasonFilter } from '$lib/server/db/hidden.js';
-import { calculateStandings } from '$lib/standings';
+import { generateDivisionStandings } from '$lib/server/standings';
 import { MatchState } from '$lib/types';
 import { aggregateGroups } from '$lib/util';
 import { error } from '@sveltejs/kit';
@@ -36,31 +36,7 @@ export const load = async ({ params, locals }) => {
 							}
 						}
 					},
-					groups: {
-						orderBy: {
-							name: 'asc'
-						},
-						columns: {
-							id: true,
-							name: true,
-							slug: true
-						},
-						with: {
-							rosters: {
-								columns: {
-									id: true,
-									name: true,
-									slug: true,
-									resigned: true,
-									initialSeed: true
-								}
-							},
-							matches: {
-								orderBy: groupMatchOrder,
-								columns: fullMatchColumns
-							}
-						}
-					}
+					groups: fullGroupQuery
 				}
 			}
 		}
@@ -74,46 +50,16 @@ export const load = async ({ params, locals }) => {
 
 	return {
 		season,
-		divisions: divisions.map(({ groups, ...division }) => {
-			const { rosters, matches: divisionMatches } = aggregateGroups(groups);
+		divisions: divisions.map((division) => {
+			const { rosters, matches } = aggregateGroups(division.groups);
 
-			let groupings;
-			if (division.groupwiseStandings) {
-				groupings = groups.map((group) => ({
-					id: group.id,
-					title: group.name,
-					matches: group.matches,
-					rosters: group.rosters,
-					adminUrl: `/admin/grupp/${group.id}`
-				}));
-			} else {
-				groupings = [
-					{
-						id: division.id,
-						title: null,
-						matches: divisionMatches,
-						rosters,
-						adminUrl: `/admin/division/${division.id}`
-					}
-				];
-			}
+			const tables = generateDivisionStandings(division, { legacy: season.legacySeeding });
 
-			const tables = groupings.map(({ matches, rosters, ...table }) => {
-				const standings = calculateStandings(rosters, matches, {
-					legacy: season.legacySeeding
-				});
-
-				return {
-					...table,
-					standings
-				};
-			});
-
-			divisionMatches.sort((a, b) => compareMatchDates(a, b));
-			const latestMatches = divisionMatches
+			matches.sort((a, b) => compareMatchDates(a, b));
+			const latestMatches = matches
 				.filter((match) => match.state === MatchState.PLAYED)
 				.slice(0, 3);
-			const upcomingMatches = divisionMatches
+			const upcomingMatches = matches
 				.filter((match) => match.state === MatchState.SCHEDULED)
 				.slice(0, 3);
 
