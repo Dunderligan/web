@@ -4,7 +4,7 @@ import type { ResolvedPickBanConfig } from './config';
 import { eligibleHeroes, eligibleMaps } from './eligibility';
 import {
 	DecisionPoint,
-	RoomState,
+	RoomStatus,
 	type DecisionValue,
 	type HeroCatalogEntry,
 	type MapCatalogEntry,
@@ -60,7 +60,7 @@ export type ApplyDecisionInput = {
 	decision: DecisionInput;
 	actor: DecisionActor;
 	now: Date;
-	status?: RoomState;
+	status?: RoomStatus;
 };
 
 export type ApplyDecisionResult =
@@ -73,7 +73,7 @@ export type FallbackInput = {
 	catalog: DecisionCatalog;
 	/** Injectable randomness for deterministic tests. Must return a number in [0, 1). */
 	random?: () => number;
-	status?: RoomState;
+	status?: RoomStatus;
 };
 
 export type FallbackResult =
@@ -87,9 +87,9 @@ export type FallbackResult =
 export function nextDecisionPoint(
 	config: ResolvedPickBanConfig,
 	maps: readonly RoomMapState[],
-	status: RoomState = RoomState.IN_PROGRESS
+	status: RoomStatus = RoomStatus.IN_PROGRESS
 ): OpenDecisionPoint | null {
-	if (status !== RoomState.IN_PROGRESS) return null;
+	if (status !== RoomStatus.IN_PROGRESS) return null;
 
 	const currentMap = maps[maps.length - 1];
 	if (!currentMap) return null;
@@ -147,9 +147,9 @@ export function mapDecisionsComplete(config: ResolvedPickBanConfig, map: RoomMap
  */
 export function applyDecision(input: ApplyDecisionInput): ApplyDecisionResult {
 	const { config, maps, slot, decision, actor, now } = input;
-	const status = input.status ?? RoomState.IN_PROGRESS;
+	const status = input.status ?? RoomStatus.IN_PROGRESS;
 
-	if (status !== RoomState.IN_PROGRESS) {
+	if (status !== RoomStatus.IN_PROGRESS) {
 		return { ok: false, error: DecisionError.WRONG_STATE };
 	}
 
@@ -253,7 +253,7 @@ function decisionValue(decision: DecisionInput): DecisionValue {
  * - hero ban: a uniformly random eligible hero.
  */
 export function fallbackDecision(input: FallbackInput): FallbackResult {
-	const status = input.status ?? RoomState.IN_PROGRESS;
+	const status = input.status ?? RoomStatus.IN_PROGRESS;
 
 	const open = nextDecisionPoint(input.config, input.maps, status);
 	if (!open) return { ok: false, error: DecisionError.NO_OPEN_DECISION };

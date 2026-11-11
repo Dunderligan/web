@@ -182,6 +182,41 @@ export const fullGroupQuery = {
 	}
 } as const;
 
+export const roomStateQuery = {
+	columns: {
+		status: true,
+		teamASeed: true,
+		teamBSeed: true,
+		currentMapIndex: true,
+		version: true,
+		nextDeadlineAt: true,
+		closeReason: true,
+		closedAt: true,
+		createdById: true,
+		cancelledById: true,
+		createdAt: true,
+		updatedAt: true
+	},
+	with: {
+		maps: {
+			orderBy: {
+				index: 'asc'
+			},
+			columns: {
+				roomId: false
+			},
+			with: {
+				decisions: {
+					columns: {
+						roomMapId: false
+					}
+				},
+				reports: true
+			}
+		}
+	}
+} as const;
+
 export type Transaction = PgTransaction<PostgresJsQueryResultHKT, typeof schema>;
 
 export function rolesOrder(column: PgColumn) {

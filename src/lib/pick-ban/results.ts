@@ -6,7 +6,6 @@ import {
 	RoomMapReportState,
 	WinCondition,
 	type MapReport,
-	type MapResult,
 	type RoomMapState
 } from './types';
 
@@ -66,7 +65,7 @@ export function submitReport(input: SubmitReportInput): SubmitReportResult {
 	const currentMap = input.maps[input.maps.length - 1];
 	if (!currentMap) return { ok: false, error: ReportError.NO_MAP };
 
-	if (currentMap.result) return { ok: false, error: ReportError.RESULT_ALREADY_RECORDED };
+	if (currentMap.outcome) return { ok: false, error: ReportError.RESULT_ALREADY_RECORDED };
 
 	if (!mapDecisionsComplete(input.config, currentMap)) {
 		return { ok: false, error: ReportError.DECISIONS_INCOMPLETE };
@@ -94,16 +93,16 @@ export function submitReport(input: SubmitReportInput): SubmitReportResult {
 		return { ok: true, map: { ...currentMap, reports, reportState: RoomMapReportState.DISPUTED } };
 	}
 
-	// The captains agree on the outcome, resolve and record it automatically.
-	const result: MapResult = {
-		outcome: report.outcome,
-		recordedAt: input.now,
-		resolvedById: null
-	};
-
 	return {
 		ok: true,
-		map: { ...currentMap, reports, reportState: RoomMapReportState.AGREED, result }
+		map: {
+			...currentMap,
+			reports,
+			reportState: RoomMapReportState.AGREED,
+			outcome: report.outcome,
+			resultRecordedAt: input.now,
+			resolvedById: null
+		}
 	};
 }
 
@@ -120,15 +119,15 @@ export function resolveResult(input: ResolveResultInput): ResolveResultResult {
 		return { ok: false, error: ReportError.DECISIONS_INCOMPLETE };
 	}
 
-	const result: MapResult = {
-		outcome: input.outcome,
-		recordedAt: input.now,
-		resolvedById: input.adminId
-	};
-
 	return {
 		ok: true,
-		map: { ...map, reportState: RoomMapReportState.RESOLVED, result }
+		map: {
+			...map,
+			reportState: RoomMapReportState.RESOLVED,
+			outcome: input.outcome,
+			resultRecordedAt: input.now,
+			resolvedById: input.adminId
+		}
 	};
 }
 
@@ -141,14 +140,14 @@ export function matchProgress(
 	config: ResolvedPickBanConfig,
 	maps: readonly RoomMapState[]
 ): MatchProgress {
-	const results = maps
-		.map((map) => map.result)
-		.filter((result): result is MapResult => result !== null);
+	const mapOutcomes = maps
+		.map((map) => map.outcome)
+		.filter((outcome): outcome is MapOutcome => outcome !== null);
 
-	const teamAWins = results.filter((result) => result.outcome === MapOutcome.TEAM_A).length;
-	const teamBWins = results.filter((result) => result.outcome === MapOutcome.TEAM_B).length;
-	const draws = results.filter((result) => result.outcome === MapOutcome.DRAW).length;
-	const mapsPlayed = results.length;
+	const teamAWins = mapOutcomes.filter((outcome) => outcome === MapOutcome.TEAM_A).length;
+	const teamBWins = mapOutcomes.filter((outcome) => outcome === MapOutcome.TEAM_B).length;
+	const draws = mapOutcomes.filter((outcome) => outcome === MapOutcome.DRAW).length;
+	const mapsPlayed = mapOutcomes.length;
 
 	if (config.winCondition === WinCondition.FIRST_TO) {
 		const complete = teamAWins >= config.mapCount || teamBWins >= config.mapCount;

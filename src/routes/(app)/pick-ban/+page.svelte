@@ -29,7 +29,7 @@
 					<span class="text-sm text-gray-300">{room.id}</span>
 				</div>
 				<div class="flex items-center gap-2">
-					<span class="text-sm text-gray-300">{room.state}</span>
+					<span class="text-sm text-gray-300">{room.status}</span>
 				</div>
 				<Match match={room.match} />
 			</a>

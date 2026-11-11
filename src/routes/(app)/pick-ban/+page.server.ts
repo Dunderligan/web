@@ -6,7 +6,7 @@ export const load = async ({ locals }) => {
 	const rooms = await db.query.room.findMany({
 		columns: {
 			id: true,
-			state: true
+			status: true
 		},
 		with: {
 			match: fullMatchQueryWithContext

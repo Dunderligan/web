@@ -1,4 +1,4 @@
-import { RoomState } from '$lib/pick-ban';
+import { RoomStatus } from '$lib/pick-ban';
 import { MatchState } from '$lib/types';
 import { inArray } from 'drizzle-orm';
 import { db, schema } from './db';
@@ -51,8 +51,8 @@ class PickBanSweeper {
 				// exclude matches that already have a non-cancelled room
 				NOT: {
 					rooms: {
-						state: {
-							notIn: [RoomState.CANCELLED]
+						status: {
+							notIn: [RoomStatus.CANCELLED]
 						}
 					}
 				}
@@ -76,7 +76,7 @@ class PickBanSweeper {
 				id: true
 			},
 			where: {
-				state: RoomState.OPEN,
+				status: RoomStatus.OPEN,
 				createdById: {
 					isNull: true
 				},

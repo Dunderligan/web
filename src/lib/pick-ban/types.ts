@@ -14,7 +14,7 @@ export enum WinCondition {
 }
 
 /** The lifecycle state of a room. */
-export enum RoomState {
+export enum RoomStatus {
 	OPEN = 'open',
 	READY_CHECK = 'ready_check',
 	IN_PROGRESS = 'in_progress',
@@ -74,14 +74,6 @@ export type MapReport = {
 	submittedAt: Date;
 };
 
-/** The recorded result of a map, either agreed by both captains or set by an admin. */
-export type MapResult = {
-	outcome: MapOutcome;
-	recordedAt: Date;
-	/** The admin who resolved the result, or null when the captains agreed. */
-	resolvedById: string | null;
-};
-
 /** The pure state of one map in a room. */
 export type RoomMapState = {
 	/** Zero-based game index within the match. */
@@ -93,7 +85,9 @@ export type RoomMapState = {
 	decisions: RecordedDecision[];
 	reports: MapReport[];
 	reportState: RoomMapReportState;
-	result: MapResult | null;
+	outcome: MapOutcome | null;
+	resultRecordedAt: Date | null;
+	resolvedById: string | null;
 	decisionsCompletedAt: Date | null;
 };
 
@@ -132,4 +126,21 @@ export type RuleCatalog = {
 export type SeedPair = {
 	a: number | null;
 	b: number | null;
+};
+
+/** The full room state including history that is synced to connected clients */
+export type RoomState = {
+	status: RoomStatus;
+	teamASeed: number;
+	teamBSeed: number;
+	currentMapIndex: number;
+	version: number;
+	nextDeadlineAt: Date | null;
+	closeReason: RoomCloseReason | null;
+	closedAt: Date | null;
+	createdById: string | null;
+	cancelledById: string | null;
+	createdAt: Date;
+	updatedAt: Date;
+	maps: RoomMapState[];
 };

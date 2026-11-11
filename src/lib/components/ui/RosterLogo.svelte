@@ -7,7 +7,7 @@
 	type Props = {
 		id: string;
 		class?: ClassValue;
-		size: 'sm' | 'md' | 'lg' | 'xl' | number;
+		size: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | number;
 		src?: string | null;
 		href?: ResolvedPathname | null;
 	};
@@ -21,7 +21,8 @@
 					sm: 32,
 					md: 48,
 					lg: 64,
-					xl: 160
+					xl: 86,
+					'2xl': 160
 				}[sizeProp]
 	);
 

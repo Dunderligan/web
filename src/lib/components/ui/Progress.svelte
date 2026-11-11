@@ -17,6 +17,7 @@
 		valueLabel = `${value}/${max}`,
 		inline = false,
 		color,
+		class: classProp,
 		...props
 	}: Props = $props();
 
@@ -30,7 +31,7 @@
 	);
 </script>
 
-<div class={[inline ? 'flex-row items-center gap-2' : 'flex-col gap-1', 'flex']}>
+<div class={[classProp, inline ? 'flex-row items-center gap-2' : 'flex-col gap-1', 'flex']}>
 	<div class={[inline ? 'text-sm' : 'text-lg', 'shrink-0']}>
 		<span class="font-medium">{label}</span>
 		<span class="font-semibold">{valueLabel}</span>

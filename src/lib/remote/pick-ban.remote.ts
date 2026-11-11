@@ -1,12 +1,12 @@
-import { command } from '$app/server';
+import { command, query } from '$app/server';
 import z from 'zod';
 import { roleGuard } from './auth.remote';
 import { AuthRole } from '$lib/auth-role';
 import pickBanService from '$lib/server/pick-ban';
-import { fullMatchQueryWithContext } from '$lib/server/db/helpers';
+import { fullMatchQueryWithContext, roomStateQuery } from '$lib/server/db/helpers';
 import { db, schema } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
-import { RoomCloseReason, RoomState } from '$lib/pick-ban';
+import { RoomCloseReason, RoomStatus } from '$lib/pick-ban';
 import { and, eq, isNull } from 'drizzle-orm';
 
 export const createRoom = command(
@@ -43,11 +43,33 @@ export const cancelRoom = command(
 		await db
 			.update(schema.room)
 			.set({
-				state: RoomState.CANCELLED,
+				status: RoomStatus.CANCELLED,
 				cancelledById: user.id,
 				closedAt: new Date(),
 				closeReason: RoomCloseReason.CANCELLED
 			})
 			.where(and(eq(schema.room.matchId, matchId), isNull(schema.room.closeReason)));
+	}
+);
+
+export const subscribeToRoom = query.live(
+	z.object({ roomId: z.uuid() }),
+	async function* ({ roomId }) {
+		const room = await db.query.room.findFirst({
+			...roomStateQuery,
+			where: {
+				id: roomId
+			}
+		});
+
+		if (!room) {
+			throw error(404, 'Room not found');
+		}
+
+		yield room;
+
+		while (true) {
+			await new Promise((f) => setTimeout(f, 1000));
+		}
 	}
 );

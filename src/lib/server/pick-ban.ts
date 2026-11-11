@@ -36,7 +36,7 @@ class PickBanService {
 			// seed the first map of the room
 			await tx.insert(schema.roomMap).values({
 				firstBanSlot: firstMapFirstBanTeam(seeds),
-				mapIndex: 0,
+				index: 0,
 				roomId: room.id
 			});
 

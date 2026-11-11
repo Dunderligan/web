@@ -22,7 +22,7 @@ import {
 	PickBanMapType,
 	RoomCloseReason,
 	RoomMapReportState,
-	RoomState,
+	RoomStatus,
 	WinCondition,
 	type DecisionValue
 } from '../../../pick-ban/types';
@@ -90,7 +90,7 @@ export const pickBanConfig = pgTable(
 	]
 );
 
-export const roomStateEnum = pgEnum('room_state', enumToPgEnum(RoomState));
+export const roomStatusEnum = pgEnum('room_status', enumToPgEnum(RoomStatus));
 export const roomCloseReasonEnum = pgEnum('room_close_reason', enumToPgEnum(RoomCloseReason));
 
 /** The live pick-ban session for one match. */
@@ -101,7 +101,7 @@ export const room = pgTable(
 		matchId: uuid()
 			.notNull()
 			.references(() => match.id, { onDelete: 'cascade' }),
-		state: roomStateEnum().notNull().default(RoomState.OPEN),
+		status: roomStatusEnum().notNull().default(RoomStatus.OPEN),
 		/** Incremented in the same transaction as every committed state change. */
 		version: integer().notNull().default(0),
 		/** A snapshot of the configuration at room creation, so that config edits cannot rewrite history. */
@@ -122,9 +122,9 @@ export const room = pgTable(
 	(t) => [
 		uniqueIndex('room_one_active_per_match_idx')
 			.on(t.matchId)
-			.where(sql`${t.state} in ('open', 'ready_check', 'in_progress')`),
+			.where(sql`${t.status} in ('open', 'ready_check', 'in_progress')`),
 		index('room_next_deadline_at_idx').on(t.nextDeadlineAt),
-		index('room_state_idx').on(t.state),
+		index('room_state_idx').on(t.status),
 		check('room_seeds', sql`${t.teamASeed} >= 0 and ${t.teamBSeed} >= 0`),
 		check('room_current_map_index', sql`${t.currentMapIndex} >= 0`)
 	]
@@ -145,12 +145,12 @@ export const roomMap = pgTable(
 			.notNull()
 			.references(() => room.id, { onDelete: 'cascade' }),
 		/** Zero-based game index within the match. */
-		mapIndex: integer().notNull(),
+		index: integer().notNull(),
 		/** Null until the map is picked or assigned from a fixed pool. */
 		mapId: uuid().references(() => map.id, { onDelete: 'restrict' }),
 		firstBanSlot: matchSlotEnum().notNull(),
 		reportState: roomMapReportStateEnum().notNull().default(RoomMapReportState.PENDING),
-		resultOutcome: mapOutcomeEnum(),
+		outcome: mapOutcomeEnum(),
 		decisionsCompletedAt: timestamp({ withTimezone: true }),
 		resultRecordedAt: timestamp({ withTimezone: true }),
 		/** An admin who resolved a disputed map report, or reported the result before the team captains did. */
@@ -158,10 +158,10 @@ export const roomMap = pgTable(
 		createdAt: timestamp({ withTimezone: true }).defaultNow().notNull()
 	},
 	(t) => [
-		unique('room_map_room_index_key').on(t.roomId, t.mapIndex),
+		unique('room_map_room_index_key').on(t.roomId, t.index),
 		index('room_map_room_id_idx').on(t.roomId),
 		index('room_map_map_id_idx').on(t.mapId),
-		check('room_map_index', sql`${t.mapIndex} >= 0`)
+		check('room_map_index', sql`${t.index} >= 0`)
 	]
 );
 

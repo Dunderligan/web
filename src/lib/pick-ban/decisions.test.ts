@@ -11,7 +11,7 @@ import {
 	mapDecisionsComplete,
 	nextDecisionPoint
 } from './decisions';
-import { DecisionPoint, PickBanMapType, RoomState, type RoomMapState } from './types';
+import { DecisionPoint, PickBanMapType, RoomStatus, type RoomMapState } from './types';
 import {
 	banOrder,
 	catalog,
@@ -81,9 +81,9 @@ describe('nextDecisionPoint', () => {
 	});
 
 	it('returns null outside the in-progress state', () => {
-		expect(nextDecisionPoint(config(), [roomMap()], RoomState.OPEN)).toBeNull();
-		expect(nextDecisionPoint(config(), [roomMap()], RoomState.READY_CHECK)).toBeNull();
-		expect(nextDecisionPoint(config(), [roomMap()], RoomState.FINISHED)).toBeNull();
+		expect(nextDecisionPoint(config(), [roomMap()], RoomStatus.OPEN)).toBeNull();
+		expect(nextDecisionPoint(config(), [roomMap()], RoomStatus.READY_CHECK)).toBeNull();
+		expect(nextDecisionPoint(config(), [roomMap()], RoomStatus.FINISHED)).toBeNull();
 	});
 
 	it('skips the map pick for a fixed map pool', () => {
@@ -361,7 +361,7 @@ describe('applyDecision', () => {
 			decision: { point: DecisionPoint.MAP_PICK, mapId: MAP.antarctic },
 			actor: { type: 'captain', userId: 'captain-a' },
 			now: new Date(1_000),
-			status: RoomState.READY_CHECK
+			status: RoomStatus.READY_CHECK
 		});
 
 		expect(result).toEqual({ ok: false, error: DecisionError.WRONG_STATE });

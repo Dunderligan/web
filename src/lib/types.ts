@@ -172,6 +172,11 @@ export type Member = {
 	};
 };
 
+export type MemberWithProfile = {
+	member: Member;
+	profile: GameProfileEntryWithDate;
+};
+
 export type Roster = {
 	id: string;
 	name: string;

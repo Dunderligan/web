@@ -5,10 +5,11 @@
 	type Props = {
 		class?: ClassValue;
 		topMargin?: boolean;
+		wide?: boolean;
 		children?: Snippet;
 	};
 
-	let { children, topMargin = true, class: classProp }: Props = $props();
+	let { children, topMargin = true, wide, class: classProp }: Props = $props();
 </script>
 
 <main
@@ -17,7 +18,7 @@
 		'relative z-0 grow overflow-hidden bg-white px-4 pt-18 pb-24 text-gray-800 dark:bg-gray-950 dark:text-gray-300'
 	]}
 >
-	<div class={[classProp, 'mx-auto max-w-4xl']}>
+	<div class={[classProp, wide ? 'max-w-6xl' : 'max-w-4xl', 'mx-auto']}>
 		{@render children?.()}
 	</div>
 
