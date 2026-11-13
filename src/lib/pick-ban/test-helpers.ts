@@ -75,7 +75,9 @@ export function roomMap(partial: Partial<RoomMapState> = {}): RoomMapState {
 		decisions: [],
 		reports: [],
 		reportState: RoomMapReportState.PENDING,
-		result: null,
+		outcome: null,
+		resultRecordedAt: null,
+		resolvedById: null,
 		decisionsCompletedAt: null,
 		...partial
 	};
@@ -132,11 +134,9 @@ export function resultedMap(
 	overrides: Partial<RoomMapState> = {}
 ): RoomMapState {
 	return completedMap({
-		result: {
-			outcome,
-			recordedAt: new Date(3_000),
-			resolvedById: null
-		},
+		outcome,
+		resultRecordedAt: new Date(3_000),
+		resolvedById: null,
 		...overrides
 	});
 }

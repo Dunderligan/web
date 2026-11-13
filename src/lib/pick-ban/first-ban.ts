@@ -25,15 +25,15 @@ export function firstMapFirstBanTeam(seeds: SeedPair): MatchSlot {
  * The loser of the previous map bans first; after a draw the previous first-ban team keeps it.
  */
 export function nextMapFirstBanTeam(previousMap: RoomMapState): MatchSlot {
-	if (!previousMap.result) {
+	if (!previousMap.outcome) {
 		throw new Error('The previous map has no recorded result');
 	}
 
-	if (previousMap.result.outcome === MapOutcome.DRAW) {
+	if (previousMap.outcome === MapOutcome.DRAW) {
 		return previousMap.firstBanSlot;
 	}
 
-	return previousMap.result.outcome === MapOutcome.TEAM_A ? MatchSlot.B : MatchSlot.A;
+	return previousMap.outcome === MapOutcome.TEAM_A ? MatchSlot.B : MatchSlot.A;
 }
 
 /**

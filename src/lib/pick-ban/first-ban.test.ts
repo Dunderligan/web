@@ -40,7 +40,7 @@ describe('nextMapFirstBanTeam', () => {
 	});
 
 	it('throws when the previous map has no result', () => {
-		expect(() => nextMapFirstBanTeam(resultedMap(MapOutcome.TEAM_A, { result: null }))).toThrow();
+		expect(() => nextMapFirstBanTeam(resultedMap(MapOutcome.TEAM_A, { outcome: null }))).toThrow();
 	});
 });
 

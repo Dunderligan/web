@@ -349,7 +349,7 @@ export type GameProfileEntryWithDate = { date: string } & GameProfileEntry;
 
 export type MatchQueryParams = z.infer<typeof matchQueryParamsSchema>;
 
-export type ChipColor = 'gray' | 'yellow' | 'green' | 'accent';
+export type ChipColor = 'gray' | 'yellow' | 'green' | 'accent' | 'red';
 
 export type Placement = {
 	best: number;

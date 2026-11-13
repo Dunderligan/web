@@ -32,7 +32,7 @@ describe('submitReport', () => {
 		if (!result.ok) return;
 		expect(result.maps[0].reports).toHaveLength(1);
 		expect(result.maps[0].reportState).toBe(RoomMapReportState.PENDING);
-		expect(result.maps[0].result).toBeNull();
+		expect(result.maps[0].outcome).toBeNull();
 	});
 
 	it('records the result when both reports agree', () => {
@@ -45,11 +45,9 @@ describe('submitReport', () => {
 		if (!second.ok) return;
 
 		expect(second.maps[0].reportState).toBe(RoomMapReportState.AGREED);
-		expect(second.maps[0].result).toEqual({
-			outcome: MapOutcome.TEAM_A,
-			recordedAt: new Date(5_000),
-			resolvedById: null
-		});
+		expect(second.maps[0].outcome).toBe(MapOutcome.TEAM_A);
+		expect(second.maps[0].resultRecordedAt).toEqual(new Date(5_000));
+		expect(second.maps[0].resolvedById).toBeNull();
 	});
 
 	it('marks disagreeing reports as disputed and records no result', () => {
@@ -60,7 +58,7 @@ describe('submitReport', () => {
 		if (!second.ok) throw new Error('second report failed');
 
 		expect(second.maps[0].reportState).toBe(RoomMapReportState.DISPUTED);
-		expect(second.maps[0].result).toBeNull();
+		expect(second.maps[0].outcome).toBeNull();
 	});
 
 	it('records a draw as a valid outcome', () => {
@@ -70,7 +68,7 @@ describe('submitReport', () => {
 		const second = report(first.maps, MatchSlot.B, MapOutcome.DRAW);
 		if (!second.ok) throw new Error('second report failed');
 
-		expect(second.maps[0].result?.outcome).toBe(MapOutcome.DRAW);
+		expect(second.maps[0]?.outcome).toBe(MapOutcome.DRAW);
 	});
 
 	it('rejects a report before all decisions are complete', () => {
@@ -89,11 +87,9 @@ describe('submitReport', () => {
 
 	it('rejects a report once a result exists', () => {
 		const map = completedMap({
-			result: {
-				outcome: MapOutcome.TEAM_A,
-				recordedAt: new Date(1_000),
-				resolvedById: 'admin'
-			}
+			outcome: MapOutcome.TEAM_A,
+			resultRecordedAt: new Date(1_000),
+			resolvedById: 'admin'
 		});
 
 		const result = report([map], MatchSlot.A, MapOutcome.TEAM_A);
@@ -114,8 +110,8 @@ describe('resolveResult', () => {
 		expect(result.ok).toBe(true);
 		if (!result.ok) return;
 		expect(result.map.reportState).toBe(RoomMapReportState.RESOLVED);
-		expect(result.map.result?.resolvedById).toBe('admin-1');
-		expect(result.map.result?.recordedAt).toEqual(new Date(7_000));
+		expect(result.map?.resolvedById).toBe('admin-1');
+		expect(result.map?.resultRecordedAt).toEqual(new Date(7_000));
 	});
 
 	it('resolves a disputed map', () => {
@@ -135,7 +131,7 @@ describe('resolveResult', () => {
 		expect(result.ok).toBe(true);
 		if (!result.ok) return;
 		expect(result.map.reportState).toBe(RoomMapReportState.RESOLVED);
-		expect(result.map.result?.outcome).toBe(MapOutcome.DRAW);
+		expect(result.map?.outcome).toBe(MapOutcome.DRAW);
 	});
 
 	it('rejects a result before all decisions are complete', () => {
@@ -222,7 +218,7 @@ describe('matchProgress', () => {
 	it('counts only recorded maps', () => {
 		const progress = matchProgress(config(), [
 			resultedMap(MapOutcome.TEAM_A),
-			completedMap({ result: null })
+			completedMap({ outcome: null })
 		]);
 
 		expect(progress.mapsPlayed).toBe(1);

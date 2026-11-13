@@ -1,5 +1,10 @@
 import { db } from '$lib/server/db';
-import { fullMatchQueryWithContext, memberQuery, rosterQuery } from '$lib/server/db/helpers.js';
+import {
+	fullMatchQueryWithContext,
+	memberQuery,
+	rosterQuery,
+	roomStateQuery
+} from '$lib/server/db/helpers.js';
 import overwatch from '$lib/server/overwatch.js';
 import pickBanService from '$lib/server/pick-ban';
 import type { GameProfileEntryWithDate, Member } from '$lib/types.js';
@@ -24,12 +29,13 @@ const roomRosterQuery = {
 } as const;
 
 export const load = async ({ params }) => {
-	const room = await db.query.room.findFirst({
+	const roomData = await db.query.room.findFirst({
+		...roomStateQuery,
 		where: {
 			id: params.id
 		},
-		columns: {},
 		with: {
+			...roomStateQuery.with,
 			match: {
 				...fullMatchQueryWithContext,
 				with: {
@@ -40,25 +46,28 @@ export const load = async ({ params }) => {
 		}
 	});
 
-	if (!room) {
+	if (!roomData) {
 		throw error(404, 'Room not found');
 	}
 
+	const { match, ...roomState } = roomData;
+
 	const [teamAMembers, teamBMembers, maps, heroes, config] = await Promise.all([
-		resolveMemberProfiles(room.match.rosterA?.members ?? []),
-		resolveMemberProfiles(room.match.rosterB?.members ?? []),
+		resolveMemberProfiles(match.rosterA?.members ?? []),
+		resolveMemberProfiles(match.rosterB?.members ?? []),
 		db.query.map.findMany(),
 		db.query.hero.findMany(),
-		pickBanService.retrieveMatchConfig(room.match)
+		pickBanService.retrieveMatchConfig(match)
 	]);
 
 	return {
 		maps,
 		heroes,
 		config,
-		match: room.match,
+		match,
 		teamAMembers,
 		teamBMembers,
+		state: roomState,
 		roomId: params.id
 	};
 };

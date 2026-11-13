@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { cubicOut, sineIn } from 'svelte/easing';
+	import { linear, sineIn } from 'svelte/easing';
 	import { Tween } from 'svelte/motion';
 
 	type Props = {
@@ -54,7 +54,7 @@
 
 	const easedPercentFilled = new Tween(0, {
 		duration: 1000,
-		easing: cubicOut
+		easing: linear
 	});
 
 	$effect(() => {

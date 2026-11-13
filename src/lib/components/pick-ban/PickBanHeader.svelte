@@ -1,20 +1,17 @@
 <script lang="ts">
-	import { matchProgress, type ResolvedPickBanConfig, type RoomState } from '$lib/pick-ban';
-	import { MatchSlot, type ResolvedMatchWithContext } from '$lib/types';
+	import { MatchSlot } from '$lib/types';
 	import type { ClassValue } from 'svelte/elements';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import { matchRoster } from '$lib/match';
+	import { PickBanContext } from '$lib/state/pick-ban.svelte';
 
 	type Props = {
-		state: RoomState;
-		config: ResolvedPickBanConfig;
-		match: ResolvedMatchWithContext;
 		class?: ClassValue;
 	};
 
-	let { state, match, config, class: classProp }: Props = $props();
+	let { class: classProp }: Props = $props();
 
-	const progress = $derived(matchProgress(config, state.maps));
+	const context = PickBanContext.get();
 </script>
 
 <header
@@ -26,15 +23,15 @@
 	{@render slot({ slot: MatchSlot.A, class: 'flex-row-reverse text-right' })}
 
 	<div class="text-6xl font-bold">
-		{progress.teamAWins} — {progress.teamBWins}
+		{context.matchProgress.teamAWins} — {context.matchProgress.teamBWins}
 	</div>
 
 	{@render slot({ slot: MatchSlot.B })}
 </header>
 
 {#snippet slot({ slot, class: classProp }: { slot: MatchSlot; class?: ClassValue })}
-	{@const roster = matchRoster(match, slot)}
-	{@const seed = slot === MatchSlot.A ? state.teamASeed : state.teamBSeed}
+	{@const roster = matchRoster(context.match, slot)}
+	{@const seed = slot === MatchSlot.A ? context.state.teamASeed : context.state.teamBSeed}
 
 	<div class={[classProp, 'flex items-center gap-2']}>
 		{#if roster}
