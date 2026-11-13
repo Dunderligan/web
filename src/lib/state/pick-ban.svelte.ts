@@ -41,10 +41,9 @@ export class PickBanContext {
 		return 'disconnected';
 	});
 
+	status = $derived.by(() => this.state.status);
 	matchProgress = $derived.by(() => matchProgress(this.config, this.state.maps));
-	nextDecision = $derived.by(() =>
-		nextDecisionPoint(this.config, this.state.maps, this.state.status)
-	);
+	nextDecision = $derived.by(() => nextDecisionPoint(this.config, this.state.maps, this.status));
 
 	deadlineInMillis = $derived.by(() => {
 		const decisionDeadline = this.state.nextDeadlineAt;

@@ -6,6 +6,7 @@
 	import { PickBanContext } from '$lib/state/pick-ban.svelte';
 	import { MatchSlot } from '$lib/types';
 	import PickBanHistory from './PickBanHistory.svelte';
+	import PickBanState from './PickBanState.svelte';
 
 	type Props = {
 		class?: ClassValue;
@@ -16,7 +17,7 @@
 	const context = PickBanContext.get();
 </script>
 
-<div class={[classProp, 'grid grid-cols-[1fr_3fr_1fr] gap-3']}>
+<div class={[classProp, 'grid grid-cols-[minmax(8rem,1fr)_3fr_minmax(8rem,1fr)] gap-3']}>
 	<PickBanHeader class="col-span-3" />
 
 	<PickBanTimer
@@ -27,7 +28,7 @@
 
 	<PickBanMembersList slot={MatchSlot.A} />
 
-	<div class="rounded-xl border-[3px] border-gray-200 p-6"></div>
+	<PickBanState />
 
 	<PickBanMembersList slot={MatchSlot.B} />
 

@@ -1,24 +1,12 @@
 <script lang="ts">
-	import { invalidateAll } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import Match from '$lib/components/match/Match.svelte';
 	import PageSection from '$lib/components/structure/PageSection.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
-	import { createRoom } from '$lib/remote/pick-ban.remote.js';
 
 	let { data } = $props();
-
-	async function create() {
-		await createRoom({
-			matchId: '9df7e3a3-638b-475d-9f48-43a168071fc0'
-		});
-		await invalidateAll();
-	}
 </script>
 
 <PageSection>
-	<Button onclick={create}>Skapa</Button>
-
 	<div class="space-y-1">
 		{#each data.rooms as room (room.id)}
 			<a

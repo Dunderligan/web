@@ -3,7 +3,7 @@ CREATE TYPE "map_outcome" AS ENUM('a', 'b', 'draw');--> statement-breakpoint
 CREATE TYPE "pick_ban_map_type" AS ENUM('fixed', 'pool');--> statement-breakpoint
 CREATE TYPE "room_close_reason" AS ENUM('finished', 'cancelled');--> statement-breakpoint
 CREATE TYPE "room_map_report_state" AS ENUM('pending', 'agreed', 'disputed', 'resolved');--> statement-breakpoint
-CREATE TYPE "room_state" AS ENUM('open', 'ready_check', 'in_progress', 'finished', 'cancelled');--> statement-breakpoint
+CREATE TYPE "room_status" AS ENUM('open', 'ready_check', 'in_progress', 'finished', 'cancelled');--> statement-breakpoint
 CREATE TYPE "win_condition" AS ENUM('first_to', 'fixed_maps');--> statement-breakpoint
 CREATE TABLE "gamemode" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -48,7 +48,7 @@ CREATE TABLE "pick_ban_config" (
 CREATE TABLE "room" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 	"match_id" uuid NOT NULL,
-	"state" "room_state" DEFAULT 'open'::"room_state" NOT NULL,
+	"status" "room_status" DEFAULT 'open'::"room_status" NOT NULL,
 	"version" integer DEFAULT 0 NOT NULL,
 	"config_snapshot" jsonb NOT NULL,
 	"team_a_seed" integer NOT NULL,
@@ -80,17 +80,17 @@ CREATE TABLE "room_decision" (
 CREATE TABLE "room_map" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 	"room_id" uuid NOT NULL,
-	"map_index" integer NOT NULL,
+	"index" integer NOT NULL,
 	"map_id" uuid,
 	"first_ban_slot" "match_slot" NOT NULL,
 	"report_state" "room_map_report_state" DEFAULT 'pending'::"room_map_report_state" NOT NULL,
-	"result_outcome" "map_outcome",
+	"outcome" "map_outcome",
 	"decisions_completed_at" timestamp with time zone,
 	"result_recorded_at" timestamp with time zone,
 	"resolved_by_id" uuid,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "room_map_room_index_key" UNIQUE("room_id","map_index"),
-	CONSTRAINT "room_map_index" CHECK ("map_index" >= 0)
+	CONSTRAINT "room_map_room_index_key" UNIQUE("room_id","index"),
+	CONSTRAINT "room_map_index" CHECK ("index" >= 0)
 );
 --> statement-breakpoint
 CREATE TABLE "room_report" (
@@ -104,9 +104,9 @@ CREATE TABLE "room_report" (
 );
 --> statement-breakpoint
 CREATE INDEX "map_gamemode_id_idx" ON "map" ("gamemode_id");--> statement-breakpoint
-CREATE UNIQUE INDEX "room_one_active_per_match_idx" ON "room" ("match_id") WHERE "state" in ('open', 'ready_check', 'in_progress');--> statement-breakpoint
+CREATE UNIQUE INDEX "room_one_active_per_match_idx" ON "room" ("match_id") WHERE "status" in ('open', 'ready_check', 'in_progress');--> statement-breakpoint
 CREATE INDEX "room_next_deadline_at_idx" ON "room" ("next_deadline_at");--> statement-breakpoint
-CREATE INDEX "room_state_idx" ON "room" ("state");--> statement-breakpoint
+CREATE INDEX "room_state_idx" ON "room" ("status");--> statement-breakpoint
 CREATE INDEX "room_decision_room_map_id_idx" ON "room_decision" ("room_map_id");--> statement-breakpoint
 CREATE INDEX "room_map_room_id_idx" ON "room_map" ("room_id");--> statement-breakpoint
 CREATE INDEX "room_map_map_id_idx" ON "room_map" ("map_id");--> statement-breakpoint
@@ -179,3 +179,4 @@ FROM (
 ) AS v("name", "slug", "gamemode_slug", "active")
 JOIN "gamemode" g ON g."slug" = v."gamemode_slug"
 ON CONFLICT ("slug") DO NOTHING;
+

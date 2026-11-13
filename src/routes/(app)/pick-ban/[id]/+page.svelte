@@ -4,6 +4,7 @@
 	import Button from '$lib/components/ui/Button.svelte';
 	import Chip from '$lib/components/ui/Chip.svelte';
 	import { PickBanContext } from '$lib/state/pick-ban.svelte.js';
+	import type { ChipColor } from '$lib/types.js';
 
 	let { data } = $props();
 
@@ -22,11 +23,11 @@
 
 	const context = PickBanContext.get();
 
-	const { color, label, icon } = $derived(
+	const connectionChipProps = $derived(
 		{
-			connected: { color: 'green', label: 'Ansluten', icon: 'ph:circle' },
-			loading: { color: 'yellow', label: 'Ansluter...', icon: 'ph:spinner' },
-			disconnected: { color: 'red', label: 'Inte ansluten', icon: 'ph:minus-circle' }
+			connected: { color: 'green' as ChipColor, label: 'Ansluten', icon: 'ph:circle' },
+			loading: { color: 'yellow' as ChipColor, label: 'Ansluter...', icon: 'ph:spinner' },
+			disconnected: { color: 'red' as ChipColor, label: 'Inte ansluten', icon: 'ph:minus-circle' }
 		}[context.connectionState]
 	);
 </script>
@@ -36,7 +37,7 @@
 		<Button kind="secondary" icon="ph:arrow-left" href="/pick-ban" label="Tillbaka" />
 		<Button kind="secondary" icon="ph:info" label="Info" />
 
-		<Chip class="ml-auto" {icon} {color} {label} />
+		<Chip class="ml-auto" {...connectionChipProps} />
 	</div>
 
 	<PickBan class="mt-4" />

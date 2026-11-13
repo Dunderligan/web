@@ -1,7 +1,7 @@
 {
   "version": "8",
   "dialect": "postgres",
-  "id": "70887bac-69a0-48d6-a35f-7897268652ec",
+  "id": "d9780eeb-a0dc-43a5-b219-15aa9dfbf447",
   "prevIds": [
     "a52c4aca-92a6-4aa5-b865-8c75fa81c22d"
   ],
@@ -75,7 +75,7 @@
         "finished",
         "cancelled"
       ],
-      "name": "room_state",
+      "name": "room_status",
       "entityType": "enums",
       "schema": "public"
     },
@@ -935,14 +935,14 @@
       "table": "room"
     },
     {
-      "type": "room_state",
+      "type": "room_status",
       "typeSchema": "public",
       "notNull": true,
       "dimensions": 0,
       "default": "'open'",
       "generated": null,
       "identity": null,
-      "name": "state",
+      "name": "status",
       "entityType": "columns",
       "schema": "public",
       "table": "room"
@@ -1241,7 +1241,7 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "map_index",
+      "name": "index",
       "entityType": "columns",
       "schema": "public",
       "table": "room_map"
@@ -1293,7 +1293,7 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "result_outcome",
+      "name": "outcome",
       "entityType": "columns",
       "schema": "public",
       "table": "room_map"
@@ -2943,7 +2943,7 @@
         }
       ],
       "isUnique": true,
-      "where": "\"state\" in ('open', 'ready_check', 'in_progress')",
+      "where": "\"status\" in ('open', 'ready_check', 'in_progress')",
       "with": "",
       "method": "btree",
       "concurrently": false,
@@ -2977,7 +2977,7 @@
       "nameExplicit": true,
       "columns": [
         {
-          "value": "state",
+          "value": "status",
           "isExpression": false,
           "asc": true,
           "nullsFirst": false,
@@ -4304,7 +4304,7 @@
       "nameExplicit": true,
       "columns": [
         "room_id",
-        "map_index"
+        "index"
       ],
       "nullsNotDistinct": false,
       "name": "room_map_room_index_key",
@@ -4542,7 +4542,7 @@
       "table": "room"
     },
     {
-      "value": "\"map_index\" >= 0",
+      "value": "\"index\" >= 0",
       "name": "room_map_index",
       "entityType": "checks",
       "schema": "public",
