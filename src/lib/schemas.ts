@@ -1,5 +1,6 @@
 import z from 'zod';
 import { MatchState, Rank, Role, SocialPlatform } from './types';
+import { DecisionPoint } from './pick-ban';
 
 /**
  * Zod schema for remote functions that take matches as arguments.
@@ -58,3 +59,10 @@ export const teamSubmissionSchema = z.object({
 	captainDiscordUsername: z.string().min(1).max(32),
 	members: z.array(memberSchema)
 });
+
+export const decisionInputSchema = z.union([
+	z.object({ point: z.literal(DecisionPoint.MAP_PICK), mapId: z.string() }),
+	z.object({ point: z.literal(DecisionPoint.BAN_ORDER), concede: z.boolean() }),
+	z.object({ point: z.literal(DecisionPoint.FIRST_BAN), heroId: z.string() }),
+	z.object({ point: z.literal(DecisionPoint.SECOND_BAN), heroId: z.string() })
+]);

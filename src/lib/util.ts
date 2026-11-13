@@ -178,6 +178,14 @@ export function formatDateTimeShort(date: Date, extra?: Intl.DateTimeFormatOptio
 	});
 }
 
+export function formatTime(date: Date, extra?: Intl.DateTimeFormatOptions): string {
+	return date.toLocaleTimeString('sv-SE', {
+		hour: '2-digit',
+		minute: '2-digit',
+		...extra
+	});
+}
+
 /** Shortens a team name to a string of 3 characters. */
 export function shortenTeamName(name: string) {
 	const words = name.replace(/[():]/g, '').toUpperCase().split(' ');

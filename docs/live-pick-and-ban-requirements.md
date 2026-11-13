@@ -97,8 +97,8 @@ The random choice is made once on the server and recorded like any other decisio
 ## 5. Room lifecycle
 
 1. **Planned.** Rooms are created automatically ahead of time for eligible matches that have a scheduled start time, no later than 15 minutes before that time. The lead time may be longer, but never shorter than 15 minutes.
-2. **Open.** Participants may join. The room accepts presence and a ready check, but no decisions are made yet.
-3. **Ready check.** Each captain confirms their team is ready. Both teams must be ready before the room proceeds; the room never starts with only one team ready. Both confirmations are active simultaneously, and a captain may withdraw readiness until the first decision is made. There is no automatic ready-check timeout: the room stays in this state until both teams are ready or an admin cancels it.
+2. **Open.** Participants may join. The room shows the ready check to participants, but no decisions are made yet.
+3. **Ready check.** Each captain confirms their team is ready. Both teams must be ready before the room proceeds; the room never starts with only one team ready. Both confirmations are active simultaneously, and a captain may withdraw readiness until the first decision is made. There is no automatic ready-check timeout: the room stays open until both teams are ready or an admin cancels it. When both teams are ready the room moves directly to the in-progress state.
 4. **In progress.** Decisions are made map by map. The room shows the current decision point, which team may act, and how long is left.
 5. **Map complete.** The decisions for the current map are shown as final, and the teams play the map outside the site.
 6. **Map reported.** Both captains report the result. Agreement advances to the next map; disagreement pauses the room.
@@ -283,7 +283,7 @@ All decisions are sequential; no two decision points are open at once. This orde
 41. When a deadline passes, exactly one automatic decision is recorded, chosen at random among the eligible options, and shown as automatic to all clients.
 42. A captain submission that arrives before the fallback is applied is recorded; one that arrives after is rejected.
 43. Every decision, including automatic and admin actions, is present in the room's decision log with actor and timestamp.
-44. A room does not leave the ready check until both captains have readied their teams; it does not start automatically with only one team ready.
+44. A room does not leave the open state until both captains have readied their teams; it does not start automatically with only one team ready.
 45. In a first-to-N match, draws are recorded but do not count toward either team's map wins; in a fixed-N match, a draw counts as one of the N maps played.
 46. A first-to-N match closes when a team reaches N map wins; a fixed-N match closes after exactly N maps have been played.
 47. Every viewer, including an unauthenticated visitor, sees each pick and ban decision as soon as it is recorded, with no delay until the map is final.

@@ -13,6 +13,7 @@ import {
 	matchRoster,
 	matchRosterId,
 	matchScore,
+	matchSlots,
 	matchWinner,
 	resolvedMatchToLogical
 } from '$lib/match';
@@ -20,6 +21,12 @@ import { MatchState, MatchSlot, type MatchWithoutRosters } from '$lib/types';
 import { logicalMatch, matchRoster as makeRoster, resolvedMatch } from '$lib/test/fixtures';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+
+describe('matchSlots', () => {
+	it('returns all possible slots', () => {
+		expect(matchSlots()).toEqual([MatchSlot.A, MatchSlot.B]);
+	});
+});
 
 describe('hasMatchScore', () => {
 	it('is true for played and walkover matches', () => {

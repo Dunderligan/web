@@ -82,7 +82,7 @@ describe('nextDecisionPoint', () => {
 
 	it('returns null outside the in-progress state', () => {
 		expect(nextDecisionPoint(config(), [roomMap()], RoomStatus.OPEN)).toBeNull();
-		expect(nextDecisionPoint(config(), [roomMap()], RoomStatus.READY_CHECK)).toBeNull();
+		expect(nextDecisionPoint(config(), [roomMap()], RoomStatus.CANCELLED)).toBeNull();
 		expect(nextDecisionPoint(config(), [roomMap()], RoomStatus.FINISHED)).toBeNull();
 	});
 
@@ -361,7 +361,7 @@ describe('applyDecision', () => {
 			decision: { point: DecisionPoint.MAP_PICK, mapId: MAP.antarctic },
 			actor: { type: 'captain', userId: 'captain-a' },
 			now: new Date(1_000),
-			status: RoomStatus.READY_CHECK
+			status: RoomStatus.CANCELLED
 		});
 
 		expect(result).toEqual({ ok: false, error: DecisionError.WRONG_STATE });

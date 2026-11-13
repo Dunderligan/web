@@ -13,10 +13,9 @@ export enum WinCondition {
 	FIXED_MAPS = 'fixed_maps'
 }
 
-/** The lifecycle state of a room. */
+/** The lifecycle state of a room. A room in the open state shows the ready check. */
 export enum RoomStatus {
 	OPEN = 'open',
-	READY_CHECK = 'ready_check',
 	IN_PROGRESS = 'in_progress',
 	FINISHED = 'finished',
 	CANCELLED = 'cancelled'
@@ -63,6 +62,8 @@ export type RecordedDecision = {
 	automatic: boolean;
 	/** The acting user, or null for automatic decisions and decisions whose user has been deleted. */
 	actorUserId: string | null;
+	/** The acting user's public identity, resolved for display. Absent in the pure rule engine. */
+	actor?: { battletag: string } | null;
 	createdAt: Date;
 };
 
@@ -128,7 +129,22 @@ export type SeedPair = {
 	b: number | null;
 };
 
-/** The full room state including history that is synced to connected clients */
+/** A participant who is currently connected to a room. */
+export type RoomPresenceMember = {
+	userId: string;
+	battletag: string;
+	slot: MatchSlot;
+	isCaptain: boolean;
+	/** True while the participant has confirmed that their team is ready. */
+	ready: boolean;
+};
+
+/** Ephemeral presence and readiness for a room. Not persisted in the database. */
+export type RoomPresence = {
+	members: RoomPresenceMember[];
+};
+
+/** The full room state including history that is synced to connected clients. */
 export type RoomState = {
 	status: RoomStatus;
 	teamASeed: number;
@@ -143,4 +159,9 @@ export type RoomState = {
 	createdAt: Date;
 	updatedAt: Date;
 	maps: RoomMapState[];
+};
+
+/** A room snapshot as published by the live query, including ephemeral presence. */
+export type RoomSnapshot = RoomState & {
+	presence: RoomPresence;
 };

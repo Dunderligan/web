@@ -5,12 +5,15 @@
 	import Chip from '$lib/components/ui/Chip.svelte';
 	import { PickBanContext } from '$lib/state/pick-ban.svelte.js';
 	import type { ChipColor } from '$lib/types.js';
+	import { onMount } from 'svelte';
 
 	let { data } = $props();
 
+	// svelte-ignore state_referenced_locally
 	PickBanContext.set(
 		new PickBanContext({
 			catalog: { maps: data.maps, heroes: data.heroes },
+			gamemodes: data.gamemodes,
 			config: data.config,
 			initialState: data.state,
 			match: data.match,
@@ -30,6 +33,11 @@
 			disconnected: { color: 'red' as ChipColor, label: 'Inte ansluten', icon: 'ph:minus-circle' }
 		}[context.connectionState]
 	);
+
+	onMount(() => {
+		const destroy = context.startClient();
+		return destroy;
+	});
 </script>
 
 <PageSection topMargin={false} wide>

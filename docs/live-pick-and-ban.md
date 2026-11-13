@@ -38,6 +38,8 @@ These rules vary by bracket, group match round and division. A group match's rou
 
 During a game, members of the teams can connect to a live room on the site. Anyone can view the state of a room, even if not authenticated, however only team captains can make decisions The connection state of the players are shown in the interface.
 
+While the room is open, both team captains must confirm that their team is ready. The room starts only when both teams are ready; one team's confirmation never starts it on its own, and there is no ready-check timeout. Readiness is tied to presence: if no captain of a team stays connected, that team is no longer considered ready. As soon as both teams are ready, the room moves directly to the pick and ban phase.
+
 Once the captains of both teams have confirmed their teams are ready, the pick and ban process begins. At each decision point, a timeout is set. Once the timer runs out, a fallback decision is automatically taken for the timed-out team.
 
 After all the decisions for a map are completed, the site displays the final choices and the teams are free to play the map. Upon returning, the captains report the result of the game independently. In case they agree, the next round proceeds. If they report differently, the room is frozen until an admin resolves the score. Additionally, an admin can report the result directly, before input from the captains are recorded. Repeat until the win condition of the match is achieved and the room is closed.

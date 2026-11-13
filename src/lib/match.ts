@@ -11,6 +11,11 @@ import {
 } from './types';
 import { v4 as uuidv4 } from 'uuid';
 
+/** Returns an array of all possible match slots. */
+export function matchSlots(): readonly MatchSlot[] {
+	return [MatchSlot.A, MatchSlot.B] as const;
+}
+
 /** Whether a match has a recorded score, that is, a score that should count toward the teams' standings. */
 export function hasMatchScore(match: LogicalMatch): boolean {
 	return match.state === MatchState.PLAYED || match.state === MatchState.WALKOVER;

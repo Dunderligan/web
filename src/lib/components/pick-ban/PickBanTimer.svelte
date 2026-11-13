@@ -1,15 +1,19 @@
 <script lang="ts">
+	import { PickBanContext } from '$lib/state/pick-ban.svelte';
 	import { onMount } from 'svelte';
 	import { linear, sineIn } from 'svelte/easing';
 	import { Tween } from 'svelte/motion';
 
 	type Props = {
-		max: number;
-		value: number | null;
 		class?: string;
 	};
 
-	let { max, value, class: classProp }: Props = $props();
+	let { class: classProp }: Props = $props();
+
+	const context = PickBanContext.get();
+
+	const max = $derived(context.config.decisionTimeoutSeconds * 1000);
+	const value = $derived(context.deadlineInMillis);
 
 	const percentFilled = $derived.by(() => {
 		if (value === null) return 100;
@@ -21,7 +25,7 @@
 	const label = $derived.by(() => {
 		if (value === null) return '---';
 
-		let secs = value ?? 0;
+		let secs = (value ?? 0) / 1000;
 		const mins = Math.floor(secs / 60);
 		secs = Math.round(secs % 60);
 

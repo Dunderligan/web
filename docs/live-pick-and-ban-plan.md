@@ -77,6 +77,7 @@ The feature is additive. Teams that pick and ban manually are unaffected, rooms 
 
 ### 3.5 Presence and ready check
 
+- The room has no separate ready-check state: while `status = open` it shows the ready check, and it moves straight to `in_progress` when both teams are ready.
 - Presence is stored in Redis as room-scoped keys with a 45-second TTL, refreshed by a 15-second `presenceHeartbeat` command from the room client.
 - Presence is registered by an explicit client command, never by the live query generator, since the generator's first iteration also runs during SSR and would otherwise mark every crawler as connected.
 - When `REDIS_URL` is absent, an in-memory store with the same interface is used and a warning is logged.

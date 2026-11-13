@@ -122,7 +122,7 @@ export const room = pgTable(
 	(t) => [
 		uniqueIndex('room_one_active_per_match_idx')
 			.on(t.matchId)
-			.where(sql`${t.status} in ('open', 'ready_check', 'in_progress')`),
+			.where(sql`${t.status} in ('open', 'in_progress')`),
 		index('room_next_deadline_at_idx').on(t.nextDeadlineAt),
 		index('room_state_idx').on(t.status),
 		check('room_seeds', sql`${t.teamASeed} >= 0 and ${t.teamBSeed} >= 0`),

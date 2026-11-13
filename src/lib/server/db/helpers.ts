@@ -209,6 +209,13 @@ export const roomStateQuery = {
 				decisions: {
 					columns: {
 						roomMapId: false
+					},
+					with: {
+						actor: {
+							columns: {
+								battletag: true
+							}
+						}
 					}
 				},
 				reports: true

@@ -3,7 +3,7 @@ CREATE TYPE "map_outcome" AS ENUM('a', 'b', 'draw');--> statement-breakpoint
 CREATE TYPE "pick_ban_map_type" AS ENUM('fixed', 'pool');--> statement-breakpoint
 CREATE TYPE "room_close_reason" AS ENUM('finished', 'cancelled');--> statement-breakpoint
 CREATE TYPE "room_map_report_state" AS ENUM('pending', 'agreed', 'disputed', 'resolved');--> statement-breakpoint
-CREATE TYPE "room_status" AS ENUM('open', 'ready_check', 'in_progress', 'finished', 'cancelled');--> statement-breakpoint
+CREATE TYPE "room_status" AS ENUM('open', 'in_progress', 'finished', 'cancelled');--> statement-breakpoint
 CREATE TYPE "win_condition" AS ENUM('first_to', 'fixed_maps');--> statement-breakpoint
 CREATE TABLE "gamemode" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -104,7 +104,7 @@ CREATE TABLE "room_report" (
 );
 --> statement-breakpoint
 CREATE INDEX "map_gamemode_id_idx" ON "map" ("gamemode_id");--> statement-breakpoint
-CREATE UNIQUE INDEX "room_one_active_per_match_idx" ON "room" ("match_id") WHERE "status" in ('open', 'ready_check', 'in_progress');--> statement-breakpoint
+CREATE UNIQUE INDEX "room_one_active_per_match_idx" ON "room" ("match_id") WHERE "status" in ('open', 'in_progress');--> statement-breakpoint
 CREATE INDEX "room_next_deadline_at_idx" ON "room" ("next_deadline_at");--> statement-breakpoint
 CREATE INDEX "room_state_idx" ON "room" ("status");--> statement-breakpoint
 CREATE INDEX "room_decision_room_map_id_idx" ON "room_decision" ("room_map_id");--> statement-breakpoint

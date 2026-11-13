@@ -70,7 +70,6 @@
     {
       "values": [
         "open",
-        "ready_check",
         "in_progress",
         "finished",
         "cancelled"
@@ -2943,7 +2942,7 @@
         }
       ],
       "isUnique": true,
-      "where": "\"status\" in ('open', 'ready_check', 'in_progress')",
+      "where": "\"status\" in ('open', 'in_progress')",
       "with": "",
       "method": "btree",
       "concurrently": false,

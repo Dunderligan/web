@@ -7,6 +7,7 @@ import {
 } from '$lib/server/db/helpers.js';
 import overwatch from '$lib/server/overwatch.js';
 import pickBanService from '$lib/server/pick-ban';
+import presenceStore from '$lib/server/presence';
 import type { GameProfileEntryWithDate, Member } from '$lib/types.js';
 import { error } from '@sveltejs/kit';
 
@@ -52,22 +53,27 @@ export const load = async ({ params }) => {
 
 	const { match, ...roomState } = roomData;
 
-	const [teamAMembers, teamBMembers, maps, heroes, config] = await Promise.all([
-		resolveMemberProfiles(match.rosterA?.members ?? []),
-		resolveMemberProfiles(match.rosterB?.members ?? []),
-		db.query.map.findMany(),
-		db.query.hero.findMany(),
-		pickBanService.retrieveMatchConfig(match)
-	]);
+	const [teamAMembers, teamBMembers, maps, heroes, gamemodes, config, presence] = await Promise.all(
+		[
+			resolveMemberProfiles(match.rosterA?.members ?? []),
+			resolveMemberProfiles(match.rosterB?.members ?? []),
+			db.query.map.findMany(),
+			db.query.hero.findMany(),
+			db.query.gamemode.findMany(),
+			pickBanService.retrieveMatchConfig(match),
+			presenceStore.list(params.id)
+		]
+	);
 
 	return {
 		maps,
 		heroes,
+		gamemodes,
 		config,
 		match,
 		teamAMembers,
 		teamBMembers,
-		state: roomState,
+		state: { ...roomState, presence },
 		roomId: params.id
 	};
 };

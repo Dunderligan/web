@@ -2,6 +2,7 @@
 	import { PickBanContext } from '$lib/state/pick-ban.svelte';
 	import { MatchSlot } from '$lib/types';
 	import Icon from '../ui/Icon.svelte';
+	import StatusIndicator from '../ui/StatusIndicator.svelte';
 
 	type Props = {
 		slot: MatchSlot;
@@ -16,6 +17,9 @@
 
 <div class="space-y-1">
 	{#each members as { member, profile } (member.player.id)}
+		{@const presence = context.presenceFor(member.player.battletag)}
+		{@const connected = presence !== null}
+
 		<div class="flex h-16 items-center gap-1.5 rounded-lg bg-gray-100 p-2 dark:bg-gray-900">
 			{#if profile.status === 'found' && profile.profile.avatarUrl}
 				<img src={profile.profile.avatarUrl} alt="Profilbild" class="h-full rounded-md" />
@@ -26,8 +30,10 @@
 			</span>
 
 			{#if member.isCaptain}
-				<Icon icon="ph:crown-simple" class="mx-2 text-lg" title="Lagkapten" />
+				<Icon icon="ph:crown-simple" class="text-lg" title="Lagkapten" />
 			{/if}
+
+			<StatusIndicator size="sm" active={connected} />
 		</div>
 	{/each}
 </div>

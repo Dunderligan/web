@@ -1,4 +1,5 @@
-import { type RoomMapState, DecisionPoint, type RecordedDecision } from './types';
+import { MatchSlot } from '$lib/types';
+import { type RoomMapState, DecisionPoint, type RecordedDecision, MapOutcome } from './types';
 
 /** Returns the recorded decision for a point, if any. */
 export function decisionAt(map: RoomMapState, point: DecisionPoint): RecordedDecision | undefined {
@@ -21,4 +22,10 @@ export function pickedMapId(decision: RecordedDecision | undefined): string | nu
 export function concededFirstBan(map: RoomMapState): boolean {
 	const decision = decisionAt(map, DecisionPoint.BAN_ORDER);
 	return Boolean(decision && 'concede' in decision.value && decision.value.concede);
+}
+
+export function outcomeToSlot(outcome: MapOutcome): MatchSlot | null {
+	if (outcome === MapOutcome.TEAM_A) return MatchSlot.A;
+	if (outcome === MapOutcome.TEAM_B) return MatchSlot.B;
+	return null;
 }
