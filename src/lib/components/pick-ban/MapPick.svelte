@@ -4,7 +4,7 @@
 	import { SvelteMap } from 'svelte/reactivity';
 	import Tabs from '../ui/Tabs.svelte';
 	import type { ClassValue } from 'svelte/elements';
-	import { compare } from '$lib/util';
+	import { compare, gamemodeIcon } from '$lib/util';
 
 	type Props = {
 		interactive?: boolean;
@@ -75,7 +75,8 @@
 			.map((gamemode) => ({
 				label: gamemode.name,
 				value: gamemode.id,
-				disabled: !mapsByGamemode.get(gamemode.id)?.some((map) => map.eligible)
+				disabled: !gamemodeHasEligibleMaps(gamemode.id),
+				icon: gamemodeIcon(gamemode.slug)
 			}))
 			.toSorted((a, b) => a.label.localeCompare(b.label))}
 	/>

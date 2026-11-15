@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { nextDecisionPoint } from '$lib/pick-ban';
 	import { PickBanContext } from '$lib/state/pick-ban.svelte';
 	import { onMount } from 'svelte';
 	import { linear, sineIn } from 'svelte/easing';
@@ -13,7 +14,11 @@
 	const context = PickBanContext.get();
 
 	const max = $derived(context.config.decisionTimeoutSeconds * 1000);
-	const value = $derived(context.deadlineInMillis);
+
+	const decisionPoint = $derived(
+		nextDecisionPoint(context.config, context.state.maps, context.status)
+	);
+	const value = $derived(decisionPoint === null ? null : context.deadlineInMillis);
 
 	const percentFilled = $derived.by(() => {
 		if (value === null) return 100;

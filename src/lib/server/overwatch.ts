@@ -8,7 +8,7 @@ const apiProfileSchema = z.object({
 	lastUpdated: z.number(),
 	namecard: z.url(),
 	avatar: z.url(),
-	title: z.record(z.string(), z.string()).nullable(),
+	title: z.union([z.string(), z.record(z.string(), z.string())]).nullable(),
 	url: z.string(),
 	name: z.string()
 });
@@ -114,15 +114,21 @@ class OverwatchProfiles {
 			return { profiles: mappedProfiles, date };
 		} catch (error) {
 			console.error('Error fetching Overwatch profile:', error);
-			return { error: 'Failed to fetch profile', date: new Date().toISOString() };
+			return { error: 'Failed to fetch profile', date };
 		}
 	}
 
 	#mapApiProfile(profile: ApiProfile): GameProfile {
+		let title = typeof profile.title === 'string' ? profile.title : (profile.title?.en_US ?? null);
+
+		if (title?.length === 0) {
+			title = null;
+		}
+
 		return {
 			avatarUrl: profile.avatar,
 			name: profile.name,
-			title: profile.title?.en_US ?? null,
+			title,
 			slug: profile.url
 		};
 	}

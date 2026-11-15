@@ -73,10 +73,10 @@ export class PickBanContext {
 		return this.findMemberByBattletag(this.user.battletag);
 	});
 
-	#userIsParticipant = $derived.by(() => this.#userInfo !== null);
+	userIsParticipant = $derived.by(() => this.#userInfo !== null);
 	userSlot = $derived.by(() => this.#userInfo?.slot ?? null);
 	userMember = $derived.by(() => this.#userInfo?.member ?? null);
-	userIsCaptain = $derived.by(() => this.#userInfo?.member.member.isCaptain ?? false);
+	userIsCaptain = $derived.by(() => this.userMember?.member.isCaptain ?? false);
 
 	userTeamReady = $derived.by(() => {
 		const slot = this.userSlot;
@@ -134,7 +134,7 @@ export class PickBanContext {
 			this.now = new SvelteDate();
 		}, 1000);
 
-		if (this.#userIsParticipant) {
+		if (this.userIsParticipant) {
 			void this.#sendHeartbeat();
 
 			this.#heartbeatInterval = setInterval(() => {
@@ -156,7 +156,7 @@ export class PickBanContext {
 		this.#nowInterval = null;
 		this.#heartbeatInterval = null;
 
-		if (this.#userIsParticipant) {
+		if (this.userIsParticipant) {
 			void leaveRoom({ roomId: this.roomId }).catch(() => {});
 		}
 	}

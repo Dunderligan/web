@@ -6,7 +6,7 @@ import pickBanService, { type RoomParticipant } from '$lib/server/pick-ban';
 import { fullMatchQueryWithContext, roomStateQuery } from '$lib/server/db/helpers';
 import { db } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
-import { RoomCloseReason, RoomStatus, type DecisionActor } from '$lib/pick-ban';
+import { MapOutcome, RoomCloseReason, RoomStatus, type DecisionActor } from '$lib/pick-ban';
 import presence from '$lib/server/presence';
 import type { PresenceParticipant } from '$lib/server/presence-store';
 import type { User } from '$lib/server/db/schema/auth';
@@ -163,14 +163,26 @@ export const makeDecision = command(
 		decision: decisionInputSchema
 	}),
 	async ({ roomId, decision: decisionInput }) => {
-		const { actor, participant } = await requireActor(roomId);
+		const { actor, participant } = await requireActingCaptain(roomId);
 
 		await pickBanService.applyDecision(roomId, actor, decisionInput, participant.slot);
 	}
 );
 
+export const submitReport = command(
+	z.object({
+		roomId: z.uuid(),
+		outcome: z.enum(MapOutcome)
+	}),
+	async ({ roomId, outcome }) => {
+		const { user, participant } = await requireActingCaptain(roomId);
+
+		await pickBanService.addReport(roomId, user.id, participant.slot, outcome);
+	}
+);
+
 /** Requires a signed-in captain participant of an in-progress room. */
-async function requireActor(
+async function requireActingCaptain(
 	roomId: string
 ): Promise<{ user: User; participant: RoomParticipant; actor: DecisionActor }> {
 	const { user, participant } = await requireParticipant(roomId);

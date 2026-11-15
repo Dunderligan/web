@@ -15,17 +15,20 @@
 </script>
 
 <div
-	class={[classProp, 'grid grid-cols-1 gap-3 md:grid-cols-[minmax(8rem,1fr)_3fr_minmax(8rem,1fr)]']}
+	class={[
+		classProp,
+		'grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-[minmax(8rem,1fr)_3fr_minmax(8rem,1fr)]'
+	]}
 >
-	<PickBanHeader class="col-span-3" />
+	<PickBanHeader class="col-span-full" />
 
-	<PickBanTimer class="col-span-3" />
+	<PickBanTimer class="col-span-full" />
 
 	<PickBanMembersList slot={MatchSlot.A} />
-	<PickBanState />
+
+	<PickBanState class="col-span-full row-start-3 lg:col-span-1 lg:row-auto" />
+
 	<PickBanMembersList slot={MatchSlot.B} />
 
-	<div></div>
-	<PickBanHistory />
-	<div></div>
+	<PickBanHistory class="col-span-full lg:col-start-2 lg:col-end-2" />
 </div>

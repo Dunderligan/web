@@ -2,8 +2,10 @@ import { matchDivision } from '$lib/match';
 import {
 	applyDecision,
 	firstMapFirstBanTeam,
+	MapOutcome,
 	resolveConfig,
 	RoomStatus,
+	submitReport,
 	type DecisionActor,
 	type DecisionInput,
 	type MatchScope,
@@ -332,6 +334,39 @@ class PickBanService {
 				advanceDeadline: true
 			}
 		);
+	}
+
+	async addReport(roomId: string, byId: string, slot: MatchSlot, outcome: MapOutcome) {
+		await pickBanService.mutateRoom(roomId, async (tx, config, state) => {
+			const [roomMap] = await tx
+				.select({ id: schema.roomMap.id })
+				.from(schema.roomMap)
+				.where(
+					and(eq(schema.roomMap.index, state.currentMapIndex), eq(schema.roomMap.roomId, roomId))
+				)
+				.limit(1);
+
+			const result = submitReport({
+				config,
+				maps: state.maps,
+				slot,
+				now: new Date(),
+				outcome,
+				submittedById: byId
+			});
+
+			if (!result.ok) {
+				throw error(400, `Failed to apply decision: ${result.error}`);
+			}
+
+			// write the updated map state to the database
+			const { map: updatedMap } = result;
+
+			await tx.update(schema.roomMap).set(updatedMap).where(eq(schema.roomMap.id, roomMap.id));
+
+			// we don't need to modify the room object further ourselves
+			return {};
+		});
 	}
 
 	/**

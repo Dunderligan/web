@@ -98,6 +98,25 @@ export function roleIcon(role: Role): string {
 	return 'ph:question-mark';
 }
 
+export function gamemodeIcon(slug: string): string {
+	switch (slug) {
+		case 'control':
+			return 'ph:flag-checkered';
+		case 'escort':
+			return 'ph:package';
+		case 'flashpoint':
+			return 'ph:lightning';
+		case 'hybrid':
+			return 'ph:map-trifold';
+		case 'push':
+			return 'ph:robot';
+		case 'clash':
+			return 'ph:swords';
+		default:
+			return 'ph:question';
+	}
+}
+
 /** Aggregate a number of groups into single collections of rosters and matches. */
 export function aggregateGroups<R, M>(groups: { rosters: R[]; matches: M[] }[]) {
 	return {
@@ -280,8 +299,13 @@ export function compareNullableStrings(a?: string | null, b?: string | null): nu
 	return compareNullable(a ?? null, b ?? null, (x, y) => x.localeCompare(y));
 }
 
-export const PLAYER_ROLES = [Role.DAMAGE, Role.TANK, Role.SUPPORT, Role.FLEX];
+export const HERO_ROLES = [Role.DAMAGE, Role.TANK, Role.SUPPORT];
+export const PLAYER_ROLES = [...HERO_ROLES, Role.FLEX];
 export const ORGANIZATION_ROLES = [Role.COACH, Role.MANAGER];
+
+export function isHeroRole(role: Role): boolean {
+	return HERO_ROLES.includes(role);
+}
 
 export function isPlayerRole(role: Role): boolean {
 	return PLAYER_ROLES.includes(role);
@@ -304,4 +328,21 @@ export function formatSubmissionStatus(status: SubmissionStatus): string {
 
 export function average(values: number[]): number {
 	return values.reduce((sum, value) => sum + value, 0) / values.length;
+}
+
+export function formatRole(role: Role): string {
+	switch (role) {
+		case Role.TANK:
+			return 'Tank';
+		case Role.DAMAGE:
+			return 'DPS';
+		case Role.SUPPORT:
+			return 'Support';
+		case Role.FLEX:
+			return 'Flex';
+		case Role.COACH:
+			return 'Coach';
+		case Role.MANAGER:
+			return 'Manager';
+	}
 }
