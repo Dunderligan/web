@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import { MatchSlot } from '$lib/types';
 import {
 	applyDecision,
-	applyTimeoutFallback,
 	bannerSlots,
 	DecisionError,
 	decisionDeadline,
@@ -520,25 +519,6 @@ describe('fallbackDecision', () => {
 			ok: false,
 			error: DecisionError.NO_OPEN_DECISION
 		});
-	});
-});
-
-describe('applyTimeoutFallback', () => {
-	it('records an automatic decision with no actor', () => {
-		const result = applyTimeoutFallback({
-			config: config(),
-			maps: [roomMap()],
-			catalog,
-			random: () => 0,
-			now: new Date(5_000)
-		});
-
-		expect(result.ok).toBe(true);
-		if (!result.ok) return;
-		expect(result.map.mapId).toBe(MAP.antarctic);
-		expect(result.decision.automatic).toBe(true);
-		expect(result.decision.actorUserId).toBeNull();
-		expect(result.decision.createdAt).toEqual(new Date(5_000));
 	});
 });
 

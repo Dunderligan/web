@@ -1,7 +1,12 @@
 import { flipSlot } from '$lib/match';
 import { MatchSlot } from '$lib/types';
 import type { ResolvedPickBanConfig } from './config';
-import { eligibleHeroes, eligibleMaps } from './eligibility';
+import {
+	computeHeroEligibility,
+	computeMapEligibility,
+	MapEligibility,
+	HeroEligibility
+} from './eligibility';
 import {
 	DecisionPoint,
 	RoomStatus,
@@ -206,8 +211,11 @@ function validateDecision(
 		case DecisionPoint.MAP_PICK: {
 			if (config.mapType === PickBanMapType.FIXED) return DecisionError.WRONG_DECISION_POINT;
 
-			const eligible = eligibleMaps({ config, maps, catalog: catalog.maps });
-			if (!eligible.some((entry) => entry.id === decision.mapId)) {
+			const eligible = computeMapEligibility({ config, maps, catalog: catalog.maps });
+			const isEligible = eligible.some(
+				(entry) => entry.item.id === decision.mapId && entry.eligibility === MapEligibility.ELIGIBLE
+			);
+			if (!isEligible) {
 				return DecisionError.INVALID_MAP;
 			}
 
@@ -220,9 +228,13 @@ function validateDecision(
 
 		case DecisionPoint.FIRST_BAN:
 		case DecisionPoint.SECOND_BAN: {
-			const eligible = eligibleHeroes({ maps, slot: input.slot, catalog: catalog.heroes });
+			const eligible = computeHeroEligibility({ maps, slot: input.slot, catalog: catalog.heroes });
+			const isEligible = eligible.some(
+				(entry) =>
+					entry.item.id === decision.heroId && entry.eligibility === HeroEligibility.ELIGIBLE
+			);
 
-			if (!eligible.some((entry) => entry.id === decision.heroId)) {
+			if (!isEligible) {
 				return DecisionError.INVALID_HERO;
 			}
 
@@ -269,11 +281,11 @@ export function fallbackDecision(input: FallbackInput): FallbackResult {
 			};
 
 		case DecisionPoint.MAP_PICK: {
-			const eligible = eligibleMaps({
+			const eligible = computeMapEligibility({
 				config: input.config,
 				maps: input.maps,
 				catalog: input.catalog.maps
-			});
+			}).filter((entry) => entry.eligibility === MapEligibility.ELIGIBLE);
 
 			if (eligible.length === 0) return { ok: false, error: DecisionError.NO_ELIGIBLE_MAP };
 
@@ -281,17 +293,17 @@ export function fallbackDecision(input: FallbackInput): FallbackResult {
 			return {
 				ok: true,
 				slot: open.slot,
-				decision: { point: DecisionPoint.MAP_PICK, mapId: map.id }
+				decision: { point: DecisionPoint.MAP_PICK, mapId: map.item.id }
 			};
 		}
 
 		case DecisionPoint.FIRST_BAN:
 		case DecisionPoint.SECOND_BAN: {
-			const eligible = eligibleHeroes({
+			const eligible = computeHeroEligibility({
 				maps: input.maps,
 				slot: open.slot,
 				catalog: input.catalog.heroes
-			});
+			}).filter((entry) => entry.eligibility === HeroEligibility.ELIGIBLE);
 
 			if (eligible.length === 0) return { ok: false, error: DecisionError.NO_ELIGIBLE_HERO };
 
@@ -300,27 +312,10 @@ export function fallbackDecision(input: FallbackInput): FallbackResult {
 			return {
 				ok: true,
 				slot: open.slot,
-				decision: { point: open.point, heroId: hero.id }
+				decision: { point: open.point, heroId: hero.item.id }
 			};
 		}
 	}
-}
-
-/** Applies the timeout fallback as an automatic decision. */
-export function applyTimeoutFallback(input: FallbackInput & { now: Date }): ApplyDecisionResult {
-	const fallback = fallbackDecision(input);
-	if (!fallback.ok) return { ok: false, error: fallback.error };
-
-	return applyDecision({
-		config: input.config,
-		maps: input.maps,
-		catalog: input.catalog,
-		slot: fallback.slot,
-		decision: fallback.decision,
-		actor: { type: 'automatic' },
-		now: input.now,
-		status: input.status
-	});
 }
 
 /** Returns the deadline for a decision point that was opened at `openedAt`. */

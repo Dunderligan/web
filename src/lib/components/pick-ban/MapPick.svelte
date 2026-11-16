@@ -1,5 +1,10 @@
 <script lang="ts">
-	import { DecisionPoint, eligibleMaps, type MapCatalogEntry } from '$lib/pick-ban';
+	import {
+		DecisionPoint,
+		MapEligibility,
+		computeMapEligibility,
+		type MapCatalogEntry
+	} from '$lib/pick-ban';
 	import { PickBanContext } from '$lib/state/pick-ban.svelte';
 	import { SvelteMap } from 'svelte/reactivity';
 	import Tabs from '../ui/Tabs.svelte';
@@ -16,44 +21,58 @@
 	const context = PickBanContext.get();
 
 	const mapsByGamemode = $derived.by(() => {
-		const eligibleIds = new Set(
-			eligibleMaps({
+		const eligibilityById = new Map(
+			computeMapEligibility({
 				catalog: context.catalog.maps,
 				config: context.config,
 				maps: context.state.maps
-			}).map((map) => map.id)
+			}).map((map) => [map.item.id, map.eligibility])
 		);
 
-		const maps = new SvelteMap<string, (MapCatalogEntry & { eligible: boolean })[]>();
+		const maps = new SvelteMap<string, (MapCatalogEntry & { eligibility: MapEligibility })[]>();
 
 		for (const map of context.catalog.maps) {
 			if (!maps.has(map.gamemodeId)) {
 				maps.set(map.gamemodeId, []);
 			}
 
-			const eligible = eligibleIds.has(map.id);
-			maps.get(map.gamemodeId)?.push({ ...map, eligible });
+			const eligibility = eligibilityById.get(map.id) ?? MapEligibility.ELIGIBLE;
+			maps.get(map.gamemodeId)?.push({ ...map, eligibility });
 		}
 
 		return maps;
 	});
 
 	let selectedGamemodeId = $derived(
-		context.gamemodes.find((gamemode) => gamemode.active && gamemodeHasEligibleMaps(gamemode.id))
-			?.id
+		context.gamemodes.find(
+			(gamemode) => gamemode.active && gamemodeEligibility(gamemode.id) === MapEligibility.ELIGIBLE
+		)?.id
 	);
 
 	const shownMaps = $derived.by(() => {
 		const unsorted = selectedGamemodeId ? (mapsByGamemode.get(selectedGamemodeId) ?? []) : [];
 
 		return unsorted.sort((a, b) => {
-			return compare(a.eligible, b.eligible) || a.name.localeCompare(b.name);
+			return compare(a.eligibility, b.eligibility) || a.name.localeCompare(b.name);
 		});
 	});
 
-	function gamemodeHasEligibleMaps(gamemodeId: string): boolean {
-		const maps = mapsByGamemode.get(gamemodeId);
-		return maps?.some((map) => map.eligible) ?? false;
+	function gamemodeEligibility(gamemodeId: string): MapEligibility {
+		const map = mapsByGamemode.get(gamemodeId);
+		if (!map) return MapEligibility.ELIGIBLE;
+
+		if (map.some((hero) => hero.eligibility === MapEligibility.ELIGIBLE)) {
+			return MapEligibility.ELIGIBLE;
+		}
+
+		const ineligibilityReasons = new SvelteMap<MapEligibility, number>();
+		for (const hero of map) {
+			const current = ineligibilityReasons.get(hero.eligibility) ?? 0;
+			ineligibilityReasons.set(hero.eligibility, current + 1);
+		}
+
+		const topReason = [...ineligibilityReasons.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
+		return topReason ?? MapEligibility.ELIGIBLE;
 	}
 
 	async function selectMap(mapId: string) {
@@ -64,6 +83,25 @@
 			mapId
 		});
 	}
+
+	function formatEligibility(eligibility: MapEligibility): string {
+		switch (eligibility) {
+			case MapEligibility.ELIGIBLE:
+				return 'Väljbar';
+			case MapEligibility.ALREADY_PICKED:
+				return 'Redan vald i den här matchen';
+			case MapEligibility.INACTIVE:
+				return 'Inaktiv';
+			case MapEligibility.INVALID_FIRST_GAMEMODE:
+				return 'Första kartan måste vara av en annan speltyp';
+			case MapEligibility.POOL_GAMEMODE_RESTRICTION:
+				return 'Speltypen tillåts inte av kartpoolen';
+			case MapEligibility.POOL_RESTRICTION:
+				return 'Kartpoolen tillåter inte den här kartan';
+			case MapEligibility.USED_GAMEMODE:
+				return 'Speltypen har redan använts i den här matchen';
+		}
+	}
 </script>
 
 <div class={[classProp, 'w-full']}>
@@ -72,21 +110,30 @@
 		bind:selected={selectedGamemodeId}
 		items={context.gamemodes
 			.filter((gamemode) => gamemode.active)
-			.map((gamemode) => ({
-				label: gamemode.name,
-				value: gamemode.id,
-				disabled: !gamemodeHasEligibleMaps(gamemode.id),
-				icon: gamemodeIcon(gamemode.slug)
-			}))
+			.map((gamemode) => {
+				const eligibility = gamemodeEligibility(gamemode.id);
+				const disabled = eligibility !== MapEligibility.ELIGIBLE;
+
+				return {
+					label: gamemode.name,
+					value: gamemode.id,
+					disabled,
+					icon: gamemodeIcon(gamemode.slug),
+					title: disabled ? formatEligibility(eligibility) : undefined
+				};
+			})
 			.toSorted((a, b) => a.label.localeCompare(b.label))}
 	/>
 
 	<div class="mt-4 grid grid-cols-[repeat(auto-fill,minmax(9rem,1fr))] gap-2">
-		{#each shownMaps as { eligible, ...map } (map.id)}
+		{#each shownMaps as { eligibility, ...map } (map.id)}
 			<button
-				class="overflow-hidden rounded-lg bg-gray-100 not-disabled:hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-80"
-				disabled={!interactive || !eligible}
+				class="overflow-hidden rounded-lg bg-gray-100 not-disabled:hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-70"
 				onclick={() => selectMap(map.id)}
+				disabled={!interactive || eligibility !== MapEligibility.ELIGIBLE}
+				{...eligibility !== MapEligibility.ELIGIBLE
+					? { title: formatEligibility(eligibility) }
+					: {}}
 			>
 				<img src="/maps/{map.slug}.webp" alt={map.name} class="h-24 w-full object-cover" />
 

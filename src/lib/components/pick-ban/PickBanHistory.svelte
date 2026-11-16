@@ -27,6 +27,7 @@
 	import type { ClassValue } from 'svelte/elements';
 	import StatusIndicator from '../ui/StatusIndicator.svelte';
 	import PickBanHistoryEntry from './PickBanHistoryEntry.svelte';
+	import Placeholder from '../ui/Placeholder.svelte';
 
 	type Props = {
 		class?: ClassValue;
@@ -75,16 +76,19 @@
 
 	<div class="space-y-8">
 		{#each history as { map, entries } (map.index)}
-			{@const current = isCurrentMap(map)}
-
 			<section class="flex items-start gap-4">
-				<StatusIndicator kind={current ? 'active' : 'inactive'} class="z-10 mt-0.5" />
+				<StatusIndicator kind={isCurrentMap(map) ? 'active' : 'inactive'} class="z-10 mt-0.5" />
 
 				<div class="w-full space-y-3">
 					<h3 class="text-lg font-semibold uppercase">Map {map.index + 1}</h3>
 
 					{#each entries as entry (entry.key)}
 						<PickBanHistoryEntry {entry} />
+					{:else}
+						<Placeholder
+							icon="ph:hourglass"
+							text="Inga beslut eller resultat har rapporterats än."
+						/>
 					{/each}
 				</div>
 			</section>

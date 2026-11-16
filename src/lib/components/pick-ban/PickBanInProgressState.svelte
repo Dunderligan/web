@@ -27,13 +27,11 @@
 
 		<BanOrderPick interactive={isActing} />
 	{:else}
-		<Waiting />
-
-		<Subheading>Andra laget väljer first bann</Subheading>
+		<Waiting text="Andra laget väljer första ban" />
 	{/if}
 {:else if decisionPoint.point === DecisionPoint.FIRST_BAN}
 	<div>
-		<div class="uppercase">Första ban</div>
+		<div class="font-semibold uppercase">Första ban</div>
 
 		{#if isActing}
 			<Subheading>Välj en hjälte att banna</Subheading>
@@ -43,9 +41,7 @@
 	{#if isActing}
 		<HeroPick class="grow" interactive={isActing} firstBan={true} slot={decisionPoint.slot} />
 	{:else}
-		<Waiting />
-
-		<Subheading>Väntar på att andra lag bannar</Subheading>
+		<Waiting text="Väntar på att andra laget bannar" />
 	{/if}
 {:else if decisionPoint.point === DecisionPoint.MAP_PICK}
 	{#if isActing}
@@ -65,8 +61,6 @@
 	{#if isActing}
 		<HeroPick class="grow" interactive={isActing} firstBan={false} slot={decisionPoint.slot} />
 	{:else}
-		<Waiting />
-
-		<Subheading>Väntar på att andra lag bannar</Subheading>
+		<Waiting text="Väntar på att andra laget bannar" />
 	{/if}
 {/if}

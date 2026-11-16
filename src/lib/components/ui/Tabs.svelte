@@ -10,6 +10,7 @@
 		icon?: string;
 		href?: ResolvedPathname;
 		disabled?: boolean;
+		title?: string;
 	};
 
 	type Props = {
@@ -30,13 +31,14 @@
 </script>
 
 <div class={[classProp, 'flex items-stretch gap-1 overflow-x-auto']}>
-	{#each items as { label, value, icon, href, disabled } (value)}
+	{#each items as { label, value, icon, href, disabled, title } (value)}
 		{@const isSelected = selected === value}
 		{@const renderedIcon = icon && isSelected && fillIcons ? `${icon}-fill` : icon}
 
 		<Button.Root
 			{href}
 			{disabled}
+			{...title ? { title } : {}}
 			data-sveltekit-noscroll
 			role="tab"
 			tabindex={isSelected ? 0 : -1}

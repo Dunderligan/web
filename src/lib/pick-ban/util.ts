@@ -25,7 +25,23 @@ export function concededFirstBan(map: RoomMapState): boolean {
 }
 
 export function outcomeToSlot(outcome: MapOutcome): MatchSlot | null {
-	if (outcome === MapOutcome.TEAM_A) return MatchSlot.A;
-	if (outcome === MapOutcome.TEAM_B) return MatchSlot.B;
-	return null;
+	switch (outcome) {
+		case MapOutcome.TEAM_A:
+			return MatchSlot.A;
+		case MapOutcome.TEAM_B:
+			return MatchSlot.B;
+		case MapOutcome.DRAW:
+			return null;
+	}
+}
+
+export function slotToOutcome(slot: MatchSlot | null): MapOutcome {
+	switch (slot) {
+		case MatchSlot.A:
+			return MapOutcome.TEAM_A;
+		case MatchSlot.B:
+			return MapOutcome.TEAM_B;
+		case null:
+			return MapOutcome.DRAW;
+	}
 }

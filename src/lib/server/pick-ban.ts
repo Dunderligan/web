@@ -2,8 +2,12 @@ import { matchDivision } from '$lib/match';
 import {
 	applyDecision,
 	firstMapFirstBanTeam,
+	isMatchComplete,
 	MapOutcome,
+	nextMapFirstBanTeam,
 	resolveConfig,
+	RoomCloseReason,
+	RoomMapReportState,
 	RoomStatus,
 	submitReport,
 	type DecisionActor,
@@ -58,18 +62,7 @@ class PickBanService {
 			createdById
 		};
 
-		const room = await db.transaction(async (tx) => {
-			const [room] = await tx.insert(schema.room).values(values).returning();
-
-			// seed the first map of the room
-			await tx.insert(schema.roomMap).values({
-				firstBanSlot: firstMapFirstBanTeam(seeds),
-				index: 0,
-				roomId: room.id
-			});
-
-			return room;
-		});
+		const [room] = await db.insert(schema.room).values(values).returning();
 
 		return room.id;
 	}
@@ -266,17 +259,36 @@ class PickBanService {
 	async startRoom(roomId: string): Promise<boolean> {
 		return await this.mutateRoom(
 			roomId,
-			async (_tx, _config, state) => {
+			async (tx, config, state) => {
 				if (state.status !== RoomStatus.OPEN) return null;
 
+				const patch = await this.#advanceRoom(tx, roomId, state, config);
+
 				return {
-					status: RoomStatus.IN_PROGRESS
+					status: RoomStatus.IN_PROGRESS,
+					...patch
 				};
 			},
 			{
 				advanceDeadline: true
 			}
 		);
+	}
+
+	async #getCurrentMap(
+		roomId: string,
+		state: RoomState,
+		tx: Transaction
+	): Promise<{ id: string } | null> {
+		const [roomMap] = await tx
+			.select({ id: schema.roomMap.id })
+			.from(schema.roomMap)
+			.where(
+				and(eq(schema.roomMap.index, state.currentMapIndex), eq(schema.roomMap.roomId, roomId))
+			)
+			.limit(1);
+
+		return roomMap ?? null;
 	}
 
 	async applyDecision(
@@ -288,20 +300,15 @@ class PickBanService {
 		await pickBanService.mutateRoom(
 			roomId,
 			async (tx, config, state) => {
-				const [heroes, maps, [roomMap]] = await Promise.all([
+				const [heroes, maps, roomMap] = await Promise.all([
 					tx.select().from(schema.hero),
 					tx.select().from(schema.map),
-					tx
-						.select({ id: schema.roomMap.id })
-						.from(schema.roomMap)
-						.where(
-							and(
-								eq(schema.roomMap.index, state.currentMapIndex),
-								eq(schema.roomMap.roomId, roomId)
-							)
-						)
-						.limit(1)
+					this.#getCurrentMap(roomId, state, tx)
 				]);
+
+				if (!roomMap) {
+					throw error(400, `No current map found for room ${roomId}`);
+				}
 
 				const result = applyDecision({
 					actor,
@@ -338,13 +345,11 @@ class PickBanService {
 
 	async addReport(roomId: string, byId: string, slot: MatchSlot, outcome: MapOutcome) {
 		await pickBanService.mutateRoom(roomId, async (tx, config, state) => {
-			const [roomMap] = await tx
-				.select({ id: schema.roomMap.id })
-				.from(schema.roomMap)
-				.where(
-					and(eq(schema.roomMap.index, state.currentMapIndex), eq(schema.roomMap.roomId, roomId))
-				)
-				.limit(1);
+			const roomMap = await this.#getCurrentMap(roomId, state, tx);
+
+			if (!roomMap) {
+				throw error(400, `No current map found for room ${roomId}`);
+			}
 
 			const result = submitReport({
 				config,
@@ -362,11 +367,68 @@ class PickBanService {
 			// write the updated map state to the database
 			const { map: updatedMap } = result;
 
+			state.maps[updatedMap.index] = updatedMap;
+
 			await tx.update(schema.roomMap).set(updatedMap).where(eq(schema.roomMap.id, roomMap.id));
 
-			// we don't need to modify the room object further ourselves
+			// insert the new report
+			const report = updatedMap.reports.find((r) => r.slot === slot);
+			if (!report) {
+				throw error(500, `Report not found after update for room ${roomId}, slot ${slot}`);
+			}
+
+			await tx.insert(schema.roomReport).values({
+				outcome: report.outcome,
+				roomMapId: roomMap.id,
+				slot: report.slot,
+				submittedById: byId
+			});
+
+			if (updatedMap.reportState === RoomMapReportState.AGREED) {
+				return await this.#advanceRoom(tx, roomId, state, config);
+			}
+
 			return {};
 		});
+	}
+
+	async #advanceRoom(
+		tx: Transaction,
+		roomId: string,
+		state: RoomState,
+		config: ResolvedPickBanConfig
+	): Promise<RoomMutation> {
+		if (isMatchComplete(config, state.maps)) {
+			return {
+				status: RoomStatus.FINISHED,
+				closeReason: RoomCloseReason.FINISHED,
+				closedAt: new Date()
+			};
+		}
+
+		let firstBanSlot: MatchSlot;
+		if (state.currentMapIndex == 0) {
+			firstBanSlot = firstMapFirstBanTeam({
+				a: state.teamASeed,
+				b: state.teamBSeed
+			});
+		} else {
+			const prevMap = state.maps[state.currentMapIndex - 1];
+			firstBanSlot = nextMapFirstBanTeam(prevMap);
+		}
+
+		await tx
+			.insert(schema.roomMap)
+			.values({
+				roomId,
+				firstBanSlot,
+				index: state.currentMapIndex + 1
+			})
+			.returning();
+
+		return {
+			currentMapIndex: state.currentMapIndex + 1
+		};
 	}
 
 	/**

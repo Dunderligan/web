@@ -49,7 +49,7 @@
 	}
 </script>
 
-<div class="relative rounded-lg bg-gray-50 p-3 font-medium dark:bg-gray-900">
+<div class="relative rounded-lg bg-gray-50 p-3 text-lg font-medium dark:bg-gray-900">
 	<StatusIndicator
 		kind="outlined"
 		class="absolute top-1/2 -left-9 z-10 -translate-y-1/2"
@@ -148,7 +148,7 @@
 				<div
 					class="flex size-10 items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-800"
 				>
-					<Icon icon="ph:equals" class="text-xl" />
+					<Icon icon="ph:handshake" class="text-xl" />
 				</div>
 			{/if}
 

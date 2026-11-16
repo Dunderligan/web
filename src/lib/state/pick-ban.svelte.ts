@@ -1,4 +1,5 @@
 import {
+	MapOutcome,
 	matchProgress,
 	nextDecisionPoint,
 	type DecisionInput,
@@ -17,6 +18,7 @@ import {
 	leaveRoom,
 	makeDecision,
 	setRoomReady,
+	submitReport,
 	subscribeToRoom
 } from '$lib/remote/pick-ban.remote';
 
@@ -57,6 +59,8 @@ export class PickBanContext {
 	});
 
 	status = $derived.by(() => this.state.status);
+
+	currentMap = $derived.by(() => this.state.maps.at(-1) ?? null);
 	matchProgress = $derived.by(() => matchProgress(this.config, this.state.maps));
 	nextDecision = $derived.by(() => nextDecisionPoint(this.config, this.state.maps, this.status));
 
@@ -165,6 +169,13 @@ export class PickBanContext {
 		await makeDecision({
 			roomId: this.roomId,
 			decision: input
+		});
+	}
+
+	async submitReport(outcome: MapOutcome) {
+		await submitReport({
+			roomId: this.roomId,
+			outcome
 		});
 	}
 
