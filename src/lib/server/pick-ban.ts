@@ -2,9 +2,11 @@ import { matchDivision } from '$lib/match';
 import {
 	applyDecision,
 	firstMapFirstBanTeam,
+	fixedMapForGame,
 	isMatchComplete,
 	MapOutcome,
 	nextMapFirstBanTeam,
+	PickBanMapType,
 	resolveConfig,
 	RoomCloseReason,
 	RoomMapReportState,
@@ -12,6 +14,7 @@ import {
 	submitReport,
 	type DecisionActor,
 	type DecisionInput,
+	type MapCatalogEntry,
 	type MatchScope,
 	type ResolvedPickBanConfig,
 	type RoomState,
@@ -262,7 +265,9 @@ class PickBanService {
 			async (tx, config, state) => {
 				if (state.status !== RoomStatus.OPEN) return null;
 
-				const patch = await this.#advanceRoom(tx, roomId, state, config);
+				const maps = await tx.select().from(schema.map);
+
+				const patch = await this.#advanceRoom(tx, roomId, state, config, maps);
 
 				return {
 					status: RoomStatus.IN_PROGRESS,
@@ -345,7 +350,10 @@ class PickBanService {
 
 	async addReport(roomId: string, byId: string, slot: MatchSlot, outcome: MapOutcome) {
 		await pickBanService.mutateRoom(roomId, async (tx, config, state) => {
-			const roomMap = await this.#getCurrentMap(roomId, state, tx);
+			const [maps, roomMap] = await Promise.all([
+				tx.select().from(schema.map),
+				this.#getCurrentMap(roomId, state, tx)
+			]);
 
 			if (!roomMap) {
 				throw error(400, `No current map found for room ${roomId}`);
@@ -385,7 +393,7 @@ class PickBanService {
 			});
 
 			if (updatedMap.reportState === RoomMapReportState.AGREED) {
-				return await this.#advanceRoom(tx, roomId, state, config);
+				return await this.#advanceRoom(tx, roomId, state, config, maps);
 			}
 
 			return {};
@@ -396,7 +404,8 @@ class PickBanService {
 		tx: Transaction,
 		roomId: string,
 		state: RoomState,
-		config: ResolvedPickBanConfig
+		config: ResolvedPickBanConfig,
+		maps: readonly MapCatalogEntry[]
 	): Promise<RoomMutation> {
 		if (isMatchComplete(config, state.maps)) {
 			return {
@@ -407,14 +416,20 @@ class PickBanService {
 		}
 
 		let firstBanSlot: MatchSlot;
-		if (state.currentMapIndex == 0) {
+		if (state.maps.length === 0) {
 			firstBanSlot = firstMapFirstBanTeam({
 				a: state.teamASeed,
 				b: state.teamBSeed
 			});
 		} else {
-			const prevMap = state.maps[state.currentMapIndex - 1];
+			const prevMap = state.maps[state.currentMapIndex];
+			state.currentMapIndex++;
 			firstBanSlot = nextMapFirstBanTeam(prevMap);
+		}
+
+		let fixedMap: MapCatalogEntry | null = null;
+		if (config.mapType === PickBanMapType.FIXED) {
+			fixedMap = fixedMapForGame(config, state.currentMapIndex, maps);
 		}
 
 		await tx
@@ -422,12 +437,13 @@ class PickBanService {
 			.values({
 				roomId,
 				firstBanSlot,
-				index: state.currentMapIndex + 1
+				index: state.currentMapIndex,
+				mapId: fixedMap?.id ?? null
 			})
 			.returning();
 
 		return {
-			currentMapIndex: state.currentMapIndex + 1
+			currentMapIndex: state.currentMapIndex
 		};
 	}
 

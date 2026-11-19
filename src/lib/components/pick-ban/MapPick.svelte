@@ -127,20 +127,22 @@
 
 	<div class="mt-4 grid grid-cols-[repeat(auto-fill,minmax(9rem,1fr))] gap-2">
 		{#each shownMaps as { eligibility, ...map } (map.id)}
-			<button
-				class="overflow-hidden rounded-lg bg-gray-100 not-disabled:hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-70"
-				onclick={() => selectMap(map.id)}
-				disabled={!interactive || eligibility !== MapEligibility.ELIGIBLE}
-				{...eligibility !== MapEligibility.ELIGIBLE
-					? { title: formatEligibility(eligibility) }
-					: {}}
-			>
-				<img src="/maps/{map.slug}.webp" alt={map.name} class="h-24 w-full object-cover" />
+			{#if eligibility !== MapEligibility.POOL_RESTRICTION}
+				<button
+					class="overflow-hidden rounded-lg bg-gray-100 not-disabled:hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-70"
+					onclick={() => selectMap(map.id)}
+					disabled={!interactive || eligibility !== MapEligibility.ELIGIBLE}
+					{...eligibility !== MapEligibility.ELIGIBLE
+						? { title: formatEligibility(eligibility) }
+						: {}}
+				>
+					<img src="/maps/{map.slug}.webp" alt={map.name} class="h-24 w-full object-cover" />
 
-				<div class="py-1.5">
-					{map.name}
-				</div>
-			</button>
+					<div class="py-1.5">
+						{map.name}
+					</div>
+				</button>
+			{/if}
 		{/each}
 	</div>
 </div>

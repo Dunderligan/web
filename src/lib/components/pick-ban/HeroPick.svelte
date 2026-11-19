@@ -126,6 +126,9 @@
 				class="overflow-hidden rounded-lg bg-gray-100 not-disabled:hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-70"
 				disabled={!interactive || eligibility !== HeroEligibility.ELIGIBLE}
 				onclick={() => selectHero(hero.id)}
+				{...eligibility !== HeroEligibility.ELIGIBLE
+					? { title: formatEligibility(eligibility) }
+					: {}}
 			>
 				<HeroPortrait {hero} size="md" class="w-full object-cover" />
 

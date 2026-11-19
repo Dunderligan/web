@@ -9,6 +9,7 @@
 	} from '$lib/pick-ban';
 	import { outcomeToSlot, pickedMapId, bannedHeroId } from '$lib/pick-ban/util';
 	import { PickBanContext } from '$lib/state/pick-ban.svelte';
+	import { fly } from 'svelte/transition';
 	import GamemodeBadge from '../ui/GamemodeBadge.svelte';
 	import HeroPortrait from '../ui/HeroPortrait.svelte';
 	import Icon from '../ui/Icon.svelte';
@@ -49,7 +50,10 @@
 	}
 </script>
 
-<div class="relative rounded-lg bg-gray-50 p-3 text-lg font-medium dark:bg-gray-900">
+<div
+	class="relative rounded-lg bg-gray-50 p-3 text-lg font-medium dark:bg-gray-900"
+	transition:fly={{ duration: 150, x: 10 }}
+>
 	<StatusIndicator
 		kind="outlined"
 		class="absolute top-1/2 -left-9 z-10 -translate-y-1/2"

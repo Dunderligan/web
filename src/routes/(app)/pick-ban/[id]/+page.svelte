@@ -3,6 +3,7 @@
 	import PageSection from '$lib/components/structure/PageSection.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Chip from '$lib/components/ui/Chip.svelte';
+	import { RoomStatus } from '$lib/pick-ban/types.js';
 	import { PickBanContext } from '$lib/state/pick-ban.svelte.js';
 	import type { ChipColor } from '$lib/types.js';
 	import { onMount } from 'svelte';
@@ -45,7 +46,9 @@
 		<Button kind="secondary" icon="ph:arrow-left" href="/pick-ban" label="Tillbaka" />
 		<Button kind="secondary" icon="ph:info" label="Info" />
 
-		<Chip class="ml-auto" {...connectionChipProps} />
+		{#if context.status !== RoomStatus.CANCELLED && context.status !== RoomStatus.FINISHED}
+			<Chip class="ml-auto" {...connectionChipProps} />
+		{/if}
 	</div>
 
 	<PickBan class="mt-4" />

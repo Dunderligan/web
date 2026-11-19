@@ -17,7 +17,7 @@
 
 	const context = PickBanContext.get();
 
-	const MAP_LENGTH_THRESHOLD = 1000 * 60 * 3; // 3 minutes;
+	const MAP_LENGTH_THRESHOLD = 1000 * 3; // 3 minutes;
 
 	const decisionsCompletedAt = $derived(context.currentMap?.decisionsCompletedAt);
 	const timeSinceMapStart = $derived(
@@ -31,7 +31,7 @@
 </script>
 
 {#snippet description(text: string)}
-	<p class="mt-2">
+	<p class="mt-2 text-lg font-medium">
 		{text}
 	</p>
 {/snippet}
