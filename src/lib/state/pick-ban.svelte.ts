@@ -17,6 +17,7 @@ import {
 	heartbeatRoom,
 	leaveRoom,
 	makeDecision,
+	resolveResult,
 	setRoomReady,
 	submitReport,
 	subscribeToRoom
@@ -45,6 +46,7 @@ export class PickBanContext {
 
 	now: SvelteDate;
 	readyPending = $state(false);
+	decisionPending = $state(false);
 
 	#nowInterval: NodeJS.Timeout | null = null;
 	#heartbeatInterval: NodeJS.Timeout | null = null;
@@ -166,16 +168,31 @@ export class PickBanContext {
 	}
 
 	async makeDecision(input: DecisionInput) {
-		await makeDecision({
-			roomId: this.roomId,
-			decision: input
-		});
+		if (this.decisionPending) return;
+
+		this.decisionPending = true;
+
+		try {
+			await makeDecision({
+				roomId: this.roomId,
+				decision: input
+			});
+		} finally {
+			this.decisionPending = false;
+		}
 	}
 
 	async submitReport(outcome: MapOutcome) {
 		await submitReport({
 			roomId: this.roomId,
 			outcome
+		});
+	}
+
+	async resolveResult(outcome: MapOutcome) {
+		await resolveResult({
+			outcome,
+			roomId: this.roomId
 		});
 	}
 

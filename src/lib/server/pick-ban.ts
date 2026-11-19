@@ -4,10 +4,13 @@ import {
 	firstMapFirstBanTeam,
 	fixedMapForGame,
 	isMatchComplete,
+	mapDecisionsComplete,
 	MapOutcome,
+	matchProgress,
 	nextMapFirstBanTeam,
 	PickBanMapType,
 	resolveConfig,
+	resolveResult,
 	RoomCloseReason,
 	RoomMapReportState,
 	RoomStatus,
@@ -18,10 +21,11 @@ import {
 	type MatchScope,
 	type ResolvedPickBanConfig,
 	type RoomState,
+	type RuleCatalog,
 	type SeedPair
 } from '$lib/pick-ban';
 import { MatchSlot, MatchState, type Member, type ResolvedMatchWithContext } from '$lib/types';
-import { and, eq, sql } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { db, schema } from './db';
 import { fullGroupQuery, memberQuery, roomStateQuery, type Transaction } from './db/helpers';
 import { generateDivisionStandings, getRosterSeed } from './standings';
@@ -35,12 +39,12 @@ export type RoomParticipant = {
 	member: Member;
 };
 
-export type RoomMutation = Partial<
-	Omit<
-		typeof schema.room.$inferInsert,
-		'id' | 'matchId' | 'createdById' | 'createdAt' | 'updatedAt' | 'version'
-	>
->;
+type RoomServerContext = {
+	config: ResolvedPickBanConfig;
+	state: RoomState;
+	catalog: RuleCatalog;
+	matchId: string;
+};
 
 class PickBanService {
 	/**
@@ -256,165 +260,151 @@ class PickBanService {
 	}
 
 	/**
-	 * Starts a room once both teams are ready. Returns false when the room was already started
-	 * (or is no longer open), so a racing ready confirmation cannot open the room twice.
+	 * Starts a room once both teams are ready.
 	 */
-	async startRoom(roomId: string): Promise<boolean> {
-		return await this.mutateRoom(
-			roomId,
-			async (tx, config, state) => {
-				if (state.status !== RoomStatus.OPEN) return null;
+	async startRoom(roomId: string): Promise<void> {
+		console.log(`Starting room ${roomId}...`);
 
-				const maps = await tx.select().from(schema.map);
+		return await db.transaction(async (tx) => {
+			await this.#mutateRoom(tx, roomId, async (context) => {
+				if (context.state.status !== RoomStatus.OPEN) {
+					throw error(400, `Room is not in the open state.`);
+				}
 
-				const patch = await this.#advanceRoom(tx, roomId, state, config, maps);
+				context.state.status = RoomStatus.IN_PROGRESS;
 
-				return {
-					status: RoomStatus.IN_PROGRESS,
-					...patch
-				};
-			},
-			{
-				advanceDeadline: true
-			}
-		);
+				this.#advanceRoom(tx, context);
+			});
+		});
 	}
 
-	async #getCurrentMap(
-		roomId: string,
-		state: RoomState,
-		tx: Transaction
-	): Promise<{ id: string } | null> {
-		const [roomMap] = await tx
-			.select({ id: schema.roomMap.id })
-			.from(schema.roomMap)
-			.where(
-				and(eq(schema.roomMap.index, state.currentMapIndex), eq(schema.roomMap.roomId, roomId))
-			)
-			.limit(1);
+	async cancelRoom(roomId: string, cancelledById: string | null): Promise<void> {
+		await db.transaction(async (tx) => {
+			await this.#mutateRoom(tx, roomId, async (context) => {
+				if (
+					context.state.status !== RoomStatus.OPEN &&
+					context.state.status !== RoomStatus.IN_PROGRESS
+				) {
+					throw error(400, `Room is not in a cancellable state.`);
+				}
 
-		return roomMap ?? null;
+				context.state.status = RoomStatus.CANCELLED;
+				context.state.closeReason = RoomCloseReason.CANCELLED;
+				context.state.closedAt = new Date();
+				context.state.cancelledById = cancelledById;
+			});
+		});
 	}
 
 	async applyDecision(
 		roomId: string,
 		actor: DecisionActor,
-		input: DecisionInput,
-		slot: MatchSlot
+		decisionFn: (context: RoomServerContext) => { slot: MatchSlot; decision: DecisionInput }
 	): Promise<void> {
-		await pickBanService.mutateRoom(
-			roomId,
-			async (tx, config, state) => {
-				const [heroes, maps, roomMap] = await Promise.all([
-					tx.select().from(schema.hero),
-					tx.select().from(schema.map),
-					this.#getCurrentMap(roomId, state, tx)
-				]);
-
-				if (!roomMap) {
-					throw error(400, `No current map found for room ${roomId}`);
-				}
+		await db.transaction(async (tx) => {
+			await this.#mutateRoom(tx, roomId, async (context) => {
+				const { slot, decision: input } = decisionFn(context);
 
 				const result = applyDecision({
 					actor,
-					config,
-					maps: state.maps,
+					config: context.config,
+					maps: context.state.maps,
 					now: new Date(),
 					slot,
-					status: state.status,
+					status: context.state.status,
 					decision: input,
-					catalog: { heroes, maps }
+					catalog: context.catalog
 				});
 
 				if (!result.ok) {
 					throw error(400, `Failed to apply decision: ${result.error}`);
 				}
 
-				// write the decision and updated map state to the database
-				const { decision, map: updatedMap } = result;
+				const { map: updatedMap } = result;
 
-				await tx.insert(schema.roomDecision).values({
-					roomMapId: roomMap.id,
-					...decision
-				});
-				await tx.update(schema.roomMap).set(updatedMap).where(eq(schema.roomMap.id, roomMap.id));
+				context.state.maps[updatedMap.index] = updatedMap;
 
-				// we don't need to modify the room object further ourselves
-				return {};
-			},
-			{
-				advanceDeadline: true
-			}
-		);
-	}
-
-	async addReport(roomId: string, byId: string, slot: MatchSlot, outcome: MapOutcome) {
-		await pickBanService.mutateRoom(roomId, async (tx, config, state) => {
-			const [maps, roomMap] = await Promise.all([
-				tx.select().from(schema.map),
-				this.#getCurrentMap(roomId, state, tx)
-			]);
-
-			if (!roomMap) {
-				throw error(400, `No current map found for room ${roomId}`);
-			}
-
-			const result = submitReport({
-				config,
-				maps: state.maps,
-				slot,
-				now: new Date(),
-				outcome,
-				submittedById: byId
+				if (mapDecisionsComplete(context.config, updatedMap)) {
+					this.#clearDeadline(context);
+				} else {
+					this.#advanceDeadline(context);
+				}
 			});
-
-			if (!result.ok) {
-				throw error(400, `Failed to apply decision: ${result.error}`);
-			}
-
-			// write the updated map state to the database
-			const { map: updatedMap } = result;
-
-			state.maps[updatedMap.index] = updatedMap;
-
-			await tx.update(schema.roomMap).set(updatedMap).where(eq(schema.roomMap.id, roomMap.id));
-
-			// insert the new report
-			const report = updatedMap.reports.find((r) => r.slot === slot);
-			if (!report) {
-				throw error(500, `Report not found after update for room ${roomId}, slot ${slot}`);
-			}
-
-			await tx.insert(schema.roomReport).values({
-				outcome: report.outcome,
-				roomMapId: roomMap.id,
-				slot: report.slot,
-				submittedById: byId
-			});
-
-			if (updatedMap.reportState === RoomMapReportState.AGREED) {
-				return await this.#advanceRoom(tx, roomId, state, config, maps);
-			}
-
-			return {};
 		});
 	}
 
-	async #advanceRoom(
-		tx: Transaction,
+	async submitReport(
 		roomId: string,
-		state: RoomState,
-		config: ResolvedPickBanConfig,
-		maps: readonly MapCatalogEntry[]
-	): Promise<RoomMutation> {
+		byId: string,
+		slot: MatchSlot,
+		outcome: MapOutcome
+	): Promise<void> {
+		await db.transaction(async (tx) => {
+			await this.#mutateRoom(tx, roomId, async (context) => {
+				const result = submitReport({
+					config: context.config,
+					maps: context.state.maps,
+					slot,
+					now: new Date(),
+					outcome,
+					submittedById: byId
+				});
+
+				if (!result.ok) {
+					throw error(400, `Failed to submit report: ${result.error}`);
+				}
+
+				const { map: updatedMap } = result;
+
+				context.state.maps[updatedMap.index] = updatedMap;
+
+				if (updatedMap.reportState === RoomMapReportState.AGREED) {
+					await this.#advanceRoom(tx, context);
+				}
+			});
+		});
+	}
+
+	async resolveResult(roomId: string, adminId: string, outcome: MapOutcome): Promise<void> {
+		await db.transaction(async (tx) => {
+			await this.#mutateRoom(tx, roomId, async (context) => {
+				const result = resolveResult({
+					adminId: adminId,
+					config: context.config,
+					maps: context.state.maps,
+					now: new Date(),
+					outcome
+				});
+
+				if (!result.ok) {
+					throw error(400, `Failed to resolve result: ${result.error}`);
+				}
+
+				const { map: updatedMap } = result;
+
+				context.state.maps[updatedMap.index] = updatedMap;
+
+				await this.#advanceRoom(tx, context);
+			});
+		});
+	}
+
+	async #advanceRoom(tx: Transaction, context: RoomServerContext): Promise<void> {
+		const { config, state, catalog } = context;
+
 		if (isMatchComplete(config, state.maps)) {
-			return {
-				status: RoomStatus.FINISHED,
-				closeReason: RoomCloseReason.FINISHED,
-				closedAt: new Date()
-			};
+			state.status = RoomStatus.FINISHED;
+			state.closeReason = RoomCloseReason.FINISHED;
+			state.closedAt = new Date();
+
+			this.#clearDeadline(context);
+			await this.#writeMatchResult(tx, context);
+			return;
 		}
 
+		console.log(`Advancing ${JSON.stringify(context.state)}...`);
+
+		// advance to the next map
 		let firstBanSlot: MatchSlot;
 		if (state.maps.length === 0) {
 			firstBanSlot = firstMapFirstBanTeam({
@@ -429,75 +419,148 @@ class PickBanService {
 
 		let fixedMap: MapCatalogEntry | null = null;
 		if (config.mapType === PickBanMapType.FIXED) {
-			fixedMap = fixedMapForGame(config, state.currentMapIndex, maps);
+			fixedMap = fixedMapForGame(config, state.currentMapIndex, catalog.maps);
 		}
 
-		await tx
-			.insert(schema.roomMap)
-			.values({
-				roomId,
-				firstBanSlot,
-				index: state.currentMapIndex,
-				mapId: fixedMap?.id ?? null
-			})
-			.returning();
+		state.maps.push({
+			index: state.currentMapIndex,
+			mapId: fixedMap?.id ?? null,
+			firstBanSlot,
+			decisions: [],
+			reports: [],
+			reportState: RoomMapReportState.PENDING,
+			outcome: null,
+			resultRecordedAt: null,
+			resolvedById: null,
+			decisionsCompletedAt: null
+		});
 
-		return {
-			currentMapIndex: state.currentMapIndex
-		};
+		this.#advanceDeadline(context);
+	}
+
+	async #writeMatchResult(tx: Transaction, { config, state, matchId }: RoomServerContext) {
+		const progress = matchProgress(config, state.maps);
+
+		await tx
+			.update(schema.match)
+			.set({
+				state: MatchState.PLAYED,
+				teamAScore: progress.teamAWins,
+				teamBScore: progress.teamBWins,
+				draws: progress.draws,
+				playedAt: state.createdAt
+			})
+			.where(and(eq(schema.match.id, matchId), eq(schema.match.state, MatchState.SCHEDULED)));
+	}
+
+	#advanceDeadline(context: RoomServerContext) {
+		const newDeadline = new Date().getTime() + context.config.decisionTimeoutSeconds * 1000;
+		context.state.nextDeadlineAt = new Date(newDeadline);
+	}
+
+	#clearDeadline(context: RoomServerContext) {
+		context.state.nextDeadlineAt = null;
 	}
 
 	/**
-	 * Mutates a room's state atomically in a transaction, incrementing the version, updatedAt and optionally
-	 * setting a new nextDeadlineAt. Updates to maps, decisions and related tables should be done in the same transaction.
 	 *
-	 * Returns true for successful mutations, false if the room was not found or the version check failed
-	 * (meaning a concurrent mutation was committed).
 	 */
-	async mutateRoom(
+	async #mutateRoom(
+		tx: Transaction,
 		roomId: string,
-		mutate: (
-			tx: Transaction,
-			config: ResolvedPickBanConfig,
-			state: RoomState
-		) => Promise<RoomMutation | null>,
-		{ advanceDeadline = false }: { advanceDeadline?: boolean } = {}
-	): Promise<boolean> {
-		return await db.transaction(async (tx) => {
-			const data = await tx.query.room.findFirst({
+		mutate: (context: RoomServerContext) => Promise<void>
+	): Promise<void> {
+		const context = await this.#getContext(tx, roomId);
+
+		const prevState = JSON.parse(JSON.stringify(context.state)) as RoomState;
+
+		await mutate(context);
+
+		context.state.version++;
+		context.state.updatedAt = new Date();
+
+		await this.#upsertRoomState(tx, prevState, context.state);
+	}
+
+	async #upsertRoomState(
+		tx: Transaction,
+		prevState: RoomState,
+		newState: RoomState
+	): Promise<void> {
+		const { id: roomId, maps: newMaps, ...newRoom } = newState;
+		const { maps: prevMaps } = prevState;
+
+		await tx.update(schema.room).set(newRoom).where(eq(schema.room.id, roomId));
+
+		for (const newMap of newMaps) {
+			const { reports, decisions, ...newMapData } = newMap;
+			const prevMap = prevMaps.find((m) => m.index === newMap.index);
+
+			let mapId: string;
+			if (!prevMap) {
+				const [inserted] = await tx
+					.insert(schema.roomMap)
+					.values({ ...newMapData, roomId })
+					.returning({ id: schema.roomMap.id });
+
+				mapId = inserted.id;
+			} else {
+				const [updated] = await tx
+					.update(schema.roomMap)
+					.set(newMapData)
+					.where(and(eq(schema.roomMap.roomId, roomId), eq(schema.roomMap.index, newMap.index)))
+					.returning({ id: schema.roomMap.id });
+
+				mapId = updated.id;
+			}
+
+			for (const newDecision of decisions) {
+				const prevDecision = prevMap?.decisions.find((d) => d.point === newDecision.point);
+
+				if (!prevDecision) {
+					await tx.insert(schema.roomDecision).values({ ...newDecision, roomMapId: mapId });
+				}
+			}
+
+			for (const newReport of reports) {
+				const prevReport = prevMap?.reports.find((r) => r.slot === newReport.slot);
+
+				if (!prevReport) {
+					await tx.insert(schema.roomReport).values({ ...newReport, roomMapId: mapId });
+				}
+			}
+		}
+	}
+
+	async #getContext(tx: Transaction, roomId: string): Promise<RoomServerContext> {
+		const [roomData, heroes, maps] = await Promise.all([
+			tx.query.room.findFirst({
 				...roomStateQuery,
 				columns: {
 					...roomStateQuery.columns,
-					configSnapshot: true
+					configSnapshot: true,
+					matchId: true
 				},
 				where: {
 					id: roomId
 				}
-			});
+			}),
+			tx.select().from(schema.hero),
+			tx.select().from(schema.map)
+		]);
 
-			if (!data) return false;
+		if (!roomData) {
+			throw error(404, `Room ${roomId} not found`);
+		}
 
-			const { configSnapshot: config, ...roomState } = data;
+		const { configSnapshot: config, matchId, ...state } = roomData;
 
-			const roomMutation = await mutate(tx, config, roomState);
-
-			const nextDeadlineAt = advanceDeadline
-				? sql`now() + ${config.decisionTimeoutSeconds} * interval '1 second'`
-				: null;
-
-			const updatedRoom = await tx
-				.update(schema.room)
-				.set({
-					...roomMutation,
-					nextDeadlineAt: nextDeadlineAt,
-					version: sql`${schema.room.version} + 1`,
-					updatedAt: sql`now()`
-				})
-				.where(and(eq(schema.room.id, roomId), eq(schema.room.version, roomState.version)))
-				.returning({ id: schema.room.id });
-
-			return updatedRoom.length > 0;
-		});
+		return {
+			config,
+			state,
+			catalog: { heroes, maps },
+			matchId
+		};
 	}
 }
 

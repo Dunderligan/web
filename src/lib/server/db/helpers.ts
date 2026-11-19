@@ -3,6 +3,7 @@ import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 import { db, schema } from '$lib/server/db';
 import type { PgColumn, PgTransaction } from 'drizzle-orm/pg-core';
 import type { PlayerCheckin } from '$lib/types';
+import type relations from './relations';
 
 // Helper queries and functions for database operations.
 
@@ -184,6 +185,7 @@ export const fullGroupQuery = {
 
 export const roomStateQuery = {
 	columns: {
+		id: true,
 		status: true,
 		teamASeed: true,
 		teamBSeed: true,
@@ -203,11 +205,13 @@ export const roomStateQuery = {
 				index: 'asc'
 			},
 			columns: {
+				id: false,
 				roomId: false
 			},
 			with: {
 				decisions: {
 					columns: {
+						id: false,
 						roomMapId: false
 					},
 					with: {
@@ -224,7 +228,7 @@ export const roomStateQuery = {
 	}
 } as const;
 
-export type Transaction = PgTransaction<PostgresJsQueryResultHKT, typeof schema>;
+export type Transaction = PgTransaction<PostgresJsQueryResultHKT, typeof schema, typeof relations>;
 
 export function rolesOrder(column: PgColumn) {
 	return sql`(

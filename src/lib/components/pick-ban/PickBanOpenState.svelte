@@ -22,9 +22,7 @@
 			När en kapten från bägge lag har bekräftat att de är redo startas matchen.
 		</div>
 	{:else}
-		<Waiting />
-
-		<div>Väntar på lagkaptener att bekräfta att de är redo...</div>
+		<Waiting text="Väntar på att lagkaptenerna bekräftar att de är redo..." />
 	{/if}
 </div>
 

@@ -124,7 +124,7 @@ export const room = pgTable(
 			.on(t.matchId)
 			.where(sql`${t.status} in ('open', 'in_progress')`),
 		index('room_next_deadline_at_idx').on(t.nextDeadlineAt),
-		index('room_state_idx').on(t.status),
+		index('room_status_idx').on(t.status),
 		check('room_seeds', sql`${t.teamASeed} >= 0 and ${t.teamBSeed} >= 0`),
 		check('room_current_map_index', sql`${t.currentMapIndex} >= 0`)
 	]

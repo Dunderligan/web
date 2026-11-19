@@ -8,6 +8,8 @@
 	import { MapOutcome, RoomMapReportState } from '$lib/pick-ban';
 	import { slotToOutcome } from '$lib/pick-ban/util';
 	import Waiting from './Waiting.svelte';
+	import { page } from '$app/state';
+	import { isAdmin } from '$lib/auth-role';
 
 	type Props = {
 		class?: ClassValue;
@@ -28,6 +30,8 @@
 	const teamHasSubmitted = $derived(
 		context.currentMap?.reports.some((report) => report.slot === context.userSlot)
 	);
+
+	const userIsAdmin = $derived(isAdmin(page.data.user?.role));
 </script>
 
 {#snippet description(text: string)}
@@ -51,47 +55,61 @@
 		{:else if context.userIsCaptain}
 			<Subheading>Rapportera resultat</Subheading>
 
-			<div class={[classProp, 'mt-4 flex w-full max-w-md flex-col gap-1 overflow-hidden']}>
-				{#each matchSlots() as slot (slot)}
-					{@const roster = matchRoster(context.match, slot)}
-
-					{#if roster}
-						<Button
-							class="justify-start text-lg"
-							kind="secondary"
-							onclick={() => context.submitReport(slotToOutcome(slot))}
-						>
-							<RosterLogo id={roster.id} size="md" />
-							<span class="font-semibold">
-								Vinst till {roster.name}
-							</span>
-						</Button>
-					{/if}
-				{/each}
-
-				<Button
-					kind="tertiary"
-					icon="ph:handshake"
-					label="Oavgjort"
-					onclick={() => context.submitReport(MapOutcome.DRAW)}
-				/>
-			</div>
+			{@render resultsPicker((outcome: MapOutcome) => context.submitReport(outcome))}
 		{:else}
-			<Waiting text="Väntar på att lagen ska rapportera resultatet..." />
+			<Waiting text="Väntar på att lagen ska rapportera resultat..." />
 		{/if}
 	{:else if reportState === RoomMapReportState.AGREED}
 		<Subheading>Resultat rapporterat</Subheading>
 
 		{@render description('Resultatet har rapporterats och godkänts av båda lagen.')}
 	{:else if reportState === RoomMapReportState.DISPUTED}
-		<Subheading>Resultatet är under diskussion</Subheading>
+		{#if userIsAdmin}
+			<Subheading>Resultatet har rapporterats annorlunda</Subheading>
 
-		{@render description(
-			'Resultatet har rapporterats men inte godkänts av båda lagen. Diskutera med motståndarlaget för att komma överens om resultatet.'
-		)}
+			<p class="mt-2 text-lg font-medium">
+				De två lagen har rapporterat olika resultat.
+				<br />
+				Som en administratör kan du fastställa resultatet nedan.
+			</p>
+
+			{@render resultsPicker((outcome: MapOutcome) => context.resolveResult(outcome))}
+		{:else}
+			<Waiting
+				text="Lagen har rapporterat olika resultat. En administratör krävs för att fastställa resultatet."
+			/>
+		{/if}
 	{:else if reportState === RoomMapReportState.RESOLVED}
 		<Subheading>Resultatet har fastställts</Subheading>
 
 		{@render description('Resultatet har fastställts av en administratör.')}
 	{/if}
 </div>
+
+{#snippet resultsPicker(onSubmit: (outcome: MapOutcome) => void)}
+	<div class={[classProp, 'mt-4 flex w-full max-w-md flex-col gap-1 overflow-hidden']}>
+		{#each matchSlots() as slot (slot)}
+			{@const roster = matchRoster(context.match, slot)}
+
+			{#if roster}
+				<Button
+					class="justify-start text-lg"
+					kind="secondary"
+					onclick={() => onSubmit(slotToOutcome(slot))}
+				>
+					<RosterLogo id={roster.id} size="md" />
+					<span class="font-semibold">
+						Vinst till {roster.name}
+					</span>
+				</Button>
+			{/if}
+		{/each}
+
+		<Button
+			kind="tertiary"
+			icon="ph:handshake"
+			label="Oavgjort"
+			onclick={() => onSubmit(MapOutcome.DRAW)}
+		/>
+	</div>
+{/snippet}

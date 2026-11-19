@@ -146,6 +146,7 @@ export type RoomPresence = {
 
 /** The full room state including history that is synced to connected clients. */
 export type RoomState = {
+	id: string;
 	status: RoomStatus;
 	teamASeed: number;
 	teamBSeed: number;

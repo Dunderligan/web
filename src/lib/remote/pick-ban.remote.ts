@@ -6,7 +6,7 @@ import pickBanService, { type RoomParticipant } from '$lib/server/pick-ban';
 import { fullMatchQueryWithContext, roomStateQuery } from '$lib/server/db/helpers';
 import { db } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
-import { MapOutcome, RoomCloseReason, RoomStatus, type DecisionActor } from '$lib/pick-ban';
+import { MapOutcome, RoomStatus, type DecisionActor } from '$lib/pick-ban';
 import presence from '$lib/server/presence';
 import type { PresenceParticipant } from '$lib/server/presence-store';
 import type { User } from '$lib/server/db/schema/auth';
@@ -47,22 +47,9 @@ export const cancelRoom = command(
 	async ({ roomId }) => {
 		const user = await roleGuard(AuthRole.ADMIN);
 
-		const success = await pickBanService.mutateRoom(roomId, async (_tx, _config, state) => {
-			if (state.status === RoomStatus.FINISHED || state.status === RoomStatus.CANCELLED) {
-				return null;
-			}
+		await pickBanService.cancelRoom(roomId, user.id);
 
-			return {
-				status: RoomStatus.CANCELLED,
-				cancelledById: user.id,
-				closedAt: new Date(),
-				closeReason: RoomCloseReason.CANCELLED
-			};
-		});
-
-		if (success) {
-			await presence.clear(roomId);
-		}
+		await presence.clear(roomId);
 	}
 );
 
@@ -107,16 +94,16 @@ export const setRoomReady = command(
 		await presence.heartbeat(roomId, participantToPresence(participant));
 		await presence.setReady(roomId, participant.userId, ready);
 
-		if (!ready) return { started: false };
+		if (!ready) return;
 
 		const snapshot = await presence.list(roomId);
 		const readySlots = new Set(
 			snapshot.members.filter((member) => member.isCaptain && member.ready).map((m) => m.slot)
 		);
 
-		if (readySlots.size < 2) return { started: false };
+		if (readySlots.size < 2) return;
 
-		return { started: await pickBanService.startRoom(roomId) };
+		await pickBanService.startRoom(roomId);
 	}
 );
 
@@ -165,7 +152,10 @@ export const makeDecision = command(
 	async ({ roomId, decision: decisionInput }) => {
 		const { actor, participant } = await requireActingCaptain(roomId);
 
-		await pickBanService.applyDecision(roomId, actor, decisionInput, participant.slot);
+		await pickBanService.applyDecision(roomId, actor, () => ({
+			slot: participant.slot,
+			decision: decisionInput
+		}));
 	}
 );
 
@@ -177,7 +167,19 @@ export const submitReport = command(
 	async ({ roomId, outcome }) => {
 		const { user, participant } = await requireActingCaptain(roomId);
 
-		await pickBanService.addReport(roomId, user.id, participant.slot, outcome);
+		await pickBanService.submitReport(roomId, user.id, participant.slot, outcome);
+	}
+);
+
+export const resolveResult = command(
+	z.object({
+		roomId: z.uuid(),
+		outcome: z.enum(MapOutcome)
+	}),
+	async ({ roomId, outcome }) => {
+		const user = await roleGuard(AuthRole.ADMIN);
+
+		await pickBanService.resolveResult(roomId, user.id, outcome);
 	}
 );
 

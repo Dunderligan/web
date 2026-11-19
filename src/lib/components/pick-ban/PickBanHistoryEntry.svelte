@@ -51,7 +51,7 @@
 </script>
 
 <div
-	class="relative rounded-lg bg-gray-50 p-3 text-lg font-medium dark:bg-gray-900"
+	class="relative z-0 rounded-lg bg-gray-50 p-3 text-lg font-medium dark:bg-gray-900"
 	transition:fly={{ duration: 150, x: 10 }}
 >
 	<StatusIndicator
@@ -73,7 +73,10 @@
 				{@const gamemode = gamemodeFor(pickedMap)}
 
 				{#if pickedMap && gamemode}
-					<div class="pointer-events-none absolute inset-y-0 right-0 w-2/3" aria-hidden="true">
+					<div
+						class="pointer-events-none absolute inset-y-0 right-0 -z-10 w-2/3"
+						aria-hidden="true"
+					>
 						<img
 							src="/maps/{pickedMap.slug}.webp"
 							alt=""
@@ -81,7 +84,7 @@
 						/>
 
 						<div
-							class="absolute inset-0 bg-linear-to-r from-gray-50 via-gray-50/50 to-transparent dark:from-gray-900 dark:via-gray-900/80"
+							class="absolute inset-0 bg-linear-to-r from-gray-50 via-gray-50/80 to-transparent dark:from-gray-900 dark:via-gray-900/80"
 						></div>
 					</div>
 
