@@ -19,7 +19,9 @@ import {
 	type DecisionInput,
 	type MapCatalogEntry,
 	type MatchScope,
+	type PickBanConfigRow,
 	type ResolvedPickBanConfig,
+	type RoomMapState,
 	type RoomState,
 	type RuleCatalog,
 	type SeedPair
@@ -157,20 +159,8 @@ class PickBanService {
 		return config.enabled;
 	}
 
-	/**
-	 * Retrieves all the applicable pick-ban configs for a match and resolves them to one
-	 * final config via `resolveConfig`.
-	 */
-	async retrieveMatchConfig(match: ResolvedMatchWithContext): Promise<ResolvedPickBanConfig> {
-		const division = matchDivision(match);
-
-		const scope: MatchScope = {
-			bracketId: match.bracketId ?? null,
-			divisionId: division?.id ?? null,
-			round: match.round ?? null
-		};
-
-		const configs = await db.query.pickBanConfig.findMany({
+	async retrieveConfigs(scope: MatchScope): Promise<PickBanConfigRow[]> {
+		return await db.query.pickBanConfig.findMany({
 			where: {
 				bracketId: {
 					OR: [
@@ -194,6 +184,22 @@ class PickBanService {
 				}
 			}
 		});
+	}
+
+	/**
+	 * Retrieves all the applicable pick-ban configs for a match and resolves them to one
+	 * final config via `resolveConfig`.
+	 */
+	async retrieveMatchConfig(match: ResolvedMatchWithContext): Promise<ResolvedPickBanConfig> {
+		const division = matchDivision(match);
+
+		const scope: MatchScope = {
+			bracketId: match.bracketId ?? null,
+			divisionId: division?.id ?? null,
+			round: match.round ?? null
+		};
+
+		const configs = await this.retrieveConfigs(scope);
 
 		return resolveConfig(scope, configs);
 	}
@@ -259,40 +265,33 @@ class PickBanService {
 		return null;
 	}
 
-	/**
-	 * Starts a room once both teams are ready.
-	 */
 	async startRoom(roomId: string): Promise<void> {
 		console.log(`Starting room ${roomId}...`);
 
-		return await db.transaction(async (tx) => {
-			await this.#mutateRoom(tx, roomId, async (context) => {
-				if (context.state.status !== RoomStatus.OPEN) {
-					throw error(400, `Room is not in the open state.`);
-				}
+		await this.#mutateRoomInTransaction(roomId, async (context, tx) => {
+			if (context.state.status !== RoomStatus.OPEN) {
+				throw error(400, `Room is not in the open state.`);
+			}
 
-				context.state.status = RoomStatus.IN_PROGRESS;
+			context.state.status = RoomStatus.IN_PROGRESS;
 
-				this.#advanceRoom(tx, context);
-			});
+			this.#advanceRoom(tx, context);
 		});
 	}
 
-	async cancelRoom(roomId: string, cancelledById: string | null): Promise<void> {
-		await db.transaction(async (tx) => {
-			await this.#mutateRoom(tx, roomId, async (context) => {
-				if (
-					context.state.status !== RoomStatus.OPEN &&
-					context.state.status !== RoomStatus.IN_PROGRESS
-				) {
-					throw error(400, `Room is not in a cancellable state.`);
-				}
+	async cancelRoom(roomId: string, byId: string | null): Promise<void> {
+		await this.#mutateRoomInTransaction(roomId, async (context) => {
+			if (
+				context.state.status !== RoomStatus.OPEN &&
+				context.state.status !== RoomStatus.IN_PROGRESS
+			) {
+				throw error(400, `Room is not in a cancellable state.`);
+			}
 
-				context.state.status = RoomStatus.CANCELLED;
-				context.state.closeReason = RoomCloseReason.CANCELLED;
-				context.state.closedAt = new Date();
-				context.state.cancelledById = cancelledById;
-			});
+			context.state.status = RoomStatus.CANCELLED;
+			context.state.closeReason = RoomCloseReason.CANCELLED;
+			context.state.closedAt = new Date();
+			context.state.cancelledById = byId;
 		});
 	}
 
@@ -301,35 +300,33 @@ class PickBanService {
 		actor: DecisionActor,
 		decisionFn: (context: RoomServerContext) => { slot: MatchSlot; decision: DecisionInput }
 	): Promise<void> {
-		await db.transaction(async (tx) => {
-			await this.#mutateRoom(tx, roomId, async (context) => {
-				const { slot, decision: input } = decisionFn(context);
+		await this.#mutateRoomInTransaction(roomId, async (context) => {
+			const { slot, decision: input } = decisionFn(context);
 
-				const result = applyDecision({
-					actor,
-					config: context.config,
-					maps: context.state.maps,
-					now: new Date(),
-					slot,
-					status: context.state.status,
-					decision: input,
-					catalog: context.catalog
-				});
-
-				if (!result.ok) {
-					throw error(400, `Failed to apply decision: ${result.error}`);
-				}
-
-				const { map: updatedMap } = result;
-
-				context.state.maps[updatedMap.index] = updatedMap;
-
-				if (mapDecisionsComplete(context.config, updatedMap)) {
-					this.#clearDeadline(context);
-				} else {
-					this.#advanceDeadline(context);
-				}
+			const result = applyDecision({
+				actor,
+				config: context.config,
+				maps: context.state.maps,
+				now: new Date(),
+				slot,
+				status: context.state.status,
+				decision: input,
+				catalog: context.catalog
 			});
+
+			if (!result.ok) {
+				throw error(400, `Failed to apply decision: ${result.error}`);
+			}
+
+			const { map: updatedMap } = result;
+
+			context.state.maps[updatedMap.index] = updatedMap;
+
+			if (mapDecisionsComplete(context.config, updatedMap)) {
+				this.#clearDeadline(context);
+			} else {
+				this.#advanceDeadline(context);
+			}
 		});
 	}
 
@@ -339,53 +336,49 @@ class PickBanService {
 		slot: MatchSlot,
 		outcome: MapOutcome
 	): Promise<void> {
-		await db.transaction(async (tx) => {
-			await this.#mutateRoom(tx, roomId, async (context) => {
-				const result = submitReport({
-					config: context.config,
-					maps: context.state.maps,
-					slot,
-					now: new Date(),
-					outcome,
-					submittedById: byId
-				});
-
-				if (!result.ok) {
-					throw error(400, `Failed to submit report: ${result.error}`);
-				}
-
-				const { map: updatedMap } = result;
-
-				context.state.maps[updatedMap.index] = updatedMap;
-
-				if (updatedMap.reportState === RoomMapReportState.AGREED) {
-					await this.#advanceRoom(tx, context);
-				}
+		await this.#mutateRoomInTransaction(roomId, async (context, tx) => {
+			const result = submitReport({
+				config: context.config,
+				maps: context.state.maps,
+				slot,
+				now: new Date(),
+				outcome,
+				submittedById: byId
 			});
+
+			if (!result.ok) {
+				throw error(400, `Failed to submit report: ${result.error}`);
+			}
+
+			const { map: updatedMap } = result;
+
+			context.state.maps[updatedMap.index] = updatedMap;
+
+			if (updatedMap.reportState === RoomMapReportState.AGREED) {
+				await this.#advanceRoom(tx, context);
+			}
 		});
 	}
 
 	async resolveResult(roomId: string, adminId: string, outcome: MapOutcome): Promise<void> {
-		await db.transaction(async (tx) => {
-			await this.#mutateRoom(tx, roomId, async (context) => {
-				const result = resolveResult({
-					adminId: adminId,
-					config: context.config,
-					maps: context.state.maps,
-					now: new Date(),
-					outcome
-				});
-
-				if (!result.ok) {
-					throw error(400, `Failed to resolve result: ${result.error}`);
-				}
-
-				const { map: updatedMap } = result;
-
-				context.state.maps[updatedMap.index] = updatedMap;
-
-				await this.#advanceRoom(tx, context);
+		await this.#mutateRoomInTransaction(roomId, async (context, tx) => {
+			const result = resolveResult({
+				adminId: adminId,
+				config: context.config,
+				maps: context.state.maps,
+				now: new Date(),
+				outcome
 			});
+
+			if (!result.ok) {
+				throw error(400, `Failed to resolve result: ${result.error}`);
+			}
+
+			const { map: updatedMap } = result;
+
+			context.state.maps[updatedMap.index] = updatedMap;
+
+			await this.#advanceRoom(tx, context);
 		});
 	}
 
@@ -401,8 +394,6 @@ class PickBanService {
 			await this.#writeMatchResult(tx, context);
 			return;
 		}
-
-		console.log(`Advancing ${JSON.stringify(context.state)}...`);
 
 		// advance to the next map
 		let firstBanSlot: MatchSlot;
@@ -422,9 +413,16 @@ class PickBanService {
 			fixedMap = fixedMapForGame(config, state.currentMapIndex, catalog.maps);
 		}
 
-		state.maps.push({
-			index: state.currentMapIndex,
-			mapId: fixedMap?.id ?? null,
+		const roomMap = this.#createMap(state.currentMapIndex, fixedMap?.id ?? null, firstBanSlot);
+		state.maps.push(roomMap);
+
+		this.#advanceDeadline(context);
+	}
+
+	#createMap(index: number, mapId: string | null, firstBanSlot: MatchSlot): RoomMapState {
+		return {
+			index,
+			mapId,
 			firstBanSlot,
 			decisions: [],
 			reports: [],
@@ -433,9 +431,7 @@ class PickBanService {
 			resultRecordedAt: null,
 			resolvedById: null,
 			decisionsCompletedAt: null
-		});
-
-		this.#advanceDeadline(context);
+		};
 	}
 
 	async #writeMatchResult(tx: Transaction, { config, state, matchId }: RoomServerContext) {
@@ -462,15 +458,21 @@ class PickBanService {
 		context.state.nextDeadlineAt = null;
 	}
 
-	/**
-	 *
-	 */
+	async #mutateRoomInTransaction(
+		roomId: string,
+		mutate: (context: RoomServerContext, tx: Transaction) => Promise<void>
+	): Promise<void> {
+		await db.transaction(async (tx) => {
+			await this.#mutateRoom(tx, roomId, (context) => mutate(context, tx));
+		});
+	}
+
 	async #mutateRoom(
 		tx: Transaction,
 		roomId: string,
 		mutate: (context: RoomServerContext) => Promise<void>
 	): Promise<void> {
-		const context = await this.#getContext(tx, roomId);
+		const context = await this.#retrieveRoomContext(tx, roomId);
 
 		const prevState = JSON.parse(JSON.stringify(context.state)) as RoomState;
 
@@ -532,7 +534,7 @@ class PickBanService {
 		}
 	}
 
-	async #getContext(tx: Transaction, roomId: string): Promise<RoomServerContext> {
+	async #retrieveRoomContext(tx: Transaction, roomId: string): Promise<RoomServerContext> {
 		const [roomData, heroes, maps] = await Promise.all([
 			tx.query.room.findFirst({
 				...roomStateQuery,

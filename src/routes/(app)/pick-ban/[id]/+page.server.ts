@@ -40,6 +40,7 @@ export const load = async ({ params }) => {
 			match: {
 				...fullMatchQueryWithContext,
 				with: {
+					...fullMatchQueryWithContext.with,
 					rosterA: roomRosterQuery,
 					rosterB: roomRosterQuery
 				}

@@ -52,6 +52,14 @@
 			{/if}
 		{:else if context.userIsParticipant && teamHasSubmitted}
 			<Waiting text="Väntar på att motståndarlaget ska rapportera sitt resultat..." />
+		{:else if userIsAdmin}
+			<Subheading>Fastställ resultat</Subheading>
+
+			{@render resultsPicker((outcome: MapOutcome) => context.resolveResult(outcome))}
+
+			<p class="mt-4 text-sm font-medium">
+				Som en administratör kan du fastställa resultatet direkt.
+			</p>
 		{:else if context.userIsCaptain}
 			<Subheading>Rapportera resultat</Subheading>
 

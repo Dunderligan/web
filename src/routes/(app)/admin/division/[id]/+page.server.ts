@@ -11,9 +11,14 @@ export const load = async ({ params }) => {
 			groups: {
 				orderBy: { name: 'asc' }
 			},
-			season: {},
+			season: true,
 			brackets: {
 				orderBy: (t) => divisionOrder(t.name)
+			},
+			pickBanConfigs: {
+				columns: {
+					round: true
+				}
 			}
 		}
 	});

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import PickBan from '$lib/components/pick-ban/PickBan.svelte';
+	import PickBanInfoDialog from '$lib/components/pick-ban/PickBanInfoDialog.svelte';
 	import PageSection from '$lib/components/structure/PageSection.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Chip from '$lib/components/ui/Chip.svelte';
@@ -27,6 +28,8 @@
 
 	const context = PickBanContext.get();
 
+	let infoOpen = $state(false);
+
 	const connectionChipProps = $derived(
 		{
 			connected: { color: 'green' as ChipColor, label: 'Ansluten', icon: 'ph:circle' },
@@ -44,7 +47,7 @@
 <PageSection topMargin={false} wide>
 	<div class="flex items-center gap-2">
 		<Button kind="secondary" icon="ph:arrow-left" href="/pick-ban" label="Tillbaka" />
-		<Button kind="secondary" icon="ph:info" label="Info" />
+		<Button kind="secondary" icon="ph:info" label="Info" onclick={() => (infoOpen = true)} />
 
 		{#if context.status !== RoomStatus.CANCELLED && context.status !== RoomStatus.FINISHED}
 			<Chip class="ml-auto" {...connectionChipProps} />
@@ -53,3 +56,5 @@
 
 	<PickBan class="mt-4" />
 </PageSection>
+
+<PickBanInfoDialog bind:open={infoOpen} />

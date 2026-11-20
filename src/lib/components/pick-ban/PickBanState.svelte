@@ -19,7 +19,7 @@
 <div
 	class={[
 		classProp,
-		'flex min-h-60 flex-col items-center justify-center gap-4 rounded-xl border-[3px] border-gray-200 bg-white p-6 text-center font-medium text-gray-600 dark:border-gray-900 dark:bg-gray-950 dark:text-gray-400'
+		'flex min-h-96 flex-col items-center justify-center gap-4 rounded-xl border-[3px] border-gray-200 bg-white p-6 text-center font-medium text-gray-600 dark:border-gray-900 dark:bg-gray-950 dark:text-gray-400'
 	]}
 >
 	{#if context.status === RoomStatus.CANCELLED}

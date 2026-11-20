@@ -4,6 +4,8 @@
 	import type { ClassValue } from 'svelte/elements';
 	import Icon from '../ui/Icon.svelte';
 	import StatusIndicator from '../ui/StatusIndicator.svelte';
+	import Link from '../ui/Link.svelte';
+	import { resolve } from '$app/paths';
 
 	type Props = {
 		slot: MatchSlot;
@@ -19,7 +21,10 @@
 
 <div class={[classProp, 'space-y-1']}>
 	{#each members as { member, profile } (member.player.id)}
-		{@const presence = context.presenceFor(member.player.battletag)}
+		{@const battletag = member.player.battletag}
+		{@const href = resolve(`/spelare/${battletag.replace('#', '-')}`)}
+
+		{@const presence = context.presenceFor(battletag)}
 		{@const connected = presence !== null}
 
 		<div class="flex h-12 items-center gap-1.5 rounded-lg bg-gray-100 p-2 dark:bg-gray-900">
@@ -27,9 +32,9 @@
 				<img src={profile.profile.avatarUrl} alt="Profilbild" class="h-full rounded-md" />
 			{/if}
 
-			<span class="mr-auto text-lg font-semibold">
-				{member.player.battletag.split('#')[0]}
-			</span>
+			<Link {href} class="mr-auto text-lg font-semibold">
+				{battletag.split('#')[0]}
+			</Link>
 
 			{#if member.isCaptain}
 				<Icon icon="ph:crown-simple" title="Lagkapten" />

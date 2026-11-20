@@ -1,8 +1,10 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { matchRoster } from '$lib/match';
 	import { PickBanContext } from '$lib/state/pick-ban.svelte';
 	import { formatDateTime, formatTime } from '$lib/util';
 	import Icon from '../ui/Icon.svelte';
+	import Link from '../ui/Link.svelte';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import Tooltip from '../ui/Tooltip.svelte';
 	import type { HistoryEntry } from './PickBanHistory.svelte';
@@ -30,11 +32,13 @@
 		{@const member = actor ? context.findMemberByBattletag(actor.battletag)?.member : null}
 
 		{#if roster}
-			<RosterLogo id={roster.id} size={20} />
+			{@const rosterHref = resolve(`/lag/${roster?.slug}/${context.seasonSlug}`)}
 
-			<span>
+			<RosterLogo id={roster.id} size={20} href={rosterHref} />
+
+			<Link href={rosterHref}>
 				{roster.name}
-			</span>
+			</Link>
 		{/if}
 
 		{@render separator()}
@@ -45,12 +49,16 @@
 		{:else if member}
 			{@const avatarUrl =
 				member.profile.status === 'found' ? member.profile.profile.avatarUrl : null}
+			{@const battletag = member.member.player.battletag}
+			{@const href = resolve(`/spelare/${battletag.replace('#', '-')}`)}
 
 			{#if avatarUrl}
 				<img src={avatarUrl} alt="" class="size-5 rounded object-cover" />
 			{/if}
 
-			<span>{member.member.player.battletag.split('#')[0]}</span>
+			<Link {href}>
+				{battletag.split('#')[0]}
+			</Link>
 		{/if}
 
 		{@render separator()}

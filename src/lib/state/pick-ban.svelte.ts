@@ -89,6 +89,8 @@ export class PickBanContext {
 		return slot === null ? false : this.isTeamReady(slot);
 	});
 
+	seasonSlug = $derived.by(() => this.match.group?.division.season.slug ?? null);
+
 	constructor({
 		roomId,
 		catalog,

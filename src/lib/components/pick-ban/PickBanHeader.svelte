@@ -4,6 +4,9 @@
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import { matchRoster } from '$lib/match';
 	import { PickBanContext } from '$lib/state/pick-ban.svelte';
+	import { MediaQuery } from 'svelte/reactivity';
+	import { resolve } from '$app/paths';
+	import Link from '../ui/Link.svelte';
 
 	type Props = {
 		class?: ClassValue;
@@ -17,12 +20,12 @@
 <header
 	class={[
 		classProp,
-		'grid grid-cols-[auto_1fr_auto] items-center gap-4 rounded-xl border-[3px] border-gray-200 px-4 py-2 lg:grid-cols-[1fr_auto_1fr] lg:py-6'
+		'flex items-center justify-between gap-4 rounded-xl border-[3px] border-gray-200 px-4 py-2 lg:py-4'
 	]}
 >
 	{@render slot({ slot: MatchSlot.A, class: 'flex-row-reverse text-right' })}
 
-	<div class="text-center text-2xl font-semibold lg:text-6xl lg:font-bold">
+	<div class="shrink-0 text-center text-2xl font-semibold lg:text-6xl lg:font-bold">
 		{context.matchProgress.teamAWins} — {context.matchProgress.teamBWins}
 	</div>
 
@@ -31,13 +34,21 @@
 
 {#snippet slot({ slot, class: classProp }: { slot: MatchSlot; class?: ClassValue })}
 	{@const roster = matchRoster(context.match, slot)}
-	<!-- {@const seed = slot === MatchSlot.A ? context.state.teamASeed : context.state.teamBSeed} -->
+	{@const md = new MediaQuery('min-width: 1024px')}
 
-	<div class={[classProp, 'flex min-w-0 basis-0 items-center gap-2']}>
+	<div class={[classProp, 'flex min-w-0 items-center gap-2 lg:w-1/2']}>
 		{#if roster}
-			<RosterLogo id={roster.id} size="md" />
+			{@const href = resolve(`/lag/${roster.slug}/${context.seasonSlug}`)}
 
-			<div class="font-display text-xl font-medium lg:text-3xl lg:font-semibold">{roster.name}</div>
+			{#if md.current}
+				<RosterLogo id={roster.id} size="xl" />
+			{:else}
+				<RosterLogo id={roster.id} size="md" />
+			{/if}
+
+			<Link {href} class="font-display text-xl font-medium lg:text-3xl lg:font-semibold"
+				>{roster.name}</Link
+			>
 		{/if}
 	</div>
 {/snippet}

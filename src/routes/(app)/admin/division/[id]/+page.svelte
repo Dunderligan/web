@@ -104,6 +104,16 @@
 	/>
 </AdminCard>
 
+<AdminCard title="Pick-ban">
+	<AdminLinkList
+		items={division.pickBanConfigs}
+		linkLabel={(config) => `Gruppspelsrunda ${config.round}`}
+		linkHref={() => `/admin/pick-ban/${division.id}`}
+		emptyText="Denna division har inga pick-ban-konfigurationer."
+		oncreateclick={() => (createBracketOpen = true)}
+	/>
+</AdminCard>
+
 {#if isAdmin(data.user?.role)}
 	<AdminCard title="Inställningar">
 		<div class="space-y-2">
