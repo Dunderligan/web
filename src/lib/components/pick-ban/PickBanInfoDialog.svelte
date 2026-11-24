@@ -133,24 +133,24 @@
 			</div>
 
 			<div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-2.5">
-				<dt class="font-semibold text-gray-500 dark:text-gray-400">Tillåtna speltyper</dt>
+				<dt class="font-semibold text-gray-500 dark:text-gray-400">Tillåtna spellägen</dt>
 				<dd class="ml-auto text-right font-medium text-gray-800 dark:text-gray-200">
 					{#if allowedGamemodes}
 						{@render nameList(
 							allowedGamemodes.map((gamemode) => gamemode.name),
-							'Inga speltyper tillåtna'
+							'Inga spellägen tillåtna'
 						)}
 					{:else}
-						Alla aktiva speltyper
+						Alla aktiva spellägen
 					{/if}
 				</dd>
 			</div>
 
 			{@render row(
-				'Återanvända speltyper',
+				'Återanvända spellägen',
 				config.restrictUsedGamemodes ? 'Får inte väljas igen' : 'Får väljas igen'
 			)}
-			{@render row('Första speltypen', firstGamemode?.name ?? 'Valfri')}
+			{@render row('Första spellägen', firstGamemode?.name ?? 'Valfri')}
 		{/if}
 	</dl>
 </Dialog>

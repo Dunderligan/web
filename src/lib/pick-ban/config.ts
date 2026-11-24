@@ -64,7 +64,7 @@ export type MatchScope = {
 	round: number | null;
 };
 
-export type PickBanConfigRow = PickBanConfigValues & MatchScope;
+export type PickBanConfigRow = { id: string } & PickBanConfigValues & MatchScope;
 
 /** Thrown when a configuration cannot produce a coherent effective configuration. */
 export class InvalidPickBanConfigError extends Error {
@@ -103,7 +103,11 @@ export const DEFAULT_PICK_BAN_CONFIG: ResolvedPickBanConfig = {
  * 4. division
  * 5. global
  */
-export function resolveConfig(scope: MatchScope, rows: PickBanConfigRow[]): ResolvedPickBanConfig {
+export function resolveConfig(
+	scope: MatchScope,
+	rows: PickBanConfigRow[],
+	validate = true
+): ResolvedPickBanConfig {
 	const appliedRows = rows
 		.filter((row) => scopeMatches(scope, row))
 		.map((row) => ({ row, rank: scopeRank(row) }))
@@ -116,7 +120,9 @@ export function resolveConfig(scope: MatchScope, rows: PickBanConfigRow[]): Reso
 		resolved = applyValues(resolved, row);
 	}
 
-	validateConfig(resolved);
+	if (validate) {
+		validateConfig(resolved);
+	}
 	return resolved;
 }
 

@@ -16,6 +16,7 @@
 	import GenerateBracketDialog from '$lib/components/admin/GenerateBracketDialog.svelte';
 	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
 	import { isAdmin } from '$lib/auth-role.js';
+	import { createPickBanConfig } from '$lib/remote/pick-ban-admin.remote';
 
 	const { data } = $props();
 
@@ -41,6 +42,8 @@
 	let createGroupOpen = $state(false);
 	let newGroupName = $state('');
 
+	let createPickBanConfigOpen = $state(false);
+
 	let createBracketOpen = $state(false);
 
 	async function submitDelete() {
@@ -65,6 +68,15 @@
 		});
 
 		await goto(resolve(`/admin/grupp/${group.id}`));
+	}
+
+	async function submitNewPickBanConfig() {
+		const { config } = await createPickBanConfig({
+			divisionId: division.id,
+			round: null
+		});
+
+		await goto(resolve(`/admin/pick-ban/${config.id}`));
 	}
 
 	async function save() {
@@ -108,9 +120,9 @@
 	<AdminLinkList
 		items={division.pickBanConfigs}
 		linkLabel={(config) => `Gruppspelsrunda ${config.round}`}
-		linkHref={() => `/admin/pick-ban/${division.id}`}
+		linkHref={(config) => `/admin/pick-ban/${config.id}`}
 		emptyText="Denna division har inga pick-ban-konfigurationer."
-		oncreateclick={() => (createBracketOpen = true)}
+		oncreateclick={() => (createPickBanConfigOpen = true)}
 	/>
 </AdminCard>
 
@@ -151,6 +163,17 @@
 	<Label label="Namn">
 		<InputField bind:value={newGroupName} placeholder="T.ex. Grupp A..." />
 	</Label>
+</CreateDialog>
+
+<CreateDialog
+	title="Skapa pick-ban konfiguration"
+	bind:open={createPickBanConfigOpen}
+	oncreate={submitNewPickBanConfig}
+	onclose={() => {
+		// newGroupName = '';
+	}}
+>
+	hej
 </CreateDialog>
 
 <GenerateBracketDialog

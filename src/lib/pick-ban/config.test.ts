@@ -12,6 +12,7 @@ import { MAP } from './test-helpers';
 
 function row(partial: Partial<PickBanConfigRow> = {}): PickBanConfigRow {
 	return {
+		id: 'row-1',
 		divisionId: null,
 		bracketId: null,
 		round: null,

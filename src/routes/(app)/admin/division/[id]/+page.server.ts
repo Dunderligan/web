@@ -17,6 +17,7 @@ export const load = async ({ params }) => {
 			},
 			pickBanConfigs: {
 				columns: {
+					id: true,
 					round: true
 				}
 			}

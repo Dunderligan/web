@@ -93,13 +93,13 @@
 			case MapEligibility.INACTIVE:
 				return 'Inaktiv';
 			case MapEligibility.INVALID_FIRST_GAMEMODE:
-				return 'Första kartan måste vara av en annan speltyp';
+				return 'Spelläget är inte tillåtet som första karta';
 			case MapEligibility.POOL_GAMEMODE_RESTRICTION:
-				return 'Speltypen tillåts inte av kartpoolen';
+				return 'Spelläget tillåts inte av kartpoolen';
 			case MapEligibility.POOL_RESTRICTION:
 				return 'Kartpoolen tillåter inte den här kartan';
 			case MapEligibility.USED_GAMEMODE:
-				return 'Speltypen har redan använts i den här matchen';
+				return 'Spelläget har redan använts i den här matchen';
 		}
 	}
 </script>

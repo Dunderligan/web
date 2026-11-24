@@ -316,6 +316,11 @@ export type TournamentState = {
 export type SelectItem = Exclude<Select.RootProps['items'], undefined>[number];
 export type TabItem<T> = ComponentProps<typeof Tabs<T>>['items'][number];
 
+export type Crumb = {
+	label: string;
+	href: ResolvedPathname;
+};
+
 export type DropdownItem = {
 	label: string;
 	icon?: string;
@@ -411,3 +416,7 @@ export type PlayerCheckin = {
 };
 
 export type MatchLineState = 'hidden' | 'visible' | 'highlighted';
+
+export type KeysWithType<Obj, V> = {
+	[K in keyof Obj]-?: [Obj[K]] extends [V] ? K : never;
+}[keyof Obj];

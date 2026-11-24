@@ -60,10 +60,11 @@ export const pickBanConfig = pgTable(
 	'pick_ban_config',
 	{
 		id: uuid().primaryKey().defaultRandom(),
+
 		divisionId: uuid().references(() => division.id, { onDelete: 'cascade' }),
 		bracketId: uuid().references(() => bracket.id, { onDelete: 'cascade' }),
-
 		round: integer(),
+
 		enabled: boolean(),
 		decisionTimeoutSeconds: integer(),
 		allowConcedeFirstBan: boolean(),

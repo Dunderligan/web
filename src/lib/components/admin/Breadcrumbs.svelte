@@ -4,12 +4,7 @@
 	import { isModerator } from '$lib/auth-role';
 	import { SaveContext } from '$lib/state/save.svelte';
 	import Icon from '../ui/Icon.svelte';
-	import type { ResolvedPathname } from '$app/types';
-
-	type Crumb = {
-		label: string;
-		href: ResolvedPathname;
-	};
+	import type { Crumb } from '$lib/types';
 
 	type Props = {
 		crumbs?: Crumb[];
