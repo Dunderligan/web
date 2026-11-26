@@ -1,5 +1,5 @@
-import { db } from '$lib/server/db.js';
-import { entityQuery, retrievePlayerCheckins, rosterSeasonFilter } from '$lib/server/db/helpers.js';
+import { db } from '#lib/server/db.js';
+import { entityQuery, retrievePlayerCheckins, rosterSeasonFilter } from '#lib/server/db/helpers.js';
 import { error } from '@sveltejs/kit';
 
 export const load = async ({ params }) => {

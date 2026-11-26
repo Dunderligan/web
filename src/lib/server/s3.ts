@@ -3,7 +3,7 @@ import {
 	S3_BUCKET_NAME,
 	S3_ENDPOINT,
 	S3_SECRET_ACCESS_KEY
-} from '$env/static/private';
+} from '$app/env/private';
 import {
 	CopyObjectCommand,
 	DeleteObjectCommand,

@@ -1,11 +1,11 @@
 <script lang="ts">
 	import '../app.css';
-	import favicon from '$lib/assets/images/favicon.ico';
+	import favicon from '#lib/assets/images/favicon.ico';
 	import { ProgressBar } from '@prgm/sveltekit-progress-bar';
-	import Footer from '$lib/components/structure/Footer.svelte';
-	import Navbar from '$lib/components/structure/Navbar.svelte';
+	import Footer from '#lib/components/structure/Footer.svelte';
+	import Navbar from '#lib/components/structure/Navbar.svelte';
 	import { page } from '$app/state';
-	import { PreferencesState } from '$lib/state/preferences.svelte';
+	import { PreferencesState } from '#lib/state/preferences.svelte.ts';
 	import { Tooltip } from 'bits-ui';
 
 	let { children, data } = $props();

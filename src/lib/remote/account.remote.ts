@@ -1,6 +1,6 @@
 import { command, getRequestEvent } from '$app/server';
-import auth from '$lib/server/auth';
-import session from '$lib/server/session';
+import auth from '#lib/server/auth.ts';
+import session from '#lib/server/session.ts';
 import { error } from '@sveltejs/kit';
 
 export const deleteAccount = command(async () => {

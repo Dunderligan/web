@@ -1,7 +1,6 @@
-import { db } from '$lib/server/db';
-import { entityQuery } from '$lib/server/db/helpers';
-import { hiddenSeasonFilter } from '$lib/server/db/hidden.js';
-import { json } from '@sveltejs/kit';
+import { db } from '#lib/server/db.ts';
+import { entityQuery } from '#lib/server/db/helpers.ts';
+import { hiddenSeasonFilter } from '#lib/server/db/hidden.js';
 
 export const GET = async ({ locals }) => {
 	const seasons = await db.query.season.findMany({
@@ -34,7 +33,7 @@ export const GET = async ({ locals }) => {
 		}
 	});
 
-	return json({
+	return Response.json({
 		seasons
 	});
 };

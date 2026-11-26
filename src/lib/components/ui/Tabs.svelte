@@ -37,7 +37,7 @@
 		<Button.Root
 			{href}
 			{disabled}
-			data-sveltekit-noscroll
+			data-sveltekit-reset="false"
 			role="tab"
 			tabindex={isSelected ? 0 : -1}
 			onclick={() => {

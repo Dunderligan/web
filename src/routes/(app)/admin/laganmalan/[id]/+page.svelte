@@ -2,31 +2,31 @@
 	import { goto, invalidate } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { isAdmin } from '$lib/auth-role.js';
-	import cdn from '$lib/cdn.js';
-	import AdminCard from '$lib/components/admin/AdminCard.svelte';
-	import AdminLink from '$lib/components/admin/AdminLink.svelte';
-	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
-	import ConfirmDialog from '$lib/components/admin/ConfirmDialog.svelte';
-	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
-	import SaveToast from '$lib/components/admin/SaveToast.svelte';
-	import SubmissionChip from '$lib/components/admin/SubmissionChip.svelte';
-	import GroupSelect from '$lib/components/form/GroupSelect.svelte';
-	import EditableMembersTable from '$lib/components/table/EditableMembersTable.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
-	import ImageUpload from '$lib/components/form/ImageUpload.svelte';
-	import InputField from '$lib/components/form/InputField.svelte';
-	import Label from '$lib/components/form/Label.svelte';
-	import Notice from '$lib/components/ui/Notice.svelte';
+	import { isAdmin } from '#lib/auth-role.js';
+	import cdn from '#lib/cdn.js';
+	import AdminCard from '#lib/components/admin/AdminCard.svelte';
+	import AdminLink from '#lib/components/admin/AdminLink.svelte';
+	import Breadcrumbs from '#lib/components/admin/Breadcrumbs.svelte';
+	import ConfirmDialog from '#lib/components/admin/ConfirmDialog.svelte';
+	import CreateDialog from '#lib/components/admin/CreateDialog.svelte';
+	import SaveToast from '#lib/components/admin/SaveToast.svelte';
+	import SubmissionChip from '#lib/components/admin/SubmissionChip.svelte';
+	import GroupSelect from '#lib/components/form/GroupSelect.svelte';
+	import EditableMembersTable from '#lib/components/table/EditableMembersTable.svelte';
+	import Button from '#lib/components/ui/Button.svelte';
+	import ImageUpload from '#lib/components/form/ImageUpload.svelte';
+	import InputField from '#lib/components/form/InputField.svelte';
+	import Label from '#lib/components/form/Label.svelte';
+	import Notice from '#lib/components/ui/Notice.svelte';
 	import {
 		deleteTeamSubmission,
 		editTeamSubmissionData,
 		reviewTeamSubmission
-	} from '$lib/remote/registration.remote.js';
-	import { ConfirmContext } from '$lib/state/confirm.svelte';
-	import { SaveContext } from '$lib/state/save.svelte.js';
-	import { Role, SubmissionStatus } from '$lib/types.js';
-	import { formatDateTime } from '$lib/util';
+	} from '#lib/remote/registration.remote.js';
+	import { ConfirmContext } from '#lib/state/confirm.svelte.ts';
+	import { SaveContext } from '#lib/state/save.svelte.js';
+	import { Role, SubmissionStatus } from '#lib/types.js';
+	import { formatDateTime } from '#lib/util.ts';
 
 	const { data } = $props();
 
@@ -81,9 +81,9 @@
 					id: submission.id
 				});
 				if (userIsAdmin) {
-					await goto(resolve(`/admin/anmalan/${registration.id}`));
+					await goto(resolve(`admin/anmalan/${registration.id}`));
 				} else {
-					await goto(resolve(`/jag/installningar`));
+					await goto(resolve(`jag/installningar`));
 				}
 			}
 		});
@@ -211,6 +211,7 @@
 					onclick={onApproveClicked}
 					{loading}
 				/>
+
 				<Button icon="ph:x-circle" label="Neka" kind="destructive" onclick={reject} {loading} />
 			</div>
 		{:else if submission.status === SubmissionStatus.REJECTED && submission.approvedRosterId}

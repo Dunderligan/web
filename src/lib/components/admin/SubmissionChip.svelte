@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { ChipColor, SubmissionStatus } from '$lib/types';
-	import { formatSubmissionStatus } from '$lib/util';
+	import type { ChipColor, SubmissionStatus } from '#lib/types.ts';
+	import { formatSubmissionStatus } from '#lib/util.ts';
 	import Chip from '../ui/Chip.svelte';
 
 	type Props = {

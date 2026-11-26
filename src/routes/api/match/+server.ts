@@ -1,16 +1,16 @@
-import { AuthRole } from '$lib/auth-role.js';
-import { roleGuard } from '$lib/remote/auth.remote.js';
-import { queryMatches } from '$lib/remote/match.remote.js';
-import { matchSchema } from '$lib/schemas.js';
-import { db, schema } from '$lib/server/db.js';
-import { parseMatchQueryParams } from '$lib/util';
-import { error, json, redirect } from '@sveltejs/kit';
+import { AuthRole } from '#lib/auth-role.js';
+import { roleGuard } from '#lib/remote/auth.remote.js';
+import { queryMatches } from '#lib/remote/match.remote.js';
+import { matchSchema } from '#lib/schemas.js';
+import { db, schema } from '#lib/server/db.js';
+import { parseMatchQueryParams } from '#lib/util.ts';
+import { error, redirect } from '@sveltejs/kit';
 import z from 'zod';
 
 export const GET = async ({ url }) => {
 	const params = parseMatchQueryParams(url.searchParams);
 	const matches = await queryMatches(params);
-	return json(matches);
+	return Response.json(matches);
 };
 
 const createMatchSchema = matchSchema

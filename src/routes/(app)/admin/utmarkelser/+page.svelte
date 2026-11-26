@@ -1,19 +1,19 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { isAdmin } from '$lib/auth-role.js';
-	import AdminCard from '$lib/components/admin/AdminCard.svelte';
-	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
-	import AdminLink from '$lib/components/admin/AdminLink.svelte';
-	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
-	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
-	import Checkbox from '$lib/components/form/Checkbox.svelte';
-	import InputField from '$lib/components/form/InputField.svelte';
-	import Label from '$lib/components/form/Label.svelte';
-	import Note from '$lib/components/ui/Note.svelte';
-	import { createAwardType } from '$lib/remote/award.remote';
-	import { SaveContext } from '$lib/state/save.svelte';
+	import { isAdmin } from '#lib/auth-role.js';
+	import AdminCard from '#lib/components/admin/AdminCard.svelte';
+	import AdminEmptyNotice from '#lib/components/admin/AdminEmptyNotice.svelte';
+	import AdminLink from '#lib/components/admin/AdminLink.svelte';
+	import Breadcrumbs from '#lib/components/admin/Breadcrumbs.svelte';
+	import CreateDialog from '#lib/components/admin/CreateDialog.svelte';
+	import Button from '#lib/components/ui/Button.svelte';
+	import Checkbox from '#lib/components/form/Checkbox.svelte';
+	import InputField from '#lib/components/form/InputField.svelte';
+	import Label from '#lib/components/form/Label.svelte';
+	import Note from '#lib/components/ui/Note.svelte';
+	import { createAwardType } from '#lib/remote/award.remote.ts';
+	import { SaveContext } from '#lib/state/save.svelte.ts';
 
 	let { data } = $props();
 
@@ -38,7 +38,7 @@
 			showDivision: newShowDivision
 		});
 
-		await goto(resolve(`/admin/utmarkelser/${awardType.id}`));
+		await goto(resolve(`admin/utmarkelser/${awardType.id}`));
 	}
 </script>
 
@@ -46,9 +46,9 @@
 
 <AdminCard title="Utmärkelser">
 	{#if awardTypes.length === 0}
-		<AdminEmptyNotice oncreateclick={() => (createOpen = true)} hideCreateButton={!canEdit}>
-			Inga utmärkelser har skapats än.
-		</AdminEmptyNotice>
+		<AdminEmptyNotice oncreateclick={() => (createOpen = true)} hideCreateButton={!canEdit}
+			>Inga utmärkelser har skapats än.</AdminEmptyNotice
+		>
 	{:else}
 		<div class="space-y-1 overflow-hidden rounded-lg">
 			{#each awardTypes as awardType (awardType.id)}

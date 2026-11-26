@@ -1,11 +1,11 @@
 <script lang="ts">
-	import Meta from '$lib/components/structure/Meta.svelte';
-	import PageHeader from '$lib/components/structure/PageHeader.svelte';
-	import PageSection from '$lib/components/structure/PageSection.svelte';
+	import Meta from '#lib/components/structure/Meta.svelte';
+	import PageHeader from '#lib/components/structure/PageHeader.svelte';
+	import PageSection from '#lib/components/structure/PageSection.svelte';
 
-	import Subheading from '$lib/components/ui/Subheading.svelte';
-	import Accordion from '$lib/components/ui/Accordion.svelte';
-	import DiscordLink from '$lib/components/ui/DiscordLink.svelte';
+	import Subheading from '#lib/components/ui/Subheading.svelte';
+	import Accordion from '#lib/components/ui/Accordion.svelte';
+	import DiscordLink from '#lib/components/ui/DiscordLink.svelte';
 
 	const items = [
 		{

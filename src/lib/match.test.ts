@@ -15,9 +15,9 @@ import {
 	matchScore,
 	matchWinner,
 	resolvedMatchToLogical
-} from '$lib/match';
-import { MatchState, MatchSlot, type MatchWithoutRosters } from '$lib/types';
-import { logicalMatch, matchRoster as makeRoster, resolvedMatch } from '$lib/test/fixtures';
+} from '#lib/match.ts';
+import { MatchState, MatchSlot, type MatchWithoutRosters } from '#lib/types.ts';
+import { logicalMatch, matchRoster as makeRoster, resolvedMatch } from '#lib/test/fixtures.ts';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 

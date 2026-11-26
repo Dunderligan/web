@@ -1,5 +1,5 @@
-import type { GameProfile, GameProfileEntry, GameProfileEntryWithDate } from '$lib/types';
-import { env } from '$env/dynamic/private';
+import type { GameProfile, GameProfileEntry, GameProfileEntryWithDate } from '#lib/types.ts';
+import { REDIS_URL } from '$app/env/private';
 import { createClient } from 'redis';
 import z from 'zod';
 
@@ -129,7 +129,7 @@ class OverwatchProfiles {
 }
 
 async function connectRedis(): Promise<Cache> {
-	const redis = createClient({ url: env.REDIS_URL });
+	const redis = createClient({ url: REDIS_URL });
 	redis.on('error', (err) => console.error('Redis Client Error', err));
 	await redis.connect();
 
@@ -168,7 +168,7 @@ const REFRESH_INTERVAL = 1000 * 60 * 60 * 24; // 24 hours
 
 let cache: Cache;
 
-if (env.REDIS_URL) {
+if (REDIS_URL) {
 	cache = await connectRedis();
 } else {
 	console.warn('REDIS_URL not set, using in-memory cache for Overwatch profile info.');

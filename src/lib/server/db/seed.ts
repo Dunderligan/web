@@ -1,6 +1,6 @@
 import { reset } from 'drizzle-seed';
 import schema from './schema';
-import { MatchState, Rank, Role } from '$lib/types';
+import { MatchState, Rank, Role } from '#lib/types.ts';
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
 function rand() {

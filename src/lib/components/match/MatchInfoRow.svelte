@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { type NestedBracket, type NestedGroup, type MatchWithoutRosters } from '$lib/types';
-	import { capitalize, formatDateShort, formatDateTime, formatDateTimeShort } from '$lib/util';
+	import { type NestedBracket, type NestedGroup, type MatchWithoutRosters } from '#lib/types.ts';
+	import { capitalize, formatDateShort, formatDateTime, formatDateTimeShort } from '#lib/util.ts';
 	import type { ClassValue } from 'svelte/elements';
 	import Icon from '../ui/Icon.svelte';
 	import Link from '../ui/Link.svelte';

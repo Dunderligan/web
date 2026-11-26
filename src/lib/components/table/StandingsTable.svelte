@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { TableScore } from '$lib/standings';
-	import type { Roster } from '$lib/types';
+	import type { TableScore } from '#lib/standings.ts';
+	import type { Roster } from '#lib/types.ts';
 	import Icon from '../ui/Icon.svelte';
 	import Link from '../ui/Link.svelte';
 	import RosterLogo from '../ui/RosterLogo.svelte';
@@ -25,8 +25,20 @@
 <Table
 	rows={standings}
 	columns={[
-		{ label: '#', snippet: seedCell, center: true, class: 'font-semibold text-lg', width: '3rem' },
-		{ label: 'Lag', snippet: teamCell, class: 'font-semibold text-lg' },
+		{
+			label: '#',
+			snippet: seedCell,
+			center: true,
+			class: 'font-semibold text-lg',
+			width: '3rem'
+		},
+
+		{
+			label: 'Lag',
+			snippet: teamCell,
+			class: 'font-semibold text-lg'
+		},
+
 		{
 			label: 'Poäng',
 			content: ({ score }) => score.mapWins,
@@ -76,7 +88,7 @@
 {/snippet}
 
 {#snippet teamCell({ roster }: TableEntry, index: number)}
-	{@const href = resolve(`/lag/${roster.slug}/${seasonSlug}`)}
+	{@const href = resolve(`lag/${roster.slug}/${seasonSlug}`)}
 
 	<RosterLogo id={roster.id} {href} size="md" class="mr-2" />
 

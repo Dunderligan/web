@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { queryPlayers } from '$lib/remote/player.remote';
+	import { queryPlayers } from '#lib/remote/player.remote.ts';
 	import SearchSelect from '../form/SearchSelect.svelte';
-	import type { SelectItem } from '$lib/types';
+	import type { SelectItem } from '#lib/types.ts';
 	import type { ComponentProps } from 'svelte';
 
 	type Props = Omit<ComponentProps<typeof SearchSelect>, 'queryItems'>;

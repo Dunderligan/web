@@ -1,7 +1,7 @@
-import { db } from '$lib/server/db';
-import { divisionOrder, entityQuery, nestedDivisionQuery } from '$lib/server/db/helpers.js';
-import { hiddenDivisionFilter, hiddenSeasonFilter } from '$lib/server/db/hidden';
-import type { User } from '$lib/server/db/schema/auth.js';
+import { db } from '#lib/server/db.ts';
+import { divisionOrder, entityQuery, nestedDivisionQuery } from '#lib/server/db/helpers.js';
+import { hiddenDivisionFilter, hiddenSeasonFilter } from '#lib/server/db/hidden.ts';
+import type { User } from '#lib/server/db/schema/auth.js';
 import { error } from '@sveltejs/kit';
 
 export const load = async ({ params, locals, depends }) => {

@@ -26,7 +26,7 @@
 
 <style>
 	.halftone {
-		mask-image: url('$lib/assets/images/halftone-bg.avif');
+		mask-image: url('../../assets/images/halftone-bg.avif');
 		mask-size: cover;
 		mask-position: left;
 		mask-repeat: no-repeat;

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ResolvedPathname } from '$app/types';
-	import fallbackLogo from '$lib/assets/images/placeholder.avif';
-	import cdn from '$lib/cdn';
+	import fallbackLogo from '#lib/assets/images/placeholder.avif';
+	import cdn from '#lib/cdn.ts';
 	import type { ClassValue } from 'svelte/elements';
 
 	type Props = {

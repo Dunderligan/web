@@ -1,5 +1,5 @@
-import { db } from '$lib/server/db';
-import { divisionOrder } from '$lib/server/db/helpers';
+import { db } from '#lib/server/db.ts';
+import { divisionOrder } from '#lib/server/db/helpers.ts';
 import { error } from '@sveltejs/kit';
 
 export const load = async ({ params }) => {

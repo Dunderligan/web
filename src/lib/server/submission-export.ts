@@ -1,6 +1,6 @@
-import { averageRank, formatRank } from '$lib/rank';
-import type { AnyRank, NullableFullRank, TeamSubmission } from '$lib/types';
-import { capitalize, formatSubmissionStatus } from '$lib/util';
+import { averageRank, formatRank } from '#lib/rank.ts';
+import type { AnyRank, NullableFullRank, TeamSubmission } from '#lib/types.ts';
+import { capitalize, formatSubmissionStatus } from '#lib/util.ts';
 
 class SubmissionExporter {
 	/**

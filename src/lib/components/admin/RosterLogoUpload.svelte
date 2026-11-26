@@ -1,6 +1,6 @@
 <script lang="ts">
-	import cdn from '$lib/cdn';
-	import { uploadRosterLogo } from '$lib/remote/roster.remote';
+	import cdn from '#lib/cdn.ts';
+	import { uploadRosterLogo } from '#lib/remote/roster.remote.ts';
 	import ImageUpload from '../form/ImageUpload.svelte';
 
 	type Props = {

@@ -1,5 +1,5 @@
 <script lang="ts" generics="M extends { player: { id: string } }">
-	import type { PlayerCheckin, Roster } from '$lib/types';
+	import type { PlayerCheckin, Roster } from '#lib/types.ts';
 	import Progress from '../ui/Progress.svelte';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import AdminLinkList from './AdminLinkList.svelte';

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Placement } from '$lib/types';
+	import type { Placement } from '#lib/types.ts';
 	import Icon from './Icon.svelte';
 
 	type Props = Placement;

@@ -1,4 +1,4 @@
-import { PUBLIC_CDN_ENDPOINT } from '$env/static/public';
+import { CDN_ENDPOINT } from '$app/env/public';
 
 class Cdn {
 	/**
@@ -6,7 +6,7 @@ class Cdn {
 	 * The path must not be prefixed with a forward slash.
 	 */
 	srcUrl(key: string) {
-		return `${PUBLIC_CDN_ENDPOINT}/${key}`;
+		return `${CDN_ENDPOINT}/${key}`;
 	}
 
 	/**

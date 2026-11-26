@@ -5,7 +5,7 @@
 	import Button from '../ui/Button.svelte';
 	import { page } from '$app/state';
 	import type { ClassValue } from 'svelte/elements';
-	import type { ResolvedMatchWithContext } from '$lib/types';
+	import type { ResolvedMatchWithContext } from '#lib/types.ts';
 	import type { ComponentProps } from 'svelte';
 
 	type Props = {

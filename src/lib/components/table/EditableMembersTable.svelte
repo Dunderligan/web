@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { SaveContext } from '$lib/state/save.svelte';
-	import { type AnyRank, type Member, Rank as RankEnum, Role } from '$lib/types';
+	import { SaveContext } from '#lib/state/save.svelte.ts';
+	import { type AnyRank, type Member, Rank as RankEnum, Role } from '#lib/types.ts';
 	import {
 		capitalize,
 		compareRoles,
@@ -8,7 +8,7 @@
 		isPlayerRole,
 		ORGANIZATION_ROLES,
 		roleIcon
-	} from '$lib/util';
+	} from '#lib/util.ts';
 	import Button from '../ui/Button.svelte';
 	import Checkbox from '../form/Checkbox.svelte';
 	import InputField from '../form/InputField.svelte';
@@ -17,7 +17,7 @@
 	import CreateDialog from '../admin/CreateDialog.svelte';
 	import Label from '../form/Label.svelte';
 	import RankInput from '../form/RankInput.svelte';
-	import { isLegacyRank } from '$lib/rank';
+	import { isLegacyRank } from '#lib/rank.ts';
 	import Notice from '../ui/Notice.svelte';
 	import Link from '../ui/Link.svelte';
 

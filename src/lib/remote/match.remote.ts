@@ -1,9 +1,9 @@
 import { getRequestEvent, query } from '$app/server';
-import { matchQueryParamsSchema } from '$lib/schemas';
-import { db } from '$lib/server/db';
-import { fullMatchQueryWithContext, isNull } from '$lib/server/db/helpers';
-import { hiddenMatchFilter } from '$lib/server/db/hidden';
-import { MatchState } from '$lib/types';
+import { matchQueryParamsSchema } from '#lib/schemas.ts';
+import { db } from '#lib/server/db.ts';
+import { fullMatchQueryWithContext, isNull } from '#lib/server/db/helpers.ts';
+import { hiddenMatchFilter } from '#lib/server/db/hidden.ts';
+import { MatchState } from '#lib/types.ts';
 
 export const queryMatches = query(
 	matchQueryParamsSchema,

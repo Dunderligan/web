@@ -58,6 +58,10 @@ Open up http://localhost:5173/setup in a browser, where the website will ask you
 > [!NOTE]
 > Currently, only Battle.net authentication is supported. This has implications if you lose the session credentials to the superuser. In that case, you'll either have to manually edit the database, or make sure you signed up with a battletag you have access to (and [setup Battle.net OAuth](./cloud-services.md#battlenet)).
 
+### Environment variables
+
+Environment variables are declared in [`src/env.ts`](../src/env.ts) with [`defineEnvVars`](https://svelte.dev/docs/kit/environment-variables), then imported from `$app/env/private` (server-only) or `$app/env/public` (browser-safe). Values are validated automatically by SvelteKit when the dev server starts and when the app is built.
+
 ### Formatting
 
 The project uses [Oxfmt](https://oxc.rs/docs/guide/usage/formatter.html) for code formatting. **Always format your code before contributing.** This can be done via your editor (for example with the Oxc VSCode extension), or by running `pnpm format`.

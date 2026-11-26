@@ -1,19 +1,19 @@
 import { command, getRequestEvent, query } from '$app/server';
-import { AuthRole, isAdmin } from '$lib/auth-role';
-import { teamSubmissionSchema } from '$lib/schemas';
-import { db, schema } from '$lib/server/db';
+import { AuthRole, isAdmin } from '#lib/auth-role.ts';
+import { teamSubmissionSchema } from '#lib/schemas.ts';
+import { db, schema } from '#lib/server/db.ts';
 import { error } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import z from 'zod';
 import { roleGuard } from './auth.remote';
-import type { User } from '$lib/server/db/schema/auth';
-import { SubmissionStatus, type TeamSubmission } from '$lib/types';
+import type { User } from '#lib/server/db/schema/auth.ts';
+import { SubmissionStatus, type TeamSubmission } from '#lib/types.ts';
 import { createRoster, editRoster } from './roster.remote';
-import s3 from '$lib/server/s3';
-import cdn from '$lib/cdn';
-import image from '$lib/server/image';
-import submissionExport from '$lib/server/submission-export';
-import { entityQuery } from '$lib/server/db/helpers';
+import s3 from '#lib/server/s3.ts';
+import cdn from '#lib/cdn.ts';
+import image from '#lib/server/image.ts';
+import submissionExport from '#lib/server/submission-export.ts';
+import { entityQuery } from '#lib/server/db/helpers.ts';
 
 export const updateRegistration = command(
 	z.object({

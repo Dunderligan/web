@@ -1,6 +1,6 @@
-import { queryMatches } from '$lib/remote/match.remote.js';
-import { fetchTournamentState } from '$lib/server/db/tournament-state.js';
-import { MatchState } from '$lib/types';
+import { queryMatches } from '#lib/remote/match.remote.js';
+import { fetchTournamentState } from '#lib/server/db/tournament-state.js';
+import { MatchState } from '#lib/types.ts';
 
 export const load = async () => {
 	const [upcoming, latest, tournamentState] = await Promise.all([

@@ -3,7 +3,7 @@
 	import AdminEmptyNotice from './AdminEmptyNotice.svelte';
 	import AdminLink from './AdminLink.svelte';
 	import Button from '../ui/Button.svelte';
-	import { isAdmin } from '$lib/auth-role';
+	import { isAdmin } from '#lib/auth-role.ts';
 	import { page } from '$app/state';
 	import type { ResolvedPathname } from '$app/types';
 

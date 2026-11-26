@@ -1,10 +1,10 @@
 import { query } from '$app/server';
-import { db } from '$lib/server/db';
-import { nestedGroupQuery } from '$lib/server/db/helpers';
-import type { RosterWithGroup } from '$lib/types';
+import { db } from '#lib/server/db.ts';
+import { nestedGroupQuery } from '#lib/server/db/helpers.ts';
+import type { RosterWithGroup } from '#lib/types.ts';
 import z from 'zod';
 import { roleGuard } from './auth.remote';
-import { AuthRole } from '$lib/auth-role';
+import { AuthRole } from '#lib/auth-role.ts';
 
 export const queryTeams = query(
 	z.object({

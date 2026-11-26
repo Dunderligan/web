@@ -1,24 +1,24 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import AdminCard from '$lib/components/admin/AdminCard.svelte';
-	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
-	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
-	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
-	import InputField from '$lib/components/form/InputField.svelte';
-	import Label from '$lib/components/form/Label.svelte';
-	import SaveToast from '$lib/components/admin/SaveToast.svelte';
-	import { ConfirmContext } from '$lib/state/confirm.svelte';
-	import { SaveContext } from '$lib/state/save.svelte';
-	import DateInput from '$lib/components/ui/DateInput.svelte';
-	import { createDivision } from '$lib/remote/division.remote';
-	import { createRegistration, deleteSeason, updateSeason } from '$lib/remote/season.remote';
-	import Checkbox from '$lib/components/form/Checkbox.svelte';
-	import Note from '$lib/components/ui/Note.svelte';
-	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
-	import { isAdmin } from '$lib/auth-role.js';
-	import AdminLink from '$lib/components/admin/AdminLink.svelte';
+	import AdminCard from '#lib/components/admin/AdminCard.svelte';
+	import AdminEmptyNotice from '#lib/components/admin/AdminEmptyNotice.svelte';
+	import Breadcrumbs from '#lib/components/admin/Breadcrumbs.svelte';
+	import Button from '#lib/components/ui/Button.svelte';
+	import CreateDialog from '#lib/components/admin/CreateDialog.svelte';
+	import InputField from '#lib/components/form/InputField.svelte';
+	import Label from '#lib/components/form/Label.svelte';
+	import SaveToast from '#lib/components/admin/SaveToast.svelte';
+	import { ConfirmContext } from '#lib/state/confirm.svelte.ts';
+	import { SaveContext } from '#lib/state/save.svelte.ts';
+	import DateInput from '#lib/components/ui/DateInput.svelte';
+	import { createDivision } from '#lib/remote/division.remote.ts';
+	import { createRegistration, deleteSeason, updateSeason } from '#lib/remote/season.remote.ts';
+	import Checkbox from '#lib/components/form/Checkbox.svelte';
+	import Note from '#lib/components/ui/Note.svelte';
+	import AdminLinkList from '#lib/components/admin/AdminLinkList.svelte';
+	import { isAdmin } from '#lib/auth-role.js';
+	import AdminLink from '#lib/components/admin/AdminLink.svelte';
 
 	const { data } = $props();
 
@@ -47,7 +47,7 @@
 			seasonId: data.season.id
 		});
 
-		await goto(resolve(`/admin/division/${division.id}`));
+		await goto(resolve(`admin/division/${division.id}`));
 	}
 
 	async function save() {
@@ -60,11 +60,8 @@
 			description: `Är du säker på att du vill radera ${data.season.name}?`,
 			destructive: true,
 			action: async () => {
-				await deleteSeason({
-					id: data.season.id
-				});
-
-				await goto(resolve('/admin'));
+				await deleteSeason({ id: data.season.id });
+				await goto(resolve('admin'));
 			}
 		});
 	}
@@ -76,7 +73,7 @@
 			closeDate: newRegistrationEnd
 		});
 
-		await goto(resolve(`/admin/anmalan/${registration.id}`));
+		await goto(resolve(`admin/anmalan/${registration.id}`));
 	}
 </script>
 

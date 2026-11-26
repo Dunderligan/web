@@ -1,5 +1,5 @@
-import { AuthRole, checkPermission } from '$lib/auth-role.js';
-import { db } from '$lib/server/db';
+import { AuthRole, checkPermission } from '#lib/auth-role.js';
+import { db } from '#lib/server/db.ts';
 import { error } from '@sveltejs/kit';
 import { sql } from 'drizzle-orm';
 

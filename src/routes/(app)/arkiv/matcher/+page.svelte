@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import AsyncMatchList from '$lib/components/match/AsyncMatchList.svelte';
-	import Meta from '$lib/components/structure/Meta.svelte';
-	import PageHeader from '$lib/components/structure/PageHeader.svelte';
-	import PageSection from '$lib/components/structure/PageSection.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
-	import { MatchState } from '$lib/types.js';
+	import AsyncMatchList from '#lib/components/match/AsyncMatchList.svelte';
+	import Meta from '#lib/components/structure/Meta.svelte';
+	import PageHeader from '#lib/components/structure/PageHeader.svelte';
+	import PageSection from '#lib/components/structure/PageSection.svelte';
+	import Button from '#lib/components/ui/Button.svelte';
+	import { MatchState } from '#lib/types.js';
 
 	let { data } = $props();
 
@@ -44,7 +44,7 @@
 	});
 
 	function queryParamHref(param: string, value: string | undefined | null) {
-		const url = new URL(page.url);
+		const url = new URL(page.url.href);
 		if (value === null || value === undefined) {
 			url.searchParams.delete(param);
 		} else {
@@ -72,7 +72,7 @@
 				icon="ph:arrow-left"
 				label="Föregående sida"
 				href={queryParamHref('page', String(data.params.page - 1))}
-				data-sveltekit-noscroll
+				data-sveltekit-reset="false"
 			/>
 
 			{#await data.query}
@@ -99,6 +99,6 @@
 		label="Nästa sida"
 		href={queryParamHref('page', String(data.params.page + 1))}
 		{disabled}
-		data-sveltekit-noscroll
+		data-sveltekit-reset="false"
 	/>
 {/snippet}

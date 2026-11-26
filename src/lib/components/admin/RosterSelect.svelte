@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { RosterContext } from '$lib/state/rosters.svelte';
+	import { RosterContext } from '#lib/state/rosters.svelte.ts';
 	import type { ClassValue } from 'svelte/elements';
 	import Select from '../form/Select.svelte';
 

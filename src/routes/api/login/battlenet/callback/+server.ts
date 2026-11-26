@@ -1,10 +1,10 @@
-import session from '$lib/server/session';
-import { battlenet } from '$lib/server/oauth';
+import session from '#lib/server/session.ts';
+import { battlenet } from '#lib/server/oauth.ts';
 import type { RequestHandler } from '@sveltejs/kit';
 import { redirect } from '@sveltejs/kit';
 import { error } from '@sveltejs/kit';
 import type { OAuth2Tokens } from 'arctic';
-import auth from '$lib/server/auth';
+import auth from '#lib/server/auth.ts';
 
 type BattlenetUserResponse = {
 	sub: string;

@@ -1,21 +1,21 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import AdminCard from '$lib/components/admin/AdminCard.svelte';
-	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
-	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
-	import InputField from '$lib/components/form/InputField.svelte';
-	import Label from '$lib/components/form/Label.svelte';
-	import SaveToast from '$lib/components/admin/SaveToast.svelte';
-	import { ConfirmContext } from '$lib/state/confirm.svelte';
-	import { SaveContext } from '$lib/state/save.svelte';
-	import { createGroup } from '$lib/remote/group.remote';
-	import { deleteDivision, updateDivision } from '$lib/remote/division.remote';
-	import Checkbox from '$lib/components/form/Checkbox.svelte';
-	import GenerateBracketDialog from '$lib/components/admin/GenerateBracketDialog.svelte';
-	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
-	import { isAdmin } from '$lib/auth-role.js';
+	import AdminCard from '#lib/components/admin/AdminCard.svelte';
+	import Breadcrumbs from '#lib/components/admin/Breadcrumbs.svelte';
+	import Button from '#lib/components/ui/Button.svelte';
+	import CreateDialog from '#lib/components/admin/CreateDialog.svelte';
+	import InputField from '#lib/components/form/InputField.svelte';
+	import Label from '#lib/components/form/Label.svelte';
+	import SaveToast from '#lib/components/admin/SaveToast.svelte';
+	import { ConfirmContext } from '#lib/state/confirm.svelte.ts';
+	import { SaveContext } from '#lib/state/save.svelte.ts';
+	import { createGroup } from '#lib/remote/group.remote.ts';
+	import { deleteDivision, updateDivision } from '#lib/remote/division.remote.ts';
+	import Checkbox from '#lib/components/form/Checkbox.svelte';
+	import GenerateBracketDialog from '#lib/components/admin/GenerateBracketDialog.svelte';
+	import AdminLinkList from '#lib/components/admin/AdminLinkList.svelte';
+	import { isAdmin } from '#lib/auth-role.js';
 
 	const { data } = $props();
 
@@ -49,11 +49,8 @@
 			description: `Är du säker på att du vill radera ${division.name}, ${season.name}?`,
 			destructive: true,
 			action: async () => {
-				await deleteDivision({
-					id: division.id
-				});
-
-				await goto(resolve(`/admin/sasong/${season.id}`));
+				await deleteDivision({ id: division.id });
+				await goto(resolve(`admin/sasong/${season.id}`));
 			}
 		});
 	}
@@ -64,7 +61,7 @@
 			divisionId: division.id
 		});
 
-		await goto(resolve(`/admin/grupp/${group.id}`));
+		await goto(resolve(`admin/grupp/${group.id}`));
 	}
 
 	async function save() {

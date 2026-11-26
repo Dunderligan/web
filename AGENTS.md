@@ -17,7 +17,7 @@ All user-facing text is in Swedish, while code, comments and docs are in English
 
 ## Stack
 
-- SvelteKit 2, Svelte 5, adapter-node, experimental remote functions
+- SvelteKit 3 (configured through the `sveltekit()` plugin in `vite.config.ts`, no `svelte.config.js`), Svelte 5, adapter-node, experimental remote functions
 - Drizzle ORM 1.0.0-beta release; make sure docs are up do date when reading
 - Tailwind v4, Bits UI, Zod v4, Arctic (OAuth), S3 AWS SDK
 
@@ -25,6 +25,8 @@ All user-facing text is in Swedish, while code, comments and docs are in English
 
 - Standard `src/routes`; the main pages live under `(app)` group (`(app)/+layout.svelte` provides scaffolding)
   - Landing page lives outside `(app)` since it defines its own layout (for instance the large video background)
+- `#lib/*` maps to `src/lib/*` through the `imports` field in `package.json`; imports need a file extension (e.g. `#lib/util.ts`)
+- `src/env.ts`: declared environment variables, imported from `$app/env/private` (server) or `$app/env/public` (browser)
 - `src/lib/remote/*.remote.ts`: remote `query`/`command` mutations: Zod-validate, then `roleGuard(AuthRole.X)`
 - `src/lib/server/db/schema/`: Drizzle schema, split by domain
 - `src/lib/components/{ui,admin,form,match,table,structure}/`

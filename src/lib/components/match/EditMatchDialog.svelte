@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { RosterContext } from '$lib/state/rosters.svelte';
-	import { SaveContext } from '$lib/state/save.svelte';
+	import { RosterContext } from '#lib/state/rosters.svelte.ts';
+	import { SaveContext } from '#lib/state/save.svelte.ts';
 	import Dialog from '../ui/Dialog.svelte';
 	import InputField from '../form/InputField.svelte';
 	import Label from '../form/Label.svelte';
@@ -8,7 +8,7 @@
 	import DateInput from '../ui/DateInput.svelte';
 	import { Accordion } from 'bits-ui';
 	import Icon from '../ui/Icon.svelte';
-	import { MatchState } from '$lib/types';
+	import { MatchState } from '#lib/types.ts';
 	import Select from '../form/Select.svelte';
 
 	const rosterCtx = RosterContext.get();

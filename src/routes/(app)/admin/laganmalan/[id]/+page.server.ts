@@ -1,7 +1,7 @@
-import { isModerator } from '$lib/auth-role.js';
-import { teamSubmissionSchema } from '$lib/schemas.js';
-import { db } from '$lib/server/db';
-import { entityQuery } from '$lib/server/db/helpers.js';
+import { isModerator } from '#lib/auth-role.js';
+import { teamSubmissionSchema } from '#lib/schemas.js';
+import { db } from '#lib/server/db.ts';
+import { entityQuery } from '#lib/server/db/helpers.js';
 import { error } from '@sveltejs/kit';
 
 export const load = async ({ params, depends, locals }) => {

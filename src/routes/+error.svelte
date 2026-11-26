@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import PageSection from '$lib/components/structure/PageSection.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
-	import errorImage from '$lib/assets/images/error.avif';
-	import Meta from '$lib/components/structure/Meta.svelte';
+	import PageSection from '#lib/components/structure/PageSection.svelte';
+	import Button from '#lib/components/ui/Button.svelte';
+	import errorImage from '#lib/assets/images/error.avif';
+	import Meta from '#lib/components/structure/Meta.svelte';
 </script>
 
 <Meta title={page.status.toString()} description="Ett fel uppstod" />
@@ -46,7 +46,7 @@
 	#background {
 		background-image:
 			linear-gradient(to bottom, transparent, var(--color-gray-100) 100%),
-			url('$lib/assets/images/striped-bg.avif');
+			url('../lib/assets/images/striped-bg.avif');
 		background-size: cover;
 		aspect-ratio: 16 / 9;
 	}

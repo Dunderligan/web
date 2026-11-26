@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { db } from '#lib/server/db.ts';
 import { error } from '@sveltejs/kit';
 
 export const load = async ({ locals }) => {

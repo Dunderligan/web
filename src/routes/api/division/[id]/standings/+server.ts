@@ -1,8 +1,8 @@
-import { db } from '$lib/server/db';
-import { fullMatchColumns, rosterQuery } from '$lib/server/db/helpers';
-import { calculateStandings } from '$lib/standings.js';
-import { aggregateGroups } from '$lib/util';
-import { json, error } from '@sveltejs/kit';
+import { db } from '#lib/server/db.ts';
+import { fullMatchColumns, rosterQuery } from '#lib/server/db/helpers.ts';
+import { calculateStandings } from '#lib/standings.js';
+import { aggregateGroups } from '#lib/util.ts';
+import { error } from '@sveltejs/kit';
 
 export const GET = async ({ params }) => {
 	const division = await db.query.division.findFirst({
@@ -65,7 +65,7 @@ export const GET = async ({ params }) => {
 		};
 	});
 
-	return json({
+	return Response.json({
 		tables
 	});
 };

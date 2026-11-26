@@ -1,21 +1,21 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import AdminCard from '$lib/components/admin/AdminCard.svelte';
-	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
-	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
-	import SaveToast from '$lib/components/admin/SaveToast.svelte';
-	import SubmissionsTable from '$lib/components/table/SubmissionsTable.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
-	import DateInput from '$lib/components/ui/DateInput.svelte';
-	import InputField from '$lib/components/form/InputField.svelte';
-	import Label from '$lib/components/form/Label.svelte';
-	import { deleteRegistration, updateRegistration } from '$lib/remote/registration.remote.js';
-	import { ConfirmContext } from '$lib/state/confirm.svelte';
-	import { SaveContext } from '$lib/state/save.svelte.js';
-	import Select from '$lib/components/form/Select.svelte';
-	import { SubmissionStatus } from '$lib/types.js';
-	import { formatSubmissionStatus } from '$lib/util.js';
+	import AdminCard from '#lib/components/admin/AdminCard.svelte';
+	import AdminEmptyNotice from '#lib/components/admin/AdminEmptyNotice.svelte';
+	import Breadcrumbs from '#lib/components/admin/Breadcrumbs.svelte';
+	import SaveToast from '#lib/components/admin/SaveToast.svelte';
+	import SubmissionsTable from '#lib/components/table/SubmissionsTable.svelte';
+	import Button from '#lib/components/ui/Button.svelte';
+	import DateInput from '#lib/components/ui/DateInput.svelte';
+	import InputField from '#lib/components/form/InputField.svelte';
+	import Label from '#lib/components/form/Label.svelte';
+	import { deleteRegistration, updateRegistration } from '#lib/remote/registration.remote.js';
+	import { ConfirmContext } from '#lib/state/confirm.svelte.ts';
+	import { SaveContext } from '#lib/state/save.svelte.js';
+	import Select from '#lib/components/form/Select.svelte';
+	import { SubmissionStatus } from '#lib/types.js';
+	import { formatSubmissionStatus } from '#lib/util.js';
 
 	const { data } = $props();
 
@@ -47,11 +47,8 @@
 			description: `Är du säker på att du vill radera anmälan för ${season.name}?`,
 			destructive: true,
 			action: async () => {
-				await deleteRegistration({
-					id: registration.id
-				});
-
-				await goto(resolve(`/admin/sasong/${season.id}`));
+				await deleteRegistration({ id: registration.id });
+				await goto(resolve(`admin/sasong/${season.id}`));
 			}
 		});
 	}

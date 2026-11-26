@@ -47,6 +47,6 @@
 				rgba(255, 255, 255, 0.85) 75%,
 				rgba(255, 255, 255, 0.3) 95%
 			),
-			url('$lib/assets/images/topo-bg.avif');
+			url('../../assets/images/topo-bg.avif');
 	}
 </style>

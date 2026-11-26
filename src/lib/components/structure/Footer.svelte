@@ -2,9 +2,9 @@
 	import { page } from '$app/state';
 	import Icon from '../ui/Icon.svelte';
 	import TeamSocial from '../ui/TeamSocial.svelte';
-	import logo from '$lib/assets/images/logo.webp';
-	import lysatorLogo from '$lib/assets/images/lysator.svg';
-	import { socials } from '$lib/socials';
+	import logo from '#lib/assets/images/logo.webp';
+	import lysatorLogo from '#lib/assets/images/lysator.svg';
+	import { socials } from '#lib/socials.ts';
 	import Dialog from '../ui/Dialog.svelte';
 	import Button from '../ui/Button.svelte';
 	import Link from '../ui/Link.svelte';

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { generateBracket } from '$lib/remote/bracket.remote';
-	import { BracketFormat } from '$lib/types';
+	import { generateBracket } from '#lib/remote/bracket.remote.ts';
+	import { BracketFormat } from '#lib/types.ts';
 	import Checkbox from '../form/Checkbox.svelte';
 	import InputField from '../form/InputField.svelte';
 	import Label from '../form/Label.svelte';
@@ -28,7 +28,7 @@
 		const { bracket } = await generateBracket({
 			name,
 			divisionId,
-			roundCount: roundCount,
+			roundCount,
 			avoidPreviousMatchups,
 			flipStandings,
 			format: doubleElimination
@@ -37,7 +37,7 @@
 		});
 
 		open = false;
-		await goto(resolve(`/admin/bracket/${bracket.id}`));
+		await goto(resolve(`admin/bracket/${bracket.id}`));
 	}
 </script>
 

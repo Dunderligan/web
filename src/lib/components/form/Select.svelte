@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { mapEmptyToUndefined } from '$lib/util';
+	import { mapEmptyToUndefined } from '#lib/util.ts';
 	import { Select, type WithoutChildren } from 'bits-ui';
 
 	import Icon from '../ui/Icon.svelte';
 	import type { Snippet } from 'svelte';
 	import type { ClassValue } from 'svelte/elements';
-	import type { SelectItem } from '$lib/types';
+	import type { SelectItem } from '#lib/types.ts';
 
 	type LabelDecoration =
 		| {

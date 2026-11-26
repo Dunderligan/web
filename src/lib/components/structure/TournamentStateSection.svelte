@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { BracketWinner, TournamentState } from '$lib/types';
+	import type { BracketWinner, TournamentState } from '#lib/types.ts';
 	import { onMount } from 'svelte';
 	import Icon from '../ui/Icon.svelte';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import Button from '../ui/Button.svelte';
 	import PageSectionAlternate from './PageSectionAlternate.svelte';
-	import { flattenDivision } from '$lib/util';
+	import { flattenDivision } from '#lib/util.ts';
 	import Link from '../ui/Link.svelte';
 	import { resolve } from '$app/paths';
 
@@ -115,9 +115,8 @@
 {#snippet winnerCard(winner: BracketWinner)}
 	{@const { roster, bracket } = winner}
 	{@const { season, division } = flattenDivision(bracket.division)}
-
-	{@const bracketHref = resolve(`/stallningar/${season.slug}?visa=slutspel&div=${division.slug}`)}
-	{@const rosterHref = resolve(`/lag/${roster.slug}/${tournamentState.season.slug}`)}
+	{@const bracketHref = resolve(`stallningar/${season.slug}?visa=slutspel&div=${division.slug}`)}
+	{@const rosterHref = resolve(`lag/${roster.slug}/${tournamentState.season.slug}`)}
 
 	<div class="flex items-center gap-3 rounded-lg bg-gray-700 px-6 py-4 dark:bg-gray-800">
 		<RosterLogo id={roster.id} size="md" href={rosterHref} />

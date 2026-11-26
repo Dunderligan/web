@@ -1,8 +1,7 @@
-import { browser } from '$app/environment';
-import type { Preferences, Theme } from '$lib/types';
+import { browser } from '$app/env';
+import type { Preferences, Theme } from '#lib/types.ts';
 import type { Cookies } from '@sveltejs/kit';
 import { defineContext } from './util';
-import { setCookie } from '$lib/cookies';
 
 const { get, set } = defineContext<PreferencesState>('$_preferences_state');
 
@@ -60,6 +59,16 @@ export class PreferencesState {
 		this.current.spoilerMode = enabled;
 		setCookie('spoilerMode', String(enabled));
 	}
+}
+
+function setCookie(name: string, value: string) {
+	// During SSR the cookie has already been read from the request and the rendered markup
+	// reflects it, so there is nothing to persist until the user changes a preference.
+	if (!browser) return;
+
+	const COOKIE_EXPIRATION_MS = 365 * 24 * 60 * 60 * 1000; // 1 year
+	const expires = new Date(Date.now() + COOKIE_EXPIRATION_MS);
+	document.cookie = `${name}=${value}; path=/; expires=${expires.toUTCString()}`;
 }
 
 export function preferencesFromCookies(cookies: Cookies): Preferences {

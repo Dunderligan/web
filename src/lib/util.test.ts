@@ -23,8 +23,8 @@ import {
 	shortenTeamName,
 	socialMediaPlatformDomains,
 	toSlug
-} from '$lib/util';
-import { MatchState, Role, SocialPlatform, SubmissionStatus } from '$lib/types';
+} from '#lib/util.ts';
+import { MatchState, Role, SocialPlatform, SubmissionStatus } from '#lib/types.ts';
 
 describe('formatSocialPlatform / socialMediaPlatformDomains', () => {
 	it('maps platforms to display names', () => {

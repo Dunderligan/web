@@ -24,7 +24,7 @@
 <Button.Root
 	{href}
 	data-sveltekit-replacestate
-	data-sveltekit-noscroll
+	data-sveltekit-reset="false"
 	onclick={() => {
 		checked = !checked;
 		onclick?.();

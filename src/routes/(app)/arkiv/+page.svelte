@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import AdminLink from '$lib/components/admin/AdminLink.svelte';
-	import Meta from '$lib/components/structure/Meta.svelte';
-	import PageHeader from '$lib/components/structure/PageHeader.svelte';
-	import PageSection from '$lib/components/structure/PageSection.svelte';
-	import Subheading from '$lib/components/ui/Subheading.svelte';
-	import type { ListedSeason } from '$lib/types';
+	import AdminLink from '#lib/components/admin/AdminLink.svelte';
+	import Meta from '#lib/components/structure/Meta.svelte';
+	import PageHeader from '#lib/components/structure/PageHeader.svelte';
+	import PageSection from '#lib/components/structure/PageSection.svelte';
+	import Subheading from '#lib/components/ui/Subheading.svelte';
+	import type { ListedSeason } from '#lib/types.ts';
 
 	let { data } = $props();
 
@@ -31,7 +31,7 @@
 	{/if}
 
 	<div class="mt-10 space-y-1 overflow-hidden rounded-lg">
-		<AdminLink href={resolve('/arkiv/matcher?prev={page.url.pathname}')}>Matcher</AdminLink>
+		<AdminLink href={resolve('arkiv/matcher?prev={page.url.pathname}')}>Matcher</AdminLink>
 	</div>
 </PageSection>
 

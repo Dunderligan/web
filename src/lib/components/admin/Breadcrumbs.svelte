@@ -1,19 +1,13 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
-	import { isModerator } from '$lib/auth-role';
-	import { SaveContext } from '$lib/state/save.svelte';
+	import { isModerator } from '#lib/auth-role.ts';
+	import { SaveContext } from '#lib/state/save.svelte.ts';
 	import Icon from '../ui/Icon.svelte';
 	import type { ResolvedPathname } from '$app/types';
 
-	type Crumb = {
-		label: string;
-		href: ResolvedPathname;
-	};
-
-	type Props = {
-		crumbs?: Crumb[];
-	};
+	type Crumb = { label: string; href: ResolvedPathname };
+	type Props = { crumbs?: Crumb[] };
 
 	let { crumbs = [] }: Props = $props();
 
@@ -25,7 +19,7 @@
 <div class="flex h-8 items-center gap-4 font-display text-lg text-gray-600 dark:text-gray-400">
 	{#if userIsModerator}
 		<a
-			href={resolve('/admin')}
+			href={resolve('admin')}
 			class="flex items-center justify-center text-xl hover:text-gray-700 dark:hover:text-gray-300"
 		>
 			<Icon icon="ph:house" />

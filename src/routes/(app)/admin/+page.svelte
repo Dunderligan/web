@@ -1,18 +1,18 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import AdminCard from '$lib/components/admin/AdminCard.svelte';
-	import AdminLink from '$lib/components/admin/AdminLink.svelte';
-	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
-	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
-	import InputField from '$lib/components/form/InputField.svelte';
-	import Label from '$lib/components/form/Label.svelte';
-	import { SaveContext } from '$lib/state/save.svelte';
-	import DateInput from '$lib/components/ui/DateInput.svelte';
-	import { createSeason } from '$lib/remote/season.remote';
-	import Checkbox from '$lib/components/form/Checkbox.svelte';
-	import { isAdmin } from '$lib/auth-role.js';
-	import AdminLinkList from '$lib/components/admin/AdminLinkList.svelte';
+	import AdminCard from '#lib/components/admin/AdminCard.svelte';
+	import AdminLink from '#lib/components/admin/AdminLink.svelte';
+	import Breadcrumbs from '#lib/components/admin/Breadcrumbs.svelte';
+	import CreateDialog from '#lib/components/admin/CreateDialog.svelte';
+	import InputField from '#lib/components/form/InputField.svelte';
+	import Label from '#lib/components/form/Label.svelte';
+	import { SaveContext } from '#lib/state/save.svelte.ts';
+	import DateInput from '#lib/components/ui/DateInput.svelte';
+	import { createSeason } from '#lib/remote/season.remote.ts';
+	import Checkbox from '#lib/components/form/Checkbox.svelte';
+	import { isAdmin } from '#lib/auth-role.js';
+	import AdminLinkList from '#lib/components/admin/AdminLinkList.svelte';
 
 	let { data } = $props();
 
@@ -41,7 +41,7 @@
 			hidden
 		});
 
-		await goto(resolve(`/admin/sasong/${season.id}`));
+		await goto(resolve(`admin/sasong/${season.id}`));
 	}
 
 	function resetNewSeason() {

@@ -1,5 +1,5 @@
-import { matchRoster, matchWinner, resolvedMatchToLogical } from '$lib/match';
-import type { TournamentState, BracketWinner, ResolvedMatch, NestedBracket } from '$lib/types';
+import { matchRoster, matchWinner, resolvedMatchToLogical } from '#lib/match.ts';
+import type { TournamentState, BracketWinner, ResolvedMatch, NestedBracket } from '#lib/types.ts';
 import { db } from '../db';
 import { divisionOrder, entityQuery, finalMatchQuery, nestedDivisionQuery } from './helpers';
 

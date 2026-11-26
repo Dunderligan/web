@@ -1,40 +1,40 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { canEditUserPage } from '$lib/auth-role.js';
-	import AwardCard from '$lib/components/ui/AwardCard.svelte';
-	import Match from '$lib/components/match/Match.svelte';
-	import Field from '$lib/components/structure/Field.svelte';
-	import Meta from '$lib/components/structure/Meta.svelte';
-	import PageHeader from '$lib/components/structure/PageHeader.svelte';
-	import PageSection from '$lib/components/structure/PageSection.svelte';
-	import Table from '$lib/components/table/Table.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
-	import ChipToggle from '$lib/components/form/ChipToggle.svelte';
-	import HeroPortrait from '$lib/components/ui/HeroPortrait.svelte';
-	import Icon from '$lib/components/ui/Icon.svelte';
-	import Notice from '$lib/components/ui/Notice.svelte';
-	import OverwatchProfile from '$lib/components/ui/OverwatchProfile.svelte';
-	import Placement from '$lib/components/ui/Placement.svelte';
-	import Rank from '$lib/components/ui/Rank.svelte';
-	import RosterLogo from '$lib/components/ui/RosterLogo.svelte';
-	import Subheading from '$lib/components/ui/Subheading.svelte';
-	import TeamSocial from '$lib/components/ui/TeamSocial.svelte';
-	import { claimPlayer } from '$lib/remote/player.remote.js';
+	import { canEditUserPage } from '#lib/auth-role.js';
+	import AwardCard from '#lib/components/ui/AwardCard.svelte';
+	import Match from '#lib/components/match/Match.svelte';
+	import Field from '#lib/components/structure/Field.svelte';
+	import Meta from '#lib/components/structure/Meta.svelte';
+	import PageHeader from '#lib/components/structure/PageHeader.svelte';
+	import PageSection from '#lib/components/structure/PageSection.svelte';
+	import Table from '#lib/components/table/Table.svelte';
+	import Button from '#lib/components/ui/Button.svelte';
+	import ChipToggle from '#lib/components/form/ChipToggle.svelte';
+	import HeroPortrait from '#lib/components/ui/HeroPortrait.svelte';
+	import Icon from '#lib/components/ui/Icon.svelte';
+	import Notice from '#lib/components/ui/Notice.svelte';
+	import OverwatchProfile from '#lib/components/ui/OverwatchProfile.svelte';
+	import Placement from '#lib/components/ui/Placement.svelte';
+	import Rank from '#lib/components/ui/Rank.svelte';
+	import RosterLogo from '#lib/components/ui/RosterLogo.svelte';
+	import Subheading from '#lib/components/ui/Subheading.svelte';
+	import TeamSocial from '#lib/components/ui/TeamSocial.svelte';
+	import { claimPlayer } from '#lib/remote/player.remote.js';
 	import {
 		type Member,
 		type Placement as PlacementType,
 		type ResolvedMatchWithContext,
 		type RosterWithGroup
-	} from '$lib/types.js';
+	} from '#lib/types.js';
 	import {
 		compareNullable,
 		flattenGroup,
 		formatDateTime,
 		isOrganizationRole,
 		roleIcon
-	} from '$lib/util';
-	import Link from '$lib/components/ui/Link.svelte';
+	} from '#lib/util.ts';
+	import Link from '#lib/components/ui/Link.svelte';
 	import { resolve } from '$app/paths';
 
 	type MembershipRow = Pick<Member, 'role' | 'rank' | 'tier' | 'sr'> & {
@@ -115,7 +115,7 @@
 				battletag: data.player.battletag
 			});
 
-			await goto(resolve(`/admin/spelare/${id}`));
+			await goto(resolve(`admin/spelare/${id}`));
 		} finally {
 			claimLoading = false;
 		}
@@ -207,13 +207,9 @@
 			{#snippet teamCell(membership: MembershipRow)}
 				{@const { roster } = membership}
 				{@const { season } = flattenGroup(roster.group)}
-				{@const href = resolve(`/lag/${roster.slug}/${season.slug}`)}
-
+				{@const href = resolve(`lag/${roster.slug}/${season.slug}`)}
 				<RosterLogo id={roster.id} size="md" {href} />
-
-				<Link {href} class="hidden truncate sm:inline">
-					{roster.name}
-				</Link>
+				<Link {href} class="hidden truncate sm:inline">{roster.name}</Link>
 			{/snippet}
 
 			{#snippet seasonCell(membership: MembershipRow)}

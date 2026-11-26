@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { calculateStandings, sortBySeed } from '$lib/standings';
-import { MatchState } from '$lib/types';
-import { logicalMatch, roster } from '$lib/test/fixtures';
+import { calculateStandings, sortBySeed } from '#lib/standings.ts';
+import { MatchState } from '#lib/types.ts';
+import { logicalMatch, roster } from '#lib/test/fixtures.ts';
 
 function rosterIds(rows: { rosterId: string }[]) {
 	return rows.map((row) => row.rosterId);
