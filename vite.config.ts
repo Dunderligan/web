@@ -6,9 +6,7 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-	// `clientAuth: false` skips the one-time code for the dock. The dev server only
-	// listens on localhost, so only this machine can reach it.
-	devtools: { apply: 'serve', clientAuth: false },
+	devtools: { apply: 'serve' },
 	plugins: [
 		svelteDevtools(),
 		tailwindcss(),
