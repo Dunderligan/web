@@ -1,9 +1,10 @@
 import { fallbackDecision, RoomStatus } from '$lib/pick-ban';
 import { MatchState } from '$lib/types';
 import { inArray } from 'drizzle-orm';
-import { db, schema } from './db';
-import { fullMatchQueryWithContext } from './db/helpers';
-import pickBanService from './pick-ban';
+import { db, schema } from '../db';
+import { fullMatchQueryWithContext } from '../db/helpers';
+import pickBanService from '.';
+import roomEvents from './room-events';
 
 class PickBanSweeper {
 	#sweepIntervalMillis: number = 5 * 1000; // 5 seconds
@@ -99,6 +100,10 @@ class PickBanSweeper {
 			)
 			.execute();
 
+		for (const room of roomsToDelete) {
+			roomEvents.close(room.id);
+		}
+
 		if (result.count > 0) {
 			console.log(`Auto-deleted ${result.count} inactive rooms.`);
 		}
@@ -107,44 +112,48 @@ class PickBanSweeper {
 	async #applyDeadlineDecisions() {
 		const now = new Date();
 
-		await db.transaction(async (tx) => {
-			const rooms = await tx.query.room.findMany({
-				columns: {
-					id: true
-				},
-				where: {
-					status: RoomStatus.IN_PROGRESS,
-					nextDeadlineAt: {
-						lte: now
-					}
+		const rooms = await db.query.room.findMany({
+			columns: {
+				id: true
+			},
+			where: {
+				status: RoomStatus.IN_PROGRESS,
+				nextDeadlineAt: {
+					lte: now
 				}
-			});
-
-			for (const room of rooms) {
-				await pickBanService.applyDecision(
-					room.id,
-					{ type: 'automatic' },
-					({ catalog, config, state }) => {
-						const fallback = fallbackDecision({
-							catalog,
-							config,
-							maps: state.maps
-						});
-
-						if (!fallback.ok) {
-							throw new Error(
-								`Failed to generate fallback decision for room ${room.id}: ${fallback.error}`
-							);
-						}
-
-						return fallback;
-					}
-				);
 			}
 		});
+
+		for (const room of rooms) {
+			try {
+				await this.applyDeadlineDecision(room.id);
+			} catch (error) {
+				console.error(`Error applying deadline decision for room ${room.id}:`, error);
+			}
+		}
+	}
+
+	private async applyDeadlineDecision(roomId: string) {
+		await pickBanService.applyDecision(
+			roomId,
+			{ type: 'automatic' },
+			({ catalog, config, state }) => {
+				const fallback = fallbackDecision({
+					catalog,
+					config,
+					maps: state.maps
+				});
+
+				if (!fallback.ok) {
+					throw new Error(
+						`Failed to generate fallback decision for room ${roomId}: ${fallback.error}`
+					);
+				}
+
+				return fallback;
+			}
+		);
 	}
 }
 
-const pickBanSweeper = new PickBanSweeper();
-
-export default pickBanSweeper;
+export default new PickBanSweeper();

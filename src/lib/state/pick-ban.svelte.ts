@@ -215,12 +215,6 @@ export class PickBanContext {
 
 		try {
 			await setRoomReady({ roomId: this.roomId, ready });
-			// apply the change optimistically
-			for (const member of this.state.presence.members) {
-				if (member.userId === this.user?.id) {
-					member.ready = ready;
-				}
-			}
 		} finally {
 			this.readyPending = false;
 		}

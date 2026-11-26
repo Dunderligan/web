@@ -123,7 +123,7 @@
 	<div class="mt-4 grid grid-cols-[repeat(auto-fill,minmax(6rem,1fr))] gap-2">
 		{#each shownHeroes as { eligibility, ...hero } (hero.id)}
 			<button
-				class="overflow-hidden rounded-lg bg-gray-100 not-disabled:hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-70"
+				class="overflow-hidden rounded-lg bg-gray-100 not-disabled:hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-70 dark:bg-gray-900 dark:not-disabled:hover:bg-gray-800"
 				disabled={!interactive || eligibility !== HeroEligibility.ELIGIBLE}
 				onclick={() => selectHero(hero.id)}
 				{...eligibility !== HeroEligibility.ELIGIBLE

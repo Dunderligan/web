@@ -25,11 +25,62 @@
 		class?: ClassValue;
 		kind?: Kind;
 		placeholder?: ComponentProps<typeof Placeholder>;
+		onreorder?: (from: number, to: number) => void;
 	};
 
-	let { columns, rows, key, class: classProp, kind = 'neutral', placeholder }: Props = $props();
+	let {
+		columns,
+		rows,
+		key,
+		class: classProp,
+		kind = 'neutral',
+		placeholder,
+		onreorder
+	}: Props = $props();
 
 	const fixedLayout = $derived(columns.some((c) => c.width));
+
+	let draggedIndex = $state<number | null>(null);
+	let dropIndex = $state<number | null>(null);
+
+	function handleDragStart(event: DragEvent, index: number) {
+		if (!onreorder) return;
+
+		draggedIndex = index;
+
+		if (event.dataTransfer) {
+			event.dataTransfer.effectAllowed = 'move';
+			event.dataTransfer.setData('text/plain', String(index));
+		}
+	}
+
+	function handleDragOver(event: DragEvent, index: number) {
+		if (!onreorder || draggedIndex === null) return;
+
+		event.preventDefault();
+		dropIndex = index;
+
+		if (event.dataTransfer) {
+			event.dataTransfer.dropEffect = 'move';
+		}
+	}
+
+	function handleDrop(event: DragEvent, index: number) {
+		if (!onreorder || draggedIndex === null) return;
+
+		event.preventDefault();
+
+		if (draggedIndex !== index) {
+			onreorder(draggedIndex, index);
+		}
+
+		resetDrag();
+	}
+
+	function resetDrag() {
+		draggedIndex = null;
+		dropIndex = null;
+	}
 </script>
 
 {#if rows.length === 0 && placeholder}
@@ -75,9 +126,19 @@
 			<tbody>
 				{#each rows as row, i (key(row))}
 					<tr
+						draggable={onreorder ? true : undefined}
+						ondragstart={(event) => handleDragStart(event, i)}
+						ondragover={(event) => handleDragOver(event, i)}
+						ondrop={(event) => handleDrop(event, i)}
+						ondragend={resetDrag}
 						class={[
 							i === rows.length - 1 && 'rounded-b-lg',
-							kind === 'neutral' && 'gap-y-1 bg-gray-100 dark:bg-gray-900'
+							kind === 'neutral' && 'gap-y-1 bg-gray-100 dark:bg-gray-900',
+							onreorder && 'cursor-grab active:cursor-grabbing',
+							draggedIndex === i && 'opacity-50',
+							dropIndex === i &&
+								draggedIndex !== i &&
+								'animate-pulse bg-accent-50 outline -outline-offset-2 outline-accent-400 dark:bg-accent-900/50 dark:outline-accent-700'
 						]}
 					>
 						{#each columns as column, j (String(key(row)) + '-' + (column.label ?? j))}

@@ -3,16 +3,18 @@ import z from 'zod';
 import { roleGuard } from './auth.remote';
 import { AuthRole } from '$lib/auth-role';
 import pickBanService, { type RoomParticipant } from '$lib/server/pick-ban';
-import { fullMatchQueryWithContext, roomStateQuery } from '$lib/server/db/helpers';
+import { fullMatchQueryWithContext } from '$lib/server/db/helpers';
+import { getRoomSnapshot, publishRoom } from '$lib/server/pick-ban/room-snapshot';
 import { db } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
 import { MapOutcome, RoomStatus, type DecisionActor } from '$lib/pick-ban';
-import presence from '$lib/server/presence';
-import type { PresenceParticipant } from '$lib/server/presence-store';
+import presence from '$lib/server/pick-ban/presence';
+import type { PresenceParticipant } from '$lib/server/pick-ban/presence-store';
 import type { User } from '$lib/server/db/schema/auth';
 import { decisionInputSchema } from '$lib/schemas';
+import roomEvents from '$lib/server/pick-ban/room-events';
+import { isClosed } from '$lib/pick-ban/util';
 
-const ROOM_POLL_INTERVAL_MS = 1000;
 /** Yield at least this often so the live query doesn't time out due to inactivity. */
 const ROOM_KEEPALIVE_INTERVAL_MS = 15 * 1000;
 
@@ -94,52 +96,58 @@ export const setRoomReady = command(
 		await presence.heartbeat(roomId, participantToPresence(participant));
 		await presence.setReady(roomId, participant.userId, ready);
 
-		if (!ready) return;
+		if (!ready) {
+			// publish room so presence changes are reflected immediately
+			await publishRoom(roomId);
+			return;
+		}
 
-		const snapshot = await presence.list(roomId);
+		const roomPresence = await presence.list(roomId);
 		const readySlots = new Set(
-			snapshot.members.filter((member) => member.isCaptain && member.ready).map((m) => m.slot)
+			roomPresence.members.filter((member) => member.isCaptain && member.ready).map((m) => m.slot)
 		);
 
-		if (readySlots.size < 2) return;
-
-		await pickBanService.startRoom(roomId);
+		if (readySlots.size < 2) {
+			// simiarly, publish room to broadcast presence
+			// startRoom publishes internally, so only do it here to avoid duplicate events
+			await publishRoom(roomId);
+		} else {
+			await pickBanService.startRoom(roomId);
+		}
 	}
 );
 
 export const subscribeToRoom = query.live(
 	z.object({ roomId: z.uuid() }),
 	async function* ({ roomId }) {
-		let lastSnapshot: string | null = null;
-		let lastYieldAt = 0;
+		let latestSnapshot = await getRoomSnapshot(roomId);
+		if (!latestSnapshot || isClosed(latestSnapshot?.status)) {
+			return;
+		}
 
-		while (true) {
-			const room = await db.query.room.findFirst({
-				...roomStateQuery,
-				where: {
-					id: roomId
+		yield latestSnapshot;
+
+		const subscriber = roomEvents.subscribe(roomId);
+		try {
+			while (true) {
+				const keepalive = new Promise<void>((resolve) =>
+					setTimeout(resolve, ROOM_KEEPALIVE_INTERVAL_MS)
+				);
+				const result = await Promise.race([subscriber.next(), keepalive.then(() => null)]);
+
+				if (result === null) {
+					// yield at least every ROOM_KEEPALIVE_INTERVAL_MS so the live query doesn't time out
+					yield latestSnapshot;
+				} else if (result.done) {
+					yield latestSnapshot;
+					break;
+				} else {
+					latestSnapshot = result.value;
+					yield latestSnapshot;
 				}
-			});
-
-			// A deleted room ends the stream. Viewers keep the last state they saw.
-			if (!room) return;
-
-			const presenceState = await presence.list(roomId);
-			const snapshot = { ...room, presence: presenceState };
-			const serialized = JSON.stringify(snapshot);
-			const now = Date.now();
-
-			if (serialized !== lastSnapshot || now - lastYieldAt >= ROOM_KEEPALIVE_INTERVAL_MS) {
-				yield snapshot;
-				lastSnapshot = serialized;
-				lastYieldAt = now;
 			}
-
-			if (room.status === RoomStatus.FINISHED || room.status === RoomStatus.CANCELLED) {
-				return;
-			}
-
-			await new Promise((resolve) => setTimeout(resolve, ROOM_POLL_INTERVAL_MS));
+		} finally {
+			subscriber.close();
 		}
 	}
 );

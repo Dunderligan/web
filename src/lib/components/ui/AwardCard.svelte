@@ -73,10 +73,10 @@
 
 	@keyframes spin {
 		0% {
-			transform: rotateY(180deg);
+			transform: perspective(300px) rotateY(180deg);
 		}
 		100% {
-			transform: rotateY(0deg);
+			transform: perspective(300px) rotateY(0deg);
 		}
 	}
 </style>

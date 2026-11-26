@@ -1,9 +1,11 @@
 <script lang="ts">
 	import PickBan from '$lib/components/pick-ban/PickBan.svelte';
 	import PickBanInfoDialog from '$lib/components/pick-ban/PickBanInfoDialog.svelte';
+	import Meta from '$lib/components/structure/Meta.svelte';
 	import PageSection from '$lib/components/structure/PageSection.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Chip from '$lib/components/ui/Chip.svelte';
+	import { matchDivision } from '$lib/match.js';
 	import { RoomStatus } from '$lib/pick-ban/types.js';
 	import { PickBanContext } from '$lib/state/pick-ban.svelte.js';
 	import type { ChipColor } from '$lib/types.js';
@@ -30,6 +32,11 @@
 
 	let infoOpen = $state(false);
 
+	const rosterA = $derived(context.match.rosterA);
+	const rosterB = $derived(context.match.rosterB);
+	const division = $derived(matchDivision(context.match));
+	const season = $derived(division?.season);
+
 	const connectionChipProps = $derived(
 		{
 			connected: { color: 'green' as ChipColor, label: 'Ansluten', icon: 'ph:circle' },
@@ -43,6 +50,11 @@
 		return destroy;
 	});
 </script>
+
+<Meta
+	title="{rosterA?.name} vs {rosterB?.name}"
+	description="Se kartval och hjältebans för {division?.name}, {season?.name}."
+/>
 
 <PageSection topMargin={false} wide>
 	<div class="flex items-center gap-2">

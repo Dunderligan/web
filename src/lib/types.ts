@@ -4,6 +4,7 @@ import type { ResolvedPathname } from '$app/types';
 import type { Select } from 'bits-ui';
 import type { ComponentProps } from 'svelte';
 import Tabs from './components/ui/Tabs.svelte';
+import type { RoomStatus } from './pick-ban';
 
 export type ListedSeason = {
 	id: string;
@@ -420,3 +421,9 @@ export type MatchLineState = 'hidden' | 'visible' | 'highlighted';
 export type KeysWithType<Obj, V> = {
 	[K in keyof Obj]-?: [Obj[K]] extends [V] ? K : never;
 }[keyof Obj];
+
+export type ListedRoom = {
+	id: string;
+	status: RoomStatus;
+	match: ResolvedMatchWithContext;
+};

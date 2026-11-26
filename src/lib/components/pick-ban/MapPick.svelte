@@ -97,7 +97,7 @@
 			case MapEligibility.POOL_GAMEMODE_RESTRICTION:
 				return 'Spelläget tillåts inte av kartpoolen';
 			case MapEligibility.POOL_RESTRICTION:
-				return 'Kartpoolen tillåter inte den här kartan';
+				return 'Kartan tillåts inte i den här matchen';
 			case MapEligibility.USED_GAMEMODE:
 				return 'Spelläget har redan använts i den här matchen';
 		}
@@ -129,7 +129,7 @@
 		{#each shownMaps as { eligibility, ...map } (map.id)}
 			{#if eligibility !== MapEligibility.POOL_RESTRICTION}
 				<button
-					class="overflow-hidden rounded-lg bg-gray-100 not-disabled:hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-70"
+					class="overflow-hidden rounded-lg bg-gray-100 not-disabled:hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-70 dark:bg-gray-900 dark:not-disabled:hover:bg-gray-800"
 					onclick={() => selectMap(map.id)}
 					disabled={!interactive || eligibility !== MapEligibility.ELIGIBLE}
 					{...eligibility !== MapEligibility.ELIGIBLE

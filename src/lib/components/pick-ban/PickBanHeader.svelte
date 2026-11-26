@@ -20,7 +20,7 @@
 <header
 	class={[
 		classProp,
-		'flex items-center justify-between gap-4 rounded-xl border-[3px] border-gray-200 px-4 py-2 lg:py-4'
+		'grid grid-cols-[1fr_auto_1fr] items-center gap-4 rounded-xl border-[3px] border-gray-200 px-4 py-2 lg:py-4 dark:border-gray-900'
 	]}
 >
 	{@render slot({ slot: MatchSlot.A, class: 'flex-row-reverse text-right' })}
@@ -36,7 +36,7 @@
 	{@const roster = matchRoster(context.match, slot)}
 	{@const md = new MediaQuery('min-width: 1024px')}
 
-	<div class={[classProp, 'flex min-w-0 items-center gap-2 lg:w-1/2']}>
+	<div class={[classProp, 'flex items-center gap-2 not-lg:justify-end']}>
 		{#if roster}
 			{@const href = resolve(`/lag/${roster.slug}/${context.seasonSlug}`)}
 

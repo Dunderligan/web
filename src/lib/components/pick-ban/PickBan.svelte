@@ -17,7 +17,7 @@
 <div
 	class={[
 		classProp,
-		'grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-[minmax(8rem,1fr)_3fr_minmax(8rem,1fr)]'
+		'grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-[minmax(5rem,1fr)_3fr_minmax(5rem,1fr)]'
 	]}
 >
 	<PickBanHeader class="col-span-full" />

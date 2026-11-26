@@ -1,5 +1,11 @@
 import { MatchSlot } from '$lib/types';
-import { type RoomMapState, DecisionPoint, type RecordedDecision, MapOutcome } from './types';
+import {
+	type RoomMapState,
+	DecisionPoint,
+	type RecordedDecision,
+	MapOutcome,
+	RoomStatus
+} from './types';
 
 /** Returns the recorded decision for a point, if any. */
 export function decisionAt(map: RoomMapState, point: DecisionPoint): RecordedDecision | undefined {
@@ -44,4 +50,8 @@ export function slotToOutcome(slot: MatchSlot | null): MapOutcome {
 		case null:
 			return MapOutcome.DRAW;
 	}
+}
+
+export function isClosed(status: RoomStatus): boolean {
+	return status === RoomStatus.FINISHED || status === RoomStatus.CANCELLED;
 }

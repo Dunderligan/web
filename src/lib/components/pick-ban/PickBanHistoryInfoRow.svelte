@@ -16,10 +16,22 @@
 	let { entry }: Props = $props();
 
 	const context = PickBanContext.get();
+
+	const actor = $derived.by(() => {
+		switch (entry.kind) {
+			case 'decision':
+				if (entry.decision.automatic) return 'automatic';
+				return entry.decision.actor;
+			case 'fixed-map':
+				return 'automatic';
+			default:
+				return null;
+		}
+	});
 </script>
 
 {#snippet separator()}
-	<span class="h-4 w-px bg-gray-300 dark:bg-gray-700" aria-hidden="true"></span>
+	<div class="h-4 w-px bg-gray-300 dark:bg-gray-700" aria-hidden="true"></div>
 {/snippet}
 
 <div
@@ -27,9 +39,6 @@
 >
 	{#if entry.kind === 'decision'}
 		{@const roster = matchRoster(context.match, entry.decision.slot)}
-
-		{@const actor = entry.decision.actor}
-		{@const member = actor ? context.findMemberByBattletag(actor.battletag)?.member : null}
 
 		{#if roster}
 			{@const rosterHref = resolve(`/lag/${roster?.slug}/${context.seasonSlug}`)}
@@ -40,27 +49,39 @@
 				{roster.name}
 			</Link>
 		{/if}
+	{/if}
 
+	{#if entry.kind === 'decision' && actor}
 		{@render separator()}
+	{/if}
 
-		{#if entry.decision.automatic}
+	{#if actor}
+		{#if actor === 'automatic'}
 			<Icon icon="ph:robot" class="text-base" />
 			<span>Automatiskt</span>
-		{:else if member}
-			{@const avatarUrl =
-				member.profile.status === 'found' ? member.profile.profile.avatarUrl : null}
-			{@const battletag = member.member.player.battletag}
-			{@const href = resolve(`/spelare/${battletag.replace('#', '-')}`)}
+		{:else}
+			{@const member = context.findMemberByBattletag(actor.battletag)?.member}
 
-			{#if avatarUrl}
-				<img src={avatarUrl} alt="" class="size-5 rounded object-cover" />
+			{#if member}
+				{@const avatarUrl =
+					member.profile.status === 'found' ? member.profile.profile.avatarUrl : null}
+				{@const battletag = member.member.player.battletag}
+				{@const href = resolve(`/spelare/${battletag.replace('#', '-')}`)}
+
+				{#if avatarUrl}
+					<img src={avatarUrl} alt="" class="size-5 rounded object-cover" />
+				{/if}
+
+				<Link {href}>
+					{battletag.split('#')[0]}
+				</Link>
+			{:else}
+				<span>{actor.battletag} (okänd)</span>
 			{/if}
-
-			<Link {href}>
-				{battletag.split('#')[0]}
-			</Link>
 		{/if}
+	{/if}
 
+	{#if actor && entry.at}
 		{@render separator()}
 	{/if}
 

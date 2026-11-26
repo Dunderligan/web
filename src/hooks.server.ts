@@ -4,7 +4,7 @@ import { sequence } from '@sveltejs/kit/hooks';
 import { initDb } from '$lib/server/db';
 import { isModerator } from '$lib/auth-role';
 import apiToken from '$lib/server/api-token';
-import pickBanSweeper from '$lib/server/pick-ban-sweeper';
+import pickBanSweeper from '$lib/server/pick-ban/sweeper';
 
 const handleAuth: Handle = async ({ event, resolve }) => {
 	event.locals.user = null;

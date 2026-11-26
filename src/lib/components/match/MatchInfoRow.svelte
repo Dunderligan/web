@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { type NestedBracket, type NestedGroup, type MatchWithoutRosters } from '$lib/types';
-	import { capitalize, formatDateShort, formatDateTime, formatDateTimeShort } from '$lib/util';
+	import { capitalize } from '$lib/util';
 	import type { ClassValue } from 'svelte/elements';
 	import Icon from '../ui/Icon.svelte';
 	import Link from '../ui/Link.svelte';
-	import Tooltip from '../ui/Tooltip.svelte';
+	import Date from '../ui/Date.svelte';
 
 	type Props = {
 		match: MatchWithoutRosters;
@@ -69,14 +69,7 @@
 			{#if typeof date === 'string'}
 				{date}
 			{:else}
-				<Tooltip underline>
-					{#snippet content()}
-						<p class="text-center text-lg">
-							{formatDateTime(date)}
-						</p>
-					{/snippet}
-					{showTime ? formatDateTimeShort(date) : formatDateShort(date)}
-				</Tooltip>
+				<Date {date} preview={showTime ? 'datetime' : 'date'} />
 			{/if}
 		{/if}
 	</div>

@@ -3,8 +3,17 @@ import { db, schema } from '$lib/server/db';
 import z from 'zod';
 import { roleGuard } from './auth.remote';
 import { AuthRole } from '$lib/auth-role';
-import { PickBanMapType, WinCondition } from '$lib/pick-ban';
+import {
+	configRowToMapScope,
+	InvalidPickBanConfigError,
+	normalizeValues,
+	PickBanMapType,
+	resolveConfig,
+	WinCondition
+} from '$lib/pick-ban';
 import { eq } from 'drizzle-orm';
+import pickBanService from '$lib/server/pick-ban';
+import { error } from '@sveltejs/kit';
 
 export const createPickBanConfig = command(
 	z.object({
@@ -51,12 +60,48 @@ export const updatePickBanConfig = command(
 	async ({ id, values }) => {
 		await roleGuard(AuthRole.ADMIN);
 
-		const [config] = await db
+		const config = await db.query.pickBanConfig.findFirst({
+			where: {
+				id
+			}
+		});
+
+		if (!config) {
+			throw error(404, 'Pick-ban config not found');
+		}
+
+		const normalized = normalizeValues(values);
+
+		const scope = configRowToMapScope(config);
+		const applicableConfigs = await pickBanService.getConfigsByScope(scope);
+		const parentConfigs = applicableConfigs.filter((c) => c.id !== config.id);
+
+		try {
+			resolveConfig(scope, [{ id, ...scope, ...normalized }, ...parentConfigs]);
+		} catch (err) {
+			if (err instanceof InvalidPickBanConfigError) {
+				throw error(400, 'Invalid pick-ban config.');
+			}
+			throw err;
+		}
+
+		const [updatedConfig] = await db
 			.update(schema.pickBanConfig)
-			.set(values)
-			.where(eq(schema.pickBanConfig.id, id))
+			.set(normalized)
+			.where(eq(schema.pickBanConfig.id, config.id))
 			.returning();
 
-		return { config };
+		return { config: updatedConfig };
+	}
+);
+
+export const deletePickBanConfig = command(
+	z.object({
+		id: z.uuid()
+	}),
+	async ({ id }) => {
+		await roleGuard(AuthRole.ADMIN);
+
+		await db.delete(schema.pickBanConfig).where(eq(schema.pickBanConfig.id, id));
 	}
 );

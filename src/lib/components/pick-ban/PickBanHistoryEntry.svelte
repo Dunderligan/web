@@ -46,12 +46,12 @@
 		if (!slot) return 'Oavgjort';
 
 		const roster = matchRoster(context.match, slot);
-		return `Map win till ${roster?.name ?? 'okänt lag'}`;
+		return `Kartvinst till ${roster?.name ?? 'okänt lag'}`;
 	}
 </script>
 
 <div
-	class="relative z-0 rounded-lg bg-gray-50 p-3 text-lg font-medium dark:bg-gray-900"
+	class="relative z-0 rounded-lg bg-gray-50 p-2.5 text-lg font-medium dark:bg-gray-900"
 	transition:fly={{ duration: 150, x: 10 }}
 >
 	<StatusIndicator
@@ -60,7 +60,7 @@
 		size="sm"
 	/>
 
-	<div class="absolute top-1/2 -left-2.5 size-4 -translate-y-3/4 text-gray-50 dark:bg-gray-900">
+	<div class="absolute top-1/2 -left-2.5 size-4 -translate-y-3/4 text-gray-50 dark:text-gray-900">
 		<Icon icon="ph:caret-left-fill" />
 	</div>
 
@@ -70,41 +70,9 @@
 		{#if entry.kind === 'decision'}
 			{#if entry.decision.point === DecisionPoint.MAP_PICK}
 				{@const pickedMap = mapById(pickedMapId(entry.decision))}
-				{@const gamemode = gamemodeFor(pickedMap)}
 
-				{#if pickedMap && gamemode}
-					<div
-						class="pointer-events-none absolute inset-y-0 right-0 -z-10 w-2/3"
-						aria-hidden="true"
-					>
-						<img
-							src="/maps/{pickedMap.slug}.webp"
-							alt=""
-							class="size-full rounded-lg object-cover opacity-35"
-						/>
-
-						<div
-							class="absolute inset-0 bg-linear-to-r from-gray-50 via-gray-50/80 to-transparent dark:from-gray-900 dark:via-gray-900/80"
-						></div>
-					</div>
-
-					<div class="relative shrink-0">
-						<img
-							src="/maps/{pickedMap.slug}.webp"
-							alt={pickedMap.name}
-							class="h-20 rounded-md object-cover"
-						/>
-
-						<GamemodeBadge {gamemode} class="absolute -right-1 -bottom-1" />
-					</div>
-
-					<div>
-						<span class="font-semibold">
-							{pickedMap.name}
-						</span>
-
-						<span> pick </span>
-					</div>
+				{#if pickedMap}
+					{@render mapContent(pickedMap)}
 				{/if}
 			{:else if entry.decision.point === DecisionPoint.FIRST_BAN || entry.decision.point === DecisionPoint.SECOND_BAN}
 				{@const hero = heroById(bannedHeroId(entry.decision))}
@@ -114,7 +82,7 @@
 						<HeroPortrait {hero} size="sm" />
 
 						<span
-							class="absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full bg-red-100 text-red-800 shadow-sm"
+							class="absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full bg-red-100 text-red-800 shadow-sm dark:bg-red-900/60 dark:text-red-100"
 						>
 							<Icon icon="ph:prohibit" />
 						</span>
@@ -145,7 +113,7 @@
 					</div>
 				{/if}
 			{/if}
-		{:else}
+		{:else if entry.kind === 'result'}
 			{@const winnerSlot = outcomeToSlot(entry.outcome)}
 			{@const winnerRoster = winnerSlot ? matchRoster(context.match, winnerSlot) : null}
 
@@ -162,6 +130,40 @@
 			<span>
 				{outcomeLabel(entry.outcome)}
 			</span>
+		{:else if entry.kind === 'fixed-map'}
+			{@const fixedMap = mapById(entry.mapId)}
+
+			{#if fixedMap}
+				{@render mapContent(fixedMap)}
+			{/if}
 		{/if}
 	</div>
 </div>
+
+{#snippet mapContent(map: MapCatalogEntry)}
+	{@const gamemode = gamemodeFor(map)}
+
+	<div class="pointer-events-none absolute inset-y-0 right-0 -z-10 w-2/3" aria-hidden="true">
+		<img src="/maps/{map.slug}.webp" alt="" class="size-full rounded-lg object-cover opacity-35" />
+
+		<div
+			class="absolute inset-0 bg-linear-to-r from-gray-50 via-gray-50/80 to-transparent dark:from-gray-900 dark:via-gray-900/50"
+		></div>
+	</div>
+
+	<div class="relative shrink-0">
+		<img src="/maps/{map.slug}.webp" alt={map.name} class="h-20 rounded-md object-cover" />
+
+		{#if gamemode}
+			<GamemodeBadge {gamemode} class="absolute -right-1 -bottom-1" />
+		{/if}
+	</div>
+
+	<div>
+		<span class="font-semibold">
+			{map.name}
+		</span>
+
+		<span> vald </span>
+	</div>
+{/snippet}

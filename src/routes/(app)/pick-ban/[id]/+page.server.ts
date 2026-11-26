@@ -7,7 +7,7 @@ import {
 } from '$lib/server/db/helpers.js';
 import overwatch from '$lib/server/overwatch.js';
 import pickBanService from '$lib/server/pick-ban';
-import presenceStore from '$lib/server/presence';
+import presenceStore from '$lib/server/pick-ban/presence.js';
 import type { GameProfileEntryWithDate, Member } from '$lib/types.js';
 import { error } from '@sveltejs/kit';
 

@@ -66,11 +66,39 @@ export type MatchScope = {
 
 export type PickBanConfigRow = { id: string } & PickBanConfigValues & MatchScope;
 
-/** Thrown when a configuration cannot produce a coherent effective configuration. */
+/** A reason a resolved configuration cannot be used. */
+export enum PickBanConfigError {
+	INVALID_MAP_COUNT = 'invalid_map_count',
+	INVALID_DECISION_TIMEOUT = 'invalid_decision_timeout',
+	EMPTY_ALLOWED_MAPS = 'empty_allowed_maps',
+	DUPLICATE_ALLOWED_MAPS = 'duplicate_allowed_maps',
+	EMPTY_ALLOWED_GAMEMODES = 'empty_allowed_gamemodes',
+	DUPLICATE_ALLOWED_GAMEMODES = 'duplicate_allowed_gamemodes',
+	MISSING_FIXED_MAPS = 'missing_fixed_maps',
+	DUPLICATE_FIXED_MAPS = 'duplicate_fixed_maps'
+}
+
+const PICK_BAN_CONFIG_ERROR_MESSAGES: Record<PickBanConfigError, string> = {
+	[PickBanConfigError.INVALID_MAP_COUNT]: 'mapCount must be a positive integer',
+	[PickBanConfigError.INVALID_DECISION_TIMEOUT]:
+		'decisionTimeoutSeconds must be a positive integer',
+	[PickBanConfigError.EMPTY_ALLOWED_MAPS]: 'allowedMapIds cannot be empty when defined',
+	[PickBanConfigError.DUPLICATE_ALLOWED_MAPS]: 'allowedMapIds contains duplicate maps',
+	[PickBanConfigError.EMPTY_ALLOWED_GAMEMODES]: 'allowedGamemodeIds cannot be empty when defined',
+	[PickBanConfigError.DUPLICATE_ALLOWED_GAMEMODES]:
+		'allowedGamemodeIds contains duplicate gamemodes',
+	[PickBanConfigError.MISSING_FIXED_MAPS]: 'fixedMapIds is required when mapType is FIXED',
+	[PickBanConfigError.DUPLICATE_FIXED_MAPS]: 'fixedMapIds contains duplicate maps'
+};
+
+/** Thrown by `resolveConfig` when the resolved configuration fails validation. */
 export class InvalidPickBanConfigError extends Error {
-	constructor(message: string) {
-		super(message);
+	readonly code: PickBanConfigError;
+
+	constructor(code: PickBanConfigError) {
+		super(PICK_BAN_CONFIG_ERROR_MESSAGES[code]);
 		this.name = 'InvalidPickBanConfigError';
+		this.code = code;
 	}
 }
 
@@ -121,50 +149,75 @@ export function resolveConfig(
 	}
 
 	if (validate) {
-		validateConfig(resolved);
+		const error = validateConfig(resolved);
+		if (error) throw new InvalidPickBanConfigError(error);
 	}
 	return resolved;
 }
 
-/** Validates a resolved configuration, throwing on values that cannot be used. */
-export function validateConfig(config: ResolvedPickBanConfig): void {
+/** Validates a resolved configuration, returning the first error or `null` when it is usable. */
+export function validateConfig(config: ResolvedPickBanConfig): PickBanConfigError | null {
 	if (!Number.isInteger(config.mapCount) || config.mapCount < 1) {
-		throw new InvalidPickBanConfigError('mapCount must be a positive integer');
+		return PickBanConfigError.INVALID_MAP_COUNT;
 	}
 
 	if (!Number.isInteger(config.decisionTimeoutSeconds) || config.decisionTimeoutSeconds < 1) {
-		throw new InvalidPickBanConfigError('decisionTimeoutSeconds must be a positive integer');
+		return PickBanConfigError.INVALID_DECISION_TIMEOUT;
 	}
 
 	if (config.allowedMapIds) {
 		if (config.allowedMapIds.length === 0) {
-			throw new InvalidPickBanConfigError('allowedMapIds cannot be empty when defined');
+			return PickBanConfigError.EMPTY_ALLOWED_MAPS;
 		}
 		if (new Set(config.allowedMapIds).size !== config.allowedMapIds.length) {
-			throw new InvalidPickBanConfigError('allowedMapIds contains duplicate maps');
+			return PickBanConfigError.DUPLICATE_ALLOWED_MAPS;
 		}
 	}
 
 	if (config.allowedGamemodeIds) {
 		if (config.allowedGamemodeIds.length === 0) {
-			throw new InvalidPickBanConfigError('allowedGamemodeIds cannot be empty when defined');
+			return PickBanConfigError.EMPTY_ALLOWED_GAMEMODES;
 		}
 		if (new Set(config.allowedGamemodeIds).size !== config.allowedGamemodeIds.length) {
-			throw new InvalidPickBanConfigError('allowedGamemodeIds contains duplicate gamemodes');
+			return PickBanConfigError.DUPLICATE_ALLOWED_GAMEMODES;
 		}
 	}
 
 	if (config.mapType === PickBanMapType.FIXED) {
 		if (!config.fixedMapIds || config.fixedMapIds.length === 0) {
-			throw new InvalidPickBanConfigError('fixedMapIds is required when mapType is FIXED');
+			return PickBanConfigError.MISSING_FIXED_MAPS;
 		}
 		if (new Set(config.fixedMapIds).size !== config.fixedMapIds.length) {
-			throw new InvalidPickBanConfigError('fixedMapIds contains duplicate maps');
-		}
-		if (config.fixedMapIds.length < config.mapCount) {
-			throw new InvalidPickBanConfigError('fixedMapIds must contain at least mapCount maps');
+			return PickBanConfigError.DUPLICATE_FIXED_MAPS;
 		}
 	}
+
+	return null;
+}
+
+/** Extracts the match scope from a configuration row. */
+export function configRowToMapScope(
+	row: Pick<PickBanConfigRow, 'divisionId' | 'bracketId' | 'round'>
+): MatchScope {
+	return {
+		divisionId: row.divisionId,
+		bracketId: row.bracketId,
+		round: row.round
+	};
+}
+
+/**
+ * Normalizes configuration values by clearing properties that are explicitly
+ * ignored by a boolean flag. Returns a copy of the input object instead of mutating it.
+ */
+export function normalizeValues(values: PickBanConfigValues): PickBanConfigValues {
+	const normalized = { ...values };
+
+	if (!normalized.setAllowedMapIds) normalized.allowedMapIds = null;
+	if (!normalized.setAllowedGamemodeIds) normalized.allowedGamemodeIds = null;
+	if (!normalized.setFirstGamemodeId) normalized.firstGamemodeId = null;
+
+	return normalized;
 }
 
 /**

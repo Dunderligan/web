@@ -40,24 +40,24 @@
 	const { bgColor, fgColor, labelColor } = $derived.by(() => {
 		if (value === null) {
 			return {
-				bgColor: 'bg-gray-100',
-				fgColor: 'bg-gray-300',
-				labelColor: 'text-gray-400'
+				bgColor: 'bg-gray-100 dark:bg-gray-900',
+				fgColor: 'bg-gray-300 dark:bg-gray-700',
+				labelColor: 'text-gray-400 dark:text-gray-600'
 			};
 		}
 
 		if (percentFilled < 15) {
 			return {
-				bgColor: 'bg-red-100',
-				fgColor: 'bg-red-600',
-				labelColor: 'text-red-800'
+				bgColor: 'bg-red-100 dark:bg-red-950/70',
+				fgColor: 'bg-red-600 dark:bg-red-700',
+				labelColor: 'text-red-800 dark:text-red-200'
 			};
 		}
 
 		return {
-			bgColor: 'bg-accent-100',
-			fgColor: 'bg-accent-600',
-			labelColor: 'text-accent-800'
+			bgColor: 'bg-accent-100 dark:bg-accent-950/70',
+			fgColor: 'bg-accent-600 dark:bg-accent-700',
+			labelColor: 'text-accent-800 dark:text-accent-300'
 		};
 	});
 

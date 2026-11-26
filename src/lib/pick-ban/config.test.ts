@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import {
+	configRowToMapScope,
 	DEFAULT_PICK_BAN_CONFIG,
 	InvalidPickBanConfigError,
+	normalizeValues,
+	PickBanConfigError,
 	resolveConfig,
 	validateConfig,
 	type MatchScope,
@@ -47,6 +50,12 @@ describe('resolveConfig', () => {
 		expect(DEFAULT_PICK_BAN_CONFIG.mapCount).toBe(3);
 		expect(DEFAULT_PICK_BAN_CONFIG.allowConcedeFirstBan).toBe(true);
 		expect(DEFAULT_PICK_BAN_CONFIG.mapType).toBe(PickBanMapType.POOL);
+	});
+
+	it('throws a config error when the resolved config is invalid', () => {
+		expect(() => resolveConfig(globalScope, [row({ mapCount: 0 })])).toThrow(
+			InvalidPickBanConfigError
+		);
 	});
 
 	it('merges options from different scopes', () => {
@@ -192,91 +201,128 @@ describe('resolveConfig', () => {
 
 describe('validateConfig', () => {
 	it('accepts default config', () => {
-		expect(() => validateConfig(DEFAULT_PICK_BAN_CONFIG)).not.toThrow();
+		expect(validateConfig(DEFAULT_PICK_BAN_CONFIG)).toBeNull();
 	});
 
 	it('rejects a non-positive map count', () => {
-		expect(() => validateConfig({ ...DEFAULT_PICK_BAN_CONFIG, mapCount: 0 })).toThrow(
-			InvalidPickBanConfigError
+		expect(validateConfig({ ...DEFAULT_PICK_BAN_CONFIG, mapCount: 0 })).toBe(
+			PickBanConfigError.INVALID_MAP_COUNT
 		);
 	});
 
 	it('rejects a non-positive timeout', () => {
-		expect(() => validateConfig({ ...DEFAULT_PICK_BAN_CONFIG, decisionTimeoutSeconds: 0 })).toThrow(
-			InvalidPickBanConfigError
+		expect(validateConfig({ ...DEFAULT_PICK_BAN_CONFIG, decisionTimeoutSeconds: 0 })).toBe(
+			PickBanConfigError.INVALID_DECISION_TIMEOUT
 		);
 	});
 
 	it('rejects an empty restricted allowed-map list', () => {
-		expect(() => validateConfig({ ...DEFAULT_PICK_BAN_CONFIG, allowedMapIds: [] })).toThrow(
-			InvalidPickBanConfigError
+		expect(validateConfig({ ...DEFAULT_PICK_BAN_CONFIG, allowedMapIds: [] })).toBe(
+			PickBanConfigError.EMPTY_ALLOWED_MAPS
 		);
 	});
 
 	it('rejects an empty restricted gamemode list', () => {
-		expect(() => validateConfig({ ...DEFAULT_PICK_BAN_CONFIG, allowedGamemodeIds: [] })).toThrow(
-			InvalidPickBanConfigError
+		expect(validateConfig({ ...DEFAULT_PICK_BAN_CONFIG, allowedGamemodeIds: [] })).toBe(
+			PickBanConfigError.EMPTY_ALLOWED_GAMEMODES
 		);
 	});
 
 	it('rejects duplicate allowed gamemodes', () => {
-		expect(() =>
+		expect(
 			validateConfig({
 				...DEFAULT_PICK_BAN_CONFIG,
 				allowedGamemodeIds: ['gamemode-control', 'gamemode-control']
 			})
-		).toThrow(InvalidPickBanConfigError);
+		).toBe(PickBanConfigError.DUPLICATE_ALLOWED_GAMEMODES);
 	});
 
 	it('rejects duplicate allowed maps', () => {
-		expect(() =>
+		expect(
 			validateConfig({
 				...DEFAULT_PICK_BAN_CONFIG,
 				allowedMapIds: [MAP.antarctic, MAP.antarctic]
 			})
-		).toThrow(InvalidPickBanConfigError);
+		).toBe(PickBanConfigError.DUPLICATE_ALLOWED_MAPS);
 	});
 
 	it('rejects a fixed map pool without maps', () => {
-		expect(() =>
+		expect(
 			validateConfig({
 				...DEFAULT_PICK_BAN_CONFIG,
 				mapType: PickBanMapType.FIXED,
 				fixedMapIds: null
 			})
-		).toThrow(InvalidPickBanConfigError);
-		expect(() =>
+		).toBe(PickBanConfigError.MISSING_FIXED_MAPS);
+		expect(
 			validateConfig({ ...DEFAULT_PICK_BAN_CONFIG, mapType: PickBanMapType.FIXED, fixedMapIds: [] })
-		).toThrow(InvalidPickBanConfigError);
+		).toBe(PickBanConfigError.MISSING_FIXED_MAPS);
 	});
 
 	it('rejects a fixed map pool with duplicates', () => {
-		expect(() =>
+		expect(
 			validateConfig({
 				...DEFAULT_PICK_BAN_CONFIG,
 				mapType: PickBanMapType.FIXED,
 				fixedMapIds: [MAP.antarctic, MAP.antarctic, MAP.busan]
 			})
-		).toThrow(InvalidPickBanConfigError);
-	});
-
-	it('rejects a fixed map pool shorter than the match', () => {
-		expect(() =>
-			validateConfig({
-				...DEFAULT_PICK_BAN_CONFIG,
-				mapType: PickBanMapType.FIXED,
-				fixedMapIds: [MAP.antarctic, MAP.busan]
-			})
-		).toThrow(InvalidPickBanConfigError);
+		).toBe(PickBanConfigError.DUPLICATE_FIXED_MAPS);
 	});
 
 	it('allows a fixed map pool of the required length', () => {
-		expect(() =>
+		expect(
 			validateConfig({
 				...DEFAULT_PICK_BAN_CONFIG,
 				mapType: PickBanMapType.FIXED,
 				fixedMapIds: [MAP.antarctic, MAP.busan, MAP.dorado]
 			})
-		).not.toThrow();
+		).toBeNull();
+	});
+});
+
+describe('configRowToMapScope', () => {
+	it('returns the correct scope for a row', () => {
+		const configRow = row({ divisionId: 'division-1', bracketId: 'bracket-1', round: 2 });
+		expect(configRowToMapScope(configRow)).toEqual({
+			divisionId: 'division-1',
+			bracketId: 'bracket-1',
+			round: 2
+		});
+	});
+});
+
+describe('normalizeValues', () => {
+	it('clears values that are ignored by a boolean flag', () => {
+		const values = row({
+			setAllowedMapIds: false,
+			allowedMapIds: [MAP.antarctic, MAP.busan],
+			setAllowedGamemodeIds: false,
+			allowedGamemodeIds: ['control', 'escort'],
+			setFirstGamemodeId: false,
+			firstGamemodeId: 'control'
+		});
+
+		const normalized = normalizeValues(values);
+
+		expect(normalized.allowedMapIds).toBeNull();
+		expect(normalized.allowedGamemodeIds).toBeNull();
+		expect(normalized.firstGamemodeId).toBeNull();
+	});
+
+	it('does not clear values that are not ignored', () => {
+		const values = row({
+			setAllowedMapIds: true,
+			allowedMapIds: [MAP.antarctic, MAP.busan],
+			setAllowedGamemodeIds: true,
+			allowedGamemodeIds: ['control', 'escort'],
+			setFirstGamemodeId: true,
+			firstGamemodeId: 'control'
+		});
+
+		const normalized = normalizeValues(values);
+
+		expect(normalized.allowedMapIds).toEqual([MAP.antarctic, MAP.busan]);
+		expect(normalized.allowedGamemodeIds).toEqual(['control', 'escort']);
+		expect(normalized.firstGamemodeId).toBe('control');
 	});
 });

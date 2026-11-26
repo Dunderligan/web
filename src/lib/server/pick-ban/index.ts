@@ -28,10 +28,11 @@ import {
 } from '$lib/pick-ban';
 import { MatchSlot, MatchState, type Member, type ResolvedMatchWithContext } from '$lib/types';
 import { and, eq } from 'drizzle-orm';
-import { db, schema } from './db';
-import { fullGroupQuery, memberQuery, roomStateQuery, type Transaction } from './db/helpers';
-import { generateDivisionStandings, getRosterSeed } from './standings';
+import { db, schema } from '../db';
+import { fullGroupQuery, memberQuery, roomStateQuery, type Transaction } from '../db/helpers';
+import { generateDivisionStandings, getRosterSeed } from '../standings';
 import { error } from '@sveltejs/kit';
+import { publishRoom } from './room-snapshot';
 
 /** A signed-in roster member who is allowed to participate in a room. */
 export type RoomParticipant = {
@@ -159,7 +160,7 @@ class PickBanService {
 		return config.enabled;
 	}
 
-	async retrieveConfigs(scope: MatchScope): Promise<PickBanConfigRow[]> {
+	async getConfigsByScope(scope: MatchScope): Promise<PickBanConfigRow[]> {
 		return await db.query.pickBanConfig.findMany({
 			where: {
 				bracketId: {
@@ -199,7 +200,7 @@ class PickBanService {
 			round: match.round ?? null
 		};
 
-		const configs = await this.retrieveConfigs(scope);
+		const configs = await this.getConfigsByScope(scope);
 
 		return resolveConfig(scope, configs);
 	}
@@ -268,7 +269,7 @@ class PickBanService {
 	async startRoom(roomId: string): Promise<void> {
 		console.log(`Starting room ${roomId}...`);
 
-		await this.#mutateRoomInTransaction(roomId, async (context, tx) => {
+		await this.mutateRoom(roomId, async (context, tx) => {
 			if (context.state.status !== RoomStatus.OPEN) {
 				throw error(400, `Room is not in the open state.`);
 			}
@@ -280,7 +281,7 @@ class PickBanService {
 	}
 
 	async cancelRoom(roomId: string, byId: string | null): Promise<void> {
-		await this.#mutateRoomInTransaction(roomId, async (context) => {
+		await this.mutateRoom(roomId, async (context) => {
 			if (
 				context.state.status !== RoomStatus.OPEN &&
 				context.state.status !== RoomStatus.IN_PROGRESS
@@ -300,7 +301,7 @@ class PickBanService {
 		actor: DecisionActor,
 		decisionFn: (context: RoomServerContext) => { slot: MatchSlot; decision: DecisionInput }
 	): Promise<void> {
-		await this.#mutateRoomInTransaction(roomId, async (context) => {
+		await this.mutateRoom(roomId, async (context) => {
 			const { slot, decision: input } = decisionFn(context);
 
 			const result = applyDecision({
@@ -336,7 +337,7 @@ class PickBanService {
 		slot: MatchSlot,
 		outcome: MapOutcome
 	): Promise<void> {
-		await this.#mutateRoomInTransaction(roomId, async (context, tx) => {
+		await this.mutateRoom(roomId, async (context, tx) => {
 			const result = submitReport({
 				config: context.config,
 				maps: context.state.maps,
@@ -361,7 +362,7 @@ class PickBanService {
 	}
 
 	async resolveResult(roomId: string, adminId: string, outcome: MapOutcome): Promise<void> {
-		await this.#mutateRoomInTransaction(roomId, async (context, tx) => {
+		await this.mutateRoom(roomId, async (context, tx) => {
 			const result = resolveResult({
 				adminId: adminId,
 				config: context.config,
@@ -437,16 +438,19 @@ class PickBanService {
 	async #writeMatchResult(tx: Transaction, { config, state, matchId }: RoomServerContext) {
 		const progress = matchProgress(config, state.maps);
 
+		const matchState = progress.complete ? MatchState.PLAYED : MatchState.SCHEDULED;
+		const playedAt = progress.complete ? state.createdAt : undefined;
+
 		await tx
 			.update(schema.match)
 			.set({
-				state: MatchState.PLAYED,
+				state: matchState,
 				teamAScore: progress.teamAWins,
 				teamBScore: progress.teamBWins,
 				draws: progress.draws,
-				playedAt: state.createdAt
+				playedAt
 			})
-			.where(and(eq(schema.match.id, matchId), eq(schema.match.state, MatchState.SCHEDULED)));
+			.where(and(eq(schema.match.id, matchId)));
 	}
 
 	#advanceDeadline(context: RoomServerContext) {
@@ -458,22 +462,25 @@ class PickBanService {
 		context.state.nextDeadlineAt = null;
 	}
 
-	async #mutateRoomInTransaction(
+	async mutateRoom(
 		roomId: string,
 		mutate: (context: RoomServerContext, tx: Transaction) => Promise<void>
 	): Promise<void> {
 		await db.transaction(async (tx) => {
-			await this.#mutateRoom(tx, roomId, (context) => mutate(context, tx));
+			await this.applyRoomMutation(tx, roomId, (context) => mutate(context, tx));
 		});
+
+		await publishRoom(roomId);
 	}
 
-	async #mutateRoom(
+	async applyRoomMutation(
 		tx: Transaction,
 		roomId: string,
 		mutate: (context: RoomServerContext) => Promise<void>
 	): Promise<void> {
 		const context = await this.#retrieveRoomContext(tx, roomId);
 
+		// make a deep copy of the state
 		const prevState = JSON.parse(JSON.stringify(context.state)) as RoomState;
 
 		await mutate(context);

@@ -2,10 +2,11 @@ import { command } from '$app/server';
 import { matchSchema } from '$lib/schemas';
 import { db, schema } from '$lib/server/db';
 import { toSlug } from '$lib/util';
-import { and, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import z from 'zod';
 import { roleGuard } from './auth.remote';
 import { AuthRole } from '$lib/auth-role';
+import type { Transaction } from '$lib/server/db/helpers';
 
 export const createGroup = command(
 	z.object({
@@ -50,14 +51,7 @@ export const updateGroup = command(
 				})
 				.where(eq(schema.group.id, id));
 
-			// delete all matches and recreate them
-			await tx.delete(schema.match).where(and(eq(schema.match.groupId, id)));
-
-			const inserts = matches.map((match) => ({ ...match, groupId: id }));
-
-			if (inserts.length > 0) {
-				await tx.insert(schema.match).values(inserts);
-			}
+			await updateMatches(tx, id, matches);
 		});
 	}
 );
@@ -72,3 +66,38 @@ export const deleteGroup = command(
 		await db.delete(schema.group).where(eq(schema.group.id, id));
 	}
 );
+
+async function updateMatches(
+	tx: Transaction,
+	groupId: string,
+	newMatches: z.infer<typeof matchSchema>[]
+) {
+	const existing = await tx.query.match.findMany({
+		where: {
+			groupId
+		},
+		columns: {
+			id: true
+		}
+	});
+
+	const existingIds = new Set(existing.map((match) => match.id));
+	const newMatchesById = new Map(newMatches.map((match) => [match.id, match]));
+
+	for (const match of newMatches) {
+		if (existingIds.has(match.id)) {
+			await tx.update(schema.match).set(match).where(eq(schema.match.id, match.id));
+		} else {
+			await tx.insert(schema.match).values({
+				...match,
+				groupId
+			});
+		}
+	}
+
+	for (const match of existing) {
+		if (!newMatchesById.has(match.id)) {
+			await tx.delete(schema.match).where(eq(schema.match.id, match.id));
+		}
+	}
+}

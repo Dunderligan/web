@@ -1,26 +1,25 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
-	import Match from '$lib/components/match/Match.svelte';
+	import RoomCard from '$lib/components/pick-ban/RoomCard.svelte';
+	import Meta from '$lib/components/structure/Meta.svelte';
+	import PageHeader from '$lib/components/structure/PageHeader.svelte';
 	import PageSection from '$lib/components/structure/PageSection.svelte';
+	import Subheading from '$lib/components/ui/Subheading.svelte';
 
 	let { data } = $props();
 </script>
 
+<Meta title="Pick-ban" />
+
+<PageHeader title="Pick-ban" />
+
 <PageSection>
+	<Subheading class="mb-2">Aktiva rum</Subheading>
+
 	<div class="space-y-1">
 		{#each data.rooms as room (room.id)}
-			<a
-				href={resolve(`/pick-ban/${room.id}`)}
-				class="flex items-center justify-between gap-2 rounded-lg border border-gray-700 bg-gray-800 p-2 font-medium"
-			>
-				<div class="flex items-center gap-2">
-					<span class="text-sm text-gray-300">{room.id}</span>
-				</div>
-				<div class="flex items-center gap-2">
-					<span class="text-sm text-gray-300">{room.status}</span>
-				</div>
-				<Match match={room.match} />
-			</a>
+			<RoomCard {room} />
 		{/each}
 	</div>
+
+	<Subheading class="mt-8 mb-2">Tidigare rum</Subheading>
 </PageSection>

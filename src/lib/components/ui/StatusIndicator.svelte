@@ -12,9 +12,9 @@
 
 	const kindClasses = $derived(
 		{
-			inactive: 'border-gray-200 bg-gray-400',
-			active: 'border-green-200 bg-green-400',
-			outlined: 'border-gray-200 bg-white'
+			inactive: 'border-gray-200 bg-gray-400 dark:border-gray-700 dark:bg-gray-800',
+			active: 'border-green-200 bg-green-400 dark:border-green-900 dark:bg-green-500',
+			outlined: 'border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-950'
 		}[kind]
 	);
 

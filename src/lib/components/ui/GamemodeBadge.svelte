@@ -15,7 +15,7 @@
 <span
 	class={[
 		classProp,
-		'flex items-center justify-center rounded-full bg-white p-1 text-gray-700 shadow dark:bg-gray-100'
+		'flex items-center justify-center rounded-full bg-white p-1 text-gray-700 shadow dark:bg-gray-800 dark:text-gray-300'
 	]}
 >
 	<Icon icon={gamemodeIcon(gamemode.slug)} class="text-sm" title={gamemode.name} />

@@ -6,6 +6,7 @@
 	import StatusIndicator from '../ui/StatusIndicator.svelte';
 	import Link from '../ui/Link.svelte';
 	import { resolve } from '$app/paths';
+	import { RoomStatus } from '$lib/pick-ban';
 
 	type Props = {
 		slot: MatchSlot;
@@ -17,6 +18,9 @@
 	const context = PickBanContext.get();
 
 	const members = $derived(slot === MatchSlot.A ? context.teamAMembers : context.teamBMembers);
+	const showStatus = $derived(
+		context.status === RoomStatus.OPEN || context.status === RoomStatus.IN_PROGRESS
+	);
 </script>
 
 <div class={[classProp, 'space-y-1']}>
@@ -27,12 +31,14 @@
 		{@const presence = context.presenceFor(battletag)}
 		{@const connected = presence !== null}
 
-		<div class="flex h-12 items-center gap-1.5 rounded-lg bg-gray-100 p-2 dark:bg-gray-900">
+		<div
+			class="flex h-12 items-center gap-1.5 overflow-hidden rounded-lg bg-gray-100 p-2 dark:bg-gray-900"
+		>
 			{#if profile.status === 'found' && profile.profile.avatarUrl}
 				<img src={profile.profile.avatarUrl} alt="Profilbild" class="h-full rounded-md" />
 			{/if}
 
-			<Link {href} class="mr-auto text-lg font-semibold">
+			<Link {href} class="mr-auto truncate text-lg font-semibold">
 				{battletag.split('#')[0]}
 			</Link>
 
@@ -40,11 +46,13 @@
 				<Icon icon="ph:crown-simple" title="Lagkapten" />
 			{/if}
 
-			<StatusIndicator
-				size="sm"
-				kind={connected ? 'active' : 'inactive'}
-				title={connected ? 'Ansluten' : 'Frånkopplad'}
-			/>
+			{#if showStatus}
+				<StatusIndicator
+					size="sm"
+					kind={connected ? 'active' : 'inactive'}
+					title={connected ? 'Ansluten' : 'Frånkopplad'}
+				/>
+			{/if}
 		</div>
 	{/each}
 </div>
