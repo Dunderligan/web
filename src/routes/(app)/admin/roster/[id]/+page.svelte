@@ -1,30 +1,30 @@
 <script lang="ts">
-	import { goto, invalidateAll } from '$app/navigation';
+	import { goto, refreshAll } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import AdminCard from '$lib/components/admin/AdminCard.svelte';
-	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
-	import AdminLink from '$lib/components/admin/AdminLink.svelte';
-	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
-	import InputField from '$lib/components/form/InputField.svelte';
-	import Label from '$lib/components/form/Label.svelte';
-	import RosterLogoUpload from '$lib/components/admin/RosterLogoUpload.svelte';
-	import SaveToast from '$lib/components/admin/SaveToast.svelte';
-	import { ConfirmContext } from '$lib/state/confirm.svelte';
-	import { SaveContext } from '$lib/state/save.svelte';
-	import { flattenGroup, formatDateTime } from '$lib/util';
-	import TeamSelect from '$lib/components/admin/TeamSelect.svelte';
-	import { deleteRoster, editRoster, mergeTeams, moveRoster } from '$lib/remote/roster.remote';
-	import EditableMembersTable from '$lib/components/table/EditableMembersTable.svelte';
-	import Notice from '$lib/components/ui/Notice.svelte';
-	import Checkbox from '$lib/components/form/Checkbox.svelte';
-	import { AuthRole, checkPermission } from '$lib/auth-role.js';
-	import AdminSocials from '$lib/components/admin/AdminSocials.svelte';
-	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
-	import GroupSelect from '$lib/components/form/GroupSelect.svelte';
-	import Table from '$lib/components/table/Table.svelte';
-	import Icon from '$lib/components/ui/Icon.svelte';
-	import { deleteCheckin } from '$lib/remote/checkin.remote.js';
+	import AdminCard from '#lib/components/admin/AdminCard.svelte';
+	import AdminEmptyNotice from '#lib/components/admin/AdminEmptyNotice.svelte';
+	import AdminLink from '#lib/components/admin/AdminLink.svelte';
+	import Breadcrumbs from '#lib/components/admin/Breadcrumbs.svelte';
+	import Button from '#lib/components/ui/Button.svelte';
+	import InputField from '#lib/components/form/InputField.svelte';
+	import Label from '#lib/components/form/Label.svelte';
+	import RosterLogoUpload from '#lib/components/admin/RosterLogoUpload.svelte';
+	import SaveToast from '#lib/components/admin/SaveToast.svelte';
+	import { ConfirmContext } from '#lib/state/confirm.svelte.ts';
+	import { SaveContext } from '#lib/state/save.svelte.ts';
+	import { flattenGroup, formatDateTime } from '#lib/util.ts';
+	import TeamSelect from '#lib/components/admin/TeamSelect.svelte';
+	import { deleteRoster, editRoster, mergeTeams, moveRoster } from '#lib/remote/roster.remote.ts';
+	import EditableMembersTable from '#lib/components/table/EditableMembersTable.svelte';
+	import Notice from '#lib/components/ui/Notice.svelte';
+	import Checkbox from '#lib/components/form/Checkbox.svelte';
+	import { AuthRole, checkPermission } from '#lib/auth-role.js';
+	import AdminSocials from '#lib/components/admin/AdminSocials.svelte';
+	import CreateDialog from '#lib/components/admin/CreateDialog.svelte';
+	import GroupSelect from '#lib/components/form/GroupSelect.svelte';
+	import Table from '#lib/components/table/Table.svelte';
+	import Icon from '#lib/components/ui/Icon.svelte';
+	import { deleteCheckin } from '#lib/remote/checkin.remote.js';
 
 	type CheckinMember = {
 		player: { id: string; battletag: string };
@@ -76,11 +76,8 @@
 			description: `Är du säker på att du vill radera ${roster.name} från ${season.name}? <b>Detta går inte att ångra!</b>`,
 			destructive: true,
 			action: async () => {
-				await deleteRoster({
-					id: roster.id
-				});
-
-				await goto(resolve(`/admin/grupp/${group.id}`));
+				await deleteRoster({ id: roster.id });
+				await goto(resolve(`admin/grupp/${group.id}`));
 			}
 		});
 	}
@@ -89,7 +86,7 @@
 		if (!linkTeamId) return;
 
 		await mergeTeams({ teamAId: team.id, teamBId: linkTeamId });
-		await invalidateAll();
+		await refreshAll();
 
 		linkTeamOpen = false;
 	}
@@ -98,7 +95,7 @@
 		if (!changeGroupTo) return;
 
 		await moveRoster({ rosterId: roster.id, groupId: changeGroupTo });
-		await invalidateAll();
+		await refreshAll();
 
 		changeGroupOpen = false;
 	}
@@ -110,7 +107,7 @@
 			destructive: true,
 			action: async () => {
 				await deleteCheckin({ seasonId: season.id, discordId });
-				await invalidateAll();
+				await refreshAll();
 			}
 		});
 	}
@@ -258,7 +255,8 @@
 				createButtonLabel="Länka"
 				createButtonIcon="ph:link"
 				oncreateclick={() => (linkTeamOpen = true)}
-				>{roster.name} är inte länkat till något annat roster.
+			>
+				{roster.name} är inte länkat till något annat roster.
 			</AdminEmptyNotice>
 		{/if}
 	</AdminCard>

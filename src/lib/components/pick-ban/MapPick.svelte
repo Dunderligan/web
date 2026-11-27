@@ -4,12 +4,12 @@
 		MapEligibility,
 		computeMapEligibility,
 		type MapCatalogEntry
-	} from '$lib/pick-ban';
-	import { PickBanContext } from '$lib/state/pick-ban.svelte';
+	} from '#lib/pick-ban/index.ts';
+	import { PickBanContext } from '#lib/state/pick-ban.svelte.ts';
 	import { SvelteMap } from 'svelte/reactivity';
 	import Tabs from '../ui/Tabs.svelte';
 	import type { ClassValue } from 'svelte/elements';
-	import { compare, gamemodeIcon } from '$lib/util';
+	import { compare, gamemodeIcon } from '#lib/util.ts';
 
 	type Props = {
 		interactive?: boolean;

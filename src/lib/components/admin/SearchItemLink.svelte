@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SearchItem } from '$lib/types';
+	import type { SearchItem } from '#lib/types.ts';
 	import Icon from '../ui/Icon.svelte';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import AdminLink from './AdminLink.svelte';

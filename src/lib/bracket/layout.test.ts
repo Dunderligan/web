@@ -1,18 +1,18 @@
 import { describe, expect, it } from 'vitest';
-import { createBracket } from '$lib/bracket';
+import { createBracket } from '#lib/bracket/index.ts';
 import {
 	MATCH_HEIGHT,
 	MATCH_WIDTH,
 	buildBracketLayout,
 	orderEdgesForPainting
-} from '$lib/bracket/layout';
+} from '#lib/bracket/layout.ts';
 import {
 	BracketFormat,
 	BracketSide,
 	MatchState,
 	type ResolvedMatchWithSeeds,
 	type UnresolvedMatchWithOrder
-} from '$lib/types';
+} from '#lib/types.ts';
 
 const COLUMN_GAP = 24;
 const MATCH_GAP = 12;

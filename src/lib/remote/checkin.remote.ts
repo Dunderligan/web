@@ -1,8 +1,8 @@
 import { command } from '$app/server';
 import z from 'zod';
 import { roleGuard } from './auth.remote';
-import { AuthRole } from '$lib/auth-role';
-import { db, schema } from '$lib/server/db';
+import { AuthRole } from '#lib/auth-role.ts';
+import { db, schema } from '#lib/server/db.ts';
 import { and, eq } from 'drizzle-orm';
 
 export const deleteCheckin = command(

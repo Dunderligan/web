@@ -1,5 +1,5 @@
-import { flipSlot } from '$lib/match';
-import { MatchSlot } from '$lib/types';
+import { flipSlot } from '#lib/match.ts';
+import { MatchSlot } from '#lib/types.ts';
 import type { ResolvedPickBanConfig } from './config';
 import {
 	computeHeroEligibility,

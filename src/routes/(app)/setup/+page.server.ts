@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db';
+import { db } from '#lib/server/db.ts';
 import { redirect } from '@sveltejs/kit';
 
 export const load = async () => {

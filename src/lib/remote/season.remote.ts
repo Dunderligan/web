@@ -1,11 +1,11 @@
 import { command, query } from '$app/server';
-import { db, schema } from '$lib/server/db';
-import { toSlug } from '$lib/util';
+import { db, schema } from '#lib/server/db.ts';
+import { toSlug } from '#lib/util.ts';
 import { eq } from 'drizzle-orm';
 import z from 'zod';
 import { roleGuard } from './auth.remote';
-import { AuthRole } from '$lib/auth-role';
-import { divisionOrder, entityQuery } from '$lib/server/db/helpers';
+import { AuthRole } from '#lib/auth-role.ts';
+import { divisionOrder, entityQuery } from '#lib/server/db/helpers.ts';
 import { createDivision } from './division.remote';
 
 export const createSeason = command(

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { ResolvedMatchWithContext } from '$lib/types';
+	import type { ResolvedMatchWithContext } from '#lib/types.ts';
 	import MatchSkeleton from './MatchSkeleton.svelte';
 	import MatchList from './MatchList.svelte';
 	import type { ComponentProps } from 'svelte';

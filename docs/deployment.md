@@ -18,4 +18,4 @@ The Docker Compose file is on the other hand used to quickly set up a local envi
 
 Every push and pull request runs the [`ci` workflow](../.github/workflows/ci.yml), which type-checks, lints and tests the project (`pnpm check`, `pnpm lint` and `pnpm test`).
 
-The workflow copies the `.env.example` file to `.env` to ensure statically typed environment variable imports (`$env/static/public` and `$env/static/private`) are checked correctly.
+The workflow copies the `.env.example` file to `.env` so that the declared environment variables (see [`src/env.ts`](../src/env.ts)) are available and validated during `pnpm check`, `pnpm build` and `pnpm test`.

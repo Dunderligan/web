@@ -1,16 +1,16 @@
 import { command } from '$app/server';
-import { db, schema } from '$lib/server/db';
-import { lookupOrCreatePlayer, type Transaction } from '$lib/server/db/helpers';
-import { type Member, type Social } from '$lib/types';
-import { toSlug } from '$lib/util';
+import { db, schema } from '#lib/server/db.ts';
+import { lookupOrCreatePlayer, type Transaction } from '#lib/server/db/helpers.ts';
+import { type Member, type Social } from '#lib/types.ts';
+import { toSlug } from '#lib/util.ts';
 import { eq } from 'drizzle-orm';
 import z from 'zod';
 import { roleGuard } from './auth.remote';
-import { AuthRole } from '$lib/auth-role';
-import { memberSchema, socialSchema } from '$lib/schemas';
-import s3 from '$lib/server/s3';
-import cdn from '$lib/cdn';
-import image from '$lib/server/image';
+import { AuthRole } from '#lib/auth-role.ts';
+import { memberSchema, socialSchema } from '#lib/schemas.ts';
+import s3 from '#lib/server/s3.ts';
+import cdn from '#lib/cdn.ts';
+import image from '#lib/server/image.ts';
 
 /// Create a roster and add it to a group. If an associated teamId is not provided, a new team will be created.
 export const createRoster = command(

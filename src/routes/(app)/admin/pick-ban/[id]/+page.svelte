@@ -1,25 +1,24 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import AdminCard from '$lib/components/admin/AdminCard.svelte';
-	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
-	import SaveToast from '$lib/components/admin/SaveToast.svelte';
-	import Checkbox from '$lib/components/form/Checkbox.svelte';
-	import IntegerInput from '$lib/components/form/IntegerInput.svelte';
-	import Select from '$lib/components/form/Select.svelte';
-	import AllowedMapsPicker from '$lib/components/pick-ban/AllowedMapsPicker.svelte';
-	import FixedMapsEditor from '$lib/components/pick-ban/FixedMapsEditor.svelte';
-	import PickBanConfigField from '$lib/components/pick-ban/PickBanConfigField.svelte';
-	import Meta from '$lib/components/structure/Meta.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
-	import Notice from '$lib/components/ui/Notice.svelte';
-	import { PickBanConfigError, resolveConfig, validateConfig } from '$lib/pick-ban/config.js';
-	import { PickBanMapType, WinCondition } from '$lib/pick-ban/types.js';
-	import { deletePickBanConfig, updatePickBanConfig } from '$lib/remote/pick-ban-admin.remote.js';
-	import { ConfirmContext } from '$lib/state/confirm.svelte.js';
-	import { SaveContext } from '$lib/state/save.svelte.js';
-	import type { Crumb } from '$lib/types.js';
-	import { capitalize, flattenDivision } from '$lib/util.js';
+	import AdminCard from '#lib/components/admin/AdminCard.svelte';
+	import Breadcrumbs from '#lib/components/admin/Breadcrumbs.svelte';
+	import SaveToast from '#lib/components/admin/SaveToast.svelte';
+	import Checkbox from '#lib/components/form/Checkbox.svelte';
+	import IntegerInput from '#lib/components/form/IntegerInput.svelte';
+	import Select from '#lib/components/form/Select.svelte';
+	import AllowedMapsPicker from '#lib/components/pick-ban/AllowedMapsPicker.svelte';
+	import FixedMapsEditor from '#lib/components/pick-ban/FixedMapsEditor.svelte';
+	import PickBanConfigField from '#lib/components/pick-ban/PickBanConfigField.svelte';
+	import Button from '#lib/components/ui/Button.svelte';
+	import Notice from '#lib/components/ui/Notice.svelte';
+	import { PickBanConfigError, resolveConfig, validateConfig } from '#lib/pick-ban/config.js';
+	import { PickBanMapType, WinCondition } from '#lib/pick-ban/types.js';
+	import { deletePickBanConfig, updatePickBanConfig } from '#lib/remote/pick-ban-admin.remote.js';
+	import { ConfirmContext } from '#lib/state/confirm.svelte.js';
+	import { SaveContext } from '#lib/state/save.svelte.js';
+	import type { Crumb } from '#lib/types.js';
+	import { capitalize, flattenDivision } from '#lib/util.js';
 
 	const { data } = $props();
 
@@ -86,11 +85,11 @@
 			action: async () => {
 				await deletePickBanConfig({ id: config.id });
 
-				let redirectUrl = resolve(`/admin`);
+				let redirectUrl = resolve('admin');
 				if (config.division) {
-					redirectUrl = resolve(`/admin/division/${config.division.id}`);
+					redirectUrl = resolve(`admin/division/${config.division.id}`);
 				} else if (config.bracket) {
-					redirectUrl = resolve(`/admin/bracket/${config.bracket.id}`);
+					redirectUrl = resolve(`admin/bracket/${config.bracket.id}`);
 				}
 
 				await goto(redirectUrl);

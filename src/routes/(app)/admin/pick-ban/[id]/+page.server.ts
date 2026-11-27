@@ -1,7 +1,7 @@
-import { configRowToMapScope } from '$lib/pick-ban/config.js';
-import { db } from '$lib/server/db';
-import { nestedBracketQuery, nestedDivisionQuery } from '$lib/server/db/helpers';
-import pickBanService from '$lib/server/pick-ban';
+import { configRowToMapScope } from '#lib/pick-ban/config.js';
+import { db } from '#lib/server/db.ts';
+import { nestedBracketQuery, nestedDivisionQuery } from '#lib/server/db/helpers.ts';
+import pickBanService from '#lib/server/pick-ban/index.ts';
 import { error } from '@sveltejs/kit';
 
 export const load = async ({ params }) => {

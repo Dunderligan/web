@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ClassValue } from 'svelte/elements';
 	import Tooltip from './Tooltip.svelte';
-	import { formatDateShort, formatDateTime, formatDateTimeShort, formatTime } from '$lib/util';
+	import { formatDateShort, formatDateTime, formatDateTimeShort, formatTime } from '#lib/util.ts';
 
 	type Props = {
 		date: Date;

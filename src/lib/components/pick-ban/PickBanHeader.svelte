@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { MatchSlot } from '$lib/types';
+	import { MatchSlot } from '#lib/types.ts';
 	import type { ClassValue } from 'svelte/elements';
 	import RosterLogo from '../ui/RosterLogo.svelte';
-	import { matchRoster } from '$lib/match';
-	import { PickBanContext } from '$lib/state/pick-ban.svelte';
+	import { matchRoster } from '#lib/match.ts';
+	import { PickBanContext } from '#lib/state/pick-ban.svelte.ts';
 	import { MediaQuery } from 'svelte/reactivity';
 	import { resolve } from '$app/paths';
 	import Link from '../ui/Link.svelte';
@@ -38,7 +38,9 @@
 
 	<div class={[classProp, 'flex items-center gap-2 not-lg:justify-end']}>
 		{#if roster}
-			{@const href = resolve(`/lag/${roster.slug}/${context.seasonSlug}`)}
+			{@const href = context.seasonSlug
+				? resolve(`lag/${roster.slug}/${context.seasonSlug}`)
+				: resolve(`lag/${roster.slug}`)}
 
 			{#if md.current}
 				<RosterLogo id={roster.id} size="xl" />

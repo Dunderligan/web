@@ -3,11 +3,11 @@
 	generics="OverrideKey extends keyof PickBanConfigRow, 
   ResolvedValueKey extends keyof ResolvedPickBanConfig"
 >
-	import type { PickBanConfigRow, ResolvedPickBanConfig } from '$lib/pick-ban';
+	import type { PickBanConfigRow, ResolvedPickBanConfig } from '#lib/pick-ban/index.ts';
 	import type { Snippet } from 'svelte';
 	import Checkbox from '../form/Checkbox.svelte';
 	import Label from '../form/Label.svelte';
-	import { SaveContext } from '$lib/state/save.svelte';
+	import { SaveContext } from '#lib/state/save.svelte.ts';
 
 	type T = ResolvedPickBanConfig[ResolvedValueKey];
 

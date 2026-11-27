@@ -3,7 +3,7 @@ import {
 	type LogicalMatch,
 	type MatchRoster,
 	type ResolvedMatchWithContext
-} from '$lib/types';
+} from '#lib/types.ts';
 
 /**
  * Builds a LogicalMatch with sensible defaults.

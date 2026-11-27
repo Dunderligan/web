@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { matchRoster } from '$lib/match';
-	import { PickBanContext } from '$lib/state/pick-ban.svelte';
-	import { formatDateTime, formatTime } from '$lib/util';
+	import { matchRoster } from '#lib/match.ts';
+	import { PickBanContext } from '#lib/state/pick-ban.svelte.ts';
+	import { formatDateTime, formatTime } from '#lib/util.ts';
 	import Icon from '../ui/Icon.svelte';
 	import Link from '../ui/Link.svelte';
 	import RosterLogo from '../ui/RosterLogo.svelte';
@@ -41,7 +41,9 @@
 		{@const roster = matchRoster(context.match, entry.decision.slot)}
 
 		{#if roster}
-			{@const rosterHref = resolve(`/lag/${roster?.slug}/${context.seasonSlug}`)}
+			{@const rosterHref = context.seasonSlug
+				? resolve(`lag/${roster.slug}/${context.seasonSlug}`)
+				: resolve(`lag/${roster.slug}`)}
 
 			<RosterLogo id={roster.id} size={20} href={rosterHref} />
 
@@ -66,7 +68,7 @@
 				{@const avatarUrl =
 					member.profile.status === 'found' ? member.profile.profile.avatarUrl : null}
 				{@const battletag = member.member.player.battletag}
-				{@const href = resolve(`/spelare/${battletag.replace('#', '-')}`)}
+				{@const href = resolve(`spelare/${battletag.replace('#', '-')}`)}
 
 				{#if avatarUrl}
 					<img src={avatarUrl} alt="" class="size-5 rounded object-cover" />

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { MatchSlot, Role } from '$lib/types';
+import { MatchSlot, Role } from '#lib/types.ts';
 import {
 	computeHeroEligibility,
 	computeMapEligibility,

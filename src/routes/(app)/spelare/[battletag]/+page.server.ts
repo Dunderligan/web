@@ -1,5 +1,5 @@
-import { getFinalMatch, getRosterPlacement } from '$lib/match';
-import { db, schema } from '$lib/server/db';
+import { getFinalMatch, getRosterPlacement } from '#lib/match.ts';
+import { db, schema } from '#lib/server/db.ts';
 import {
 	entityQuery,
 	fullMatchQuery,
@@ -7,9 +7,9 @@ import {
 	nestedBracketQuery,
 	nestedDivisionQuery,
 	nestedGroupQuery
-} from '$lib/server/db/helpers';
-import { hiddenGroupFilter } from '$lib/server/db/hidden';
-import overwatch from '$lib/server/overwatch';
+} from '#lib/server/db/helpers.ts';
+import { hiddenGroupFilter } from '#lib/server/db/hidden.ts';
+import overwatch from '#lib/server/overwatch.ts';
 import { error } from '@sveltejs/kit';
 import { eq, inArray, not, sql, and } from 'drizzle-orm';
 

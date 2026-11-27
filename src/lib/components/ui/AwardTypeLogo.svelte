@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { AwardType } from '$lib/types';
-	import fallbackIcon from '$lib/assets/images/placeholder.avif';
+	import type { AwardType } from '#lib/types.ts';
+	import fallbackIcon from '#lib/assets/images/placeholder.avif';
 	import type { ClassValue } from 'svelte/elements';
 
 	type Props = {

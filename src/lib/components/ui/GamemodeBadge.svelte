@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { GamemodeCatalogEntry } from '$lib/pick-ban';
+	import type { GamemodeCatalogEntry } from '#lib/pick-ban/index.ts';
 	import type { ClassValue } from 'svelte/elements';
 	import Icon from './Icon.svelte';
-	import { gamemodeIcon } from '$lib/util';
+	import { gamemodeIcon } from '#lib/util.ts';
 
 	type Props = {
 		gamemode: GamemodeCatalogEntry;

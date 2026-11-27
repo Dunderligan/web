@@ -1,6 +1,6 @@
-import { db } from '$lib/server/db';
-import { entityQuery } from '$lib/server/db/helpers';
-import { json, error } from '@sveltejs/kit';
+import { db } from '#lib/server/db.ts';
+import { entityQuery } from '#lib/server/db/helpers.ts';
+import { error } from '@sveltejs/kit';
 
 export const GET = async ({ params }) => {
 	const division = await db.query.division.findFirst({
@@ -29,5 +29,5 @@ export const GET = async ({ params }) => {
 		throw error(404);
 	}
 
-	return json(division);
+	return Response.json(division);
 };

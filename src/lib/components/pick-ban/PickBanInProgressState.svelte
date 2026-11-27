@@ -1,13 +1,13 @@
 <script lang="ts">
-	import { DecisionPoint } from '$lib/pick-ban';
-	import { PickBanContext } from '$lib/state/pick-ban.svelte';
+	import { DecisionPoint } from '#lib/pick-ban/index.ts';
+	import { PickBanContext } from '#lib/state/pick-ban.svelte.ts';
 	import Subheading from '../ui/Subheading.svelte';
 	import HeroPick from './HeroPick.svelte';
 	import MapPick from './MapPick.svelte';
 	import PickBanReporter from './PickBanReporter.svelte';
 	import BanOrderPick from './BanOrderPick.svelte';
 	import Waiting from './Waiting.svelte';
-	import { matchRoster } from '$lib/match';
+	import { matchRoster } from '#lib/match.ts';
 
 	const context = PickBanContext.get();
 

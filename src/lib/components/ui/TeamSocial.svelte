@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { capitalize } from '$lib/util';
+	import { capitalize } from '#lib/util.ts';
 	import type { ClassValue } from 'svelte/elements';
 	import Icon from './Icon.svelte';
 

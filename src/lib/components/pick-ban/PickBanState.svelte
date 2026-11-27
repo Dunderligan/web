@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { RoomStatus } from '$lib/pick-ban';
-	import { PickBanContext } from '$lib/state/pick-ban.svelte';
+	import { RoomStatus } from '#lib/pick-ban/index.ts';
+	import { PickBanContext } from '#lib/state/pick-ban.svelte.ts';
 	import type { ClassValue } from 'svelte/elements';
 	import PickBanCancelledState from './PickBanCancelledState.svelte';
 	import PickBanFinishedState from './PickBanFinishedState.svelte';

@@ -1,5 +1,5 @@
 import { generateState } from 'arctic';
-import { battlenet } from '$lib/server/oauth';
+import { battlenet } from '#lib/server/oauth.ts';
 
 import { redirect } from '@sveltejs/kit';
 
@@ -21,5 +21,5 @@ export const GET = async ({ cookies, url }) => {
 		sameSite: 'lax'
 	});
 
-	redirect(303, redirectUrl);
+	redirect(303, redirectUrl, { external: true });
 };

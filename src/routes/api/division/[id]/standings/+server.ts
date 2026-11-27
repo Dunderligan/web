@@ -1,7 +1,7 @@
-import { db } from '$lib/server/db';
-import { fullGroupQuery } from '$lib/server/db/helpers';
-import { generateDivisionStandings } from '$lib/server/standings.js';
-import { json, error } from '@sveltejs/kit';
+import { db } from '#lib/server/db.ts';
+import { fullGroupQuery } from '#lib/server/db/helpers.ts';
+import { generateDivisionStandings } from '#lib/server/standings.ts';
+import { error } from '@sveltejs/kit';
 
 export const GET = async ({ params }) => {
 	const division = await db.query.division.findFirst({
@@ -29,7 +29,7 @@ export const GET = async ({ params }) => {
 
 	const tables = generateDivisionStandings(division, { legacy: division.season.legacySeeding });
 
-	return json({
+	return Response.json({
 		tables
 	});
 };

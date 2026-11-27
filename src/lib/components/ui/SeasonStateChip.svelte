@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { ChipColor, SeasonState } from '$lib/types';
+	import type { ChipColor, SeasonState } from '#lib/types.ts';
 	import Chip from './Chip.svelte';
 
 	type Props = { state: SeasonState };

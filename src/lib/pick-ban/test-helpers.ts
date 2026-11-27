@@ -1,4 +1,4 @@
-import { MatchSlot, Role } from '$lib/types';
+import { MatchSlot, Role } from '#lib/types.ts';
 import { DEFAULT_PICK_BAN_CONFIG, type ResolvedPickBanConfig } from './config';
 import {
 	DecisionPoint,

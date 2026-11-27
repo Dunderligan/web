@@ -1,21 +1,21 @@
 <script lang="ts">
-	import Button from '$lib/components/ui/Button.svelte';
-	import MembersTable from '$lib/components/table/MembersTable.svelte';
-	import PageHeader from '$lib/components/structure/PageHeader.svelte';
-	import PageSection from '$lib/components/structure/PageSection.svelte';
-	import Rank from '$lib/components/ui/Rank.svelte';
-	import RosterLogo from '$lib/components/ui/RosterLogo.svelte';
-	import Tabs from '$lib/components/ui/Tabs.svelte';
-	import TeamSocial from '$lib/components/ui/TeamSocial.svelte';
-	import { flattenGroup } from '$lib/util';
-	import MatchList from '$lib/components/match/MatchList.svelte';
-	import Meta from '$lib/components/structure/Meta.svelte';
-	import { MatchState, type TabItem } from '$lib/types';
-	import { averageLegacyRank, averageRank } from '$lib/rank';
-	import { isModerator } from '$lib/auth-role.js';
-	import Field from '$lib/components/structure/Field.svelte';
-	import Placement from '$lib/components/ui/Placement.svelte';
-	import cdn from '$lib/cdn.js';
+	import Button from '#lib/components/ui/Button.svelte';
+	import MembersTable from '#lib/components/table/MembersTable.svelte';
+	import PageHeader from '#lib/components/structure/PageHeader.svelte';
+	import PageSection from '#lib/components/structure/PageSection.svelte';
+	import Rank from '#lib/components/ui/Rank.svelte';
+	import RosterLogo from '#lib/components/ui/RosterLogo.svelte';
+	import Tabs from '#lib/components/ui/Tabs.svelte';
+	import TeamSocial from '#lib/components/ui/TeamSocial.svelte';
+	import { flattenGroup } from '#lib/util.ts';
+	import MatchList from '#lib/components/match/MatchList.svelte';
+	import Meta from '#lib/components/structure/Meta.svelte';
+	import { MatchState, type TabItem } from '#lib/types.ts';
+	import { averageLegacyRank, averageRank } from '#lib/rank.ts';
+	import { isModerator } from '#lib/auth-role.js';
+	import Field from '#lib/components/structure/Field.svelte';
+	import Placement from '#lib/components/ui/Placement.svelte';
+	import cdn from '#lib/cdn.js';
 
 	let { data } = $props();
 

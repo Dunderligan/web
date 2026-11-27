@@ -1,4 +1,4 @@
-import type { UnresolvedMatch, Roster } from '$lib/types';
+import type { UnresolvedMatch, Roster } from '#lib/types.ts';
 import { SvelteMap } from 'svelte/reactivity';
 import { defineContext } from './util';
 

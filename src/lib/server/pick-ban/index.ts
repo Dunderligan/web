@@ -1,4 +1,4 @@
-import { matchDivision } from '$lib/match';
+import { matchDivision } from '#lib/match.ts';
 import {
 	applyDecision,
 	firstMapFirstBanTeam,
@@ -25,8 +25,8 @@ import {
 	type RoomState,
 	type RuleCatalog,
 	type SeedPair
-} from '$lib/pick-ban';
-import { MatchSlot, MatchState, type Member, type ResolvedMatchWithContext } from '$lib/types';
+} from '#lib/pick-ban/index.ts';
+import { MatchSlot, MatchState, type Member, type ResolvedMatchWithContext } from '#lib/types.ts';
 import { and, eq } from 'drizzle-orm';
 import { db, schema } from '../db';
 import { fullGroupQuery, memberQuery, roomStateQuery, type Transaction } from '../db/helpers';

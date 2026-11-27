@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import exporter from '$lib/server/submission-export';
-import { Rank, Role, SubmissionStatus, type Member, type TeamSubmission } from '$lib/types';
+import exporter from '#lib/server/submission-export.ts';
+import { Rank, Role, SubmissionStatus, type Member, type TeamSubmission } from '#lib/types.ts';
 
 function member(battletag: string, rank: Rank | null, tier: number | null, role: Role): Member {
 	return {

@@ -1,14 +1,14 @@
-import { db } from '$lib/server/db';
+import { db } from '#lib/server/db.ts';
 import {
 	fullMatchQueryWithContext,
 	memberQuery,
 	rosterQuery,
 	roomStateQuery
-} from '$lib/server/db/helpers.js';
-import overwatch from '$lib/server/overwatch.js';
-import pickBanService from '$lib/server/pick-ban';
-import presenceStore from '$lib/server/pick-ban/presence.js';
-import type { GameProfileEntryWithDate, Member } from '$lib/types.js';
+} from '#lib/server/db/helpers.js';
+import overwatch from '#lib/server/overwatch.js';
+import pickBanService from '#lib/server/pick-ban/index.ts';
+import presenceStore from '#lib/server/pick-ban/presence.js';
+import type { GameProfileEntryWithDate, Member } from '#lib/types.js';
 import { error } from '@sveltejs/kit';
 
 const roomRosterQuery = {

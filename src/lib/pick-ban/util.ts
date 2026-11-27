@@ -1,4 +1,4 @@
-import { MatchSlot } from '$lib/types';
+import { MatchSlot } from '#lib/types.ts';
 import {
 	type RoomMapState,
 	DecisionPoint,

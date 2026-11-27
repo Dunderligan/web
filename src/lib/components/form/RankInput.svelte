@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { isLegacyRank } from '$lib/rank';
-	import type { AnyRank } from '$lib/types';
+	import { isLegacyRank } from '#lib/rank.ts';
+	import type { AnyRank } from '#lib/types.ts';
 	import Button from '../ui/Button.svelte';
 	import InputField from './InputField.svelte';
 	import Rank from '../ui/Rank.svelte';
 	import Select from './Select.svelte';
-	import { Rank as RankEnum } from '$lib/types';
-	import { capitalize } from '$lib/util';
+	import { Rank as RankEnum } from '#lib/types.ts';
+	import { capitalize } from '#lib/util.ts';
 
 	type Props = {
 		rank: AnyRank;

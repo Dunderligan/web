@@ -1,6 +1,6 @@
-import { canEditUserPage } from '$lib/auth-role.js';
-import { db } from '$lib/server/db';
-import overwatch from '$lib/server/overwatch.js';
+import { canEditUserPage } from '#lib/auth-role.js';
+import { db } from '#lib/server/db.ts';
+import overwatch from '#lib/server/overwatch.js';
 import { error } from '@sveltejs/kit';
 
 export const load = async ({ params, locals, depends }) => {

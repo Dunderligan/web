@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Hero } from '$lib/types';
+	import type { Hero } from '#lib/types.ts';
 	import type { ClassValue } from 'svelte/elements';
 
 	type Props = {

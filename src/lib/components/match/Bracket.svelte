@@ -7,8 +7,8 @@
 		MATCH_SLOT_HEIGHT,
 		MATCH_WIDTH,
 		orderEdgesForPainting
-	} from '$lib/bracket/layout';
-	import type { BracketFormat, ResolvedMatchWithSeeds } from '$lib/types';
+	} from '#lib/bracket/layout.ts';
+	import type { BracketFormat, ResolvedMatchWithSeeds } from '#lib/types.ts';
 	import type { ClassValue } from 'svelte/elements';
 	import BracketMatch from './BracketMatch.svelte';
 

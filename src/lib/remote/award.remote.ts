@@ -1,12 +1,12 @@
 import { command } from '$app/server';
-import { AuthRole } from '$lib/auth-role';
-import { db, schema } from '$lib/server/db';
+import { AuthRole } from '#lib/auth-role.ts';
+import { db, schema } from '#lib/server/db.ts';
 import { eq } from 'drizzle-orm';
 import z from 'zod';
 import { roleGuard } from './auth.remote';
-import s3 from '$lib/server/s3';
-import cdn from '$lib/cdn';
-import image from '$lib/server/image';
+import s3 from '#lib/server/s3.ts';
+import cdn from '#lib/cdn.ts';
+import image from '#lib/server/image.ts';
 
 export const createAwardType = command(
 	z.object({

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MatchState, MatchSlot, type ResolvedMatchWithSeeds } from '$lib/types';
+	import { MatchState, MatchSlot, type ResolvedMatchWithSeeds } from '#lib/types.ts';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import {
 		matchRoster,
@@ -8,7 +8,7 @@
 		matchNote,
 		hasMatchScore,
 		resolvedMatchToLogical
-	} from '$lib/match';
+	} from '#lib/match.ts';
 	import MatchInfoRow from './MatchInfoRow.svelte';
 	import Note from '../ui/Note.svelte';
 	import { resolve } from '$app/paths';
@@ -59,7 +59,7 @@
 		]}
 	>
 		{#if roster}
-			{@const href = resolve(`/lag/${roster.slug}/${seasonSlug}`)}
+			{@const href = resolve(`lag/${roster.slug}/${seasonSlug}`)}
 
 			<div
 				class={[

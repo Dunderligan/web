@@ -1,13 +1,13 @@
-import { AuthRole } from '$lib/auth-role.js';
-import { roleGuard } from '$lib/remote/auth.remote.js';
-import { db, schema } from '$lib/server/db';
+import { AuthRole } from '#lib/auth-role.js';
+import { roleGuard } from '#lib/remote/auth.remote.js';
+import { db, schema } from '#lib/server/db.ts';
 import {
 	lookupPlayer,
 	rosterQuery,
 	memberQueryWithoutPlayer,
 	rosterSeasonFilter
-} from '$lib/server/db/helpers.js';
-import { error, json, redirect } from '@sveltejs/kit';
+} from '#lib/server/db/helpers.js';
+import { error, redirect } from '@sveltejs/kit';
 import z from 'zod';
 
 export const GET = async ({ params }) => {
@@ -49,7 +49,7 @@ export const GET = async ({ params }) => {
 		error(404, 'Player either does not exist or has not checked in for this season');
 	}
 
-	return json(checkin);
+	return Response.json(checkin);
 };
 
 const checkinSchema = z.object({

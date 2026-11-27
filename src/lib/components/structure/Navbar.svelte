@@ -3,14 +3,14 @@
 	import Icon from '../ui/Icon.svelte';
 	import Button from '../ui/Button.svelte';
 	import { page } from '$app/state';
-	import { invalidateAll } from '$app/navigation';
+	import { refreshAll } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { logout } from '$lib/remote/auth.remote';
-	import { PreferencesState } from '$lib/state/preferences.svelte';
+	import { logout } from '#lib/remote/auth.remote.ts';
+	import { PreferencesState } from '#lib/state/preferences.svelte.ts';
 	import Dropdown from '../ui/Dropdown.svelte';
-	import logo from '$lib/assets/images/logo.webp';
-	import { isModerator } from '$lib/auth-role';
-	import type { DropdownItem } from '$lib/types';
+	import logo from '#lib/assets/images/logo.webp';
+	import { isModerator } from '#lib/auth-role.ts';
+	import type { DropdownItem } from '#lib/types.ts';
 	import SearchDialog from './SearchDialog.svelte';
 	import Link from '../ui/Link.svelte';
 	import type { ResolvedPathname } from '$app/types';
@@ -57,7 +57,7 @@
 
 	const loginHref = $derived.by(() => {
 		const next = encodeURIComponent(page.url.pathname);
-		return resolve(`/api/login/battlenet?next=${next}`);
+		return resolve(`api/login/battlenet?next=${next}`);
 	});
 
 	const hamburgerLinks = $derived.by(() => {
@@ -127,7 +127,7 @@
 
 	async function onLogout() {
 		await logout();
-		await invalidateAll();
+		await refreshAll();
 	}
 
 	function onDocumentKeydown(evt: KeyboardEvent) {
@@ -142,7 +142,7 @@
 	}
 </script>
 
-<svelte:document onkeydown={onDocumentKeydown} />
+<svelte:document onkeydown={onDocumentKeydown}></svelte:document>
 <svelte:window onscroll={onWindowScroll} />
 
 <nav

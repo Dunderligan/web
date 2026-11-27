@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { AwardType, PlayerAward } from '$lib/types';
-	import { flattenDivision } from '$lib/util';
+	import type { AwardType, PlayerAward } from '#lib/types.ts';
+	import { flattenDivision } from '#lib/util.ts';
 	import Link from './Link.svelte';
 	import Popover from './Popover.svelte';
 	import AwardTypeLogo from './AwardTypeLogo.svelte';

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Combobox } from 'bits-ui';
 	import Icon from '../ui/Icon.svelte';
-	import type { SelectItem } from '$lib/types';
+	import type { SelectItem } from '#lib/types.ts';
 	import type { ClassValue } from 'svelte/elements';
 	import type { Snippet } from 'svelte';
 

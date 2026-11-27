@@ -1,5 +1,5 @@
-import { AuthRole, checkPermission } from '$lib/auth-role';
-import { db } from '$lib/server/db';
+import { AuthRole, checkPermission } from '#lib/auth-role.ts';
+import { db } from '#lib/server/db.ts';
 import { error } from '@sveltejs/kit';
 
 export const load = async ({ locals }) => {

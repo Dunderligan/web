@@ -1,6 +1,6 @@
 <script lang="ts">
-	import PageSection from '$lib/components/structure/PageSection.svelte';
-	import Notice from '$lib/components/ui/Notice.svelte';
+	import PageSection from '#lib/components/structure/PageSection.svelte';
+	import Notice from '#lib/components/ui/Notice.svelte';
 </script>
 
 <PageSection>

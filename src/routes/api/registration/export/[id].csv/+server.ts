@@ -1,4 +1,4 @@
-import { exportTeamSubmissionCsv } from '$lib/remote/registration.remote';
+import { exportTeamSubmissionCsv } from '#lib/remote/registration.remote.ts';
 
 export const GET = async ({ params }) => {
 	const { season, content } = await exportTeamSubmissionCsv({

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { DropdownItem } from '$lib/types';
+	import type { DropdownItem } from '#lib/types.ts';
 	import { DropdownMenu } from 'bits-ui';
 	import Icon from './Icon.svelte';
 	import type { ClassValue } from 'svelte/elements';

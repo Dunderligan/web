@@ -3,9 +3,9 @@ import {
 	type RosterInfo,
 	type SeedOptions,
 	type TableScore
-} from '$lib/standings';
-import type { LogicalMatch } from '$lib/types';
-import { aggregateGroups } from '$lib/util';
+} from '#lib/standings.ts';
+import type { LogicalMatch } from '#lib/types.ts';
+import { aggregateGroups } from '#lib/util.ts';
 
 export type Table = {
 	id: string;

@@ -1,10 +1,10 @@
-import { error, type Handle, type ServerInit } from '@sveltejs/kit';
-import session from '$lib/server/session';
-import { sequence } from '@sveltejs/kit/hooks';
-import { initDb } from '$lib/server/db';
-import { isModerator } from '$lib/auth-role';
-import apiToken from '$lib/server/api-token';
-import pickBanSweeper from '$lib/server/pick-ban/sweeper';
+import { error } from '@sveltejs/kit';
+import session from '#lib/server/session.ts';
+import { sequence, type Handle, type ServerInit } from '@sveltejs/kit/hooks';
+import { initDb } from '#lib/server/db.ts';
+import { isModerator } from '#lib/auth-role.ts';
+import apiToken from '#lib/server/api-token.ts';
+import pickBanSweeper from '#lib/server/pick-ban/sweeper.ts';
 
 const handleAuth: Handle = async ({ event, resolve }) => {
 	event.locals.user = null;

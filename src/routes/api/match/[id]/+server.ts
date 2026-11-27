@@ -1,10 +1,10 @@
-import { AuthRole } from '$lib/auth-role';
-import { roleGuard } from '$lib/remote/auth.remote';
-import { matchSchema } from '$lib/schemas';
-import { db, schema } from '$lib/server/db';
-import { fullMatchQueryWithContext } from '$lib/server/db/helpers.js';
-import { MatchState } from '$lib/types';
-import { error, json, redirect } from '@sveltejs/kit';
+import { AuthRole } from '#lib/auth-role.ts';
+import { roleGuard } from '#lib/remote/auth.remote.ts';
+import { matchSchema } from '#lib/schemas.ts';
+import { db, schema } from '#lib/server/db.ts';
+import { fullMatchQueryWithContext } from '#lib/server/db/helpers.js';
+import { MatchState } from '#lib/types.ts';
+import { error, redirect } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import z from 'zod';
 
@@ -20,7 +20,7 @@ export const GET = async ({ params }) => {
 		error(404);
 	}
 
-	return json(match);
+	return Response.json(match);
 };
 
 const updateMatchSchema = matchSchema

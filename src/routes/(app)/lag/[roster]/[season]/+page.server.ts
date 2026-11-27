@@ -3,11 +3,11 @@ import {
 	memberQuery,
 	fullMatchQueryWithContext,
 	entityQuery
-} from '$lib/server/db/helpers';
-import { hiddenGroupFilter } from '$lib/server/db/hidden.js';
-import { db, schema } from '$lib/server/db';
+} from '#lib/server/db/helpers.ts';
+import { hiddenGroupFilter } from '#lib/server/db/hidden.js';
+import { db, schema } from '#lib/server/db.ts';
 import { error } from '@sveltejs/kit';
-import { compareMatchDates, getFinalMatch, getRosterPlacement } from '$lib/match.js';
+import { compareMatchDates, getFinalMatch, getRosterPlacement } from '#lib/match.js';
 import { and, eq, not, sql } from 'drizzle-orm';
 
 export const load = async ({ params, locals }) => {

@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { PickBanContext } from '$lib/state/pick-ban.svelte';
-	import { MatchSlot } from '$lib/types';
+	import { PickBanContext } from '#lib/state/pick-ban.svelte.ts';
+	import { MatchSlot } from '#lib/types.ts';
 	import type { ClassValue } from 'svelte/elements';
 	import Icon from '../ui/Icon.svelte';
 	import StatusIndicator from '../ui/StatusIndicator.svelte';
 	import Link from '../ui/Link.svelte';
 	import { resolve } from '$app/paths';
-	import { RoomStatus } from '$lib/pick-ban';
+	import { RoomStatus } from '#lib/pick-ban/index.ts';
 
 	type Props = {
 		slot: MatchSlot;
@@ -26,7 +26,7 @@
 <div class={[classProp, 'space-y-1']}>
 	{#each members as { member, profile } (member.player.id)}
 		{@const battletag = member.player.battletag}
-		{@const href = resolve(`/spelare/${battletag.replace('#', '-')}`)}
+		{@const href = resolve(`spelare/${battletag.replace('#', '-')}`)}
 
 		{@const presence = context.presenceFor(battletag)}
 		{@const connected = presence !== null}

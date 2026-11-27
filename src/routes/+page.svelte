@@ -1,16 +1,16 @@
 <script lang="ts">
-	import Button from '$lib/components/ui/Button.svelte';
-	import PageSection from '$lib/components/structure/PageSection.svelte';
-	import MatchList from '$lib/components/match/MatchList.svelte';
-	import Meta from '$lib/components/structure/Meta.svelte';
-	import trailerThumbnail from '$lib/assets/images/trailer-thumbnail.avif';
-	import TournamentStateSection from '$lib/components/structure/TournamentStateSection.svelte';
-	import Card from '$lib/components/structure/Card.svelte';
-	import PageSectionAlternate from '$lib/components/structure/PageSectionAlternate.svelte';
-	import discordImage from '$lib/assets/images/discord.avif';
-	import twitchImage from '$lib/assets/images/twitch.avif';
-	import { socials } from '$lib/socials.js';
-	import cdn from '$lib/cdn.js';
+	import Button from '#lib/components/ui/Button.svelte';
+	import PageSection from '#lib/components/structure/PageSection.svelte';
+	import MatchList from '#lib/components/match/MatchList.svelte';
+	import Meta from '#lib/components/structure/Meta.svelte';
+	import trailerThumbnail from '#lib/assets/images/trailer-thumbnail.avif';
+	import TournamentStateSection from '#lib/components/structure/TournamentStateSection.svelte';
+	import Card from '#lib/components/structure/Card.svelte';
+	import PageSectionAlternate from '#lib/components/structure/PageSectionAlternate.svelte';
+	import discordImage from '#lib/assets/images/discord.avif';
+	import twitchImage from '#lib/assets/images/twitch.avif';
+	import { socials } from '#lib/socials.js';
+	import cdn from '#lib/cdn.js';
 
 	let { data } = $props();
 

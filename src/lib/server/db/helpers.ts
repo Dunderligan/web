@@ -1,8 +1,8 @@
 import { sql, eq } from 'drizzle-orm';
 import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
-import { db, schema } from '$lib/server/db';
+import { db, schema } from '#lib/server/db.ts';
 import type { PgColumn, PgTransaction } from 'drizzle-orm/pg-core';
-import type { PlayerCheckin } from '$lib/types';
+import type { PlayerCheckin } from '#lib/types.ts';
 import type relations from './relations';
 
 // Helper queries and functions for database operations.

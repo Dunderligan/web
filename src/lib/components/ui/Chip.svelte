@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { ChipColor } from '$lib/types';
+	import type { ChipColor } from '#lib/types.ts';
 	import type { ClassValue } from 'svelte/elements';
 	import Icon from './Icon.svelte';
 

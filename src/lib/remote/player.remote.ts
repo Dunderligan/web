@@ -1,10 +1,10 @@
 import { command, getRequestEvent, query } from '$app/server';
-import { AuthRole, canEditUserPage, isModerator } from '$lib/auth-role';
-import { socialSchema } from '$lib/schemas';
-import { db, schema } from '$lib/server/db';
-import { type Transaction } from '$lib/server/db/helpers';
-import overwatch from '$lib/server/overwatch';
-import type { Social } from '$lib/types';
+import { AuthRole, canEditUserPage, isModerator } from '#lib/auth-role.ts';
+import { socialSchema } from '#lib/schemas.ts';
+import { db, schema } from '#lib/server/db.ts';
+import { type Transaction } from '#lib/server/db/helpers.ts';
+import overwatch from '#lib/server/overwatch.ts';
+import type { Social } from '#lib/types.ts';
 import { error } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import z from 'zod';

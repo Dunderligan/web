@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { GameProfile } from '$lib/types';
+	import type { GameProfile } from '#lib/types.ts';
 	import Button from './Button.svelte';
 
 	type Props = {

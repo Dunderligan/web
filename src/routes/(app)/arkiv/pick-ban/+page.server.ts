@@ -1,7 +1,7 @@
-import { RoomStatus } from '$lib/pick-ban/types.js';
-import { db } from '$lib/server/db';
-import { fullMatchQueryWithContext } from '$lib/server/db/helpers';
-import { hiddenMatchFilter } from '$lib/server/db/hidden';
+import { RoomStatus } from '#lib/pick-ban/types.js';
+import { db } from '#lib/server/db.ts';
+import { fullMatchQueryWithContext } from '#lib/server/db/helpers.ts';
+import { hiddenMatchFilter } from '#lib/server/db/hidden.ts';
 
 const PAGE_SIZE = 10;
 

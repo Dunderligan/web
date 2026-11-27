@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { PickBanMapType, WinCondition, type MapCatalogEntry } from '$lib/pick-ban';
-	import { PickBanContext } from '$lib/state/pick-ban.svelte';
+	import { PickBanMapType, WinCondition, type MapCatalogEntry } from '#lib/pick-ban/index.ts';
+	import { PickBanContext } from '#lib/state/pick-ban.svelte.ts';
 	import type { Snippet } from 'svelte';
 	import Dialog from '../ui/Dialog.svelte';
 

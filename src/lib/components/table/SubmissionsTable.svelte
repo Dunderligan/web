@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { TeamSubmissionInfo } from '$lib/types';
-	import { formatDate } from '$lib/util';
+	import type { TeamSubmissionInfo } from '#lib/types.ts';
+	import { formatDate } from '#lib/util.ts';
 	import SubmissionChip from '../admin/SubmissionChip.svelte';
 	import Table from './Table.svelte';
 	import Button from '../ui/Button.svelte';

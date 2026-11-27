@@ -117,7 +117,7 @@ export enum SubmissionStatus {
 /**
  * Base information used to identify seasons, divisions, groups, etc.
  * Often used in nested types from database queries.
- * See the $lib/server/db/helpers.ts file for the equivalent query definition.
+ * See the #lib/server/db/helpers.ts file for the equivalent query definition.
  */
 export type BaseEntity = {
 	id: string;

@@ -21,14 +21,14 @@
 		aspect-ratio: 16 / 9;
 		background-image:
 			linear-gradient(to bottom, transparent, var(--color-gray-100) 100%),
-			url('$lib/assets/images/striped-bg.avif');
+			url('../../lib/assets/images/striped-bg.avif');
 	}
 
 	:global(.dark) #background {
 		background-blend-mode: multiply, overlay, normal;
 		background-image:
 			linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)),
-			url('$lib/assets/images/striped-bg.avif'), linear-gradient(var(--color-gray-900));
+			url('../../lib/assets/images/striped-bg.avif'), linear-gradient(var(--color-gray-900));
 	}
 
 	#splotch {

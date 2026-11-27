@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { matchRoster, matchSlots } from '$lib/match';
-	import { DecisionPoint } from '$lib/pick-ban';
-	import { PickBanContext } from '$lib/state/pick-ban.svelte';
-	import { MatchSlot } from '$lib/types';
+	import { matchRoster, matchSlots } from '#lib/match.ts';
+	import { DecisionPoint } from '#lib/pick-ban/index.ts';
+	import { PickBanContext } from '#lib/state/pick-ban.svelte.ts';
+	import { MatchSlot } from '#lib/types.ts';
 	import type { ClassValue } from 'svelte/elements';
 	import Button from '../ui/Button.svelte';
 	import RosterLogo from '../ui/RosterLogo.svelte';

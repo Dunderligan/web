@@ -1,6 +1,6 @@
 import type { createClient } from 'redis';
-import type { MatchSlot } from '$lib/types';
-import type { RoomPresence, RoomPresenceMember } from '$lib/pick-ban';
+import type { MatchSlot } from '#lib/types.ts';
+import type { RoomPresence, RoomPresenceMember } from '#lib/pick-ban/index.ts';
 
 type RedisClient = ReturnType<typeof createClient>;
 

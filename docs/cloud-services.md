@@ -34,7 +34,7 @@ Cloudflare may ask you for credit card information on sign up. Don't worry about
 
 [Create a new R2 bucket](https://dash.cloudflare.com/9c3c36808f7b9a5adadff441d7f2ddcd/r2/overview). The project is by default configured to use a bucket named "dunderligan", however you can pick any name as long as it's reflected in the environment file. Leave `Location` as is, and pick the the `Standard` storage class.
 
-Navigate to the `Settings` tab, find `Public Development URL` and click `Enable`. Copy the url into the `PUBLIC_CDN_ENDPOINT` field of the `.env` file.
+Navigate to the `Settings` tab, find `Public Development URL` and click `Enable`. Copy the url into the `CDN_ENDPOINT` field of the `.env` file.
 
 Go back to the main R2 page, find `API Tokens` on the right sidebar and click `Manage`.
 

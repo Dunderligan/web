@@ -1,8 +1,8 @@
 import { command, getRequestEvent, query } from '$app/server';
-import { AuthRole, canPromoteTo, checkPermission } from '$lib/auth-role';
-import apiToken from '$lib/server/api-token';
-import { db, schema } from '$lib/server/db';
-import session from '$lib/server/session';
+import { AuthRole, canPromoteTo, checkPermission } from '#lib/auth-role.ts';
+import apiToken from '#lib/server/api-token.ts';
+import { db, schema } from '#lib/server/db.ts';
+import session from '#lib/server/session.ts';
 import { error } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import z from 'zod';

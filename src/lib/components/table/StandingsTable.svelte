@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { TableScore } from '$lib/standings';
-	import type { Roster } from '$lib/types';
+	import type { TableScore } from '#lib/standings.ts';
+	import type { Roster } from '#lib/types.ts';
 	import Icon from '../ui/Icon.svelte';
 	import Link from '../ui/Link.svelte';
 	import RosterLogo from '../ui/RosterLogo.svelte';
@@ -88,7 +88,7 @@
 {/snippet}
 
 {#snippet teamCell({ roster }: TableEntry, index: number)}
-	{@const href = resolve(`/lag/${roster.slug}/${seasonSlug}`)}
+	{@const href = resolve(`lag/${roster.slug}/${seasonSlug}`)}
 
 	<RosterLogo id={roster.id} {href} size="md" class="mr-2" />
 

@@ -1,17 +1,17 @@
 import { command, getRequestEvent, query } from '$app/server';
 import z from 'zod';
 import { roleGuard } from './auth.remote';
-import { AuthRole } from '$lib/auth-role';
-import pickBanService, { type RoomParticipant } from '$lib/server/pick-ban';
-import { getRoomSnapshot, publishRoom } from '$lib/server/pick-ban/room-snapshot';
+import { AuthRole } from '#lib/auth-role.ts';
+import pickBanService, { type RoomParticipant } from '#lib/server/pick-ban/index.ts';
+import { getRoomSnapshot, publishRoom } from '#lib/server/pick-ban/room-snapshot.ts';
 import { error } from '@sveltejs/kit';
-import { MapOutcome, RoomStatus, type DecisionActor } from '$lib/pick-ban';
-import presence from '$lib/server/pick-ban/presence';
-import type { PresenceParticipant } from '$lib/server/pick-ban/presence-store';
-import type { User } from '$lib/server/db/schema/auth';
-import { decisionInputSchema } from '$lib/schemas';
-import roomEvents from '$lib/server/pick-ban/room-events';
-import { isClosed } from '$lib/pick-ban/util';
+import { MapOutcome, RoomStatus, type DecisionActor } from '#lib/pick-ban/index.ts';
+import presence from '#lib/server/pick-ban/presence.ts';
+import type { PresenceParticipant } from '#lib/server/pick-ban/presence-store.ts';
+import type { User } from '#lib/server/db/schema/auth.ts';
+import { decisionInputSchema } from '#lib/schemas.ts';
+import roomEvents from '#lib/server/pick-ban/room-events.ts';
+import { isClosed } from '#lib/pick-ban/util.ts';
 
 /** Yield at least this often so the live query doesn't time out due to inactivity. */
 const ROOM_KEEPALIVE_INTERVAL_MS = 15 * 1000;

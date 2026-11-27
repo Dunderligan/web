@@ -86,7 +86,7 @@ export function matchRosterId(match: LogicalMatch, slot?: MatchSlot | null): str
 
 /**
  * Compares two matches by their played or scheduled dates, most recent first.
- * This should mimic the SQL ordering function in $lib/server/db/helpers.ts, and is used
+ * This should mimic the SQL ordering function in #lib/server/db/helpers.ts, and is used
  * whenever matches need to be sorted outside of database queries.
  */
 export function compareMatchDates(a: MatchWithoutRosters, b: MatchWithoutRosters): number {

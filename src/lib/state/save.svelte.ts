@@ -1,4 +1,4 @@
-import { beforeNavigate, invalidateAll } from '$app/navigation';
+import { beforeNavigate, refreshAll } from '$app/navigation';
 import type { ResolvedPathname } from '$app/types';
 import { ConfirmContext, type ConfirmData } from './confirm.svelte';
 import { defineContext } from './util';
@@ -48,7 +48,7 @@ export class SaveContext {
 		confirmSave?: ConfirmDataFn;
 	}) {
 		this.saveAction = options?.save;
-		this.discardAction = options?.discard ?? invalidateAll;
+		this.discardAction = options?.discard ?? refreshAll;
 		this.confirmSave = options?.confirmSave;
 
 		this.autoSave = options?.autoSave ?? false;
@@ -56,7 +56,8 @@ export class SaveContext {
 
 		this.confirmContext = ConfirmContext.get();
 
-		beforeNavigate(({ cancel }) => {
+		beforeNavigate(({ cancel, shallow, type }) => {
+			if (shallow && type === 'goto') return;
 			if (!this.isDirty) return;
 
 			if (

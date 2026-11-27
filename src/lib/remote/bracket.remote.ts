@@ -1,15 +1,15 @@
 import { command } from '$app/server';
-import { db, schema } from '$lib/server/db';
+import { db, schema } from '#lib/server/db.ts';
 import { eq } from 'drizzle-orm';
 import z from 'zod';
-import { matchSchema } from '$lib/schemas';
+import { matchSchema } from '#lib/schemas.ts';
 import { roleGuard } from './auth.remote';
-import { createBracket } from '$lib/bracket';
+import { createBracket } from '#lib/bracket/index.ts';
 import { error } from '@sveltejs/kit';
-import { sortBySeed, type SeedOptions } from '$lib/standings';
-import { MatchState, BracketFormat, type UnresolvedMatchWithOrder } from '$lib/types';
-import { fullMatchColumns, rosterQuery } from '$lib/server/db/helpers';
-import { AuthRole } from '$lib/auth-role';
+import { sortBySeed, type SeedOptions } from '#lib/standings.ts';
+import { MatchState, BracketFormat, type UnresolvedMatchWithOrder } from '#lib/types.ts';
+import { fullMatchColumns, rosterQuery } from '#lib/server/db/helpers.ts';
+import { AuthRole } from '#lib/auth-role.ts';
 
 export const generateBracket = command(
 	z.object({

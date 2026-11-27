@@ -1,18 +1,14 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
-import { env } from '$env/dynamic/private';
-import { seed as seed } from './db/seed';
-import { dev } from '$app/environment';
+import { DATABASE_URL } from '$app/env/private';
+import { seed } from './db/seed';
+import { dev } from '$app/env';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import relations from './db/relations';
 import schema from './db/schema';
 
-if (!env.DATABASE_URL) throw new Error('DATABASE_URL is not set');
+if (!DATABASE_URL) throw new Error('DATABASE_URL is not set');
 
-const db = drizzle(env.DATABASE_URL, {
-	schema,
-	relations,
-	casing: 'snake_case'
-});
+const db = drizzle(DATABASE_URL, { schema, relations, casing: 'snake_case' });
 
 async function initDb() {
 	if (!dev && !process.argv.includes('--no-migrate')) {

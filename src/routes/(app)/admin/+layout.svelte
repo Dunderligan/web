@@ -1,8 +1,8 @@
 <script lang="ts">
-	import ConfirmDialog from '$lib/components/admin/ConfirmDialog.svelte';
-	import Meta from '$lib/components/structure/Meta.svelte';
-	import PageSection from '$lib/components/structure/PageSection.svelte';
-	import { ConfirmContext } from '$lib/state/confirm.svelte';
+	import ConfirmDialog from '#lib/components/admin/ConfirmDialog.svelte';
+	import Meta from '#lib/components/structure/Meta.svelte';
+	import PageSection from '#lib/components/structure/PageSection.svelte';
+	import { ConfirmContext } from '#lib/state/confirm.svelte.ts';
 
 	let { children } = $props();
 

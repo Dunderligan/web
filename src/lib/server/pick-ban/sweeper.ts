@@ -1,5 +1,5 @@
-import { fallbackDecision, RoomStatus } from '$lib/pick-ban';
-import { MatchState } from '$lib/types';
+import { fallbackDecision, RoomStatus } from '#lib/pick-ban/index.ts';
+import { MatchState } from '#lib/types.ts';
 import { db } from '../db';
 import { fullMatchQueryWithContext } from '../db/helpers';
 import pickBanService from '.';

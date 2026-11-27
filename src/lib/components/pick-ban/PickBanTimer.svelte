@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { nextDecisionPoint } from '$lib/pick-ban';
-	import { PickBanContext } from '$lib/state/pick-ban.svelte';
+	import { nextDecisionPoint } from '#lib/pick-ban/index.ts';
+	import { PickBanContext } from '#lib/state/pick-ban.svelte.ts';
 	import { onMount } from 'svelte';
 	import { linear, sineIn } from 'svelte/easing';
 	import { Tween } from 'svelte/motion';

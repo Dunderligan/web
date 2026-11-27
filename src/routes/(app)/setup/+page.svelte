@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { goto, invalidateAll } from '$app/navigation';
+	import { goto, refreshAll } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import Meta from '$lib/components/structure/Meta.svelte';
-	import PageSection from '$lib/components/structure/PageSection.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
-	import InputField from '$lib/components/form/InputField.svelte';
-	import Label from '$lib/components/form/Label.svelte';
-	import { createSuperAdmin } from '$lib/remote/auth.remote';
+	import Meta from '#lib/components/structure/Meta.svelte';
+	import PageSection from '#lib/components/structure/PageSection.svelte';
+	import Button from '#lib/components/ui/Button.svelte';
+	import InputField from '#lib/components/form/InputField.svelte';
+	import Label from '#lib/components/form/Label.svelte';
+	import { createSuperAdmin } from '#lib/remote/auth.remote.ts';
 
 	let battletag = $state('');
 	let loading = $state(false);
@@ -15,8 +15,8 @@
 		loading = true;
 		try {
 			await createSuperAdmin({ battletag });
-			await invalidateAll();
-			await goto(resolve('/admin'));
+			await refreshAll();
+			await goto(resolve('admin'));
 		} finally {
 			loading = false;
 		}

@@ -7,16 +7,16 @@
 		matchScore,
 		matchNote,
 		resolvedMatchToLogical
-	} from '$lib/match';
-	import { MatchSlot, MatchState, type ResolvedMatchWithContext } from '$lib/types';
+	} from '#lib/match.ts';
+	import { MatchSlot, MatchState, type ResolvedMatchWithContext } from '#lib/types.ts';
 	import Icon from '../ui/Icon.svelte';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import MatchInfoRow from './MatchInfoRow.svelte';
 	import MatchNote from '../ui/Note.svelte';
-	import { shortenTeamName } from '$lib/util';
+	import { shortenTeamName } from '#lib/util.ts';
 	import { resolve } from '$app/paths';
 	import Button from '../ui/Button.svelte';
-	import { PreferencesState } from '$lib/state/preferences.svelte';
+	import { PreferencesState } from '#lib/state/preferences.svelte.ts';
 	import type { ClassValue } from 'svelte/elements';
 
 	type Props = {
@@ -135,7 +135,7 @@
 		class={[classProp, 'flex items-center gap-2 overflow-hidden text-gray-700 dark:text-gray-300']}
 	>
 		{#if roster}
-			{@const href = resolve(`/lag/${roster.slug}/${seasonSlug}`)}
+			{@const href = resolve(`lag/${roster.slug}/${seasonSlug}`)}
 
 			<RosterLogo {href} id={roster.id} size={size === 'xs' ? 'sm' : 'md'} />
 

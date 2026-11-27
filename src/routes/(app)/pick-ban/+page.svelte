@@ -1,12 +1,12 @@
 <script lang="ts">
-	import AdminLink from '$lib/components/admin/AdminLink.svelte';
-	import RoomCard from '$lib/components/pick-ban/RoomCard.svelte';
-	import Meta from '$lib/components/structure/Meta.svelte';
-	import PageHeader from '$lib/components/structure/PageHeader.svelte';
-	import PageSection from '$lib/components/structure/PageSection.svelte';
-	import Note from '$lib/components/ui/Note.svelte';
-	import Placeholder from '$lib/components/ui/Placeholder.svelte';
-	import Subheading from '$lib/components/ui/Subheading.svelte';
+	import AdminLink from '#lib/components/admin/AdminLink.svelte';
+	import RoomCard from '#lib/components/pick-ban/RoomCard.svelte';
+	import Meta from '#lib/components/structure/Meta.svelte';
+	import PageHeader from '#lib/components/structure/PageHeader.svelte';
+	import PageSection from '#lib/components/structure/PageSection.svelte';
+	import Note from '#lib/components/ui/Note.svelte';
+	import Placeholder from '#lib/components/ui/Placeholder.svelte';
+	import Subheading from '#lib/components/ui/Subheading.svelte';
 
 	let { data } = $props();
 </script>

@@ -1,26 +1,26 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
-	import { isModerator } from '$lib/auth-role.js';
-	import AdminCard from '$lib/components/admin/AdminCard.svelte';
-	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
-	import AdminSocials from '$lib/components/admin/AdminSocials.svelte';
-	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
-	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
-	import SaveToast from '$lib/components/admin/SaveToast.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
-	import HeroPortrait from '$lib/components/ui/HeroPortrait.svelte';
-	import InputField from '$lib/components/form/InputField.svelte';
-	import Label from '$lib/components/form/Label.svelte';
-	import Notice from '$lib/components/ui/Notice.svelte';
-	import OverwatchProfile from '$lib/components/ui/OverwatchProfile.svelte';
-	import Select from '$lib/components/form/Select.svelte';
-	import { editPlayer, linkPlayerAlias, setProfileSlug } from '$lib/remote/player.remote.js';
-	import TextArea from '$lib/components/form/TextArea.svelte';
-	import { SaveContext } from '$lib/state/save.svelte';
-	import type { GameProfile } from '$lib/types.js';
-	import { capitalize, formatDateTime } from '$lib/util.js';
-	import Note from '$lib/components/ui/Note.svelte';
-	import Link from '$lib/components/ui/Link.svelte';
+	import { isModerator } from '#lib/auth-role.js';
+	import AdminCard from '#lib/components/admin/AdminCard.svelte';
+	import AdminEmptyNotice from '#lib/components/admin/AdminEmptyNotice.svelte';
+	import AdminSocials from '#lib/components/admin/AdminSocials.svelte';
+	import Breadcrumbs from '#lib/components/admin/Breadcrumbs.svelte';
+	import CreateDialog from '#lib/components/admin/CreateDialog.svelte';
+	import SaveToast from '#lib/components/admin/SaveToast.svelte';
+	import Button from '#lib/components/ui/Button.svelte';
+	import HeroPortrait from '#lib/components/ui/HeroPortrait.svelte';
+	import InputField from '#lib/components/form/InputField.svelte';
+	import Label from '#lib/components/form/Label.svelte';
+	import Notice from '#lib/components/ui/Notice.svelte';
+	import OverwatchProfile from '#lib/components/ui/OverwatchProfile.svelte';
+	import Select from '#lib/components/form/Select.svelte';
+	import { editPlayer, linkPlayerAlias, setProfileSlug } from '#lib/remote/player.remote.js';
+	import TextArea from '#lib/components/form/TextArea.svelte';
+	import { SaveContext } from '#lib/state/save.svelte.ts';
+	import type { GameProfile } from '#lib/types.js';
+	import { capitalize, formatDateTime } from '#lib/util.js';
+	import Note from '#lib/components/ui/Note.svelte';
+	import Link from '#lib/components/ui/Link.svelte';
 	import { resolve } from '$app/paths';
 
 	let { data } = $props();
@@ -34,7 +34,7 @@
 
 	const slug = $derived(player.battletag.replace('#', '-'));
 
-	SaveContext.set(new SaveContext({ save, href: () => resolve(`/spelare/${slug}`) }));
+	SaveContext.set(new SaveContext({ save, href: () => resolve(`spelare/${slug}`) }));
 
 	const saveCtx = SaveContext.get();
 
@@ -111,9 +111,9 @@
 
 <AdminCard title="Alias">
 	{#if player.aliases.length === 0}
-		<AdminEmptyNotice oncreateclick={() => (createAliasOpen = true)}>
-			Denna spelare har inga alias.
-		</AdminEmptyNotice>
+		<AdminEmptyNotice oncreateclick={() => (createAliasOpen = true)}
+			>Denna spelare har inga alias.</AdminEmptyNotice
+		>
 	{:else}
 		<div class="space-y-1.5 py-1">
 			{#each player.aliases as alias, i (i)}
@@ -141,18 +141,15 @@
 
 <AdminCard title="Signaturhjältar">
 	{#if player.signatureHeroes.length === 0}
-		<AdminEmptyNotice oncreateclick={() => (addSignatureHeroOpen = true)}>
-			Denna spelare har inga signaturhjältar.
-		</AdminEmptyNotice>
+		<AdminEmptyNotice oncreateclick={() => (addSignatureHeroOpen = true)}
+			>Denna spelare har inga signaturhjältar.</AdminEmptyNotice
+		>
 	{:else}
 		<div class="space-y-1.5 py-1">
 			{#each player.signatureHeroes as { hero }, i (hero.id)}
 				<div class="flex items-center gap-2">
 					<HeroPortrait {hero} size="sm" />
-
-					<div class="font-medium capitalize">
-						{hero.name}
-					</div>
+					<div class="font-medium capitalize">{hero.name}</div>
 
 					<Button
 						icon="ph:trash"

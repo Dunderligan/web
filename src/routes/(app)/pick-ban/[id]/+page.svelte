@@ -1,22 +1,22 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { isAdmin } from '$lib/auth-role.js';
-	import ConfirmDialog from '$lib/components/admin/ConfirmDialog.svelte';
-	import PickBan from '$lib/components/pick-ban/PickBan.svelte';
-	import PickBanInfoDialog from '$lib/components/pick-ban/PickBanInfoDialog.svelte';
-	import Meta from '$lib/components/structure/Meta.svelte';
-	import PageSection from '$lib/components/structure/PageSection.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
-	import Chip from '$lib/components/ui/Chip.svelte';
-	import Dropdown from '$lib/components/ui/Dropdown.svelte';
-	import { matchDivision } from '$lib/match.js';
-	import { RoomStatus } from '$lib/pick-ban/types.js';
-	import { isClosed } from '$lib/pick-ban/util.js';
-	import { cancelRoom, deleteRoom } from '$lib/remote/pick-ban-admin.remote.js';
-	import { ConfirmContext } from '$lib/state/confirm.svelte.js';
-	import { PickBanContext } from '$lib/state/pick-ban.svelte.js';
-	import type { ChipColor, DropdownItem } from '$lib/types.js';
+	import { isAdmin } from '#lib/auth-role.js';
+	import ConfirmDialog from '#lib/components/admin/ConfirmDialog.svelte';
+	import PickBan from '#lib/components/pick-ban/PickBan.svelte';
+	import PickBanInfoDialog from '#lib/components/pick-ban/PickBanInfoDialog.svelte';
+	import Meta from '#lib/components/structure/Meta.svelte';
+	import PageSection from '#lib/components/structure/PageSection.svelte';
+	import Button from '#lib/components/ui/Button.svelte';
+	import Chip from '#lib/components/ui/Chip.svelte';
+	import Dropdown from '#lib/components/ui/Dropdown.svelte';
+	import { matchDivision } from '#lib/match.js';
+	import { RoomStatus } from '#lib/pick-ban/types.js';
+	import { isClosed } from '#lib/pick-ban/util.js';
+	import { cancelRoom, deleteRoom } from '#lib/remote/pick-ban-admin.remote.js';
+	import { ConfirmContext } from '#lib/state/confirm.svelte.js';
+	import { PickBanContext } from '#lib/state/pick-ban.svelte.js';
+	import type { ChipColor, DropdownItem } from '#lib/types.js';
 	import { onMount } from 'svelte';
 
 	let { data } = $props();
@@ -101,7 +101,7 @@
 			destructive: true,
 			action: async () => {
 				await deleteRoom({ roomId: context.roomId });
-				await goto(resolve('/pick-ban'));
+				await goto(resolve('pick-ban'));
 			}
 		});
 	}

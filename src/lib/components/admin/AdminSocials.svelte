@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { SaveContext } from '$lib/state/save.svelte';
-	import { SocialPlatform, type Social } from '$lib/types';
-	import { formatSocialPlatform, socialMediaPlatformDomains } from '$lib/util';
+	import { SaveContext } from '#lib/state/save.svelte.ts';
+	import { SocialPlatform, type Social } from '#lib/types.ts';
+	import { formatSocialPlatform, socialMediaPlatformDomains } from '#lib/util.ts';
 	import Button from '../ui/Button.svelte';
 	import Icon from '../ui/Icon.svelte';
 	import InputField from '../form/InputField.svelte';

@@ -3,7 +3,7 @@
 	import PickBanHeader from './PickBanHeader.svelte';
 	import PickBanTimer from './PickBanTimer.svelte';
 	import PickBanMembersList from './PickBanMembersList.svelte';
-	import { MatchSlot } from '$lib/types';
+	import { MatchSlot } from '#lib/types.ts';
 	import PickBanHistory from './PickBanHistory.svelte';
 	import PickBanState from './PickBanState.svelte';
 

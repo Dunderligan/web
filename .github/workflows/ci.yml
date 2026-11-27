@@ -30,8 +30,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # `svelte-kit sync` types the `$env/static/*` imports from the env vars it can see,
-      # so the example file needs to be present for `pnpm check` to resolve them.
+      # The app validates its declared environment variables (see `src/env.ts`) during
+      # `svelte-kit sync` and the build, so the example file needs to be present.
       - name: Set up environment variables
         run: cp .env.example .env
 

@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { matchRoster, matchSlots } from '$lib/match';
-	import { PickBanContext } from '$lib/state/pick-ban.svelte';
-	import { MatchSlot } from '$lib/types';
+	import { matchRoster, matchSlots } from '#lib/match.ts';
+	import { PickBanContext } from '#lib/state/pick-ban.svelte.ts';
+	import { MatchSlot } from '#lib/types.ts';
 	import Button from '../ui/Button.svelte';
 	import Icon from '../ui/Icon.svelte';
 	import Subheading from '../ui/Subheading.svelte';

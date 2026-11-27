@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import logo from '$lib/assets/images/logo.webp';
+	import logo from '#lib/assets/images/logo.webp';
 
 	type Props = {
 		title?: string;
@@ -31,6 +31,7 @@
 
 	<meta property="og:title" content={title ?? 'Dunderligan'} />
 	<meta property="og:description" content={description} />
+	<meta property="og:image" content={ogImage} />
 	<meta property="og:image:url" content={ogImage} />
 	{#if ogImageAlt}
 		<meta property="og:image:alt" content={ogImageAlt} />

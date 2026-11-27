@@ -1,5 +1,5 @@
-import { db } from '$lib/server/db';
-import { entityQuery } from '$lib/server/db/helpers.js';
+import { db } from '#lib/server/db.ts';
+import { entityQuery } from '#lib/server/db/helpers.js';
 import { error } from '@sveltejs/kit';
 
 export const load = async ({ params }) => {

@@ -1,12 +1,12 @@
 import { command } from '$app/server';
-import { matchSchema } from '$lib/schemas';
-import { db, schema } from '$lib/server/db';
-import { toSlug } from '$lib/util';
+import { matchSchema } from '#lib/schemas.ts';
+import { db, schema } from '#lib/server/db.ts';
+import { toSlug } from '#lib/util.ts';
 import { eq } from 'drizzle-orm';
 import z from 'zod';
 import { roleGuard } from './auth.remote';
-import { AuthRole } from '$lib/auth-role';
-import type { Transaction } from '$lib/server/db/helpers';
+import { AuthRole } from '#lib/auth-role.ts';
+import type { Transaction } from '#lib/server/db/helpers.ts';
 
 export const createGroup = command(
 	z.object({

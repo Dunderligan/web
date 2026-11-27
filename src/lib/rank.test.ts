@@ -6,8 +6,8 @@ import {
 	getRank,
 	getTierLabel,
 	isLegacyRank
-} from '$lib/rank';
-import { Rank, type AnyRank } from '$lib/types';
+} from '#lib/rank.ts';
+import { Rank, type AnyRank } from '#lib/types.ts';
 
 /** `isLegacyRank` only inspects shape, so loose inputs are fine in tests. */
 const legacy = (value: unknown) => isLegacyRank(value as AnyRank);

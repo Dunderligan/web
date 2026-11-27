@@ -1,17 +1,17 @@
 <script lang="ts">
-	import Checkbox from '$lib/components/form/Checkbox.svelte';
-	import Table from '$lib/components/table/Table.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
-	import Tabs from '$lib/components/ui/Tabs.svelte';
+	import Checkbox from '#lib/components/form/Checkbox.svelte';
+	import Table from '#lib/components/table/Table.svelte';
+	import Button from '#lib/components/ui/Button.svelte';
+	import Tabs from '#lib/components/ui/Tabs.svelte';
 	import type {
 		GamemodeCatalogEntry,
 		MapCatalogEntry,
 		PickBanConfigRow,
 		ResolvedPickBanConfig
-	} from '$lib/pick-ban';
-	import { SaveContext } from '$lib/state/save.svelte';
-	import type { TabItem } from '$lib/types';
-	import { gamemodeIcon } from '$lib/util';
+	} from '#lib/pick-ban/index.ts';
+	import { SaveContext } from '#lib/state/save.svelte.ts';
+	import type { TabItem } from '#lib/types.ts';
+	import { gamemodeIcon } from '#lib/util.ts';
 
 	type Props = {
 		config: PickBanConfigRow;

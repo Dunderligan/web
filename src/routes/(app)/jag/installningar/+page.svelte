@@ -1,24 +1,24 @@
 <script lang="ts">
-	import { goto, invalidateAll } from '$app/navigation';
+	import { goto, refreshAll } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { formatRole } from '$lib/auth-role.js';
-	import AdminCard from '$lib/components/admin/AdminCard.svelte';
-	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
-	import ConfirmDialog from '$lib/components/admin/ConfirmDialog.svelte';
-	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
-	import PageSection from '$lib/components/structure/PageSection.svelte';
-	import Table from '$lib/components/table/Table.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
-	import Dialog from '$lib/components/ui/Dialog.svelte';
-	import InputField from '$lib/components/form/InputField.svelte';
-	import Label from '$lib/components/form/Label.svelte';
-	import { deleteAccount } from '$lib/remote/account.remote';
-	import { createApiKey, deleteApiKey } from '$lib/remote/auth.remote.js';
-	import { ConfirmContext } from '$lib/state/confirm.svelte';
-	import { formatDate, formatDateTime } from '$lib/util';
-	import SubmissionsTable from '$lib/components/table/SubmissionsTable.svelte';
-	import Meta from '$lib/components/structure/Meta.svelte';
+	import { formatRole } from '#lib/auth-role.js';
+	import AdminCard from '#lib/components/admin/AdminCard.svelte';
+	import AdminEmptyNotice from '#lib/components/admin/AdminEmptyNotice.svelte';
+	import ConfirmDialog from '#lib/components/admin/ConfirmDialog.svelte';
+	import CreateDialog from '#lib/components/admin/CreateDialog.svelte';
+	import PageSection from '#lib/components/structure/PageSection.svelte';
+	import Table from '#lib/components/table/Table.svelte';
+	import Button from '#lib/components/ui/Button.svelte';
+	import Dialog from '#lib/components/ui/Dialog.svelte';
+	import InputField from '#lib/components/form/InputField.svelte';
+	import Label from '#lib/components/form/Label.svelte';
+	import { deleteAccount } from '#lib/remote/account.remote.ts';
+	import { createApiKey, deleteApiKey } from '#lib/remote/auth.remote.js';
+	import { ConfirmContext } from '#lib/state/confirm.svelte.ts';
+	import { formatDate, formatDateTime } from '#lib/util.ts';
+	import SubmissionsTable from '#lib/components/table/SubmissionsTable.svelte';
+	import Meta from '#lib/components/structure/Meta.svelte';
 
 	let { data } = $props();
 
@@ -36,7 +36,7 @@
 			action: async () => {
 				await deleteAccount();
 				await goto(resolve('/'));
-				await invalidateAll();
+				await refreshAll();
 			}
 		});
 	}

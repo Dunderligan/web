@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { socials } from '$lib/socials';
+	import { socials } from '#lib/socials.ts';
 	import Link from './Link.svelte';
 	import type { ComponentProps } from 'svelte';
 

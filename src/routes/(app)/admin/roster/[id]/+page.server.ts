@@ -1,12 +1,12 @@
-import { db } from '$lib/server/db';
+import { db } from '#lib/server/db.ts';
 import {
 	entityQuery,
 	memberQuery,
 	nestedGroupQuery,
 	retrievePlayerCheckins
-} from '$lib/server/db/helpers';
-import type { PlayerCheckin } from '$lib/types';
-import { flattenGroup } from '$lib/util';
+} from '#lib/server/db/helpers.ts';
+import type { PlayerCheckin } from '#lib/types.ts';
+import { flattenGroup } from '#lib/util.ts';
 import { error } from '@sveltejs/kit';
 
 export const load = async ({ params }) => {

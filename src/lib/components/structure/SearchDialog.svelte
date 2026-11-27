@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { RemoteQuery } from '@sveltejs/kit';
+	import type { RemoteQuery } from '$app/server';
 	import Dialog from '../ui/Dialog.svelte';
 	import InputField from '../form/InputField.svelte';
-	import type { SearchItem } from '$lib/types';
+	import type { SearchItem } from '#lib/types.ts';
 	import SearchItemLink from '../admin/SearchItemLink.svelte';
 	import Placeholder from '../ui/Placeholder.svelte';
-	import { search } from '$lib/remote/search.remote';
+	import { search } from '#lib/remote/search.remote.ts';
 	import { goto } from '$app/navigation';
 
 	type Props = {

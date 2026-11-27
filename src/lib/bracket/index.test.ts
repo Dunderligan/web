@@ -4,9 +4,15 @@ import {
 	createBracket,
 	minBracketRounds,
 	type BracketOptions
-} from '$lib/bracket';
-import { BracketFormat, BracketSide, MatchSlot, MatchState, type LogicalMatch } from '$lib/types';
-import { logicalMatch } from '$lib/test/fixtures';
+} from '#lib/bracket/index.ts';
+import {
+	BracketFormat,
+	BracketSide,
+	MatchSlot,
+	MatchState,
+	type LogicalMatch
+} from '#lib/types.ts';
+import { logicalMatch } from '#lib/test/fixtures.ts';
 
 function makeRosters(count: number) {
 	return Array.from({ length: count }, (_, i) => ({ id: `r${i + 1}` }));

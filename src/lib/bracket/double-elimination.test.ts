@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { buildBracketStructure, createBracket, propagateBracket } from '$lib/bracket';
-import { getBracketEdges } from '$lib/bracket/graph';
-import { BracketFormat, MatchSlot, MatchState, type UnresolvedMatchWithOrder } from '$lib/types';
+import { buildBracketStructure, createBracket, propagateBracket } from '#lib/bracket/index.ts';
+import { getBracketEdges } from '#lib/bracket/graph.ts';
+import { BracketFormat, MatchSlot, MatchState, type UnresolvedMatchWithOrder } from '#lib/types.ts';
 
 function makeRosters(count: number) {
 	return Array.from({ length: count }, (_, i) => ({ id: `r${i + 1}` }));

@@ -1,4 +1,4 @@
-import type { RoomSnapshot } from '$lib/pick-ban';
+import type { RoomSnapshot } from '#lib/pick-ban/index.ts';
 
 /** A single subscriber to a room's snapshot stream. */
 export type RoomEventSubscription = AsyncIterableIterator<RoomSnapshot> & {

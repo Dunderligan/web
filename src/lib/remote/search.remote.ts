@@ -1,12 +1,12 @@
 import { getRequestEvent, query } from '$app/server';
-import cdn from '$lib/cdn';
-import { db } from '$lib/server/db';
-import { entityQuery, nestedGroupQuery } from '$lib/server/db/helpers';
-import { hiddenGroupFilter, hiddenSeasonFilter } from '$lib/server/db/hidden';
-import type { User } from '$lib/server/db/schema/auth';
-import overwatch from '$lib/server/overwatch';
-import type { SearchItem } from '$lib/types';
-import { compareNullableStrings, flattenGroup } from '$lib/util';
+import cdn from '#lib/cdn.ts';
+import { db } from '#lib/server/db.ts';
+import { entityQuery, nestedGroupQuery } from '#lib/server/db/helpers.ts';
+import { hiddenGroupFilter, hiddenSeasonFilter } from '#lib/server/db/hidden.ts';
+import type { User } from '#lib/server/db/schema/auth.ts';
+import overwatch from '#lib/server/overwatch.ts';
+import type { SearchItem } from '#lib/types.ts';
+import { compareNullableStrings, flattenGroup } from '#lib/util.ts';
 import z from 'zod';
 
 const SEARCH_LIMIT = 10;

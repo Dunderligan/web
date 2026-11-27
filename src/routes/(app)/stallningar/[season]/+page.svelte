@@ -1,23 +1,23 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import Button from '$lib/components/ui/Button.svelte';
-	import PageHeader from '$lib/components/structure/PageHeader.svelte';
-	import PageSection from '$lib/components/structure/PageSection.svelte';
-	import StandingsTable from '$lib/components/table/StandingsTable.svelte';
-	import Tabs from '$lib/components/ui/Tabs.svelte';
-	import { getSeasonState, formatDate } from '$lib/util';
-	import Bracket from '$lib/components/match/Bracket.svelte';
-	import Subheading from '$lib/components/ui/Subheading.svelte';
-	import type { UnresolvedMatch, Roster, ResolvedMatchWithSeeds, TabItem } from '$lib/types';
-	import SeasonStateChip from '$lib/components/ui/SeasonStateChip.svelte';
-	import MatchList from '$lib/components/match/MatchList.svelte';
+	import Button from '#lib/components/ui/Button.svelte';
+	import PageHeader from '#lib/components/structure/PageHeader.svelte';
+	import PageSection from '#lib/components/structure/PageSection.svelte';
+	import StandingsTable from '#lib/components/table/StandingsTable.svelte';
+	import Tabs from '#lib/components/ui/Tabs.svelte';
+	import { getSeasonState, formatDate } from '#lib/util.ts';
+	import Bracket from '#lib/components/match/Bracket.svelte';
+	import Subheading from '#lib/components/ui/Subheading.svelte';
+	import type { UnresolvedMatch, Roster, ResolvedMatchWithSeeds, TabItem } from '#lib/types.ts';
+	import SeasonStateChip from '#lib/components/ui/SeasonStateChip.svelte';
+	import MatchList from '#lib/components/match/MatchList.svelte';
 	import { goto } from '$app/navigation';
-	import Meta from '$lib/components/structure/Meta.svelte';
-	import { isModerator } from '$lib/auth-role.js';
-	import Chip from '$lib/components/ui/Chip.svelte';
+	import Meta from '#lib/components/structure/Meta.svelte';
+	import { isModerator } from '#lib/auth-role.js';
+	import Chip from '#lib/components/ui/Chip.svelte';
 	import { resolve } from '$app/paths';
-	import Checkbox from '$lib/components/form/Checkbox.svelte';
-	import BracketContainer from '$lib/components/match/BracketContainer.svelte';
+	import Checkbox from '#lib/components/form/Checkbox.svelte';
+	import BracketContainer from '#lib/components/match/BracketContainer.svelte';
 
 	let { data } = $props();
 
@@ -59,12 +59,12 @@
 		}
 
 		if (mode === 'group' && !hasGroupStage) {
-			goto(resolve(`/stallningar/${season.slug}?div=${division.slug}&visa=slutspel`), {
-				replaceState: true
+			goto(resolve(`stallningar/${season.slug}?div=${division.slug}&visa=slutspel`), {
+				replace: true
 			});
 		} else if (mode === 'bracket' && !hasPlayoffs) {
-			goto(resolve(`/stallningar/${season.slug}?div=${division.slug}&visa=gruppspel`), {
-				replaceState: true
+			goto(resolve(`stallningar/${season.slug}?div=${division.slug}&visa=gruppspel`), {
+				replace: true
 			});
 		}
 	});

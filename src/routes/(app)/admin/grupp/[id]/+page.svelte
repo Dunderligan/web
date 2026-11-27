@@ -1,25 +1,25 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import AdminCard from '$lib/components/admin/AdminCard.svelte';
-	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
-	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
-	import EditableMatch from '$lib/components/match/EditableMatch.svelte';
-	import EditMatchDialog from '$lib/components/match/EditMatchDialog.svelte';
-	import InputField from '$lib/components/form/InputField.svelte';
-	import Label from '$lib/components/form/Label.svelte';
-	import SaveToast from '$lib/components/admin/SaveToast.svelte';
-	import { ConfirmContext } from '$lib/state/confirm.svelte';
-	import { RosterContext } from '$lib/state/rosters.svelte';
-	import { SaveContext } from '$lib/state/save.svelte';
-	import CreateRosterDialog from '$lib/components/admin/CreateRosterDialog.svelte';
-	import { deleteGroup, updateGroup } from '$lib/remote/group.remote';
-	import { createRoster } from '$lib/remote/roster.remote';
-	import { createGroupMatch, isInMatch } from '$lib/match.js';
-	import RosterSelect from '$lib/components/admin/RosterSelect.svelte';
-	import { isAdmin } from '$lib/auth-role.js';
-	import AdminRosterList from '$lib/components/admin/AdminRosterList.svelte';
+	import AdminCard from '#lib/components/admin/AdminCard.svelte';
+	import AdminEmptyNotice from '#lib/components/admin/AdminEmptyNotice.svelte';
+	import Breadcrumbs from '#lib/components/admin/Breadcrumbs.svelte';
+	import Button from '#lib/components/ui/Button.svelte';
+	import EditableMatch from '#lib/components/match/EditableMatch.svelte';
+	import EditMatchDialog from '#lib/components/match/EditMatchDialog.svelte';
+	import InputField from '#lib/components/form/InputField.svelte';
+	import Label from '#lib/components/form/Label.svelte';
+	import SaveToast from '#lib/components/admin/SaveToast.svelte';
+	import { ConfirmContext } from '#lib/state/confirm.svelte.ts';
+	import { RosterContext } from '#lib/state/rosters.svelte.ts';
+	import { SaveContext } from '#lib/state/save.svelte.ts';
+	import CreateRosterDialog from '#lib/components/admin/CreateRosterDialog.svelte';
+	import { deleteGroup, updateGroup } from '#lib/remote/group.remote.ts';
+	import { createRoster } from '#lib/remote/roster.remote.ts';
+	import { createGroupMatch, isInMatch } from '#lib/match.js';
+	import RosterSelect from '#lib/components/admin/RosterSelect.svelte';
+	import { isAdmin } from '#lib/auth-role.js';
+	import AdminRosterList from '#lib/components/admin/AdminRosterList.svelte';
 
 	const { data } = $props();
 
@@ -79,23 +79,16 @@
 			description: `Är du säker på att du vill radera ${group.name} i ${group.division.name}, ${group.division.season.name} <b>tillsammans med ${group.rosters.length} rosters</b>?`,
 			destructive: true,
 			action: async () => {
-				await deleteGroup({
-					id: group.id
-				});
-
-				await goto(resolve(`/admin/division/${group.division.id}`));
+				await deleteGroup({ id: group.id });
+				await goto(resolve(`admin/division/${group.division.id}`));
 			}
 		});
 	}
 
 	async function submitNewRoster(name: string, teamId?: string) {
-		const { roster } = await createRoster({
-			groupId: group.id,
-			name: name,
-			teamId
-		});
+		const { roster } = await createRoster({ groupId: group.id, name, teamId });
 
-		await goto(resolve(`/admin/roster/${roster.id}`));
+		await goto(resolve(`admin/roster/${roster.id}`));
 	}
 
 	function addMatchAndEdit() {

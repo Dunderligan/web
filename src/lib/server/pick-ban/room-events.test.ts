@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { RoomStatus, type RoomSnapshot } from '$lib/pick-ban';
+import { RoomStatus, type RoomSnapshot } from '#lib/pick-ban/index.ts';
 import { RoomEventBus } from './room-events';
 
 function snapshot(version = 1): RoomSnapshot {

@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { MatchSlot, type ListedRoom } from '$lib/types';
+	import { MatchSlot, type ListedRoom } from '#lib/types.ts';
 	import type { ClassValue } from 'svelte/elements';
 	import Icon from '../ui/Icon.svelte';
 	import Date from '../ui/Date.svelte';
-	import { matchRoster } from '$lib/match';
+	import { matchRoster } from '#lib/match.ts';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import StatusIndicator from '../ui/StatusIndicator.svelte';
-	import { RoomStatus } from '$lib/pick-ban';
+	import { RoomStatus } from '#lib/pick-ban/index.ts';
 
 	type Props = {
 		room: ListedRoom;
@@ -33,7 +33,7 @@
 		classProp,
 		'flex rounded-lg bg-gray-100 p-4 font-medium hover:bg-gray-200 hover:underline dark:bg-gray-900 dark:hover:bg-gray-800'
 	]}
-	href={resolve(`/pick-ban/${room.id}`)}
+	href={resolve(`pick-ban/${room.id}`)}
 >
 	<div class="grow space-y-1">
 		{@render slot(MatchSlot.A)}

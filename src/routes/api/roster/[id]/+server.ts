@@ -1,6 +1,6 @@
-import { db } from '$lib/server/db';
-import { entityQuery, memberQuery, nestedGroupQuery } from '$lib/server/db/helpers';
-import { json, error } from '@sveltejs/kit';
+import { db } from '#lib/server/db.ts';
+import { entityQuery, memberQuery, nestedGroupQuery } from '#lib/server/db/helpers.ts';
+import { error } from '@sveltejs/kit';
 
 export const GET = async ({ params }) => {
 	const roster = await db.query.roster.findFirst({
@@ -23,5 +23,5 @@ export const GET = async ({ params }) => {
 		throw error(404);
 	}
 
-	return json(roster);
+	return Response.json(roster);
 };

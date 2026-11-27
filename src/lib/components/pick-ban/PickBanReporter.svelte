@@ -1,15 +1,15 @@
 <script lang="ts">
-	import { PickBanContext } from '$lib/state/pick-ban.svelte';
+	import { PickBanContext } from '#lib/state/pick-ban.svelte.ts';
 	import type { ClassValue } from 'svelte/elements';
 	import Subheading from '../ui/Subheading.svelte';
-	import { matchRoster, matchSlots } from '$lib/match';
+	import { matchRoster, matchSlots } from '#lib/match.ts';
 	import RosterLogo from '../ui/RosterLogo.svelte';
 	import Button from '../ui/Button.svelte';
-	import { MapOutcome, RoomMapReportState } from '$lib/pick-ban';
-	import { slotToOutcome } from '$lib/pick-ban/util';
+	import { MapOutcome, RoomMapReportState } from '#lib/pick-ban/index.ts';
+	import { slotToOutcome } from '#lib/pick-ban/util.ts';
 	import Waiting from './Waiting.svelte';
 	import { page } from '$app/state';
-	import { isAdmin } from '$lib/auth-role';
+	import { isAdmin } from '#lib/auth-role.ts';
 
 	type Props = {
 		class?: ClassValue;

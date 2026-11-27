@@ -1,10 +1,10 @@
-import { compareMatchDates } from '$lib/match';
-import { db } from '$lib/server/db';
-import { fullMatchColumns, divisionOrder, fullGroupQuery } from '$lib/server/db/helpers';
-import { hiddenSeasonFilter } from '$lib/server/db/hidden.js';
-import { generateDivisionStandings } from '$lib/server/standings';
-import { MatchState } from '$lib/types';
-import { aggregateGroups } from '$lib/util';
+import { compareMatchDates } from '#lib/match.ts';
+import { db } from '#lib/server/db.ts';
+import { fullMatchColumns, divisionOrder, fullGroupQuery } from '#lib/server/db/helpers.ts';
+import { hiddenSeasonFilter } from '#lib/server/db/hidden.js';
+import { generateDivisionStandings } from '#lib/server/standings.ts';
+import { MatchState } from '#lib/types.ts';
+import { aggregateGroups } from '#lib/util.ts';
 import { error } from '@sveltejs/kit';
 
 export const load = async ({ params, locals }) => {

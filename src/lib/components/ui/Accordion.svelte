@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Accordion, type WithoutChildrenOrChild } from 'bits-ui';
-	import AccordionItem from '$lib/components/ui/AccordionItem.svelte';
+	import AccordionItem from '#lib/components/ui/AccordionItem.svelte';
 
 	type Item = {
 		value?: string;

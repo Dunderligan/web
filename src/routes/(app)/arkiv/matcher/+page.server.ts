@@ -1,7 +1,7 @@
-import { queryMatches } from '$lib/remote/match.remote.js';
-import { db } from '$lib/server/db';
-import { entityQuery, nestedGroupQuery } from '$lib/server/db/helpers.js';
-import { parseMatchQueryParams } from '$lib/util';
+import { queryMatches } from '#lib/remote/match.remote.js';
+import { db } from '#lib/server/db.ts';
+import { entityQuery, nestedGroupQuery } from '#lib/server/db/helpers.js';
+import { parseMatchQueryParams } from '#lib/util.ts';
 
 export const load = async ({ url }) => {
 	const params = parseMatchQueryParams(url.searchParams);

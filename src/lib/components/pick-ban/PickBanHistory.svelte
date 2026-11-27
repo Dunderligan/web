@@ -35,8 +35,8 @@
 		RoomStatus,
 		type RecordedDecision,
 		type RoomMapState
-	} from '$lib/pick-ban';
-	import { PickBanContext } from '$lib/state/pick-ban.svelte';
+	} from '#lib/pick-ban/index.ts';
+	import { PickBanContext } from '#lib/state/pick-ban.svelte.ts';
 	import type { ClassValue } from 'svelte/elements';
 	import StatusIndicator from '../ui/StatusIndicator.svelte';
 	import PickBanHistoryEntry from './PickBanHistoryEntry.svelte';

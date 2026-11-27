@@ -1,27 +1,27 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import AdminCard from '$lib/components/admin/AdminCard.svelte';
-	import SaveToast from '$lib/components/admin/SaveToast.svelte';
-	import Rulebook from '$lib/components/form/Rulebook.svelte';
-	import Meta from '$lib/components/structure/Meta.svelte';
-	import PageHeader from '$lib/components/structure/PageHeader.svelte';
-	import PageSection from '$lib/components/structure/PageSection.svelte';
-	import EditableMembersTable from '$lib/components/table/EditableMembersTable.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
-	import Checkbox from '$lib/components/form/Checkbox.svelte';
-	import Dialog from '$lib/components/ui/Dialog.svelte';
-	import DiscordLink from '$lib/components/ui/DiscordLink.svelte';
-	import ImageUpload from '$lib/components/form/ImageUpload.svelte';
-	import InputField from '$lib/components/form/InputField.svelte';
-	import Label from '$lib/components/form/Label.svelte';
-	import Notice from '$lib/components/ui/Notice.svelte';
-	import { submitTeam } from '$lib/remote/registration.remote.js';
-	import { SaveContext } from '$lib/state/save.svelte.js';
-	import { Role, type TeamSubmissionData } from '$lib/types.js';
-	import { formatDate } from '$lib/util';
+	import AdminCard from '#lib/components/admin/AdminCard.svelte';
+	import SaveToast from '#lib/components/admin/SaveToast.svelte';
+	import Rulebook from '#lib/components/form/Rulebook.svelte';
+	import Meta from '#lib/components/structure/Meta.svelte';
+	import PageHeader from '#lib/components/structure/PageHeader.svelte';
+	import PageSection from '#lib/components/structure/PageSection.svelte';
+	import EditableMembersTable from '#lib/components/table/EditableMembersTable.svelte';
+	import Button from '#lib/components/ui/Button.svelte';
+	import Checkbox from '#lib/components/form/Checkbox.svelte';
+	import Dialog from '#lib/components/ui/Dialog.svelte';
+	import DiscordLink from '#lib/components/ui/DiscordLink.svelte';
+	import ImageUpload from '#lib/components/form/ImageUpload.svelte';
+	import InputField from '#lib/components/form/InputField.svelte';
+	import Label from '#lib/components/form/Label.svelte';
+	import Notice from '#lib/components/ui/Notice.svelte';
+	import { submitTeam } from '#lib/remote/registration.remote.js';
+	import { SaveContext } from '#lib/state/save.svelte.js';
+	import { Role, type TeamSubmissionData } from '#lib/types.js';
+	import { formatDate } from '#lib/util.ts';
 	import { onMount } from 'svelte';
 	import { get, set } from 'idb-keyval';
-	import Link from '$lib/components/ui/Link.svelte';
+	import Link from '#lib/components/ui/Link.svelte';
 
 	let { data } = $props();
 

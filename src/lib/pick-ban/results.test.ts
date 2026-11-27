@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { MatchSlot } from '$lib/types';
+import { MatchSlot } from '#lib/types.ts';
 import {
 	isMatchComplete,
 	matchProgress,

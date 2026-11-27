@@ -1,9 +1,9 @@
-import { env } from '$env/dynamic/private';
+import { REDIS_URL } from '$app/env/private';
 import { createClient } from 'redis';
 import { InMemoryPresenceStore, RedisPresenceStore, type PresenceStore } from './presence-store';
 
 async function connectRedis(): Promise<PresenceStore> {
-	const client = createClient({ url: env.REDIS_URL });
+	const client = createClient({ url: REDIS_URL });
 	client.on('error', (err) => console.error('Redis presence client error', err));
 	await client.connect();
 
@@ -12,7 +12,7 @@ async function connectRedis(): Promise<PresenceStore> {
 
 let store: PresenceStore;
 
-if (env.REDIS_URL) {
+if (REDIS_URL) {
 	store = await connectRedis();
 } else {
 	console.warn(

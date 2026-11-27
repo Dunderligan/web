@@ -1,9 +1,9 @@
 <script lang="ts">
 	import RosterLogo from '../ui/RosterLogo.svelte';
-	import { queryTeams } from '$lib/remote/team.remote';
+	import { queryTeams } from '#lib/remote/team.remote.ts';
 	import type { ComponentProps } from 'svelte';
 	import SearchSelect from '../form/SearchSelect.svelte';
-	import type { RosterWithGroup, SelectItem } from '$lib/types';
+	import type { RosterWithGroup, SelectItem } from '#lib/types.ts';
 
 	type Props = {
 		excludeSeasonId?: string;

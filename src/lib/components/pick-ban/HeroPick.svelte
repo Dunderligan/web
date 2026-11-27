@@ -4,13 +4,13 @@
 		HeroEligibility,
 		computeHeroEligibility,
 		type HeroCatalogEntry
-	} from '$lib/pick-ban';
-	import { PickBanContext } from '$lib/state/pick-ban.svelte';
+	} from '#lib/pick-ban/index.ts';
+	import { PickBanContext } from '#lib/state/pick-ban.svelte.ts';
 	import { SvelteMap } from 'svelte/reactivity';
 	import Tabs from '../ui/Tabs.svelte';
 	import type { ClassValue } from 'svelte/elements';
-	import { compare, formatRole, isHeroRole, roleIcon } from '$lib/util';
-	import { Role, type MatchSlot } from '$lib/types';
+	import { compare, formatRole, isHeroRole, roleIcon } from '#lib/util.ts';
+	import { Role, type MatchSlot } from '#lib/types.ts';
 	import HeroPortrait from '../ui/HeroPortrait.svelte';
 
 	type Props = {

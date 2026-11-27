@@ -1,14 +1,14 @@
 <script lang="ts">
-	import { flipSlot, matchRoster } from '$lib/match';
+	import { flipSlot, matchRoster } from '#lib/match.ts';
 	import {
 		type MapCatalogEntry,
 		type HeroCatalogEntry,
 		type GamemodeCatalogEntry,
 		type MapOutcome,
 		DecisionPoint
-	} from '$lib/pick-ban';
-	import { outcomeToSlot, pickedMapId, bannedHeroId } from '$lib/pick-ban/util';
-	import { PickBanContext } from '$lib/state/pick-ban.svelte';
+	} from '#lib/pick-ban/index.ts';
+	import { outcomeToSlot, pickedMapId, bannedHeroId } from '#lib/pick-ban/util.ts';
+	import { PickBanContext } from '#lib/state/pick-ban.svelte.ts';
 	import { fly } from 'svelte/transition';
 	import GamemodeBadge from '../ui/GamemodeBadge.svelte';
 	import HeroPortrait from '../ui/HeroPortrait.svelte';

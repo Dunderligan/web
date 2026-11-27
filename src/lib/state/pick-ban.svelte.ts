@@ -8,9 +8,9 @@ import {
 	type RoomPresenceMember,
 	type RoomSnapshot,
 	type RuleCatalog
-} from '$lib/pick-ban';
-import type { User } from '$lib/server/db/schema/auth';
-import { MatchSlot, type MemberWithProfile, type ResolvedMatchWithContext } from '$lib/types';
+} from '#lib/pick-ban/index.ts';
+import type { User } from '#lib/server/db/schema/auth.ts';
+import { MatchSlot, type MemberWithProfile, type ResolvedMatchWithContext } from '#lib/types.ts';
 import { SvelteDate } from 'svelte/reactivity';
 import { defineContext } from './util';
 import {
@@ -21,7 +21,7 @@ import {
 	setRoomReady,
 	submitReport,
 	subscribeToRoom
-} from '$lib/remote/pick-ban.remote';
+} from '#lib/remote/pick-ban.remote.ts';
 
 const { get, set } = defineContext<PickBanContext>('$_pick_ban_state');
 

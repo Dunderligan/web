@@ -1,20 +1,20 @@
 <script lang="ts">
 	import { goto, invalidate } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import AdminCard from '$lib/components/admin/AdminCard.svelte';
-	import AdminEmptyNotice from '$lib/components/admin/AdminEmptyNotice.svelte';
-	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
-	import CreateDialog from '$lib/components/admin/CreateDialog.svelte';
-	import PlayerSelect from '$lib/components/admin/PlayerSelect.svelte';
-	import SaveToast from '$lib/components/admin/SaveToast.svelte';
-	import Table from '$lib/components/table/Table.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
-	import Checkbox from '$lib/components/form/Checkbox.svelte';
-	import InputField from '$lib/components/form/InputField.svelte';
-	import Label from '$lib/components/form/Label.svelte';
-	import Select from '$lib/components/form/Select.svelte';
-	import { ConfirmContext } from '$lib/state/confirm.svelte';
-	import { SaveContext } from '$lib/state/save.svelte';
+	import AdminCard from '#lib/components/admin/AdminCard.svelte';
+	import AdminEmptyNotice from '#lib/components/admin/AdminEmptyNotice.svelte';
+	import Breadcrumbs from '#lib/components/admin/Breadcrumbs.svelte';
+	import CreateDialog from '#lib/components/admin/CreateDialog.svelte';
+	import PlayerSelect from '#lib/components/admin/PlayerSelect.svelte';
+	import SaveToast from '#lib/components/admin/SaveToast.svelte';
+	import Table from '#lib/components/table/Table.svelte';
+	import Button from '#lib/components/ui/Button.svelte';
+	import Checkbox from '#lib/components/form/Checkbox.svelte';
+	import InputField from '#lib/components/form/InputField.svelte';
+	import Label from '#lib/components/form/Label.svelte';
+	import Select from '#lib/components/form/Select.svelte';
+	import { ConfirmContext } from '#lib/state/confirm.svelte.ts';
+	import { SaveContext } from '#lib/state/save.svelte.ts';
 	import {
 		createPlayerAward,
 		deleteAwardType,
@@ -22,15 +22,15 @@
 		updateAwardType,
 		updatePlayerAward,
 		uploadAwardTypeImage
-	} from '$lib/remote/award.remote';
-	import type { PlayerAward } from '$lib/types.js';
+	} from '#lib/remote/award.remote.ts';
+	import type { PlayerAward } from '#lib/types.js';
 
 	type AwardRow = PlayerAward & {
 		player: { id: string; battletag: string };
 	};
-	import TextArea from '$lib/components/form/TextArea.svelte';
-	import ImageUpload from '$lib/components/form/ImageUpload.svelte';
-	import Link from '$lib/components/ui/Link.svelte';
+	import TextArea from '#lib/components/form/TextArea.svelte';
+	import ImageUpload from '#lib/components/form/ImageUpload.svelte';
+	import Link from '#lib/components/ui/Link.svelte';
 
 	let { data } = $props();
 
@@ -76,7 +76,7 @@
 			destructive: true,
 			action: async () => {
 				await deleteAwardType({ id: awardType.id });
-				await goto(resolve('/admin/utmarkelser'));
+				await goto(resolve('admin/utmarkelser'));
 			}
 		});
 	}
@@ -147,7 +147,12 @@
 			rows={awards}
 			key={(award) => award.id}
 			columns={[
-				{ label: 'Battletag', snippet: battletagCell, class: 'font-semibold text-lg' },
+				{
+					label: 'Battletag',
+					snippet: battletagCell,
+					class: 'font-semibold text-lg'
+				},
+
 				...(awardType.showDivision
 					? [
 							{ label: 'Säsong', snippet: seasonCell, center: true },

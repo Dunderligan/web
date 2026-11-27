@@ -1,21 +1,25 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import AdminCard from '$lib/components/admin/AdminCard.svelte';
-	import Breadcrumbs from '$lib/components/admin/Breadcrumbs.svelte';
-	import Button from '$lib/components/ui/Button.svelte';
-	import EditableMatch from '$lib/components/match/EditableMatch.svelte';
-	import EditMatchDialog from '$lib/components/match/EditMatchDialog.svelte';
-	import InputField from '$lib/components/form/InputField.svelte';
-	import Label from '$lib/components/form/Label.svelte';
-	import SaveToast from '$lib/components/admin/SaveToast.svelte';
-	import { ConfirmContext } from '$lib/state/confirm.svelte';
-	import { RosterContext } from '$lib/state/rosters.svelte';
-	import { SaveContext } from '$lib/state/save.svelte';
-	import { BracketFormat, type UnresolvedMatchWithOrder } from '$lib/types';
-	import { buildBracketStructure, propagateBracket, type BracketStructure } from '$lib/bracket';
-	import { deleteBracket, updateBracket } from '$lib/remote/bracket.remote';
-	import { isAdmin } from '$lib/auth-role.js';
+	import AdminCard from '#lib/components/admin/AdminCard.svelte';
+	import Breadcrumbs from '#lib/components/admin/Breadcrumbs.svelte';
+	import Button from '#lib/components/ui/Button.svelte';
+	import EditableMatch from '#lib/components/match/EditableMatch.svelte';
+	import EditMatchDialog from '#lib/components/match/EditMatchDialog.svelte';
+	import InputField from '#lib/components/form/InputField.svelte';
+	import Label from '#lib/components/form/Label.svelte';
+	import SaveToast from '#lib/components/admin/SaveToast.svelte';
+	import { ConfirmContext } from '#lib/state/confirm.svelte.ts';
+	import { RosterContext } from '#lib/state/rosters.svelte.ts';
+	import { SaveContext } from '#lib/state/save.svelte.ts';
+	import { BracketFormat, type UnresolvedMatchWithOrder } from '#lib/types.ts';
+	import {
+		buildBracketStructure,
+		propagateBracket,
+		type BracketStructure
+	} from '#lib/bracket/index.ts';
+	import { deleteBracket, updateBracket } from '#lib/remote/bracket.remote.ts';
+	import { isAdmin } from '#lib/auth-role.js';
 
 	const { data } = $props();
 
@@ -70,11 +74,8 @@
 			description: `Är du säker på att du vill radera bracket ${bracket.name ?? division.name}, ${season.name}?`,
 			destructive: true,
 			action: async () => {
-				await deleteBracket({
-					id: bracket.id
-				});
-
-				await goto(resolve(`/admin/division/${division.id}`));
+				await deleteBracket({ id: bracket.id });
+				await goto(resolve(`admin/division/${division.id}`));
 			}
 		});
 	}

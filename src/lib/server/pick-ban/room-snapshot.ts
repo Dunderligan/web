@@ -1,5 +1,5 @@
-import { type RoomSnapshot } from '$lib/pick-ban';
-import { isClosed } from '$lib/pick-ban/util';
+import { type RoomSnapshot } from '#lib/pick-ban/index.ts';
+import { isClosed } from '#lib/pick-ban/util.ts';
 import { db } from '../db';
 import { roomStateQuery } from '../db/helpers';
 import presence from './presence';

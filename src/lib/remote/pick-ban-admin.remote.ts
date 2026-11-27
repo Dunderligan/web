@@ -1,8 +1,8 @@
 import { command } from '$app/server';
-import { db, schema } from '$lib/server/db';
+import { db, schema } from '#lib/server/db.ts';
 import z from 'zod';
 import { roleGuard } from './auth.remote';
-import { AuthRole } from '$lib/auth-role';
+import { AuthRole } from '#lib/auth-role.ts';
 import {
 	configRowToMapScope,
 	InvalidPickBanConfigError,
@@ -10,11 +10,11 @@ import {
 	PickBanMapType,
 	resolveConfig,
 	WinCondition
-} from '$lib/pick-ban';
+} from '#lib/pick-ban/index.ts';
 import { eq } from 'drizzle-orm';
-import pickBanService from '$lib/server/pick-ban';
+import pickBanService from '#lib/server/pick-ban/index.ts';
 import { error } from '@sveltejs/kit';
-import { fullMatchQueryWithContext } from '$lib/server/db/helpers';
+import { fullMatchQueryWithContext } from '#lib/server/db/helpers.ts';
 
 export const createPickBanConfig = command(
 	z.object({

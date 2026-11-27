@@ -1,10 +1,10 @@
 <script lang="ts">
-	import Meta from '$lib/components/structure/Meta.svelte';
-	import PageHeader from '$lib/components/structure/PageHeader.svelte';
-	import PageSection from '$lib/components/structure/PageSection.svelte';
-	import screenshot1 from '$lib/assets/images/screenshot1.avif';
-	import screenshot2 from '$lib/assets/images/screenshot2.avif';
-	import Card from '$lib/components/structure/Card.svelte';
+	import Meta from '#lib/components/structure/Meta.svelte';
+	import PageHeader from '#lib/components/structure/PageHeader.svelte';
+	import PageSection from '#lib/components/structure/PageSection.svelte';
+	import screenshot1 from '#lib/assets/images/screenshot1.avif';
+	import screenshot2 from '#lib/assets/images/screenshot2.avif';
+	import Card from '#lib/components/structure/Card.svelte';
 </script>
 
 <Meta title="Om oss" />
