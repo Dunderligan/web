@@ -1,3 +1,4 @@
+import { RoomStatus } from '$lib/pick-ban/types.js';
 import { db } from '$lib/server/db';
 import { fullMatchQueryWithContext } from '$lib/server/db/helpers';
 import { hiddenMatchFilter } from '$lib/server/db/hidden';
@@ -12,7 +13,10 @@ export const load = async ({ locals }) => {
 			match: fullMatchQueryWithContext
 		},
 		where: {
-			match: hiddenMatchFilter(locals.user)
+			match: hiddenMatchFilter(locals.user),
+			status: {
+				in: [RoomStatus.OPEN, RoomStatus.IN_PROGRESS]
+			}
 		}
 	});
 

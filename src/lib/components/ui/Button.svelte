@@ -14,6 +14,7 @@
 		kind?: ButtonKind;
 		loading?: boolean;
 		openInNewTab?: boolean;
+		renderAsDiv?: boolean;
 	} & Content &
 		WithoutChildren<ButtonRootProps>;
 
@@ -27,6 +28,7 @@
 		kind = 'primary',
 		href,
 		openInNewTab,
+		renderAsDiv,
 		...props
 	}: Props = $props();
 
@@ -51,7 +53,7 @@
 </script>
 
 <svelte:element
-	this={href ? 'a' : 'button'}
+	this={renderAsDiv ? 'div' : href ? 'a' : 'button'}
 	class={[
 		classProp,
 		typeClass,

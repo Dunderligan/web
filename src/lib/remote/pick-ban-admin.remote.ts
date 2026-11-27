@@ -14,6 +14,7 @@ import {
 import { eq } from 'drizzle-orm';
 import pickBanService from '$lib/server/pick-ban';
 import { error } from '@sveltejs/kit';
+import { fullMatchQueryWithContext } from '$lib/server/db/helpers';
 
 export const createPickBanConfig = command(
 	z.object({
@@ -103,5 +104,49 @@ export const deletePickBanConfig = command(
 		await roleGuard(AuthRole.ADMIN);
 
 		await db.delete(schema.pickBanConfig).where(eq(schema.pickBanConfig.id, id));
+	}
+);
+
+export const createRoom = command(
+	z.object({
+		matchId: z.uuid()
+	}),
+	async ({ matchId }) => {
+		const user = await roleGuard(AuthRole.ADMIN);
+
+		const match = await db.query.match.findFirst({
+			...fullMatchQueryWithContext,
+			where: {
+				id: matchId
+			}
+		});
+
+		if (!match) {
+			throw error(404, 'Match not found');
+		}
+
+		const roomId = await pickBanService.createRoom(match, user.id);
+
+		return { roomId };
+	}
+);
+
+export const cancelRoom = command(
+	z.object({
+		roomId: z.uuid()
+	}),
+	async ({ roomId }) => {
+		const user = await roleGuard(AuthRole.ADMIN);
+		await pickBanService.cancelRoom(roomId, user.id);
+	}
+);
+
+export const deleteRoom = command(
+	z.object({
+		roomId: z.uuid()
+	}),
+	async ({ roomId }) => {
+		await roleGuard(AuthRole.ADMIN);
+		await pickBanService.deleteRoom(roomId);
 	}
 );

@@ -20,13 +20,15 @@
 	>
 		{@render children()}
 	</Tooltip.Trigger>
-	<Tooltip.Content
-		class="floating relative max-w-md px-6 py-4 font-medium text-gray-800 dark:text-gray-300"
-	>
-		{#if typeof content === 'string'}
-			{content}
-		{:else}
-			{@render content()}
-		{/if}
-	</Tooltip.Content>
+	<Tooltip.Portal>
+		<Tooltip.Content
+			class="floating relative max-w-md px-6 py-4 font-medium text-gray-800 dark:text-gray-300"
+		>
+			{#if typeof content === 'string'}
+				{content}
+			{:else}
+				{@render content()}
+			{/if}
+		</Tooltip.Content>
+	</Tooltip.Portal>
 </Tooltip.Root>

@@ -3,9 +3,7 @@ import z from 'zod';
 import { roleGuard } from './auth.remote';
 import { AuthRole } from '$lib/auth-role';
 import pickBanService, { type RoomParticipant } from '$lib/server/pick-ban';
-import { fullMatchQueryWithContext } from '$lib/server/db/helpers';
 import { getRoomSnapshot, publishRoom } from '$lib/server/pick-ban/room-snapshot';
-import { db } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
 import { MapOutcome, RoomStatus, type DecisionActor } from '$lib/pick-ban';
 import presence from '$lib/server/pick-ban/presence';
@@ -17,43 +15,6 @@ import { isClosed } from '$lib/pick-ban/util';
 
 /** Yield at least this often so the live query doesn't time out due to inactivity. */
 const ROOM_KEEPALIVE_INTERVAL_MS = 15 * 1000;
-
-export const createRoom = command(
-	z.object({
-		matchId: z.uuid()
-	}),
-	async ({ matchId }) => {
-		const user = await roleGuard(AuthRole.ADMIN);
-
-		const match = await db.query.match.findFirst({
-			...fullMatchQueryWithContext,
-			where: {
-				id: matchId
-			}
-		});
-
-		if (!match) {
-			throw error(404, 'Match not found');
-		}
-
-		const roomId = await pickBanService.createRoom(match, user.id);
-
-		return { roomId };
-	}
-);
-
-export const cancelRoom = command(
-	z.object({
-		roomId: z.uuid()
-	}),
-	async ({ roomId }) => {
-		const user = await roleGuard(AuthRole.ADMIN);
-
-		await pickBanService.cancelRoom(roomId, user.id);
-
-		await presence.clear(roomId);
-	}
-);
 
 /** Registers or refreshes the signed-in viewer's presence in a room. */
 export const heartbeatRoom = command(z.object({ roomId: z.uuid() }), async ({ roomId }) => {

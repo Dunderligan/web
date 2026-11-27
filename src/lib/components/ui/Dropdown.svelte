@@ -1,9 +1,9 @@
 <script lang="ts">
 	import type { DropdownItem } from '$lib/types';
 	import { DropdownMenu } from 'bits-ui';
-	import type { Snippet } from 'svelte';
 	import Icon from './Icon.svelte';
 	import type { ClassValue } from 'svelte/elements';
+	import type { Snippet } from 'svelte';
 
 	type Props = {
 		items: DropdownItem[];
@@ -11,7 +11,7 @@
 		class?: ClassValue;
 	};
 
-	let { children, items, class: classProp }: Props = $props();
+	let { items, class: classProp, children }: Props = $props();
 
 	const itemClass = 'flex h-full w-full items-center gap-2';
 </script>

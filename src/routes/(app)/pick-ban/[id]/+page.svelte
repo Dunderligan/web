@@ -1,17 +1,27 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
+	import { isAdmin } from '$lib/auth-role.js';
+	import ConfirmDialog from '$lib/components/admin/ConfirmDialog.svelte';
 	import PickBan from '$lib/components/pick-ban/PickBan.svelte';
 	import PickBanInfoDialog from '$lib/components/pick-ban/PickBanInfoDialog.svelte';
 	import Meta from '$lib/components/structure/Meta.svelte';
 	import PageSection from '$lib/components/structure/PageSection.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Chip from '$lib/components/ui/Chip.svelte';
+	import Dropdown from '$lib/components/ui/Dropdown.svelte';
 	import { matchDivision } from '$lib/match.js';
 	import { RoomStatus } from '$lib/pick-ban/types.js';
+	import { isClosed } from '$lib/pick-ban/util.js';
+	import { cancelRoom, deleteRoom } from '$lib/remote/pick-ban-admin.remote.js';
+	import { ConfirmContext } from '$lib/state/confirm.svelte.js';
 	import { PickBanContext } from '$lib/state/pick-ban.svelte.js';
-	import type { ChipColor } from '$lib/types.js';
+	import type { ChipColor, DropdownItem } from '$lib/types.js';
 	import { onMount } from 'svelte';
 
 	let { data } = $props();
+
+	ConfirmContext.set(new ConfirmContext());
 
 	// svelte-ignore state_referenced_locally
 	PickBanContext.set(
@@ -29,6 +39,7 @@
 	);
 
 	const context = PickBanContext.get();
+	const confirmCtx = ConfirmContext.get();
 
 	let infoOpen = $state(false);
 
@@ -49,6 +60,51 @@
 		const destroy = context.startClient();
 		return destroy;
 	});
+
+	const adminDropdownItems = $derived.by(() => {
+		const items: DropdownItem[] = [];
+
+		if (!isClosed(context.status)) {
+			items.push({
+				type: 'button',
+				label: 'Avbryt rum',
+				icon: 'ph:x',
+				onclick: onCancelClick
+			});
+		}
+
+		items.push({
+			type: 'button',
+			label: 'Radera rum',
+			icon: 'ph:trash',
+			onclick: onDeleteClick
+		});
+
+		return items;
+	});
+
+	async function onCancelClick() {
+		confirmCtx.confirm({
+			title: 'Avbryt rum',
+			description: 'Är du säker på att du vill avbryta rummet? Detta går inte att ångra.',
+			destructive: true,
+			action: async () => {
+				await cancelRoom({ roomId: context.roomId });
+			}
+		});
+	}
+
+	async function onDeleteClick() {
+		confirmCtx.confirm({
+			title: 'Radera rum',
+			description: 'Är du säker på att du vill radera rummet? Detta går inte att ångra.',
+			destructive: true,
+			action: async () => {
+				await deleteRoom({ roomId: context.roomId });
+				await goto(resolve('/pick-ban'));
+			}
+		});
+	}
 </script>
 
 <Meta
@@ -60,6 +116,11 @@
 	<div class="flex items-center gap-2">
 		<Button kind="secondary" icon="ph:arrow-left" href="/pick-ban" label="Tillbaka" />
 		<Button kind="secondary" icon="ph:info" label="Info" onclick={() => (infoOpen = true)} />
+		{#if isAdmin(data.user?.role)}
+			<Dropdown items={adminDropdownItems}>
+				<Button kind="secondary" icon="ph:dots-three-vertical" renderAsDiv />
+			</Dropdown>
+		{/if}
 
 		{#if context.status !== RoomStatus.CANCELLED && context.status !== RoomStatus.FINISHED}
 			<Chip class="ml-auto" {...connectionChipProps} />
@@ -70,3 +131,4 @@
 </PageSection>
 
 <PickBanInfoDialog bind:open={infoOpen} />
+<ConfirmDialog />

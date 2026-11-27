@@ -2,6 +2,7 @@
 	import type { Snippet } from 'svelte';
 	import Icon from '../ui/Icon.svelte';
 	import type { ResolvedPathname } from '$app/types';
+	import type { ClassValue } from 'svelte/elements';
 
 	type Props = {
 		href: ResolvedPathname;
@@ -10,15 +11,25 @@
 		disabled?: boolean;
 		children?: Snippet;
 		rounded?: boolean;
+		class?: ClassValue;
 	};
 
-	let { href, onclick, highlighted = false, disabled, children, rounded }: Props = $props();
+	let {
+		href,
+		onclick,
+		highlighted = false,
+		disabled,
+		children,
+		rounded,
+		class: classProp
+	}: Props = $props();
 </script>
 
 <a
 	{href}
 	{onclick}
 	class={[
+		classProp,
 		highlighted
 			? 'bg-accent-600 py-5 pl-8 font-bold text-white hover:bg-accent-700'
 			: 'bg-gray-100 py-2.5 pl-6 font-semibold text-gray-700 hover:bg-gray-200 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800',

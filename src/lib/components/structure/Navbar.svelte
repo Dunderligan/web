@@ -159,13 +159,13 @@
 			</a>
 
 			{#each links as { href, label } (href)}
-				<Link class="hidden md:block" {href}>{label}</Link>
+				<Link class="hidden lg:block" {href}>{label}</Link>
 			{/each}
 		</div>
 
 		<div class="flex items-center gap-2">
 			<Dropdown items={preferencesDropdownItems}>
-				<Button icon="ph:gear" kind="secondary" />
+				<Button icon="ph:gear" kind="secondary" renderAsDiv />
 			</Dropdown>
 
 			<Button icon="ph:magnifying-glass" kind="secondary" onclick={() => (searchOpen = true)} />
@@ -184,13 +184,13 @@
 					icon="ph:sign-in"
 					kind="secondary"
 					label="Logga in"
-					class="hidden! md:inline-flex!"
+					class="hidden! lg:inline-flex!"
 					loading={loggingIn}
 				/>
 			{/if}
 
 			<DropdownMenu.Root>
-				<DropdownMenu.Trigger class="flex items-center md:hidden" aria-label="Meny">
+				<DropdownMenu.Trigger class="flex items-center lg:hidden" aria-label="Meny">
 					<Icon icon="ph:list" class="text-2xl" />
 				</DropdownMenu.Trigger>
 				<DropdownMenu.Content

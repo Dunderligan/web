@@ -1,10 +1,8 @@
 import { fallbackDecision, RoomStatus } from '$lib/pick-ban';
 import { MatchState } from '$lib/types';
-import { inArray } from 'drizzle-orm';
-import { db, schema } from '../db';
+import { db } from '../db';
 import { fullMatchQueryWithContext } from '../db/helpers';
 import pickBanService from '.';
-import roomEvents from './room-events';
 
 class PickBanSweeper {
 	#sweepIntervalMillis: number = 5 * 1000; // 5 seconds
@@ -90,22 +88,12 @@ class PickBanSweeper {
 			}
 		});
 
-		const result = await db
-			.delete(schema.room)
-			.where(
-				inArray(
-					schema.room.id,
-					roomsToDelete.map((room) => room.id)
-				)
-			)
-			.execute();
-
 		for (const room of roomsToDelete) {
-			roomEvents.close(room.id);
-		}
-
-		if (result.count > 0) {
-			console.log(`Auto-deleted ${result.count} inactive rooms.`);
+			try {
+				await pickBanService.deleteRoom(room.id);
+			} catch (error) {
+				console.error(`Error deleting inactive room ${room.id}:`, error);
+			}
 		}
 	}
 

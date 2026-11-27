@@ -33,6 +33,8 @@ import { fullGroupQuery, memberQuery, roomStateQuery, type Transaction } from '.
 import { generateDivisionStandings, getRosterSeed } from '../standings';
 import { error } from '@sveltejs/kit';
 import { publishRoom } from './room-snapshot';
+import presence from './presence';
+import roomEvents from './room-events';
 
 /** A signed-in roster member who is allowed to participate in a room. */
 export type RoomParticipant = {
@@ -294,6 +296,15 @@ class PickBanService {
 			context.state.closedAt = new Date();
 			context.state.cancelledById = byId;
 		});
+
+		await presence.clear(roomId);
+		roomEvents.close(roomId);
+	}
+
+	async deleteRoom(roomId: string): Promise<void> {
+		await db.delete(schema.room).where(eq(schema.room.id, roomId)).execute();
+		await presence.clear(roomId);
+		roomEvents.close(roomId);
 	}
 
 	async applyDecision(
