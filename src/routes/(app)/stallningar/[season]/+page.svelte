@@ -18,13 +18,17 @@
 	import { resolve } from '$app/paths';
 	import Checkbox from '#lib/components/form/Checkbox.svelte';
 	import BracketContainer from '#lib/components/match/BracketContainer.svelte';
+	import Label from '#lib/components/form/Label.svelte';
+	import TiebreakerDialog from '#lib/components/ui/TiebreakerDialog.svelte';
 
 	let { data } = $props();
 
 	let { season, divisions } = $derived(data);
 
-	let showInitialSeeds = $derived(false);
-	const state = $derived(getSeasonState(season));
+	let showInitialSeeds = $state(false);
+	let tiebreakerDialogOpen = $state(false);
+
+	const seasonState = $derived(getSeasonState(season));
 
 	let division = $derived.by(() => {
 		const param = page.url.searchParams.get('div');
@@ -35,20 +39,24 @@
 	const hasGroupStage = $derived(division.rosters.length > 0);
 	const hasPlayoffs = $derived(division.brackets.length > 0);
 
+	const anyInitialSeeds = $derived(division.rosters.some((roster) => roster.initialSeed !== null));
+
 	const tabItems: TabItem<string>[] = $derived([
 		{
 			icon: 'ph:table',
 			label: 'Gruppspel',
 			value: 'group',
 			href: `/stallningar/${season.slug}?div=${division.slug}&visa=gruppspel`,
-			disabled: !hasGroupStage
+			disabled: !hasGroupStage,
+			title: !hasGroupStage ? 'Denna division har inget gruppspel' : undefined
 		},
 		{
 			icon: 'ph:trophy',
 			label: 'Slutspel',
 			value: 'bracket',
 			href: `/stallningar/${season.slug}?div=${division.slug}&visa=slutspel`,
-			disabled: !hasPlayoffs
+			disabled: !hasPlayoffs,
+			title: !hasPlayoffs ? 'Denna division har inget slutspel' : undefined
 		}
 	]);
 
@@ -145,13 +153,13 @@
 			<Chip color="accent" icon="ph:star" label="Spinoff" />
 		{/if}
 
-		<SeasonStateChip {state} />
+		<SeasonStateChip state={seasonState} />
 
 		<div class="font-medium text-gray-600 dark:text-gray-400">
-			{#if state === 'upcoming'}
+			{#if seasonState === 'upcoming'}
 				Startar {formatDateWithoutYear(season.startedAt)}
 				{season.startedAt.getFullYear()}
-			{:else if state === 'ongoing'}
+			{:else if seasonState === 'ongoing'}
 				<span>Inleddes {formatDateWithoutYear(season.startedAt)}</span>
 				{#if season.endedAt}
 					<span>och avslutas {formatDateWithoutYear(season.endedAt)}</span>
@@ -187,37 +195,54 @@
 	</div>
 
 	{#if mode === 'group'}
-		{#each division.tables as table (table.id)}
-			{@const resolvedStandings = table.standings.map(({ rosterId, score }) => ({
-				roster: resolveRoster(rosterId)!,
-				score
-			}))}
+		<div class="grid grid-cols-1 gap-4 md:grid-cols-[auto_1fr]">
+			<section>
+				{#each division.tables as table (table.id)}
+					{@const resolvedStandings = table.standings.map(({ rosterId, score }) => ({
+						roster: resolveRoster(rosterId)!,
+						score
+					}))}
 
-			{#if table.title}
-				<Subheading class="mt-6 mb-4 flex justify-between">
-					{table.title}
-				</Subheading>
-			{/if}
+					{#if table.title}
+						<Subheading class="mt-6 mb-4 flex justify-between">
+							{table.title}
+						</Subheading>
+					{/if}
 
-			<StandingsTable
-				standings={resolvedStandings}
-				playoffLine={division.playoffLine}
-				seasonSlug={season.slug}
-				{showInitialSeeds}
-			/>
+					<StandingsTable
+						standings={resolvedStandings}
+						playoffLine={division.playoffLine}
+						seasonSlug={season.slug}
+						{showInitialSeeds}
+					/>
 
-			<Checkbox bind:checked={showInitialSeeds} />
+					{#if isModerator(data.user?.role)}
+						<Button
+							label="Redigera"
+							icon="ph:pencil-simple"
+							kind="secondary"
+							class="mt-4 max-w-max"
+							href={table.adminUrl}
+						/>
+					{/if}
+				{/each}
+			</section>
 
-			{#if isModerator(data.user?.role)}
+			<section class="space-y-2 md:pt-10">
 				<Button
-					label="Redigera"
-					icon="ph:pencil-simple"
+					icon="ph:info"
+					label="Tiebreakers"
 					kind="secondary"
-					class="mt-4 max-w-max"
-					href={table.adminUrl}
+					onclick={() => (tiebreakerDialogOpen = true)}
 				/>
-			{/if}
-		{/each}
+
+				{#if anyInitialSeeds}
+					<Label label="Visa startseeds" flipped>
+						<Checkbox bind:checked={showInitialSeeds} />
+					</Label>
+				{/if}
+			</section>
+		</div>
 
 		<MatchList
 			title="Kommande matcher"
@@ -263,3 +288,5 @@
 		{/each}
 	{/if}
 </PageSection>
+
+<TiebreakerDialog bind:open={tiebreakerDialogOpen} legacy={season.legacySeeding} />

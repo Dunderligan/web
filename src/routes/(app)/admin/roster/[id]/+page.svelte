@@ -66,7 +66,8 @@
 			name: roster.name,
 			resigned: roster.resigned,
 			members: roster.members,
-			socials: team.socials
+			socials: team.socials,
+			initialSeed: roster.initialSeed
 		});
 	}
 
@@ -190,6 +191,16 @@
 
 		<Label label="Resignerad">
 			<Checkbox bind:checked={roster.resigned} onCheckedChange={saveCtx.setDirty} />
+		</Label>
+
+		<Label label="Startseed">
+			<InputField
+				type="number"
+				bind:value={roster.initialSeed}
+				oninput={saveCtx.setDirty}
+				placeholder="Inget startseed"
+				min={1}
+			/>
 		</Label>
 
 		<Label label="Logotyp">

@@ -65,16 +65,17 @@ export const editRoster = command(
 		teamId: z.string().optional(),
 		resigned: z.boolean().optional(),
 		members: z.array(memberSchema).optional(),
-		socials: z.array(socialSchema).optional()
+		socials: z.array(socialSchema).optional(),
+		initialSeed: z.number().nullable().optional()
 	}),
-	async ({ id, teamId, name, resigned, members, socials }) => {
+	async ({ id, teamId, name, resigned, members, socials, initialSeed }) => {
 		await roleGuard(AuthRole.ADMIN);
 
 		await db.transaction(async (tx) => {
 			const tasks = [];
 
 			if (name || resigned !== undefined) {
-				tasks.push(updateInfo(tx, id, name, resigned));
+				tasks.push(updateInfo(tx, id, name, resigned, initialSeed));
 			}
 
 			if (members) {
@@ -90,7 +91,13 @@ export const editRoster = command(
 	}
 );
 
-async function updateInfo(tx: Transaction, rosterId: string, name?: string, resigned?: boolean) {
+async function updateInfo(
+	tx: Transaction,
+	rosterId: string,
+	name?: string,
+	resigned?: boolean,
+	initialSeed?: number | null
+) {
 	const newSlug = name ? toSlug(name) : undefined;
 
 	await tx
@@ -98,7 +105,8 @@ async function updateInfo(tx: Transaction, rosterId: string, name?: string, resi
 		.set({
 			name,
 			slug: newSlug,
-			resigned
+			resigned,
+			initialSeed
 		})
 		.where(eq(schema.roster.id, rosterId));
 }

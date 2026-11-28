@@ -34,8 +34,9 @@
 						label: 'Startseed',
 						content: ({ roster }: TableEntry) => (roster.initialSeed ? roster.initialSeed : '-'),
 						center: true,
-						tooltip: 'Lagets startseed i säsongen',
-						width: '5rem'
+						tooltip: 'Lagets startseed i säsongen, vilket bestämmer matchschema samt första ban',
+						width: '5rem',
+						class: 'text-lg'
 					}
 				]
 			: []),

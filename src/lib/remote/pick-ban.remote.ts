@@ -185,10 +185,7 @@ async function requireParticipant(
 		throw error(403, 'Not a participant in this room.');
 	}
 
-	if (
-		participant.roomStatus !== RoomStatus.OPEN &&
-		participant.roomStatus !== RoomStatus.IN_PROGRESS
-	) {
+	if (isClosed(participant.roomStatus)) {
 		throw error(409, 'The room is closed.');
 	}
 

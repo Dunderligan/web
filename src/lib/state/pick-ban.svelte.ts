@@ -22,6 +22,7 @@ import {
 	submitReport,
 	subscribeToRoom
 } from '#lib/remote/pick-ban.remote.ts';
+import { isClosed } from '#lib/pick-ban/util.ts';
 
 const { get, set } = defineContext<PickBanContext>('$_pick_ban_state');
 
@@ -50,17 +51,18 @@ export class PickBanContext {
 
 	#nowInterval: NodeJS.Timeout | null = null;
 	#heartbeatInterval: NodeJS.Timeout | null = null;
-	#liveQuery: ReturnType<typeof subscribeToRoom>;
+	#liveQuery: ReturnType<typeof subscribeToRoom> | null = null;
 	#destroyed = false;
 
 	connectionState: ConnectionState = $derived.by(() => {
-		if (this.#destroyed) return 'disconnected';
+		if (this.#destroyed || this.#liveQuery === null) return 'disconnected';
 		if (this.#liveQuery.connected) return 'connected';
 		if (this.#liveQuery.loading) return 'loading';
 		return 'disconnected';
 	});
 
 	status = $derived.by(() => this.state.status);
+	#roomIsClosed = $derived.by(() => isClosed(this.state.status));
 
 	currentMap = $derived.by(() => this.state.maps.at(-1) ?? null);
 	matchProgress = $derived.by(() => matchProgress(this.config, this.state.maps));
@@ -123,12 +125,14 @@ export class PickBanContext {
 		this.user = user;
 		this.now = $state(new SvelteDate());
 
-		this.#liveQuery = subscribeToRoom({ roomId: this.roomId });
+		if (!this.#roomIsClosed) {
+			this.#liveQuery = subscribeToRoom({ roomId: this.roomId });
+		}
 	}
 
 	/**
-	 * Starts the client-only timers: the countdown clock and the presence heartbeat.
-	 * Call from an effect so it only runs in the browser, and return the cleanup.
+	 * Starts the client-only timers: the countdown clock, presence heartbeat and live query listener.
+	 * Returns a cleanup function that should be called when the component is destroyed. Called only on the client.
 	 */
 	startClient() {
 		if (this.#destroyed || this.#nowInterval) return () => this.destroy();
@@ -142,7 +146,7 @@ export class PickBanContext {
 			this.now = new SvelteDate();
 		}, 1000);
 
-		if (this.userIsParticipant) {
+		if (this.userIsParticipant && !this.#roomIsClosed) {
 			void this.#sendHeartbeat();
 
 			this.#heartbeatInterval = setInterval(() => {
@@ -247,6 +251,8 @@ export class PickBanContext {
 	}
 
 	async #listenToLiveQuery() {
+		if (!this.#liveQuery) return;
+
 		for await (const state of this.#liveQuery) {
 			if (this.#destroyed) break;
 

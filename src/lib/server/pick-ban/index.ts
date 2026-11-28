@@ -295,6 +295,8 @@ class PickBanService {
 			context.state.closeReason = RoomCloseReason.CANCELLED;
 			context.state.closedAt = new Date();
 			context.state.cancelledById = byId;
+
+			this.#clearDeadline(context);
 		});
 
 		await presence.clear(roomId);
@@ -303,6 +305,7 @@ class PickBanService {
 
 	async deleteRoom(roomId: string): Promise<void> {
 		await db.delete(schema.room).where(eq(schema.room.id, roomId)).execute();
+
 		await presence.clear(roomId);
 		roomEvents.close(roomId);
 	}
